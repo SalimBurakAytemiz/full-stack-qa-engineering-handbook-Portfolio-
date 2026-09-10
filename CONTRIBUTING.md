@@ -62,7 +62,155 @@ Branch isimleri kısa ve açıklayıcı olmalıdır.
 
 ---
 
-# 4. Commit Standard
+# 4. Folder Naming Convention
+
+Repository klasör yapısı üç kategoriye ayrılır.
+
+## Primary QA Domain Folders
+
+Ana QA konu klasörleri:
+
+NN-UPPER-KEBAB-CASE
+
+formatında olmalıdır.
+
+Kurallar:
+
+- NN = iki haneli, sıfır dolgulu sıra numarası
+- Ardından tire kullanılır
+- Kelimeler İngilizce teknik terminolojiyle yazılır
+- Büyük harf kullanılır
+- Kelimeler tire ile ayrılır
+
+Örnek:
+
+00-QA-FOUNDATIONS
+
+01-REQUIREMENT-ANALYSIS
+
+07-API-TESTING
+
+18-PERFORMANCE-TESTING
+
+## Root Structural Folders
+
+Numaralandırılmayan repository alanları açıklayıcı isim kullanır.
+
+Örnek:
+
+CASE-STUDIES
+
+QA-DEMO-SYSTEM
+
+## Technical / Shared Folders
+
+Ekosistem veya teknik convention gerektiren klasörler ilgili aracın
+standart naming yaklaşımını koruyabilir.
+
+Örnek:
+
+.github
+
+shared
+
+workflows
+
+test-data
+
+schemas
+
+helpers
+
+templates
+
+evidence
+
+Nested technical folders için varsayılan:
+
+lower-kebab-case
+
+kullanılabilir.
+
+---
+
+# 5. File Naming Convention
+
+Repository dosya adlandırması içerik türüne göre üç kategoriye ayrılır.
+
+## Repository Governance Files
+
+Ana repository yönetim/dokümantasyon dosyalarında:
+
+UPPER-KEBAB-CASE.md
+
+kullanılır.
+
+Örnek:
+
+DOCUMENTATION-STANDARD.md
+
+QA-COMPETENCY-MAP.md
+
+TERMINOLOGY-GLOSSARY.md
+
+Ekosistem tarafından yaygın kabul edilen standart dosya isimleri
+istisnadır:
+
+README.md
+
+CONTRIBUTING.md
+
+LICENSE
+
+## QA Content Documentation
+
+QA içerik dosyaları mümkün olduğunca:
+
+UPPER-KEBAB-CASE.md
+
+veya konu klasörlerinde kısa standart teknik isimler kullanır.
+
+Örnek:
+
+README.md
+
+THEORY.md
+
+HOW-TO.md
+
+INTERVIEW.md
+
+COMMON-MISTAKES.md
+
+BEST-PRACTICES.md
+
+EXPECTED-RESULT.md
+
+ACTUAL-RESULT.md
+
+## Code / Configuration / Tool Files
+
+Kod, config ve framework dosyalarında ilgili teknoloji ekosisteminin
+standart naming convention'ı korunur.
+
+Örnek:
+
+package.json
+
+playwright.config.ts
+
+docker-compose.yml
+
+schema.json
+
+validation.js
+
+Dokümantasyon standardı ile source-code naming standardını birbirine
+zorla uygulama.
+
+---
+
+# 6. Commit Standard
 
 Commit mesajları yapılan değişikliğin amacını açıkça göstermelidir.
 
@@ -84,7 +232,7 @@ chore: update repository structure
 
 ---
 
-# 5. Pull Request Rule
+# 7. Pull Request Rule
 
 Önemli değişiklikler Pull Request üzerinden `main` branch'e alınmalıdır.
 
@@ -102,7 +250,7 @@ Pull Request mümkün olduğunca aşağıdaki bilgileri içermelidir:
 
 ---
 
-# 6. Knowledge Status Integrity
+# 8. Knowledge Status Integrity
 
 Repository aşağıdaki statüleri kullanır:
 
@@ -125,7 +273,7 @@ Henüz yeterli hands-on uygulaması bulunmayan öğrenme alanı.
 
 ---
 
-# 7. Status Promotion Rule
+# 9. Status Promotion Rule
 
 Bir konu yalnızca dokümantasyon oluşturulduğu için:
 
@@ -148,7 +296,7 @@ kullanılabilir.
 
 ---
 
-# 8. Evidence Integrity
+# 10. Evidence Integrity
 
 Gerçekte çalıştırılmamış test başarılı gösterilemez.
 
@@ -177,7 +325,7 @@ kullanılmalıdır.
 
 ---
 
-# 9. Documentation Language
+# 11. Documentation Language
 
 Ana anlatım dili:
 
@@ -204,7 +352,7 @@ framework isimleri İngilizce kullanılmalıdır.
 
 ---
 
-# 10. Documentation Structure
+# 12. Documentation Structure
 
 Teknik konular mümkün olduğunca şu yapıyı takip etmelidir:
 
@@ -237,7 +385,7 @@ eklenmemelidir.
 
 ---
 
-# 11. QA Scope Boundary
+# 13. QA Scope Boundary
 
 Repository'nin amacı QA Engineer'ın her teknik rolün görevini üstlenmesi değildir.
 
@@ -275,7 +423,7 @@ Derin security assessment ve offensive security çalışmaları yürütür.
 
 ---
 
-# 12. Real Company Data Rule
+# 14. Real Company Data Rule
 
 Repository içerisine gerçek şirket veya müşteri sistemlerinden:
 
@@ -298,7 +446,7 @@ dokümante edilir.
 
 ---
 
-# 13. Controlled QA Lab Rule
+# 15. Controlled QA Lab Rule
 
 Hands-on uygulamalar mümkün olduğunca kontrollü QA Demo System üzerinde
 çalıştırılmalıdır.
@@ -312,7 +460,7 @@ Repository sahte profesyonel deneyim üretmek için mock kullanamaz.
 
 ---
 
-# 14. Test Quality Rule
+# 16. Test Quality Rule
 
 Bir automated test yalnızca çalışıyor diye kaliteli kabul edilmez.
 
@@ -331,7 +479,7 @@ Assertion gerçek business veya technical expectation'ı doğrulamalıdır.
 
 ---
 
-# 15. Automation Rule
+# 17. Automation Rule
 
 Automation oluşturulurken mümkün olduğunda şu sorular cevaplanmalıdır:
 
@@ -345,7 +493,7 @@ Automation oluşturulurken mümkün olduğunda şu sorular cevaplanmalıdır:
 
 ---
 
-# 16. AI Agent Rule
+# 18. AI Agent Rule
 
 AI agent repository sahibinin sahip olmadığı profesyonel deneyimi
 varmış gibi gösteremez.
@@ -361,7 +509,7 @@ AI agent:
 
 ---
 
-# 17. Claude Implementation Role
+# 19. Claude Implementation Role
 
 Claude veya benzeri implementation agent:
 
@@ -377,7 +525,7 @@ Implementation tamamlandığında ilgili çalışma paketinde DURmalıdır.
 
 ---
 
-# 18. Independent Review Role
+# 20. Independent Review Role
 
 Codex veya başka bağımsız reviewer:
 
@@ -401,7 +549,7 @@ problem bulmak amacıyla incelemelidir.
 
 ---
 
-# 19. Review Severity
+# 21. Review Severity
 
 Review bulguları mümkün olduğunda:
 
@@ -419,7 +567,7 @@ Phase kapanmadan önce kabul edilmeyen kritik bulgular çözülmelidir.
 
 ---
 
-# 20. Learning Lab Completion
+# 22. Learning Lab Completion
 
 Bir Learning Lab tamamlandığında aşağıdaki çıktıların bulunması hedeflenir:
 
@@ -438,7 +586,7 @@ Bu şartlar sağlandığında konu `PRACTICED` statüsü için değerlendirilebi
 
 ---
 
-# 21. Phase Completion
+# 23. Phase Completion
 
 Her Phase aşağıdaki durumlarla takip edilir:
 
@@ -457,7 +605,7 @@ review sonucunda kritik açık bulunmadığında CLEAN olabilir.
 
 ---
 
-# 22. Repository Objective
+# 24. Repository Objective
 
 Bu repository'nin hedefi mümkün olan en fazla technology ismini listelemek değildir.
 

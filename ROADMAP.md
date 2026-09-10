@@ -17,7 +17,7 @@ Amaç:
 
 ## Status
 
-IN PROGRESS
+CLEAN
 
 ## Amaç
 
@@ -45,6 +45,10 @@ standardını oluşturmak.
 ---
 
 # PHASE 1 — QA FOUNDATIONS
+
+## Status
+
+IN PROGRESS
 
 ## Amaç
 
@@ -690,5 +694,9 @@ döngüsünden geçmelidir.
 # Current Status
 
 PHASE 0 — REPOSITORY FOUNDATION
+
+CLEAN
+
+PHASE 1 — QA FOUNDATIONS
 
 IN PROGRESS
