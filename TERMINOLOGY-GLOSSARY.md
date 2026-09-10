@@ -1197,6 +1197,146 @@ karşıladığının test edilmesi.
 
 ---
 
+# 15. Requirement & Risk Analysis Terminology
+
+## Business Rule
+
+Türkçe:
+
+İş Kuralı
+
+Tanım:
+
+Sistemin uyması gereken, genellikle birden fazla requirement'ı
+etkileyen iş kuralı. UI'nin yanı sıra API ve database seviyesinde de
+doğrulanması gerekir.
+
+---
+
+## Impact Analysis
+
+Türkçe:
+
+Etki Analizi
+
+Tanım:
+
+Bir feature değişikliğinin veya yeni bir geliştirmenin, sistemin
+hangi alanlarını (Web, Mobile, API, Backend, Database vb.)
+etkileyebileceğini belirleme süreci.
+
+---
+
+## Dependency Analysis
+
+Türkçe:
+
+Bağımlılık Analizi
+
+Tanım:
+
+Bir feature'ın bağımlı olduğu internal, external, third-party,
+environment ve data bağımlılıklarının haritalanması süreci.
+
+---
+
+## Change Impact Analysis
+
+Türkçe:
+
+Değişiklik Etki Analizi
+
+Tanım:
+
+Var olan bir requirement veya implementasyon değiştiğinde, hangi test
+case, automation, API contract ve documentation'ın güncellenmesi
+gerektiğinin belirlenmesi süreci.
+
+---
+
+## Test Condition
+
+Türkçe:
+
+Test Koşulu
+
+Tanım:
+
+Test edilmesi gereken, genellikle tek bir cümleyle ifade edilebilen
+bir koşul veya durum. Test Scenario ve Test Case'den daha soyut/üst
+seviyededir.
+
+---
+
+## Risk
+
+Türkçe:
+
+Risk
+
+Tanım:
+
+İstenmeyen bir olayın (defect, failure) gerçekleşme olasılığı ile
+gerçekleştiğinde yaratacağı etkinin birleşimi. Severity ile
+karıştırılmamalıdır — Risk proaktif (test öncesi), Severity reaktif
+(defect sonrası) bir değerlendirmedir.
+
+---
+
+## Probability
+
+Türkçe:
+
+Olasılık
+
+Tanım:
+
+Bir sorunun oluşma ihtimali. Kod karmaşıklığı, değişim sıklığı ve
+geçmiş defect verisi gibi faktörlerden etkilenir.
+
+---
+
+## Impact (Risk Bağlamında)
+
+Türkçe:
+
+Etki
+
+Tanım:
+
+Bir sorun gerçekleştiğinde yaratacağı sonucun ciddiyeti (finansal,
+kullanıcı güveni, yasal, operasyonel boyutlarla değerlendirilir).
+
+---
+
+## Error Guessing
+
+Türkçe:
+
+Hata Tahmini
+
+Tanım:
+
+Test edenin geçmiş deneyimi ve sezgisine dayanarak, sistemin
+muhtemelen hata vereceği noktaları tahmin edip hedefli şekilde test
+etme tekniği. Rastgele test etmekle karıştırılmamalıdır.
+
+---
+
+## Pairwise Testing
+
+Türkçe:
+
+İkili Kombinasyon Testi
+
+Tanım:
+
+Birden fazla değişkenin tüm kombinasyonlarını test etmek yerine, her
+ikili değişken kombinasyonunun en az bir test senaryosunda yer almasını
+garanti eden combinatorial test tekniği.
+
+---
+
 # Glossary Maintenance Rule
 
 Repository büyüdükçe yeni teknik terimler bu dosyaya eklenmelidir.

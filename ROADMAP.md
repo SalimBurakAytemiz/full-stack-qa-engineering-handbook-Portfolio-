@@ -85,7 +85,7 @@ Full Stack QA yaklaşımının temel metodoloji ve terminolojisini oluşturmak.
 
 ## Status
 
-IN PROGRESS
+CLEAN
 
 ## Amaç
 
@@ -121,6 +121,10 @@ Bir requirement'ın QA tarafından nasıl analiz edildiğini baştan sona göste
 ---
 
 # PHASE 3 — TEST MANAGEMENT & DEFECT MANAGEMENT
+
+## Status
+
+IN PROGRESS
 
 ## Amaç
 
@@ -706,5 +710,9 @@ PHASE 1 — QA FOUNDATIONS
 CLEAN
 
 PHASE 2 — REQUIREMENT & TEST DESIGN
+
+CLEAN
+
+PHASE 3 — TEST MANAGEMENT & DEFECT MANAGEMENT
 
 IN PROGRESS
