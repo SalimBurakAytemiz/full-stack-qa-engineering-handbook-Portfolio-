@@ -48,7 +48,7 @@ standardını oluşturmak.
 
 ## Status
 
-IN PROGRESS
+CLEAN
 
 ## Amaç
 
@@ -82,6 +82,10 @@ Full Stack QA yaklaşımının temel metodoloji ve terminolojisini oluşturmak.
 ---
 
 # PHASE 2 — REQUIREMENT & TEST DESIGN
+
+## Status
+
+IN PROGRESS
 
 ## Amaç
 
@@ -698,5 +702,9 @@ PHASE 0 — REPOSITORY FOUNDATION
 CLEAN
 
 PHASE 1 — QA FOUNDATIONS
+
+CLEAN
+
+PHASE 2 — REQUIREMENT & TEST DESIGN
 
 IN PROGRESS
