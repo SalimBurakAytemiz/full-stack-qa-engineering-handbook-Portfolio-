@@ -1034,6 +1034,169 @@ Henüz hands-on seviyesine taşınmamış öğrenme alanı.
 
 ---
 
+# 14. Process & Lifecycle Terminology
+
+## Error
+
+Türkçe:
+
+Hata (İnsan Hatası)
+
+Tanım:
+
+Bir kişinin (genelde developer'ın) yaptığı, kodda Defect'e yol açan
+insan hatası.
+
+QA açısından kullanım:
+
+Kök neden analizinde "Error → Defect → Failure" zincirinin başlangıç
+noktasıdır.
+
+---
+
+## Static Testing
+
+Türkçe:
+
+Statik Test
+
+Tanım:
+
+Yazılımı çalıştırmadan, requirement/design/kod gibi work product'lar
+üzerinde yapılan inceleme (review, walkthrough, inspection).
+
+---
+
+## Dynamic Testing
+
+Türkçe:
+
+Dinamik Test
+
+Tanım:
+
+Yazılımı gerçekten çalıştırarak, girdi verip çıktı gözlemleyerek
+yapılan test aktivitesi.
+
+---
+
+## Entry Criteria
+
+Türkçe:
+
+Giriş Kriterleri
+
+Tanım:
+
+Bir test aktivitesine başlamak için karşılanması gereken minimum
+koşullar.
+
+---
+
+## Exit Criteria
+
+Türkçe:
+
+Çıkış Kriterleri
+
+Tanım:
+
+Bir test aktivitesinin tamamlandığı ve bir sonraki aşamaya
+geçilebileceği kararının dayandığı koşullar.
+
+---
+
+## Traceability
+
+Türkçe:
+
+İzlenebilirlik
+
+Tanım:
+
+Bir requirement'ın test senaryosuna, test case'ine, execution
+sonucuna ve varsa defect'e kadar izlenebilir olması.
+
+---
+
+## Shift Left Testing
+
+Türkçe:
+
+Sola Kaydırma
+
+Tanım:
+
+QA aktivitelerinin lifecycle'da mümkün olduğunca erken (requirement
+aşamasına doğru) kaydırılması.
+
+---
+
+## Shift Right Testing
+
+Türkçe:
+
+Sağa Kaydırma
+
+Tanım:
+
+QA aktivitelerinin production'a doğru genişletilmesi (monitoring, log
+analizi, production validation).
+
+---
+
+## Risk-Based Testing
+
+Türkçe:
+
+Riske Dayalı Test
+
+Tanım:
+
+Test önceliklendirmesinin, bir senaryonun olasılığı (Probability) ile
+etkisinin (Impact) birleşimine göre yapılması.
+
+---
+
+## Unit Testing
+
+Türkçe:
+
+Birim Testi
+
+Tanım:
+
+Tek bir fonksiyon, method veya class'ın, dış bağımlılıklardan izole
+şekilde test edilmesi.
+
+---
+
+## Component Testing
+
+Türkçe:
+
+Bileşen Testi
+
+Tanım:
+
+Bir modül/servisin, dış bağımlılıkları genellikle mock/stub ile izole
+edilerek test edilmesi.
+
+---
+
+## System Testing
+
+Türkçe:
+
+Sistem Testi
+
+Tanım:
+
+Sistemin bir bütün olarak, tanımlanan requirement'ları uçtan uca
+karşıladığının test edilmesi.
+
+---
+
 # Glossary Maintenance Rule
 
 Repository büyüdükçe yeni teknik terimler bu dosyaya eklenmelidir.
