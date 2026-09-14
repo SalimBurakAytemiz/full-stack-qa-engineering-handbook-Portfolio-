@@ -1337,6 +1337,156 @@ garanti eden combinatorial test tekniği.
 
 ---
 
+# 16. Test & Defect Management Terminology
+
+## Test Strategy
+
+Türkçe:
+
+Test Stratejisi
+
+Tanım:
+
+Bir organizasyon veya ürün ailesi için uzun vadeli, yüksek seviyeli
+test yaklaşımını tanımlayan doküman.
+
+---
+
+## Test Plan
+
+Türkçe:
+
+Test Planı
+
+Tanım:
+
+Belirli bir feature, sprint veya release için hangi test
+aktivitelerinin hangi kapsamda, kaynakla ve takvimle yürütüleceğini
+tanımlayan detaylı doküman.
+
+---
+
+## Test Suite
+
+Türkçe:
+
+Test Paketi
+
+Tanım:
+
+Ortak bir amaca hizmet eden Test Case'lerin gruplandırılması (örn.
+Smoke Suite, Regression Suite).
+
+---
+
+## Test Cycle
+
+Türkçe:
+
+Test Döngüsü
+
+Tanım:
+
+Bir Test Suite'in belirli bir zaman diliminde, belirli bir build/
+environment üzerinde çalıştırılması.
+
+---
+
+## Test Evidence
+
+Türkçe:
+
+Test Kanıtı
+
+Tanım:
+
+Bir test sonucunu veya bulguyu tekrar üretilebilir ve teknik olarak
+kanıtlanabilir hale getiren kayıt (screenshot, log, API response
+vb.).
+
+---
+
+## Test Coverage
+
+Türkçe:
+
+Test Kapsamı
+
+Tanım:
+
+Sistemin gereksinimlerinin, kod yollarının veya risklerinin test
+aktiviteleri tarafından ne ölçüde kapsandığının ölçüsü. Yalnızca test
+case sayısıyla eş değildir.
+
+---
+
+## QA Sign-Off
+
+Türkçe:
+
+QA Onayı
+
+Tanım:
+
+QA'nın, test sonuçlarına dayanarak bir release için sunduğu
+GO / CONDITIONAL GO / NO-GO önerisi. Nihai release kararı business
+ile birlikte verilir.
+
+---
+
+## Known Issue
+
+Türkçe:
+
+Bilinen Sorun
+
+Tanım:
+
+Tespit edilmiş, düşük etkili olduğu için bilinçli olarak kabul
+edilerek release ile birlikte production'a taşınan defect veya
+sınırlama.
+
+---
+
+## Reproduction Rate
+
+Türkçe:
+
+Tekrar Üretim Oranı
+
+Tanım:
+
+Bir defect'in belirtilen adımlar uygulandığında kaç denemede kaçında
+gerçekleştiğinin oranı (örn. 5/5, 2/10).
+
+---
+
+## Defect Leakage
+
+Türkçe:
+
+Kaçan Defect Oranı
+
+Tanım:
+
+Test sürecinde yakalanmayıp production'da ortaya çıkan defect
+sayısı/oranı; test stratejisinin gerçek etkinliğinin göstergelerinden
+biridir.
+
+---
+
+## Defect Aging
+
+Türkçe:
+
+Defect Yaşlanma Süresi
+
+Tanım:
+
+Bir defect'in açıldığı andan kapatıldığı ana kadar geçen süre.
+
+---
+
 # Glossary Maintenance Rule
 
 Repository büyüdükçe yeni teknik terimler bu dosyaya eklenmelidir.
