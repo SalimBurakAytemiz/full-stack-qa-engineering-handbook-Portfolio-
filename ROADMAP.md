@@ -124,7 +124,7 @@ Bir requirement'ın QA tarafından nasıl analiz edildiğini baştan sona göste
 
 ## Status
 
-IN PROGRESS
+CLEAN
 
 ## Amaç
 
@@ -171,6 +171,10 @@ Profesyonel QA operasyonunun nasıl yönetildiğini göstermek.
 ---
 
 # PHASE 4 — QA DEMO SYSTEM
+
+## Status
+
+IN PROGRESS
 
 ## Amaç
 
@@ -714,5 +718,9 @@ PHASE 2 — REQUIREMENT & TEST DESIGN
 CLEAN
 
 PHASE 3 — TEST MANAGEMENT & DEFECT MANAGEMENT
+
+CLEAN
+
+PHASE 4 — QA DEMO SYSTEM
 
 IN PROGRESS
