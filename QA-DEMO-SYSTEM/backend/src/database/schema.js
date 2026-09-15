@@ -39,6 +39,27 @@ CREATE TABLE IF NOT EXISTS order_items (
   quantity INTEGER NOT NULL CHECK (quantity > 0),
   unit_price REAL NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS events (
+  event_id TEXT PRIMARY KEY,
+  event_type TEXT NOT NULL,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  order_id INTEGER REFERENCES orders(id),
+  payload TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (order_id, event_type)
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  type TEXT NOT NULL,
+  message TEXT NOT NULL,
+  order_id INTEGER REFERENCES orders(id),
+  is_read INTEGER NOT NULL DEFAULT 0 CHECK (is_read IN (0, 1)),
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (order_id, type)
+);
 `;
 
 module.exports = { SCHEMA_SQL };

@@ -1,6 +1,8 @@
+const http = require('node:http');
 const { createApp } = require('./app');
 const { getDatabase } = require('./database/connection');
 const { seedDatabase } = require('./database/seed');
+const { createRealtimeServer } = require('./realtime/websocketServer');
 const config = require('./config');
 
 const db = getDatabase(config.dbPath);
@@ -10,8 +12,12 @@ if (usersCount === 0) {
   seedDatabase(db);
 }
 
-const app = createApp(db);
+const httpServer = http.createServer();
+const { pushNotificationToUser } = createRealtimeServer(httpServer, db);
 
-app.listen(config.port, () => {
+const app = createApp(db, { pushNotificationToUser });
+httpServer.on('request', app);
+
+httpServer.listen(config.port, () => {
   console.log(`QA Demo System backend http://localhost:${config.port} adresinde çalışıyor.`);
 });

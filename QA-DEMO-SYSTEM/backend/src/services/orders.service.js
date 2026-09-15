@@ -1,4 +1,6 @@
 const { simulatePayment, DEFAULT_PAYMENT_TOKEN } = require('./payment.service');
+const { createOrderPaidEvent } = require('./events.service');
+const { createNotificationFromOrderPaidEvent } = require('./notifications.service');
 
 // Per ARCHITECTURE.md section 10 — deterministic order status by payment result.
 const STATUS_BY_PAYMENT_RESULT = {
@@ -104,10 +106,13 @@ function createOrder(db, userId, items, paymentToken) {
     'UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?'
   );
 
-  // Order + order_items + stock mutation run as a single SQLite
-  // transaction — any failure here rolls back the whole write, leaving no
-  // partial state (Codex P4.2 review, non-blocking #1).
+  // Order + order_items + stock mutation + event/notification (PAID only)
+  // run as a single SQLite transaction — any failure here rolls back the
+  // whole write, leaving no partial state (Codex P4.2 review, non-blocking
+  // #1; extended in P4.3 to also cover the order.paid event/notification).
   let orderId;
+  let emittedEvent;
+  let notification;
   db.exec('BEGIN');
   try {
     const info = insertOrder.run(userId, status, total);
@@ -118,11 +123,15 @@ function createOrder(db, userId, items, paymentToken) {
     }
 
     // Stock is only reserved on a successful (PAID) payment — a declined
-    // or timed-out order must not affect product availability.
+    // or timed-out order must not affect product availability, and only a
+    // PAID order emits an order.paid event/notification (P4.3 section 4).
     if (status === 'PAID') {
       for (const { product, quantity } of resolvedItems) {
         decrementStock.run(quantity, product.id);
       }
+
+      emittedEvent = createOrderPaidEvent(db, { orderId, userId, total });
+      notification = createNotificationFromOrderPaidEvent(db, emittedEvent);
     }
 
     db.exec('COMMIT');
@@ -131,7 +140,15 @@ function createOrder(db, userId, items, paymentToken) {
     throw err;
   }
 
-  return { ok: true, status: 201, orderId, orderStatus: status, total };
+  return {
+    ok: true,
+    status: 201,
+    orderId,
+    orderStatus: status,
+    total,
+    emittedEvent,
+    notification,
+  };
 }
 
 function getOrderById(db, orderId, userId) {
