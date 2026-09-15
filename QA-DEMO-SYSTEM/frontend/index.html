@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QA Demo System — Giriş</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<main>
+  <h1>QA Demo System — Giriş</h1>
+  <form id="login-form" data-testid="login-form" novalidate>
+    <label for="email">E-posta</label>
+    <input id="email" name="email" type="email" data-testid="login-email" required />
+
+    <label for="password">Şifre</label>
+    <input id="password" name="password" type="password" data-testid="login-password" required />
+
+    <button type="submit" data-testid="login-submit">Giriş Yap</button>
+
+    <p id="login-error" data-testid="login-error" class="error" hidden></p>
+  </form>
+</main>
+<script src="js/login.js"></script>
+</body>
+</html>

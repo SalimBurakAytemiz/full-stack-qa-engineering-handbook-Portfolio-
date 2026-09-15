@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "email": "test.active01@example.com",
+    "password": "ValidPass123!",
+    "status": "ACTIVE"
+  },
+  {
+    "id": 2,
+    "email": "test.active02@example.com",
+    "password": "ValidPass123!",
+    "status": "ACTIVE"
+  }
+]

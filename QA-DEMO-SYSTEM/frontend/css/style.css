@@ -1,0 +1,58 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f5f5f5;
+  color: #1a1a1a;
+  margin: 0;
+  padding: 2rem;
+}
+
+main {
+  max-width: 480px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+h1 {
+  font-size: 1.25rem;
+  margin-top: 0;
+}
+
+form label {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}
+
+form input {
+  width: 100%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  margin-top: 0.25rem;
+}
+
+form button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.error {
+  color: #b00020;
+  margin-top: 0.75rem;
+}
+
+#product-list {
+  list-style: none;
+  padding: 0;
+}
+
+#product-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}

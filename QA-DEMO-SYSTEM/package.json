@@ -1,0 +1,15 @@
+{
+  "name": "qa-demo-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "QA Demo System — Phase 4 demo application (working QA test target)",
+  "workspaces": [
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace backend",
+    "start": "npm run start --workspace backend",
+    "db:seed": "npm run db:seed --workspace backend",
+    "test": "npm test --workspace backend"
+  }
+}
