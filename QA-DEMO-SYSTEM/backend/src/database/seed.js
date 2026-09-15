@@ -10,7 +10,7 @@ function loadJSON(fileName) {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 }
 
-const AUTOINCREMENT_TABLES = ['users', 'products', 'orders', 'order_items'];
+const AUTOINCREMENT_TABLES = ['users', 'products', 'orders', 'order_items', 'notifications'];
 
 // Resets AUTOINCREMENT counters so a reseed always produces the same
 // deterministic IDs, regardless of how many rows existed before reset
@@ -30,6 +30,8 @@ function resetAutoincrementCounters(db) {
 }
 
 function seedDatabase(db) {
+  db.exec('DELETE FROM notifications');
+  db.exec('DELETE FROM events');
   db.exec('DELETE FROM order_items');
   db.exec('DELETE FROM orders');
   db.exec('DELETE FROM sessions');

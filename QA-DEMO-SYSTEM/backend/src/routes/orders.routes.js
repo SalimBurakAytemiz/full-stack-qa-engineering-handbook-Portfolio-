@@ -2,7 +2,10 @@ const express = require('express');
 const { requireAuth } = require('../middleware/requireAuth');
 const { createOrder, getOrderById } = require('../services/orders.service');
 
-function createOrdersRouter(db) {
+// pushNotificationToUser is injected (not imported directly) so orders.service
+// / this route stay decoupled from the WebSocket transport — tests and any
+// caller that doesn't need realtime delivery can omit it (default no-op).
+function createOrdersRouter(db, pushNotificationToUser = () => false) {
   const router = express.Router();
   router.use(requireAuth(db));
 
@@ -12,6 +15,10 @@ function createOrdersRouter(db) {
 
     if (!result.ok) {
       return res.status(result.status).json({ error: result.message });
+    }
+
+    if (result.notification) {
+      pushNotificationToUser(result.notification.user_id, result.notification);
     }
 
     return res.status(result.status).json({

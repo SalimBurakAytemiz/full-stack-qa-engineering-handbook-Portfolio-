@@ -112,7 +112,7 @@ Kaynak: `shared/test-data/products.json`.
 
 ---
 
-## Endpoint'ler (P4.1 + P4.2 Kapsamı)
+## Endpoint'ler (P4.1 + P4.2 + P4.3 Kapsamı)
 
 | Method | Endpoint | Açıklama |
 |---|---|---|
@@ -122,11 +122,36 @@ Kaynak: `shared/test-data/products.json`.
 | GET | `/api/products/:id` | Tek ürün; yoksa `404` |
 | POST | `/api/orders` | **Authenticated.** `{ items: [{product_id, quantity}], payment_token }` → `201` + sipariş durumu, veya `400`/`401`/`409` |
 | GET | `/api/orders/:id` | **Authenticated.** Yalnızca siparişin sahibi görebilir; başkasının siparişi veya yoksa `404` |
+| GET | `/api/notifications` | **Authenticated.** Yalnızca kendi notification'larını listeler |
+| WS | `/ws?token=<token>` | **Authenticated.** Realtime notification delivery (bkz. aşağıda) |
 
-`POST /api/orders` ve `GET /api/orders/:id`, `Authorization: Bearer <token>`
-header'ı ister (`token`, login yanıtından alınır). Notifications
-(WebSocket + in-app log) **bu pakette yoktur** — P4.3'te eklenecektir
-(bkz. `ARCHITECTURE.md` bölüm 22).
+`POST /api/orders`, `GET /api/orders/:id` ve `GET /api/notifications`,
+`Authorization: Bearer <token>` header'ı ister (`token`, login
+yanıtından alınır).
+
+### Events & Notifications (P4.3)
+
+Yalnızca **PAID** olan bir sipariş `order.paid` event'i üretir (bkz.
+`events` tablosu); `declined`/`timeout` siparişler hiçbir event/
+notification üretmez. Her `order.paid` event'i, ilgili kullanıcı için
+bir `notifications` satırı oluşturur (`GET /api/notifications` ile
+görüntülenebilir) ve eş zamanlı olarak WebSocket üzerinden bağlı
+client'a `{"type":"notification","notification":{...}}` şeklinde push
+edilir.
+
+WebSocket bağlantısı `ws://<host>/ws?token=<sessionToken>` adresine
+kurulur (token, query string ile — tarayıcı WebSocket API'si custom
+header desteklemediği için). Geçersiz/eksik token veya `/ws` dışında
+bir path → bağlantı `401` ile reddedilir, anonim erişim yoktur.
+Realtime delivery **best-effort**'tür: notification zaten kalıcı
+olarak DB'ye yazıldığından, kullanıcı o an bağlı değilse bile
+`GET /api/notifications` ile daha sonra görebilir.
+
+`events` ve `notifications` tablolarında `UNIQUE(order_id, event_type)`
+/ `UNIQUE(order_id, type)` constraint'leri, aynı sipariş için yanlışlıkla
+iki kez event/notification üretilmesine karşı basit, deterministik bir
+koruma sağlar (genel bir idempotency sistemi değildir — bkz. aşağıdaki
+"Bilinen Sınırlama").
 
 ### Fake Payment Simulation Test Token'ları
 
@@ -153,7 +178,46 @@ ayrı stok düşer. Bu, P4.0/P4.2 acceptance criteria'sında (bkz.
 P4.2 kapsamında ayrı bir idempotency-key alt sistemi **kurulmamıştır**
 (scope creep'ten kaçınmak için). Bu risk bilinçli olarak
 dokümante edilmiştir ve gelecekteki bir Phase 4 paketi/backlog
-maddesi olarak değerlendirilebilir.
+maddesi olarak değerlendirilebilir. P4.3'te de aynı ilke korunmuştur:
+`events`/`notifications` tablolarındaki `UNIQUE` constraint'leri yalnızca
+aynı sipariş için *yanlışlık sonucu* iki kez event/notification
+üretilmesini engeller — genel bir HTTP request idempotency sistemi
+**değildir** ve P4.2'nin bilinçli olarak kapsam dışı bıraktığı
+idempotency riskini kapatmaz.
+
+### Bilinen Sınırlamalar — Codex P4.3 Delta Review Notları (Non-Blocking)
+
+Codex'in P4.3 bağımsız review'ünde (verdict: PASS WITH NON-BLOCKING
+NOTES) tespit edilen, blocker sayılmayan ve bilinçli olarak
+düzeltilmeyen 3 konu:
+
+1. **Frontend'de olası çift görünüm (technical QA note):**
+   `products.html` açıldığında hem `GET /api/notifications` (geçmiş)
+   hem WebSocket (canlı) yüklemesi eş zamanlı gerçekleşebilir; aynı
+   notification frontend'de iki kez listelenebilir. **Database'de
+   duplicate satır oluşmaz** (`UNIQUE(order_id, type)` korur) — bu
+   yalnızca bir görsel/UI sunum sorunudur, veri bütünlüğü sorunu
+   değildir. Future hardening: frontend'de `notification.id` bazlı
+   de-duplication (P4.3 sonrası bir pakette ele alınabilir).
+2. **Log zamanlaması (known limitation):** `[event] emitted` ve
+   `[notification] persisted` logları, ilgili `INSERT` çalıştığı anda
+   yazılır — bu satırlar SQLite transaction'ı henüz `COMMIT`
+   edilmeden önce üretilir. Transaction daha sonra (teorik olarak) bir
+   hata nedeniyle `ROLLBACK` olursa, log çıktısı gerçekleşmemiş bir
+   durumu "emitted/persisted" olarak yanıltıcı şekilde gösterebilir.
+   Bu Phase 4 demo kapsamında düşük risklidir (P4.3 test suite'inde
+   bu yolu tetikleyen bir hata senaryosu yoktur); future hardening:
+   log'u transaction commit'inden sonra yazmak.
+3. **WebSocket negatif testlerindeki sabit bekleme penceresi
+   (technical QA note):** `websocket.test.js`'teki "başka kullanıcı
+   mesaj almıyor" ve "DECLINED order mesaj push etmiyor" testleri,
+   "mesaj gelmedi" durumunu doğrulamak için 100ms'lik sabit bir
+   bekleme kullanır. Yoğun/yavaş CI ortamlarında teorik olarak düşük
+   olasılıklı bir false-positive (test'in gerçekte push edilecek bir
+   mesajı, süre dolmadan henüz gelmediği için "gelmedi" olarak
+   yanlış raporlaması) riski taşır. Backlog: event-driven senkron bir
+   doğrulama deseni (örn. birkaç kontrol turu / polling) ile
+   değiştirilmesi ileride değerlendirilebilir.
 
 ---
 
@@ -171,9 +235,22 @@ gerekmez) ile çalışan minimum kapsam:
   bilinmeyen ürün → 404
 - `orders.test.js`: approved/declined/timeout payment token'ları,
   varsayılan token, authsız istek → 401, yetersiz stok → 409, sipariş
-  görüntüleme ve başka kullanıcının siparişine erişim → 404
-- `seed.test.js`: seed işleminin deterministik şekilde users/products
-  tablolarını doldurduğu
+  görüntüleme ve başka kullanıcının siparişine erişim → 404, duplicate
+  ürün satırı aggregation, geçersiz tip validasyonu, malformed JSON
+- `events.test.js`: PAID → tek `order.paid` event, DECLINED/TIMEOUT →
+  event yok, `event_id` unique, event contract, duplicate event UNIQUE
+  guard
+- `notifications.test.js`: PAID → notification persist, DECLINED/
+  TIMEOUT → notification yok, başka kullanıcı göremiyor, anonim/forged
+  token → 401, duplicate notification UNIQUE guard
+- `websocket.test.js`: authenticated bağlantı, geçersiz token reddi,
+  yanlış path reddi, doğru kullanıcıya realtime delivery, başka
+  kullanıcı almıyor, DECLINED sipariş mesaj push etmiyor, bağlantı
+  kapanınca temizleniyor, bağlantısız kullanıcı için notification yine
+  de kalıcı/erişilebilir
+- `seed.test.js`: seed işleminin deterministik şekilde users/products/
+  events/notifications tablolarını doldurduğu ve resetlediği, CHECK/
+  FOREIGN KEY/UNIQUE constraint'lerinin DB seviyesinde uygulandığı
 
 ---
 
@@ -202,5 +279,15 @@ doğrulanmıştır (bkz. P4.1 kapanış raporu):
 14. `POST /api/orders` (stoktan fazla adet) → `409`.
 15. `GET /api/orders/:id` (sahibi) → `200` + items; (başka kullanıcı) →
     `404`.
-16. Server log'unda beklenmeyen hata yok (yalnızca beklenen
-    `node:sqlite` experimental uyarısı).
+16. `GET /api/notifications` (token olmadan) → `401`.
+17. `POST /api/orders` (`TEST-CARD-APPROVED`) sonrası
+    `GET /api/notifications` → 1 notification, `type: "order.paid"`.
+18. `POST /api/orders` (`TEST-CARD-DECLINED`) sonrası notification
+    sayısı **artmaz**.
+19. `ws://<host>/ws?token=<geçersiz>` → bağlantı `401` ile reddedilir.
+20. `ws://<host>/ws?token=<geçerli>` bağlıyken `TEST-CARD-APPROVED`
+    siparişi verildiğinde, bağlı client
+    `{"type":"notification",...}` mesajını gerçek zamanlı alır.
+21. Server log'unda beklenmeyen hata yok (yalnızca beklenen
+    `node:sqlite` experimental uyarısı); `[event]`/`[notification]`/
+    `[websocket]` log satırları secret/token/password içermez.

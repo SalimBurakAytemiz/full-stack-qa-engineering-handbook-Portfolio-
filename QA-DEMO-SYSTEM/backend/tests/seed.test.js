@@ -98,3 +98,69 @@ test('FOREIGN KEY constraint rejects an order_item referencing a nonexistent ord
 
   db.close();
 });
+
+// --- P4.3 section 10 (test scenario 10): notification/event seed & reset
+// behavior must be deterministic, mirroring the P4.2 order reset guarantee.
+
+test('reseeding clears events and notifications and resets notification ids deterministically', () => {
+  const db = getDatabase(':memory:');
+  seedDatabase(db);
+
+  db.prepare('INSERT INTO orders (user_id, status, total) VALUES (?, ?, ?)').run(1, 'PAID', 10);
+  db.prepare(
+    'INSERT INTO events (event_id, event_type, user_id, order_id, payload) VALUES (?, ?, ?, ?, ?)'
+  ).run('evt-test-1', 'order.paid', 1, 1, '{}');
+  const insertNotification = db.prepare(
+    'INSERT INTO notifications (user_id, type, message, order_id) VALUES (?, ?, ?, ?)'
+  );
+  insertNotification.run(1, 'order.paid', 'test message', 1);
+
+  seedDatabase(db);
+
+  const eventCount = db.prepare('SELECT COUNT(*) AS count FROM events').get().count;
+  const notificationCount = db.prepare('SELECT COUNT(*) AS count FROM notifications').get().count;
+  assert.equal(eventCount, 0);
+  assert.equal(notificationCount, 0);
+
+  // A freshly created notification after reset must get id 1 again,
+  // proving the AUTOINCREMENT counter was actually cleared.
+  db.prepare('INSERT INTO orders (user_id, status, total) VALUES (?, ?, ?)').run(1, 'PAID', 10);
+  const info = insertNotification.run(1, 'order.paid', 'test message', 1);
+  assert.equal(info.lastInsertRowid, 1);
+
+  db.close();
+});
+
+test('UNIQUE(order_id, event_type) prevents a duplicate order.paid event at the database level', () => {
+  const db = getDatabase(':memory:');
+  seedDatabase(db);
+  db.prepare('INSERT INTO orders (user_id, status, total) VALUES (?, ?, ?)').run(1, 'PAID', 10);
+  db.prepare(
+    'INSERT INTO events (event_id, event_type, user_id, order_id, payload) VALUES (?, ?, ?, ?, ?)'
+  ).run('evt-a', 'order.paid', 1, 1, '{}');
+
+  assert.throws(() => {
+    db.prepare(
+      'INSERT INTO events (event_id, event_type, user_id, order_id, payload) VALUES (?, ?, ?, ?, ?)'
+    ).run('evt-b', 'order.paid', 1, 1, '{}');
+  });
+
+  db.close();
+});
+
+test('UNIQUE(order_id, type) prevents a duplicate order.paid notification at the database level', () => {
+  const db = getDatabase(':memory:');
+  seedDatabase(db);
+  db.prepare('INSERT INTO orders (user_id, status, total) VALUES (?, ?, ?)').run(1, 'PAID', 10);
+  db.prepare(
+    'INSERT INTO notifications (user_id, type, message, order_id) VALUES (?, ?, ?, ?)'
+  ).run(1, 'order.paid', 'first', 1);
+
+  assert.throws(() => {
+    db.prepare(
+      'INSERT INTO notifications (user_id, type, message, order_id) VALUES (?, ?, ?, ?)'
+    ).run(1, 'order.paid', 'second', 1);
+  });
+
+  db.close();
+});
