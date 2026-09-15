@@ -185,6 +185,40 @@ aynı sipariş için *yanlışlık sonucu* iki kez event/notification
 **değildir** ve P4.2'nin bilinçli olarak kapsam dışı bıraktığı
 idempotency riskini kapatmaz.
 
+### Bilinen Sınırlamalar — Codex P4.3 Delta Review Notları (Non-Blocking)
+
+Codex'in P4.3 bağımsız review'ünde (verdict: PASS WITH NON-BLOCKING
+NOTES) tespit edilen, blocker sayılmayan ve bilinçli olarak
+düzeltilmeyen 3 konu:
+
+1. **Frontend'de olası çift görünüm (technical QA note):**
+   `products.html` açıldığında hem `GET /api/notifications` (geçmiş)
+   hem WebSocket (canlı) yüklemesi eş zamanlı gerçekleşebilir; aynı
+   notification frontend'de iki kez listelenebilir. **Database'de
+   duplicate satır oluşmaz** (`UNIQUE(order_id, type)` korur) — bu
+   yalnızca bir görsel/UI sunum sorunudur, veri bütünlüğü sorunu
+   değildir. Future hardening: frontend'de `notification.id` bazlı
+   de-duplication (P4.3 sonrası bir pakette ele alınabilir).
+2. **Log zamanlaması (known limitation):** `[event] emitted` ve
+   `[notification] persisted` logları, ilgili `INSERT` çalıştığı anda
+   yazılır — bu satırlar SQLite transaction'ı henüz `COMMIT`
+   edilmeden önce üretilir. Transaction daha sonra (teorik olarak) bir
+   hata nedeniyle `ROLLBACK` olursa, log çıktısı gerçekleşmemiş bir
+   durumu "emitted/persisted" olarak yanıltıcı şekilde gösterebilir.
+   Bu Phase 4 demo kapsamında düşük risklidir (P4.3 test suite'inde
+   bu yolu tetikleyen bir hata senaryosu yoktur); future hardening:
+   log'u transaction commit'inden sonra yazmak.
+3. **WebSocket negatif testlerindeki sabit bekleme penceresi
+   (technical QA note):** `websocket.test.js`'teki "başka kullanıcı
+   mesaj almıyor" ve "DECLINED order mesaj push etmiyor" testleri,
+   "mesaj gelmedi" durumunu doğrulamak için 100ms'lik sabit bir
+   bekleme kullanır. Yoğun/yavaş CI ortamlarında teorik olarak düşük
+   olasılıklı bir false-positive (test'in gerçekte push edilecek bir
+   mesajı, süre dolmadan henüz gelmediği için "gelmedi" olarak
+   yanlış raporlaması) riski taşır. Backlog: event-driven senkron bir
+   doğrulama deseni (örn. birkaç kontrol turu / polling) ile
+   değiştirilmesi ileride değerlendirilebilir.
+
 ---
 
 ## Otomatik Testler
