@@ -1,10 +1,12 @@
 # QA Demo System — Run Instructions
 
 > Bu doküman, `ARCHITECTURE.md`'de kararlaştırılan çalıştırma
-> yöntemine (`npm install && npm run dev`) göre P4.1 (Demo Application
-> Skeleton — Authentication + Products) kapsamındaki sistemin nasıl
-> kurulup çalıştırılacağını, resetleneceğini ve doğrulanacağını
-> anlatır.
+> yöntemine (`npm install && npm run dev`) göre QA Demo System'in
+> (P4.1 Authentication + Products, P4.2 Orders + Fake Payment, P4.3
+> Events + Notifications kümülatif kapsamı) nasıl kurulup
+> çalıştırılacağını, resetleneceğini ve doğrulanacağını anlatır.
+> Smoke doğrulamasını kendiniz çalıştırmak için bkz.
+> [`SMOKE-CHECKLIST.md`](SMOKE-CHECKLIST.md).
 
 ---
 
@@ -60,7 +62,11 @@ Veritabanını sıfırlayıp yeniden seed etmek için:
 npm run db:seed
 ```
 
-Bu komut `users` ve `products` tablolarındaki tüm satırları siler ve
+Bu komut `notifications`, `events`, `order_items`, `orders`,
+`sessions`, `users` ve `products` tablolarındaki **tüm** satırları
+siler (yalnızca `users`/`products` değil — sipariş/oturum/event/
+notification geçmişi de tamamen temizlenir), AUTOINCREMENT
+sayaçlarını sıfırlar, ardından `users`/`products` tablolarını
 `shared/test-data/auth-users.json` + `shared/test-data/products.json`
 dosyalarından yeniden doldurur — deterministik ve tekrar
 üretilebilirdir.
@@ -254,10 +260,14 @@ gerekmez) ile çalışan minimum kapsam:
 
 ---
 
-## Smoke Doğrulama Adımları
+## Smoke Doğrulama Adımları (Tarihsel — P4.1–P4.3 Kapanışları)
 
-P4.1 kapanışında aşağıdaki adımlar gerçek sistem üzerinde çalıştırılıp
-doğrulanmıştır (bkz. P4.1 kapanış raporu):
+Aşağıdaki adımlar, ilgili paketlerin kapanışlarında (P4.1: madde
+1–9; P4.2: madde 10–15; P4.3: madde 16–21) gerçek sistem üzerinde
+çalıştırılıp doğrulanmıştır. **P4.5'in resmi, güncel ve tekrar
+çalıştırılabilir smoke checklist'i için bkz.
+[`SMOKE-CHECKLIST.md`](SMOKE-CHECKLIST.md)** — bu liste tarihsel bir
+kayıt olarak burada bırakılmıştır.
 
 1. `npm install` → hatasız tamamlanır.
 2. `npm run dev` → `"QA Demo System backend http://localhost:3000

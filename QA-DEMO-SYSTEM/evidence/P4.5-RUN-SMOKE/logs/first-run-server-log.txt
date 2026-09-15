@@ -1,0 +1,17 @@
+
+> qa-demo-system@0.1.0 dev
+> npm run dev --workspace backend
+
+
+> qa-demo-system-backend@0.1.0 dev
+> node --watch src/server.js
+
+(node:550) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+QA Demo System backend http://localhost:3000 adresinde çalışıyor.
+[event] emitted type=order.paid event_id=e3465769-4bc7-40c9-bbab-7a2b8bc1e26e order_id=1
+[notification] persisted id=1 user_id=1 order_id=1
+[event] emitted type=order.paid event_id=03c56bde-cbd5-4b4c-b2fe-7c97aba017e2 order_id=4
+[notification] persisted id=2 user_id=1 order_id=4
+[websocket] delivered=true user_id=1 notification_id=2
+Terminated

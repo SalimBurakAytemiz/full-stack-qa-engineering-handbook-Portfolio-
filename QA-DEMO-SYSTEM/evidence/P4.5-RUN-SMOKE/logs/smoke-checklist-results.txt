@@ -1,0 +1,37 @@
+=== AUTHENTICATION ===
+AUTH-01 valid login: code=200 body={"token":"demo-session-***MASKED***","user":{"id":1,"email":"test.active01@example.com"}}
+AUTH-02 invalid password: code=401 body={"error":"Email veya şifre hatalı"}
+AUTH-03 unknown user: code=401 body={"error":"Email veya şifre hatalı"}
+
+=== PRODUCTS ===
+PROD-01 product list: code=200 body={"products":[{"id":1,"name":"QA Demo Klavye","price":149.9,"stock_quantity":25,"in_stock":true},{"id":2,"name":"QA Demo Mouse","price":49.9,"stock_quantity":0,"in_stock":false},{"id":3,"name":"QA Demo Monitör","price":899.9,"stock_quantity":5,"in_stock":true},{"id":4,"name":"QA Demo Webcam","price":259.9,"stock_quantity":12,"in_stock":true}]}
+PROD-02 stock data (product 2, out of stock): code=200 body={"product":{"id":2,"name":"QA Demo Mouse","price":49.9,"stock_quantity":0,"in_stock":false}}
+
+=== ORDERS / PAYMENT ===
+ORD-01 unauthenticated order (expect 401): code=401
+ORD-02 authenticated approved order: code=201 body={"order":{"id":1,"status":"PAID","total":299.8}}
+ORD-02b stock after approved (expect 23): 23
+ORD-03 declined payment: code=201 body={"order":{"id":2,"status":"PAYMENT_FAILED","total":899.9}}
+ORD-03b stock after declined (expect unchanged, 5): 5
+ORD-04 timeout payment: code=201 body={"order":{"id":3,"status":"PAYMENT_TIMEOUT","total":259.9}}
+ORD-04b stock after timeout (expect unchanged, 12): 12
+ORD-05 stock integrity (order for out-of-stock product 2, expect 409): code=409 body={"error":"Yetersiz stok: QA Demo Mouse"}
+
+=== NOTIFICATIONS / EVENTS ===
+NOTIF-01 notifications after PAID+declined+timeout orders (expect 1, order.paid): code=200 body={"notifications":[{"id":1,"type":"order.paid","message":"Order #1 payment approved.","order_id":1,"is_read":0,"created_at":"2026-09-15 21:19:51"}]}
+NOTIF-02 anonymous notification access (expect 401): code=401
+NOTIF-03 cross-user notification access (user2, expect 0 notifications): code=200 body={"notifications":[]}
+
+=== SECURITY / AUTHORIZATION ===
+SEC-01 cross-user order access (expect 404): code=404
+SEC-02 invalid/forged token rejected (expect 401): code=401
+SEC-03 anonymous protected endpoint access already covered by NOTIF-02 and ORD-01 (both 401)
+NOTIF-04 WebSocket realtime delivery: RECEIVED {"type":"notification","notification":{"id":2,"user_id":1,"type":"order.paid","message":"Order #4 payment approved.","order_id":4,"is_read":0}}
+
+=== FRONTEND ===
+FE-01 login page loads: code=200
+FE-01b login-form present: yes
+FE-02 products page loads: code=200
+FE-03 product-list + notification-list present: yes
+SEC-04 WS invalid token rejected: status=401
+FE-04 frontend flow (login -> products with notification UI) screenshot: OK
