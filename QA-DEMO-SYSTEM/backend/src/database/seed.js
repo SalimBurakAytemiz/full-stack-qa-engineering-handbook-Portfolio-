@@ -11,6 +11,9 @@ function loadJSON(fileName) {
 }
 
 function seedDatabase(db) {
+  db.exec('DELETE FROM order_items');
+  db.exec('DELETE FROM orders');
+  db.exec('DELETE FROM sessions');
   db.exec('DELETE FROM users');
   db.exec('DELETE FROM products');
 

@@ -1,0 +1,9 @@
+{
+  "description": "QA Demo System — deterministic fake/internal payment simulation triggers. No real payment provider, bank, or card format is used or implied (see ARCHITECTURE.md section 12 and risk 3).",
+  "default_payment_token": "TEST-CARD-APPROVED",
+  "patterns": [
+    { "payment_token": "TEST-CARD-APPROVED", "result": "approved" },
+    { "payment_token": "TEST-CARD-DECLINED", "result": "declined" },
+    { "payment_token": "TEST-CARD-TIMEOUT", "result": "timeout" }
+  ]
+}

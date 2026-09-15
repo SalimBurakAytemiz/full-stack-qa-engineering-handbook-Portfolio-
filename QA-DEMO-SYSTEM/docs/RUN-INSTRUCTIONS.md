@@ -112,7 +112,7 @@ Kaynak: `shared/test-data/products.json`.
 
 ---
 
-## Endpoint'ler (P4.1 Kapsamı)
+## Endpoint'ler (P4.1 + P4.2 Kapsamı)
 
 | Method | Endpoint | Açıklama |
 |---|---|---|
@@ -120,9 +120,28 @@ Kaynak: `shared/test-data/products.json`.
 | POST | `/api/auth/login` | `{ email, password }` → `200 + token/user` veya `401` |
 | GET | `/api/products` | Tüm ürünlerin listesi (`in_stock` alanıyla) |
 | GET | `/api/products/:id` | Tek ürün; yoksa `404` |
+| POST | `/api/orders` | **Authenticated.** `{ items: [{product_id, quantity}], payment_token }` → `201` + sipariş durumu, veya `400`/`401`/`409` |
+| GET | `/api/orders/:id` | **Authenticated.** Yalnızca siparişin sahibi görebilir; başkasının siparişi veya yoksa `404` |
 
-Orders, Payment ve Notifications endpoint'leri **bu pakette yoktur** —
-P4.2/P4.3'te eklenecektir (bkz. `ARCHITECTURE.md` bölüm 22).
+`POST /api/orders` ve `GET /api/orders/:id`, `Authorization: Bearer <token>`
+header'ı ister (`token`, login yanıtından alınır). Notifications
+(WebSocket + in-app log) **bu pakette yoktur** — P4.3'te eklenecektir
+(bkz. `ARCHITECTURE.md` bölüm 22).
+
+### Fake Payment Simulation Test Token'ları
+
+Kaynak: `shared/test-data/payment-test-patterns.json`. Gerçek bir kart
+numarası formatı **kullanılmaz** — açıkça test amaçlı, deterministik
+token'lar kullanılır:
+
+| `payment_token` | Sonuç | Sipariş Durumu |
+|---|---|---|
+| `TEST-CARD-APPROVED` (varsayılan, gönderilmezse otomatik uygulanır) | approved | `PAID` |
+| `TEST-CARD-DECLINED` | declined | `PAYMENT_FAILED` |
+| `TEST-CARD-TIMEOUT` | timeout | `PAYMENT_TIMEOUT` |
+
+Stok yalnızca `PAID` durumundaki siparişlerde düşülür — `declined`/
+`timeout` siparişleri ürün stokunu etkilemez.
 
 ---
 
@@ -138,6 +157,9 @@ gerekmez) ile çalışan minimum kapsam:
 - `auth.test.js`: valid login, invalid password, unknown user
 - `products.test.js`: ürün listesi (stokta/stok yok), tekil ürün,
   bilinmeyen ürün → 404
+- `orders.test.js`: approved/declined/timeout payment token'ları,
+  varsayılan token, authsız istek → 401, yetersiz stok → 409, sipariş
+  görüntüleme ve başka kullanıcının siparişine erişim → 404
 - `seed.test.js`: seed işleminin deterministik şekilde users/products
   tablolarını doldurduğu
 
@@ -158,5 +180,15 @@ doğrulanmıştır (bkz. P4.1 kapanış raporu):
 7. `POST /api/auth/login` (unknown user) → `401` + aynı genel mesaj.
 8. `GET /api/products` → 4 ürün, en az biri `in_stock:false`.
 9. `GET /api/products/:id` (var olan) → `200`; (olmayan) → `404`.
-10. Server log'unda beklenmeyen hata yok (yalnızca beklenen
+10. `POST /api/orders` (token olmadan) → `401`.
+11. `POST /api/orders` (`TEST-CARD-APPROVED`) → `201` + `PAID`; ilgili
+    ürünün stoku düşer.
+12. `POST /api/orders` (`TEST-CARD-DECLINED`) → `201` + `PAYMENT_FAILED`;
+    stok değişmez.
+13. `POST /api/orders` (`TEST-CARD-TIMEOUT`) → `201` + `PAYMENT_TIMEOUT`;
+    stok değişmez.
+14. `POST /api/orders` (stoktan fazla adet) → `409`.
+15. `GET /api/orders/:id` (sahibi) → `200` + items; (başka kullanıcı) →
+    `404`.
+16. Server log'unda beklenmeyen hata yok (yalnızca beklenen
     `node:sqlite` experimental uyarısı).

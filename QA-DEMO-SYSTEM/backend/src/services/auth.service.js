@@ -19,10 +19,13 @@ function authenticate(db, email, password) {
     return { ok: false, status: 401, message: GENERIC_AUTH_ERROR };
   }
 
+  const token = `demo-session-${user.id}-${Date.now()}`;
+  db.prepare('INSERT INTO sessions (token, user_id) VALUES (?, ?)').run(token, user.id);
+
   return {
     ok: true,
     status: 200,
-    token: `demo-session-${user.id}-${Date.now()}`,
+    token,
     user: { id: user.id, email: user.email },
   };
 }
