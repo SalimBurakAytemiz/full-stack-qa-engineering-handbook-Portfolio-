@@ -9,6 +9,7 @@ function getDatabase(dbPath) {
   }
 
   const db = new DatabaseSync(dbPath);
+  db.exec('PRAGMA foreign_keys = ON');
   db.exec(SCHEMA_SQL);
   return db;
 }
