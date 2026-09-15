@@ -224,7 +224,42 @@ zaten kapsıyorsa duplicate test oluşturma") aykırı olurdu.
 
 ---
 
-## 11. Sonraki Adım
+## 11. Bilinen Sınırlamalar — Codex P4.4 Delta Review Notları (Non-Blocking)
+
+Codex'in P4.4 bağımsız delta review'ünde (verdict: PASS WITH
+NON-BLOCKING NOTES, 0 blocker) tespit edilen, blocker sayılmayan ve
+**Phase 3 tarihsel kayıtları değiştirilmeden** dokümante edilen 2
+konu:
+
+1. **Phase 3 Evidence Plan ifadesinin kesinliği (documentation
+   note):** `06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/09-EVIDENCE-PLAN.md`'deki
+   "QA-DEMO-SYSTEM ile Gelecekteki Evidence Üretimi" ifadesi, bu Phase
+   4 kaydına **tam anlamıyla bir "referans" değil**, gelecekte
+   (o tarihte henüz var olmayan) QA-DEMO-SYSTEM üzerinden gerçek
+   evidence üretilebileceğine dair bir **öngörüdür/planlamadır**. Bu
+   doküman, tarihsel kayıt kuralı gereği (bkz. bölüm 3 talimatları)
+   **değiştirilmemiştir** — bu not yalnızca bir açıklık notu olarak
+   burada, Phase 4 tarafında kaydedilmiştir: gerçek bağlantı yönü
+   `EXECUTION.md`'nin bölüm 1'indeki Traceability tablosudur (Phase 4
+   → Phase 3 referansı), Phase 3'ün kendi metninin iddia ettiği gibi
+   "Phase 3 → Phase 4" yönünde önceden var olan bir referans değil.
+2. **Server log'un tek başlı korelasyon kanıtı olmaması (known
+   limitation):** `logs/server-log-full-session.txt`, tek başına
+   hangi log satırının hangi HTTP isteğine ait olduğunu (request ID,
+   timestamp-level korelasyon vb. olmadan) kanıtlamaz — bu execution
+   kapsamında server'da yalnızca tek bir login isteği çalıştırıldığı
+   ve log'da hiçbir exception/hata satırı bulunmadığı için bu
+   execution'a yeterli destektir, ancak genel bir prensip olarak log
+   evidence'ı **tek başına** yeterli sayılmamalıdır. Bu execution'ın
+   asıl kanıtı `request/`+`response/` (tam HTTP request/response) ve
+   `screenshots/` (gerçek DOM çıktısı) dosyalarıdır; log yalnızca
+   destekleyici niteliktedir. Backlog: gelecekteki Phase 4
+   execution'larında correlation ID'li structured logging
+   değerlendirilebilir.
+
+---
+
+## 12. Sonraki Adım
 
 Bu execution kaydı, Phase 4'ün `BUG-AUTH-EDU-001` ile ilgili tek
 kaydıdır. `ARCHITECTURE.md` bölüm 22/24 (P4.4 acceptance criteria),
