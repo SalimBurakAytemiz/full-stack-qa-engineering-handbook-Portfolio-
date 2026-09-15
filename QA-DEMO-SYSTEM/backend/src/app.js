@@ -3,11 +3,12 @@ const express = require('express');
 const { createAuthRouter } = require('./routes/auth.routes');
 const { createProductsRouter } = require('./routes/products.routes');
 const { createOrdersRouter } = require('./routes/orders.routes');
-const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
+const { jsonParseErrorHandler, notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 function createApp(db) {
   const app = express();
   app.use(express.json());
+  app.use(jsonParseErrorHandler);
 
   app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
   app.use('/api/auth', createAuthRouter(db));

@@ -143,6 +143,18 @@ token'lar kullanılır:
 Stok yalnızca `PAID` durumundaki siparişlerde düşülür — `declined`/
 `timeout` siparişleri ürün stokunu etkilemez.
 
+### Bilinen Sınırlama — Idempotency
+
+`POST /api/orders` **idempotent değildir**: aynı istek (örn. bir ağ
+zaman aşımı sonrası client retry'ı) birden fazla kez gönderilirse,
+her istek **ayrı bir sipariş** oluşturur ve `PAID` sonuçlar için ayrı
+ayrı stok düşer. Bu, P4.0/P4.2 acceptance criteria'sında (bkz.
+`ARCHITECTURE.md` bölüm 24) yer almayan bir gereksinimdir; bu yüzden
+P4.2 kapsamında ayrı bir idempotency-key alt sistemi **kurulmamıştır**
+(scope creep'ten kaçınmak için). Bu risk bilinçli olarak
+dokümante edilmiştir ve gelecekteki bir Phase 4 paketi/backlog
+maddesi olarak değerlendirilebilir.
+
 ---
 
 ## Otomatik Testler
