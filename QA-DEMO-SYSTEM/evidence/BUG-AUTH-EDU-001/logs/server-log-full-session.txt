@@ -1,0 +1,3 @@
+(node:440) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+QA Demo System backend http://localhost:4999 adresinde çalışıyor.
