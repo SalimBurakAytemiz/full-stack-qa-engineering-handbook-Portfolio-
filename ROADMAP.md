@@ -174,7 +174,7 @@ Profesyonel QA operasyonunun nasıl yönetildiğini göstermek.
 
 ## Status
 
-IN PROGRESS
+CLEAN
 
 ## Amaç
 
@@ -212,9 +212,33 @@ Frontend
 - Güvenli test datası kullanılır
 - Sistem gerçekten çalıştırılabilir olmalıdır
 
+## Deliverables
+
+- `QA-DEMO-SYSTEM/ARCHITECTURE.md` — mimari/kapsam kararları (P4.0)
+- Çalışan backend + frontend (Authentication, Products, Orders, Fake
+  Payment, Events, Notifications, WebSocket)
+- `QA-DEMO-SYSTEM/docs/RUN-INSTRUCTIONS.md`,
+  `QA-DEMO-SYSTEM/docs/SMOKE-CHECKLIST.md`
+- 72 otomatik test (`node --test`)
+- Gerçek defect reproduction evidence (`BUG-AUTH-EDU-001` →
+  NOT REPRODUCED)
+- `QA-DEMO-SYSTEM/README.md`, `QA-DEMO-SYSTEM/PHASE-4-CLOSEOUT.md`
+
+## Exit Criteria
+
+- Sistem `npm install && npm run dev` ile temiz bir ortamdan
+  çalıştırılabiliyor (reproducibility doğrulandı)
+- Smoke checklist gerçek sistemde PASS
+- Codex bağımsız review'lerinde açık blocker yok
+- Phase 3 tarihsel kayıtları değişmedi
+
 ---
 
 # PHASE 5 — API TESTING
+
+## Status
+
+IN PROGRESS
 
 ## Amaç
 
@@ -722,5 +746,9 @@ PHASE 3 — TEST MANAGEMENT & DEFECT MANAGEMENT
 CLEAN
 
 PHASE 4 — QA DEMO SYSTEM
+
+CLEAN
+
+PHASE 5 — API TESTING
 
 IN PROGRESS
