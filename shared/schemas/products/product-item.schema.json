@@ -1,0 +1,26 @@
+{
+  "$id": "https://qa-demo-system.local/schemas/products/product-item.schema.json",
+  "title": "Tek bir ürün nesnesi (Products list ve detail response'larında ortak, reusable)",
+  "description": "Kaynak: QA-DEMO-SYSTEM/backend/src/services/products.service.js — toApiShape(): { id, name, price, stock_quantity, in_stock }. GET /api/products (liste) ve GET /api/products/:id (detay) response'ları bu nesneyi kullanır — products-list-response.schema.json ve product-detail-response.schema.json bu şemayı $ref ile referans alır.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "string"
+    },
+    "price": {
+      "type": "number"
+    },
+    "stock_quantity": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "in_stock": {
+      "type": "boolean"
+    }
+  },
+  "required": ["id", "name", "price", "stock_quantity", "in_stock"],
+  "additionalProperties": false
+}

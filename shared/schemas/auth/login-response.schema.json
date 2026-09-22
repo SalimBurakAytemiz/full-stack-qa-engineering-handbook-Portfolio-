@@ -1,0 +1,26 @@
+{
+  "$id": "https://qa-demo-system.local/schemas/auth/login-response.schema.json",
+  "title": "POST /api/auth/login — 200 (başarılı login) response",
+  "description": "Kaynak: QA-DEMO-SYSTEM/backend/src/services/auth.service.js — authenticate() başarı dalı: { ok:true, status:200, token, user:{id,email} }. token formatı `demo-session-<uuid>` string'dir; gereksiz regex ile aşırı sıkılaştırılmadı, yalnızca gerçek contract (non-empty string) doğrulanıyor.",
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string"
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "email": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "email"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["token", "user"],
+  "additionalProperties": false
+}

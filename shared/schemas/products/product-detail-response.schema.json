@@ -1,0 +1,13 @@
+{
+  "$id": "https://qa-demo-system.local/schemas/products/product-detail-response.schema.json",
+  "title": "GET /api/products/:id — 200 response",
+  "description": "Kaynak: routes/products.routes.js + services/products.service.js — { product: <product-item> }. product-item.schema.json'a $ref eder (aynı AJV instance'ına addSchema ile eklenmiş, reusable). 404 (bulunamayan id) durumu için bkz. common/error-response.schema.json.",
+  "type": "object",
+  "properties": {
+    "product": {
+      "$ref": "https://qa-demo-system.local/schemas/products/product-item.schema.json"
+    }
+  },
+  "required": ["product"],
+  "additionalProperties": false
+}

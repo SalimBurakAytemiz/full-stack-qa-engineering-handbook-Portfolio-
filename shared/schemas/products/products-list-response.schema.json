@@ -1,0 +1,16 @@
+{
+  "$id": "https://qa-demo-system.local/schemas/products/products-list-response.schema.json",
+  "title": "GET /api/products — 200 response",
+  "description": "Kaynak: routes/products.routes.js + services/products.service.js — { products: [<product-item>, ...] }. Her item product-item.schema.json'a $ref eder (aynı AJV instance'ına addSchema ile eklenmiş, reusable).",
+  "type": "object",
+  "properties": {
+    "products": {
+      "type": "array",
+      "items": {
+        "$ref": "https://qa-demo-system.local/schemas/products/product-item.schema.json"
+      }
+    }
+  },
+  "required": ["products"],
+  "additionalProperties": false
+}

@@ -1,0 +1,13 @@
+{
+  "$id": "https://qa-demo-system.local/schemas/health/health-response.schema.json",
+  "title": "GET /api/health — 200 response",
+  "description": "Kaynak: QA-DEMO-SYSTEM/backend/src/app.js — inline /api/health handler. Gerçek response ampirik olarak doğrulandı: {\"status\":\"ok\"}.",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": ["status"],
+  "additionalProperties": false
+}

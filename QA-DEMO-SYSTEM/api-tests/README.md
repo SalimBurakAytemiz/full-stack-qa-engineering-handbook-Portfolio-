@@ -1,16 +1,18 @@
 # QA Demo System — API Tests
 
 **Phase: PHASE 5 — API TESTING**
-**Doküman Statüsü: P5.1 — Postman Foundation**
+**Doküman Statüsü: P5.2 — AJV / JSON Schema Validation**
 
 > Bu klasör, Phase 5'in Postman/Newman/AJV tabanlı API test
 > katmanının giriş noktasıdır. P5.0'da yalnızca bu README (kapsam/
-> kontrat kararları) oluşturulmuştu. **P5.1'de gerçek bir Postman
-> collection, local environment ve Newman CLI dependency'si
-> kuruldu** — yalnızca **PUBLIC** REST endpoint'ler için, smoke
-> seviyesinde. AJV/JSON Schema, protected endpoint suite, DB
-> validation ve HTML reporting **henüz oluşturulmadı** — aşağıda
-> hâlâ "PLANNED" olarak işaretlidir.
+> kontrat kararları) oluşturulmuştu. P5.1'de gerçek bir Postman
+> collection, local environment ve Newman CLI dependency'si kuruldu.
+> **P5.2'de PUBLIC endpoint response'larına gerçek AJV/JSON Schema
+> validation ve Content-Type header assertion'ı eklendi** —
+> `shared/schemas/` artık **active** canonical schema source of
+> truth'tur. Protected endpoint suite, DB validation ve HTML
+> reporting **henüz oluşturulmadı** — aşağıda hâlâ "PLANNED" olarak
+> işaretlidir.
 
 ---
 
@@ -46,8 +48,8 @@ Tam envanter (method/path/body/params/status/business rule) için bkz.
 |---|---|---|
 | Postman (collection format) | Collection authoring (JSON, v2.1.0 schema) | **DONE (P5.1)** — `postman/collections/qa-demo-system-public.postman_collection.json` |
 | Newman | CLI runner, reproducible execution | **DONE (P5.1)** — `newman@6.2.2` devDependency, `api-tests/package.json` |
-| AJV | JSON Schema validation | PLANNED (P5.2) |
-| JSON Schema | Response contract tanımı | PLANNED (P5.2, `shared/schemas/` altında) |
+| AJV | JSON Schema validation | **DONE (P5.2)** — `ajv@^8.20.0` devDependency, `api-tests/scripts/run-schema-validation.js` |
+| JSON Schema | Response contract tanımı | **DONE (P5.2)** — `shared/schemas/{health,auth,products,common}/` (bkz. bölüm 7) |
 | Newman HTML reporter | Execution raporu | PLANNED (P5.8) |
 
 Postman **desktop uygulaması** kullanılmadı — collection ve
@@ -56,6 +58,22 @@ elle authoring edildi ve Newman CLI ile çalıştırıldı (Postman GUI'siz,
 CI/reproducible-friendly bir yaklaşım). `postman-collection` SDK
 dependency'si eklenmedi — P5.1 kapsamında gerekmedi (minimum
 dependency ilkesi).
+
+**P5.2 AJV entegrasyon yöntemi — gerçek bir compatibility gate
+sonucudur, varsayım değil** (bkz. bölüm 7 için tam detay): Postman/
+Newman'ın pm.test() sandbox'ı `require('ajv')` çağrısını
+reddetmiyor, ama orada çözümlenen modül bizim pinlediğimiz
+`ajv@^8.20.0` **değil**, Newman'ın kendi iç bağımlılık zincirinden
+(postman-runtime → postman-request → har-validator) gelen eski,
+kontrolsüz `ajv@6.15.0` kopyasıdır — ve sandbox'ın gerçek `fs`/relative
+`require` erişimi yok (yalnızca npm paket adıyla `require` çalışıyor).
+Bu yüzden AJV validation, collection'ın pm.test() script'lerine
+**gömülmedi**; bunun yerine Newman'ın Node API'si (`newman.run()`)
+üzerinden gerçek bir Node.js wrapper script'inde
+(`api-tests/scripts/run-schema-validation.js`) çalıştırılıyor — orada
+`require('ajv')` gerçekten bizim pinlediğimiz sürümü çözümlüyor ve
+`shared/schemas/**/*.schema.json` dosyaları doğrudan (fs/require ile,
+gerçek Node context'inde) okunabiliyor; duplication/drift riski yok.
 
 Bu araçlar `QA-COMPETENCY-MAP.md` bölüm 7–9'daki (Postman, AJV & JSON
 Schema, Newman) EXPERIENCE statüsüyle uyumludur.
@@ -91,17 +109,32 @@ Detaylı authorization matrix için bkz. `07-API-TESTING/README.md`.
 
 ## 5. Klasör Yapısı
 
-### Mevcut (P5.1 sonunda)
+### Mevcut (P5.2 sonunda)
 
 ```text
 QA-DEMO-SYSTEM/api-tests/
 ├── README.md
-├── package.json                                  (P5.1 — newman devDependency, "api:test:postman" script)
+├── package.json                                  (newman + ajv devDependency; "api:test:postman",
+│                                                    "api:test:postman:basic" script'leri)
+├── scripts/
+│   └── run-schema-validation.js                  (P5.2 — Newman Node API + AJV wrapper)
 └── postman/
     ├── collections/
-    │   └── qa-demo-system-public.postman_collection.json   (P5.1 — 4 PUBLIC endpoint, smoke assertion)
+    │   └── qa-demo-system-public.postman_collection.json   (P5.1 — 4 PUBLIC endpoint, status-code smoke)
     └── environments/
         └── local.postman_environment.json                  (P5.1 — baseUrl)
+
+shared/schemas/                                    (P5.2 — canonical, active)
+├── common/
+│   └── error-response.schema.json
+├── health/
+│   └── health-response.schema.json
+├── auth/
+│   └── login-response.schema.json
+└── products/
+    ├── product-item.schema.json                  (reusable, $ref'lenir)
+    ├── products-list-response.schema.json
+    └── product-detail-response.schema.json
 ```
 
 ### Hâlâ Planlanan (sonraki paketlerde kademeli olarak oluşturulacak)
@@ -112,15 +145,20 @@ QA-DEMO-SYSTEM/api-tests/
     ├── collections/   + protected endpoint collection'ı (P5.3+), auth negative matrix
     └── data/           (yalnızca gerçekten data-driven/multi-iteration bir senaryo — ör. P5.3
                          auth negative matrix — gerektiğinde oluşturulacak; bkz. not aşağıda)
+
+shared/schemas/
+├── orders/         (P5.5 — gerçek Orders response'ları belirlendiğinde)
+└── notifications/  (P5.6 — gerçek Notifications response'ları belirlendiğinde)
 ```
 
-**Schema'lar burada değil `shared/schemas/` altında olacak** (bkz.
-bölüm 7 — canonical karar). Reports/evidence de burada değil
-`QA-DEMO-SYSTEM/evidence/P5-API-TESTING/` altında (bkz. bölüm 11).
-Ayrı bir `scripts/` klasörü **oluşturulmadı** — Newman çalıştırma
-komutu `api-tests/package.json`'daki `api:test:postman` npm script'i
-ile karşılanıyor, ayrı bir shell script gerekmedi (minimum dependency/
-dosya ilkesi).
+**Schema'lar burada değil `shared/schemas/` altında** (bkz. bölüm 7 —
+canonical karar, P5.2'de active hale geldi). Reports/evidence de
+burada değil `QA-DEMO-SYSTEM/evidence/P5-API-TESTING/` altında (bkz.
+bölüm 11). `scripts/` klasörü **P5.2'de oluşturuldu** — yalnızca tek
+bir dosya (`run-schema-validation.js`), AJV'nin pm.test() sandbox'ında
+güvenilir çalışmaması nedeniyle gereken Newman Node API wrapper'ı
+(bkz. bölüm 3 ve 7 — compatibility gate sonucu); "devasa" bir script
+altyapısı değildir.
 
 **`postman/data/`** P5.1'de **oluşturulmadı** — bu paketin tek
 data-driven ihtiyacı (`POST /api/auth/login` için tek bir deterministic
@@ -145,7 +183,7 @@ Codex PASS → PR + merge
 Codex, her küçük commit'te değil, yalnızca paket/milestone
 kapanışlarında çağrılır (Phase 4'te P4.2–P4.6'da uygulanan pattern).
 
-**Gerçek çalıştırma komutu (P5.1'de kuruldu):**
+**Gerçek çalıştırma komutu (P5.2'de güncellendi):**
 
 ```bash
 cd QA-DEMO-SYSTEM
@@ -154,12 +192,26 @@ npm run api:test:postman # workspace root'tan, veya:
 cd api-tests && npm run api:test:postman
 ```
 
-İkinci komut, `api-tests/package.json`'daki script üzerinden şunu
-çalıştırır: `newman run postman/collections/qa-demo-system-public.postman_collection.json
--e postman/environments/local.postman_environment.json` — gerçek
-çalışan `QA-DEMO-SYSTEM` sunucusuna (`http://localhost:3000`) karşı.
-P5.1'de bu gerçekten çalıştırıldı: **4/4 request, 4/4 assertion PASS**
-(bkz. `evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION/EXECUTION.md`).
+Bu komut artık (P5.2) `api-tests/scripts/run-schema-validation.js`'yi
+çalıştırır — aynı collection/environment'ı Newman'ın Node API'siyle
+çalıştırır, her response için hem P5.1'in status-code pm.test()
+sonuçlarını hem de P5.2'nin AJV schema + Content-Type validation
+sonuçlarını raporlar. **Saf collection-only** (schema/header katmanı
+olmadan, yalnızca P5.1 pm.test() assertion'ları) çalıştırmak için:
+
+```bash
+npm run api:test:postman:basic
+```
+
+bu, doğrudan `newman run postman/collections/qa-demo-system-public.postman_collection.json
+-e postman/environments/local.postman_environment.json` komutunu
+çalıştırır.
+
+P5.2'de gerçek sisteme karşı çalıştırıldı: **4/4 request PASS (status
+code), 4/4 AJV schema + Content-Type validation PASS** (bkz.
+`evidence/P5-API-TESTING/P5.2-AJV-SCHEMA/EXECUTION.md`). P5.1'in
+kendi execution kaydı da geçerliliğini korur:
+`evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION/EXECUTION.md`.
 
 ---
 
@@ -167,14 +219,85 @@ P5.1'de bu gerçekten çalıştırıldı: **4/4 request, 4/4 assertion PASS**
 
 **Canonical schema path: `shared/schemas/`** — `ARCHITECTURE.md`
 bölüm 14'te P4.0'da bu amaç için reserve edilmişti. `api-tests/`
-altında **duplicate bir schema klasörü oluşturulmayacaktır**.
-`shared/schemas/` şu an `.gitkeep`'ten ibarettir; **P5.2**'de gerçek
-`.schema.json` dosyalarıyla doldurulup active kullanım alanına
-dönüştürülecektir.
+altında **duplicate bir schema klasörü oluşturulmadı**. **P5.2'de
+active hale getirildi** — `.gitkeep` kaldırıldı, 6 gerçek
+`.schema.json` dosyası eklendi:
+
+| Dosya | Kapsadığı Response | Not |
+|---|---|---|
+| `common/error-response.schema.json` | Tüm `{error:string}` hata response'ları | Reusable — auth 400/401 ve products 404'te ampirik doğrulandı |
+| `health/health-response.schema.json` | `GET /api/health` 200 | |
+| `auth/login-response.schema.json` | `POST /api/auth/login` 200 | |
+| `products/product-item.schema.json` | Tek ürün nesnesi | Reusable, `$ref` ile list/detail'e bağlanır |
+| `products/products-list-response.schema.json` | `GET /api/products` 200 | `product-item`'a `$ref` |
+| `products/product-detail-response.schema.json` | `GET /api/products/:id` 200 | `product-item`'a `$ref` |
+
+Tüm şemalar gerçek kaynak koddan (`services/*.js`) ve gerçek
+`curl`/Newman execution'larından doğrulandı — tahmin edilmedi. Her
+dosyanın kendi `description` alanında kaynağı belgelenmiştir.
 
 AJV kuralları (null yasak, strict type, `additionalProperties: false`,
 açık `required`, enum, nested validation) için bkz.
-`07-API-TESTING/README.md` — "Schema Governance" bölümü.
+`07-API-TESTING/README.md` — "Schema Governance" bölümü. Bu paket
+kapsamında `additionalProperties: false` **tüm** şemalarda kullanıldı
+— gerçek response'ların hiçbirinde dinamik/genişletilebilir bir map
+alanı gözlemlenmedi (istisna yok).
+
+### AJV Entegrasyon Yöntemi — Compatibility Gate Sonucu
+
+Şemaları toplu yazmadan önce, Postman/Newman'ın script sandbox'ında
+AJV'nin gerçekten nasıl çalıştığı **4 ayrı gerçek Newman execution**
+ile test edildi (varsayım yapılmadı):
+
+1. `require('ajv')` pm.test() içinde **hata vermiyor** — ama
+   çözümlenen modül, bizim `api-tests/package.json`'a eklediğimiz
+   `ajv@^8.20.0` **değil**; Newman'ın kendi iç bağımlılık zincirinden
+   (`newman → postman-runtime → postman-request → har-validator →
+   ajv@6.15.0`) gelen, bizim kontrolümüz dışındaki eski bir kopya.
+   Kanıt: hem 8.20.0 hem 6.15.0 diskte kuruluyken (`npm ls ajv --all`
+   ile doğrulandı), sandbox'taki AJV hata objeleri hâlâ v6'nın
+   `dataPath` alanını üretiyor (v8'de bu alan `instancePath`'tir).
+2. `require('ajv/package.json')` ve `require('<relative-path>.json')`
+   → **"Cannot find module"** ile başarısız oluyor — yalnızca bare npm
+   paket adıyla `require` çalışıyor, dosya yolu resolution'ı yok.
+3. `require('fs')` sandbox'ta bir obje döndürüyor ama
+   `readFileSync` **fonksiyon değil** (`"readFileSync is not a
+   function"`) — gerçek dosya sistemi erişimi yok. `process` global'i
+   de tanımsız.
+
+**Sonuç:** Sandbox içinde AJV'yi doğrudan `pm.test()` script'ine
+gömmek, hem hangi AJV sürümünün çalıştığını kontrol edemememize hem de
+`shared/schemas/` dosyalarını runtime'da okuyamamamıza (relative
+require/fs yok) yol açıyor — bu da "canonical schema, tek source of
+truth" ilkesini garanti edilemez kılıyor. Bu yüzden AJV validation,
+collection'ın pm.test() script'lerine **eklenmedi**; bunun yerine
+`api-tests/scripts/run-schema-validation.js` — Newman'ın Node API'sini
+(`newman.run(...)`, `'request'` event'i) kullanan, gerçek bir Node.js
+script'i — yazıldı. Bu script gerçek Node module resolution'ında
+çalıştığı için `require('ajv')` güvenilir şekilde bizim pinlediğimiz
+`ajv@8.20.0`'ı çözümlüyor, ve `shared/schemas/**/*.schema.json`
+dosyalarını doğrudan `require()` ile (gerçek dosya yolu, gerçek fs)
+okuyor — duplication/drift riski yok, tek source of truth korunuyor.
+Bu, "en sade, çalışan, reproducible, gerçek AJV kullanan" entegrasyon
+yöntemidir; ayrı bir framework kurulmadı (tek dosya, ~140 satır).
+
+AJV instance'ı `{ strict: true, allErrors: true }` ile oluşturuldu;
+`removeAdditional`, `coerceTypes`, `useDefaults` **bilinçli olarak
+set edilmedi** — validator yalnızca gözlemler, test edilen response'u
+asla değiştirmez.
+
+### Negative Proof (Validator'ın Gerçekten Reddettiğinin Kanıtı)
+
+Uygulama kodu veya production response'u değiştirilmeden, aynı
+şemalar + aynı pinlenmiş AJV sürümüyle, ayrı bir (repository'ye commit
+edilmemiş) proof script'inde kasıtlı olarak bozuk payload'lar test
+edildi — 15/15 proof beklenen şekilde sonuçlandı (bkz.
+`evidence/P5-API-TESTING/P5.2-AJV-SCHEMA/EXECUTION.md` bölüm
+"Negative Proof"): eksik `required` alan, yanlış `type`, `null`, ve
+beklenmeyen `additionalProperties` — her kategori (HEALTH, AUTH,
+PRODUCTS) için AJV tarafından doğru şekilde reddedildi. Ayrıca
+`common/error-response.schema.json`, gerçek 400/401/404 response
+body'lerine (curl ile yakalanan) karşı da doğrulandı — 3/3 PASS.
 
 ---
 
@@ -184,6 +307,17 @@ CURRENT (zorunlu) vs EXPECTED/FUTURE (yalnızca not edilir) ayrımı
 `07-API-TESTING/README.md`'de tanımlıdır. Özet: `Content-Type` ve
 `Authorization` zorunlu test edilir; CORS/security header'ları sistem
 bugün üretmediği için zorunlu tutulmaz (false failure üretilmez).
+
+**P5.2'de gerçekte ne yapıldı:** `run-schema-validation.js`, 4 PUBLIC
+endpoint'in her birinde gerçek response'un `Content-Type` header'ının
+tam olarak `application/json; charset=utf-8` olduğunu doğruluyor (bu
+CURRENT değer, gerçek sistemin `curl -D` ile önceden ampirik olarak
+doğrulanmış header'ıdır — bkz. `07-API-TESTING/README.md` "Gerçek
+Response Header'ları"). `Authorization` header assertion'ı bu pakette
+**yok** — 4 PUBLIC endpoint'in hiçbiri `Authorization` header'ı
+göndermiyor/beklemiyor; bu, protected endpoint'ler test edilmeye
+başladığında (P5.3) eklenecektir. CORS/security header'ları hâlâ
+FUTURE HARDENING — assertion yok.
 
 ---
 
@@ -223,23 +357,25 @@ Yalnızca Orders (PAID/DECLINED/TIMEOUT) ve Notifications akışlarında
 ## 11. Reporting Yaklaşımı
 
 Newman HTML raporları (`newman-reporter-htmlextra` vb.) **PLANNED
-(P5.8)** — henüz kurulmadı. P5.1'de yalnızca Newman'ın standart CLI
-çıktısı (console reporter) kullanıldı ve bu çıktı
-`evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION/EXECUTION.md`'ye
-gerçek execution kaydı olarak yazıldı — ara execution'lar commit
-edilmiyor, yalnızca paket kapanışındaki execution (P4.4/P4.5 evidence
-pattern'i).
+(P5.8)** — henüz kurulmadı. P5.1/P5.2'de yalnızca Newman'ın standart
+CLI çıktısı (console reporter) + `run-schema-validation.js`'nin kendi
+konsol özeti kullanıldı; bu çıktı ilgili paketin
+`evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sine gerçek execution
+kaydı olarak yazıldı — ara execution'lar commit edilmiyor, yalnızca
+paket kapanışındaki execution (P4.4/P4.5 evidence pattern'i).
 
 ---
 
 ## 12. Evidence Yaklaşımı
 
 `CONTRIBUTING.md` — Evidence Integrity kuralı aynen geçerlidir:
-gerçekten çalıştırılmamış bir Newman run'ı PASS olarak gösterilemez.
-P5.1'de gerçek bir Newman run'ı gerçek sisteme karşı çalıştırıldı ve
-sonucu `evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION/EXECUTION.md`'de
-kayıt altına alındı. Her sonraki paket kapanışında da aynı şekilde
-gerçek execution kaydı üretilecektir.
+gerçekten çalıştırılmamış bir Newman run'ı veya AJV validation'ı PASS
+olarak gösterilemez. P5.1'de gerçek bir Newman run'ı, P5.2'de gerçek
+bir AJV schema validation run'ı (+ negative proof) gerçek sisteme
+karşı çalıştırıldı ve sonuçları ilgili paketin
+`evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sinde kayıt altına
+alındı. Her sonraki paket kapanışında da aynı şekilde gerçek execution
+kaydı üretilecektir.
 
 ---
 
@@ -259,7 +395,7 @@ güvenlik açığını istismar etmesi bu kapsamın **tamamen dışındadır**.
 |---|---|---|
 | P5.0 | API Scope & Contract (bu doküman + `07-API-TESTING/README.md`) | CLEAN |
 | P5.1 | Postman Foundation (collection, local environment, Newman runner, PUBLIC endpoint smoke) | CLEAN |
-| P5.2 | AJV/JSON Schema (`shared/schemas/` doldurulması) | PLANNED |
+| P5.2 | AJV/JSON Schema (`shared/schemas/` doldurulması, Newman Node API wrapper, negative proof) | CLEAN |
 | P5.3 | Authentication & Authorization API Tests | PLANNED |
 | P5.4 | Products API Tests | PLANNED |
 | P5.5 | Orders & Payment API Tests | PLANNED |
@@ -282,3 +418,4 @@ netleştirilecektir (Phase 4'te uygulanan pattern).
 - [../../shared/schemas/](../../shared/schemas/)
 - [../../shared/test-data/](../../shared/test-data/)
 - [../evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION/EXECUTION.md](../evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION/EXECUTION.md)
+- [../evidence/P5-API-TESTING/P5.2-AJV-SCHEMA/EXECUTION.md](../evidence/P5-API-TESTING/P5.2-AJV-SCHEMA/EXECUTION.md)
