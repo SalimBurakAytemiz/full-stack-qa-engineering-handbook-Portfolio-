@@ -1,0 +1,129 @@
+{
+  "info": {
+    "_postman_id": "bb8d73af-6666-4f46-b2b5-e290008f6675",
+    "name": "QA Demo System - Public API (P5.1)",
+    "description": "P5.1 — Postman Foundation. Yalnızca PUBLIC REST endpoint'ler (health, login, products) için smoke-seviyesi requestler. Kaynak: 07-API-TESTING/README.md API Inventory. Protected endpoint'ler, WebSocket, AJV/schema validation ve genişletilmiş assertion suite bu pakette YOK — sonraki P5.x paketlerinin kapsamıdır.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET /api/health",
+      "id": "3bf2d948-5f2c-428e-9987-0fe2e1a50f42",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "POST /api/auth/login (valid, deterministic test user)",
+      "id": "40881376-cbfa-4f61-ac32-1d2e4d716ed0",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test.active01@example.com\",\n  \"password\": \"ValidPass123!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Synthetic/deterministic test credential — shared/test-data/auth-users.json. Gerçek kullanıcı verisi değildir."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "GET /api/products",
+      "id": "3d3029de-8d24-4d68-ae18-0a526e7abb1f",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "GET /api/products/:id (deterministic existing product)",
+      "id": "c1a28ead-6542-4f2a-a777-63352b04575d",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/products/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products", "1"]
+        },
+        "description": "id=1 — shared/test-data/products.json'daki deterministic mevcut ürün."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}

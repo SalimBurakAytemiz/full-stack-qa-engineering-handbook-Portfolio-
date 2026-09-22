@@ -1,0 +1,12 @@
+{
+  "name": "qa-demo-system-api-tests",
+  "version": "0.1.0",
+  "private": true,
+  "description": "QA Demo System API Tests — Phase 5 (Postman/Newman collection runner)",
+  "scripts": {
+    "api:test:postman": "newman run postman/collections/qa-demo-system-public.postman_collection.json -e postman/environments/local.postman_environment.json"
+  },
+  "devDependencies": {
+    "newman": "^6.2.2"
+  }
+}

@@ -4,12 +4,14 @@
   "private": true,
   "description": "QA Demo System — Phase 4 demo application (working QA test target)",
   "workspaces": [
-    "backend"
+    "backend",
+    "api-tests"
   ],
   "scripts": {
     "dev": "npm run dev --workspace backend",
     "start": "npm run start --workspace backend",
     "db:seed": "npm run db:seed --workspace backend",
-    "test": "npm test --workspace backend"
+    "test": "npm test --workspace backend",
+    "api:test:postman": "npm run api:test:postman --workspace api-tests"
   }
 }
