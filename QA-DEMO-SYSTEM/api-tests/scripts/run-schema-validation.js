@@ -45,6 +45,7 @@ const healthResponseSchema = require(path.join(SCHEMAS_DIR, 'health', 'health-re
 const loginResponseSchema = require(path.join(SCHEMAS_DIR, 'auth', 'login-response.schema.json'));
 const productsListResponseSchema = require(path.join(SCHEMAS_DIR, 'products', 'products-list-response.schema.json'));
 const productDetailResponseSchema = require(path.join(SCHEMAS_DIR, 'products', 'product-detail-response.schema.json'));
+const errorResponseSchema = require(path.join(SCHEMAS_DIR, 'common', 'error-response.schema.json'));
 
 const ajv = new Ajv({ strict: true, allErrors: true });
 // product-item.schema.json is added once so products-list-response and
@@ -64,12 +65,44 @@ const REQUEST_CHECKS = {
     validate: ajv.compile(loginResponseSchema),
     expectedContentType: 'application/json; charset=utf-8',
   },
-  'GET /api/products': {
+  // P5.4 — Products klasörü. "List"/"Detail - ..." isimleri, collection
+  // içinde "Products" folder'ının ALTINDAKİ leaf item.name'leridir;
+  // Newman'ın 'request' event'i klasör yolunu değil yalnızca leaf ismini
+  // verir, bu yüzden anahtar burada da yalnızca leaf ismi olmalıdır.
+  'List': {
     validate: ajv.compile(productsListResponseSchema),
     expectedContentType: 'application/json; charset=utf-8',
   },
-  'GET /api/products/:id (deterministic existing product)': {
+  'Detail - In Stock (deterministic existing product)': {
     validate: ajv.compile(productDetailResponseSchema),
+    expectedContentType: 'application/json; charset=utf-8',
+  },
+  'Detail - Out of Stock': {
+    validate: ajv.compile(productDetailResponseSchema),
+    expectedContentType: 'application/json; charset=utf-8',
+  },
+  'Unknown Product (well-formed, non-existent id)': {
+    validate: ajv.compile(errorResponseSchema),
+    expectedContentType: 'application/json; charset=utf-8',
+  },
+  'Invalid ID - non-numeric': {
+    validate: ajv.compile(errorResponseSchema),
+    expectedContentType: 'application/json; charset=utf-8',
+  },
+  'Invalid ID - zero': {
+    validate: ajv.compile(errorResponseSchema),
+    expectedContentType: 'application/json; charset=utf-8',
+  },
+  'Invalid ID - negative': {
+    validate: ajv.compile(errorResponseSchema),
+    expectedContentType: 'application/json; charset=utf-8',
+  },
+  'Invalid ID - decimal': {
+    validate: ajv.compile(errorResponseSchema),
+    expectedContentType: 'application/json; charset=utf-8',
+  },
+  'Invalid ID - very large': {
+    validate: ajv.compile(errorResponseSchema),
     expectedContentType: 'application/json; charset=utf-8',
   },
 };

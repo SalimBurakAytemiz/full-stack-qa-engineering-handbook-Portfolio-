@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "bb8d73af-6666-4f46-b2b5-e290008f6675",
     "name": "QA Demo System - Public API (P5.1)",
-    "description": "P5.1 — Postman Foundation. Yalnızca PUBLIC REST endpoint'ler (health, login, products) için smoke-seviyesi requestler. Kaynak: 07-API-TESTING/README.md API Inventory. Protected endpoint'ler, WebSocket, AJV/schema validation ve genişletilmiş assertion suite bu pakette YOK — sonraki P5.x paketlerinin kapsamıdır.",
+    "description": "P5.1 — Postman Foundation. PUBLIC REST endpoint'ler (health, login, products). Kaynak: 07-API-TESTING/README.md API Inventory. Protected endpoint'ler, WebSocket bu pakette YOK. P5.4'te Products klasörü kapsamlı positive/negative/boundary/data-quality testleriyle genişletildi.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -71,59 +71,307 @@
       "response": []
     },
     {
-      "name": "GET /api/products",
-      "id": "3d3029de-8d24-4d68-ae18-0a526e7abb1f",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/products",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "products"]
-        }
-      },
-      "event": [
+      "name": "Products",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 200', function () {",
-              "  pm.response.to.have.status(200);",
-              "});"
-            ]
-          }
-        }
-      ],
-      "response": []
-    },
-    {
-      "name": "GET /api/products/:id (deterministic existing product)",
-      "id": "c1a28ead-6542-4f2a-a777-63352b04575d",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/products/1",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "products", "1"]
+          "name": "List",
+          "id": "3d3029de-8d24-4d68-ae18-0a526e7abb1f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Public endpoint: no Authorization header required/sent', function () {",
+                  "  pm.expect(pm.request.headers.has('Authorization')).to.eql(false);",
+                  "});",
+                  "const products = pm.response.json().products;",
+                  "pm.test('At least the 4 deterministic seed products are present', function () {",
+                  "  pm.expect(products.length).to.be.at.least(4);",
+                  "});",
+                  "pm.test('Data quality: stock_quantity/in_stock consistency for every product', function () {",
+                  "  products.forEach((p) => {",
+                  "    const expected = p.stock_quantity > 0;",
+                  "    pm.expect(p.in_stock, 'product id=' + p.id + ' stock_quantity=' + p.stock_quantity + ' in_stock=' + p.in_stock).to.eql(expected);",
+                  "  });",
+                  "});",
+                  "pm.test('Data quality: no duplicate product id, no empty name, no negative stock', function () {",
+                  "  const ids = products.map((p) => p.id);",
+                  "  pm.expect(new Set(ids).size, 'duplicate id found').to.eql(ids.length);",
+                  "  products.forEach((p) => {",
+                  "    pm.expect(p.name, 'product id=' + p.id + ' has empty name').to.be.a('string').and.not.empty;",
+                  "    pm.expect(p.stock_quantity, 'product id=' + p.id + ' has negative stock').to.be.at.least(0);",
+                  "  });",
+                  "});",
+                  "const productOne = products.find((p) => p.id === 1);",
+                  "pm.collectionVariables.set('productOneFromList', JSON.stringify(productOne));"
+                ]
+              }
+            }
+          ],
+          "response": []
         },
-        "description": "id=1 — shared/test-data/products.json'daki deterministic mevcut ürün."
-      },
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status code is 200', function () {",
-              "  pm.response.to.have.status(200);",
-              "});"
-            ]
-          }
+          "name": "Detail - In Stock (deterministic existing product)",
+          "id": "c1a28ead-6542-4f2a-a777-63352b04575d",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "1"]
+            },
+            "description": "id=1 — shared/test-data/products.json'daki deterministic, stokta olan ürün (stock_quantity=25)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const product = pm.response.json().product;",
+                  "pm.test('Requested id matches response id', function () {",
+                  "  pm.expect(product.id).to.eql(1);",
+                  "});",
+                  "pm.test('In-stock product: stock_quantity > 0 and in_stock === true', function () {",
+                  "  pm.expect(product.stock_quantity).to.be.above(0);",
+                  "  pm.expect(product.in_stock).to.eql(true);",
+                  "});",
+                  "pm.test('List -> Detail consistency (same underlying row)', function () {",
+                  "  const fromListRaw = pm.collectionVariables.get('productOneFromList');",
+                  "  pm.expect(fromListRaw, 'List request must run before this one to populate productOneFromList').to.not.be.undefined;",
+                  "  const fromList = JSON.parse(fromListRaw);",
+                  "  pm.expect(product).to.eql(fromList);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Detail - Out of Stock",
+          "id": "6103cc30-2762-4bbe-a2f1-8e3af1f4c638",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "2"]
+            },
+            "description": "id=2 — shared/test-data/products.json'daki deterministic, stokta OLMAYAN ürün (stock_quantity=0)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const product = pm.response.json().product;",
+                  "pm.test('Requested id matches response id', function () {",
+                  "  pm.expect(product.id).to.eql(2);",
+                  "});",
+                  "pm.test('Out-of-stock product: stock_quantity === 0 and in_stock === false', function () {",
+                  "  pm.expect(product.stock_quantity).to.eql(0);",
+                  "  pm.expect(product.in_stock).to.eql(false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Unknown Product (well-formed, non-existent id)",
+          "id": "8e9d008d-8149-4bb8-8d48-399ee9a90ed3",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "9999"]
+            },
+            "description": "id=9999 — deterministic olarak seed data'da (1-4) bulunmadığı bilinen, sözdizimsel olarak geçerli bir id."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Error body: Urun bulunamadi', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Ürün bulunamadı');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid ID - non-numeric",
+          "id": "b03526ce-5f54-4ba9-87db-ef7d088ee0bf",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/abc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "abc"]
+            },
+            "description": "Router `Number(req.params.id)` kullanır -> NaN -> gerçek DB'de eşleşme yok -> 404. Ampirik doğrulandı, tahmin edilmedi."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404 (not 500)', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Error body: Urun bulunamadi', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Ürün bulunamadı');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid ID - zero",
+          "id": "620c5ba1-93ee-4a6b-a55c-83efde80377c",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "0"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404 (not 500)', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Error body: Urun bulunamadi', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Ürün bulunamadı');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid ID - negative",
+          "id": "6056c3e9-685a-4367-bfc4-f0fcb6952159",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/-1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "-1"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404 (not 500)', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Error body: Urun bulunamadi', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Ürün bulunamadı');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid ID - decimal",
+          "id": "cf042034-83e8-40fc-b509-8e4e6d9f5437",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1.5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "1.5"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404 (not 500)', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Error body: Urun bulunamadi', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Ürün bulunamadı');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid ID - very large",
+          "id": "ff499e87-2b84-4256-8df1-7111a23d2a43",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/99999999999999999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "99999999999999999999"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404 (not 500)', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Error body: Urun bulunamadi', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Ürün bulunamadı');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
         }
-      ],
-      "response": []
+      ]
     }
   ]
 }

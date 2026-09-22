@@ -58,6 +58,7 @@ const CASES = [
   { category: 'PRODUCTS', label: 'invalid item type (id as string)', validate: validateList, payload: { products: [{ id: '1', name: 'x', price: 1.5, stock_quantity: 1, in_stock: true }] }, expectValid: false },
   { category: 'PRODUCTS', label: 'null forbidden (stock_quantity: null)', validate: validateDetail, payload: { product: { id: 1, name: 'x', price: 1.5, stock_quantity: null, in_stock: true } }, expectValid: false },
   { category: 'PRODUCTS', label: 'unexpected additional property', validate: validateDetail, payload: { product: { id: 1, name: 'x', price: 1.5, stock_quantity: 1, in_stock: true, extra: 'nope' } }, expectValid: false },
+  { category: 'PRODUCTS', label: 'missing required (name)', validate: validateDetail, payload: { product: { id: 1, price: 1.5, stock_quantity: 1, in_stock: true } }, expectValid: false },
 
   // --- COMMON ERROR (real captured 400/401/404 bodies) ---
   { category: 'ERROR', label: 'real 400 body (POST /api/auth/login, missing password)', validate: validateError, payload: { error: 'Email ve şifre zorunludur.' }, expectValid: true },
