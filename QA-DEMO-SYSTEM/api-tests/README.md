@@ -1,18 +1,22 @@
 # QA Demo System — API Tests
 
 **Phase: PHASE 5 — API TESTING**
-**Doküman Statüsü: P5.2 — AJV / JSON Schema Validation**
+**Doküman Statüsü: P5.3 — Authentication & Authorization API Tests**
 
 > Bu klasör, Phase 5'in Postman/Newman/AJV tabanlı API test
 > katmanının giriş noktasıdır. P5.0'da yalnızca bu README (kapsam/
 > kontrat kararları) oluşturulmuştu. P5.1'de gerçek bir Postman
 > collection, local environment ve Newman CLI dependency'si kuruldu.
-> **P5.2'de PUBLIC endpoint response'larına gerçek AJV/JSON Schema
-> validation ve Content-Type header assertion'ı eklendi** —
-> `shared/schemas/` artık **active** canonical schema source of
-> truth'tur. Protected endpoint suite, DB validation ve HTML
-> reporting **henüz oluşturulmadı** — aşağıda hâlâ "PLANNED" olarak
-> işaretlidir.
+> P5.2'de PUBLIC endpoint response'larına gerçek AJV/JSON Schema
+> validation ve Content-Type header assertion'ı eklendi.
+> **P5.3'te gerçek protected REST API yüzeyinde (requireAuth
+> middleware) authentication matrix, ownership isolation ve
+> cross-user access testleri eklendi** — ayrı bir protected
+> collection, otomatik token bootstrap (manuel token kopyalama yok),
+> 2 deterministic kullanıcı ile gerçek ownership/cross-user
+> doğrulaması. Products/Orders/Notifications'ın **business/functional**
+> senaryoları, DB validation ve HTML reporting **henüz yok** —
+> aşağıda hâlâ "PLANNED" olarak işaretlidir.
 
 ---
 
@@ -50,6 +54,7 @@ Tam envanter (method/path/body/params/status/business rule) için bkz.
 | Newman | CLI runner, reproducible execution | **DONE (P5.1)** — `newman@6.2.2` devDependency, `api-tests/package.json` |
 | AJV | JSON Schema validation | **DONE (P5.2)** — `ajv@^8.20.0` devDependency, `api-tests/scripts/run-schema-validation.js` |
 | JSON Schema | Response contract tanımı | **DONE (P5.2)** — `shared/schemas/{health,auth,products,common}/` (bkz. bölüm 7) |
+| Auth/Authorization suite | Protected endpoint auth matrix + ownership | **DONE (P5.3)** — `postman/collections/qa-demo-system-protected.postman_collection.json` (bkz. bölüm 8) |
 | Newman HTML reporter | Execution raporu | PLANNED (P5.8) |
 
 Postman **desktop uygulaması** kullanılmadı — collection ve
@@ -109,19 +114,22 @@ Detaylı authorization matrix için bkz. `07-API-TESTING/README.md`.
 
 ## 5. Klasör Yapısı
 
-### Mevcut (P5.2 sonunda)
+### Mevcut (P5.3 sonunda)
 
 ```text
 QA-DEMO-SYSTEM/api-tests/
 ├── README.md
 ├── package.json                                  (newman + ajv devDependency; "api:test:postman",
-│                                                    "api:test:postman:basic" script'leri)
+│                                                    "api:test:postman:basic", "api:test:schema:negative-proof",
+│                                                    "api:test:auth" script'leri)
 ├── scripts/
 │   ├── run-schema-validation.js                  (P5.2 — Newman Node API + AJV wrapper)
 │   └── schema-negative-proof.js                  (P5.2 fix — tracked/reproducible negative+positive proof)
 └── postman/
     ├── collections/
-    │   └── qa-demo-system-public.postman_collection.json   (P5.1 — 4 PUBLIC endpoint, status-code smoke)
+    │   ├── qa-demo-system-public.postman_collection.json      (P5.1 — 4 PUBLIC endpoint, status-code smoke)
+    │   └── qa-demo-system-protected.postman_collection.json   (P5.3 — 19 request: auth gate, token bootstrap,
+    │                                                            auth matrix, ownership/cross-user)
     └── environments/
         └── local.postman_environment.json                  (P5.1 — baseUrl)
 
@@ -143,9 +151,9 @@ shared/schemas/                                    (P5.2 — canonical, active)
 ```text
 QA-DEMO-SYSTEM/api-tests/
 └── postman/
-    ├── collections/   + protected endpoint collection'ı (P5.3+), auth negative matrix
-    └── data/           (yalnızca gerçekten data-driven/multi-iteration bir senaryo — ör. P5.3
-                         auth negative matrix — gerektiğinde oluşturulacak; bkz. not aşağıda)
+    ├── collections/   + Products/Orders/Notifications business-functional collection'ları (P5.4-P5.6)
+    └── data/           (yalnızca gerçekten data-driven/multi-iteration bir senaryo gerektiğinde
+                         oluşturulacak; bkz. not aşağıda)
 
 shared/schemas/
 ├── orders/         (P5.5 — gerçek Orders response'ları belirlendiğinde)
@@ -155,7 +163,7 @@ shared/schemas/
 **Schema'lar burada değil `shared/schemas/` altında** (bkz. bölüm 7 —
 canonical karar, P5.2'de active hale geldi). Reports/evidence de
 burada değil `QA-DEMO-SYSTEM/evidence/P5-API-TESTING/` altında (bkz.
-bölüm 11). `scripts/` klasörü **P5.2'de oluşturuldu** — iki dosya:
+bölüm 12). `scripts/` klasörü **P5.2'de oluşturuldu** — iki dosya:
 `run-schema-validation.js` (AJV'nin pm.test() sandbox'ında güvenilir
 çalışmaması nedeniyle gereken Newman Node API wrapper'ı, bkz. bölüm 3
 ve 7 — compatibility gate sonucu) ve `schema-negative-proof.js`
@@ -163,12 +171,13 @@ ve 7 — compatibility gate sonucu) ve `schema-negative-proof.js`
 review'inin B2 bulgusuna karşılık eklendi, bkz. bölüm 7); "devasa" bir
 script altyapısı değildir.
 
-**`postman/data/`** P5.1'de **oluşturulmadı** — bu paketin tek
-data-driven ihtiyacı (`POST /api/auth/login` için tek bir deterministic
-kullanıcı) request body'sine doğrudan yazıldı, ayrı bir iterasyon data
-dosyası gerektirmedi. Birden fazla iterasyon/veri seti gerektiren bir
-senaryo (ör. P5.3'ün auth negative matrix'i) ortaya çıktığında, Newman'ın
-`-d <data-file>` mekanizmasıyla (bkz. bölüm 9) değerlendirilecektir.
+**`postman/data/`** hâlâ **oluşturulmadı** — P5.1'in tek deterministic
+kullanıcısı ve P5.3'ün iki deterministic kullanıcısı (USER A/B) da
+ayrı request body'lerine doğrudan yazıldı, iterasyon data dosyası
+gerektirmedi. Gerçekten çoklu iterasyon/veri seti gerektiren bir
+senaryo (ör. büyük bir credential fuzzing/negative matrix) ortaya
+çıktığında, Newman'ın `-d <data-file>` mekanizmasıyla (bkz. bölüm 10)
+değerlendirilecektir.
 
 ---
 
@@ -215,6 +224,20 @@ code), 4/4 AJV schema + Content-Type validation PASS** (bkz.
 `evidence/P5-API-TESTING/P5.2-AJV-SCHEMA/EXECUTION.md`). P5.1'in
 kendi execution kaydı da geçerliliğini korur:
 `evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION/EXECUTION.md`.
+
+**Protected (auth/authorization) suite (P5.3'te eklendi):**
+
+```bash
+cd QA-DEMO-SYSTEM/api-tests
+npm run api:test:auth
+```
+
+Bu, `newman run postman/collections/qa-demo-system-protected.postman_collection.json
+-e postman/environments/local.postman_environment.json` komutunu
+çalıştırır — token bootstrap dahil tamamen otomatik (manuel token
+kopyalama yok). P5.3'te gerçek sisteme karşı çalıştırıldı: **19/19
+request PASS, 42/42 assertion PASS** (bkz.
+`evidence/P5-API-TESTING/P5.3-AUTH-AUTHORIZATION/EXECUTION.md`).
 
 ---
 
@@ -306,7 +329,85 @@ arasında fark olamaz.
 
 ---
 
-## 8. Header Validation Standardı
+## 8. Authentication & Authorization Test Standardı (P5.3)
+
+**Kapsam:** `requireAuth` middleware'inin koruduğu 3 REST endpoint
+(`POST /api/orders`, `GET /api/orders/:id`, `GET /api/notifications`)
+üzerinde authentication matrix, ownership isolation ve cross-user
+access testleri. **Business/functional senaryolar (order creation
+kuralları, stock, payment kombinasyonları, notification business
+akışı) bu paketin kapsamı dışındadır** — sırasıyla P5.5/P5.6'nın işi.
+
+**Collection:** `postman/collections/qa-demo-system-protected.postman_collection.json`
+(19 request, 5 klasör):
+
+| Klasör | İçerik |
+|---|---|
+| 0. Authentication Gate | Token'sız `GET /api/orders/:id` → `401` (ilk uygulanan, tek başına doğrulanan adım) |
+| 1. Token Bootstrap | `POST /api/auth/login` ile USER A ve USER B (`shared/test-data/auth-users.json`) — token/`user.id` collection variable'a yazılır |
+| 2. Authentication Matrix | `GET /api/notifications` üzerinde: token yok, boş `Authorization`, yanlış scheme (`Basic`), malformed `Bearer` (token yok), bilinmeyen/random token, valid token |
+| 3. Orders — Ownership & Cross-User | Order oluşturma (USER A) + owner erişimi + cross-user erişimi (USER B, `404`) + token yok/geçersiz + bilinmeyen order (`404`) |
+| 4. Notifications — Ownership & Cross-User | USER A kendi `order_id`'sini görür + USER B'nin listesinde USER A'nın `order_id`'si **asla** yok (data-state-independent leakage kontrolü, bkz. P5.0 B2 kararı) + token yok/geçersiz |
+
+**Authentication Matrix — gerçek kaynak koddan (`requireAuth.js`)
+doğrulanan iki farklı hata sınıfı:**
+
+| Senaryo | Status | Error body |
+|---|---|---|
+| Header yok / boş / yanlış scheme (`Basic ...`) / `Bearer` (token'sız) | `401` | `{"error":"Yetkilendirme gerekli"}` |
+| `Bearer <bilinmeyen/geçersiz token>` (`sessions` tablosunda yok) | `401` | `{"error":"Geçersiz veya süresi dolmuş oturum"}` |
+| Valid `Bearer <token>` | `200`/`201` | — |
+
+Bu iki mesaj **kasıtlı olarak farklı** kod yollarından geliyor
+(`requireAuth.js` — scheme/token format kontrolü vs. `sessions`
+tablosu lookup) ve testler bu ikisini ayrı ayrı doğruluyor — tek bir
+genel "401" assertion'ına indirgenmedi.
+
+**Ownership/Cross-user assertion kalitesi:** Yalnızca status code
+kontrolü değil, gerçek response body üzerinden doğrulama yapılıyor:
+- Orders: `GET /api/orders/:id` — owner için `order.id` eşleşmesi,
+  cross-user için `404` + `"Sipariş bulunamadı"` (kaynak:
+  `orders.service.js` — `WHERE id = ? AND user_id = ?`, IDOR-bilinçli,
+  `403` değil).
+- Notifications: **"boş liste" değil, data-state-independent
+  assertion** — USER A'nın gerçek `order_id`'si USER B'nin
+  notification listesinde **hiçbir zaman** yok; USER A'nın kendi
+  listesinde bu `order_id` **var**. Bu, P5.0'da Codex B2 review'inin
+  düzelttiği aynı prensibin (`07-API-TESTING/README.md` Authorization
+  Matrix) test-seviyesinde uygulanmasıdır.
+
+**Token bootstrap:** Manuel token kopyalama **yok** — `Login as User
+A/B` request'lerinin `pm.test()` script'i, response'tan `token` ve
+`user.id`'yi `pm.collectionVariables.set(...)` ile runtime'a yazar;
+sonraki request'ler `{{userAToken}}`/`{{userBToken}}` kullanır. Bu
+değerler **hiçbir dosyaya commit edilmez** — yalnızca Newman'ın
+in-memory run instance'ında yaşar (koleksiyon/environment JSON
+dosyaları değişmez, evidence'te maskelenir).
+
+**Error contract:** Ayrı bir yeni schema dosyası oluşturulmadı —
+`common/error-response.schema.json` zaten `{error:string}` contract'ını
+kapsıyor (P5.2'de auth 400/401 ve products 404'e karşı doğrulanmıştı).
+P5.3'te bu aynı contract, sandbox-safe plain `pm.test()` assertion'larıyla
+(`Object.keys(json)).to.eql(['error'])`, `error` alanının tam beklenen
+string değeriyle eşleşmesi) doğrulandı — AJV/Node wrapper'a gerek
+kalmadı (yeni bir "schema fabrikası" kurulmadı).
+
+**WebSocket (`/ws`) bu pakete dahil DEĞİL** — P5.0'ın canonical kararı
+(`07-API-TESTING/README.md` "Kapsam Dışı": "GraphQL/WebSocket
+derinlemesine event testleri → Phase 6") gereği WS auth/event testleri
+Phase 6'nın kapsamıdır; REST protected collection'a `/ws` request'i
+eklenmedi.
+
+**Runner:** `npm run api:test:auth` (→ `newman run
+postman/collections/qa-demo-system-protected.postman_collection.json
+-e postman/environments/local.postman_environment.json`) —
+bootstrap dahil, tamamen otomatik, reproducible. P5.3'te gerçek
+sisteme karşı çalıştırıldı: **19/19 request PASS, 42/42 assertion
+PASS** (bkz. `evidence/P5-API-TESTING/P5.3-AUTH-AUTHORIZATION/EXECUTION.md`).
+
+---
+
+## 9. Header Validation Standardı
 
 CURRENT (zorunlu) vs EXPECTED/FUTURE (yalnızca not edilir) ayrımı
 `07-API-TESTING/README.md`'de tanımlıdır. Özet: `Content-Type` ve
@@ -326,7 +427,7 @@ FUTURE HARDENING — assertion yok.
 
 ---
 
-## 9. Test Data Kullanımı
+## 10. Test Data Kullanımı
 
 Mevcut `shared/test-data/` (`auth-users.json`, `products.json`,
 `payment-test-patterns.json`) **aynen yeniden kullanılacaktır** —
@@ -343,15 +444,17 @@ Runner'a data file olarak yüklenir); script'ler bu veriye runner'ın
 (`test.active01@example.com` / `ValidPass123!`) request body'sine
 **doğrudan** (hardcoded, açıkça "synthetic/deterministic test credential"
 olarak işaretlenmiş) yazdı — tek iterasyonluk bir smoke test için ayrı
-bir `-d <data-file>` kurulumu gerekmedi. Çoklu iterasyon/veri seti
-gerektiren senaryolarda (ör. P5.3'ün auth negative matrix'i — birden
-fazla email/password kombinasyonu) `-d <data-file>` modeli
-kullanılacaktır. Detaylı eşleme (`hangi veri hangi testte`) için bkz.
+bir `-d <data-file>` kurulumu gerekmedi. P5.3'ün iki kullanıcılı
+(USER A/B) authentication/authorization suite'i de aynı şekilde iki
+ayrı, doğrudan yazılmış login request'i kullandı — iterasyon data
+dosyası gerekmedi. Gerçekten çoklu iterasyon/veri seti gerektiren bir
+senaryo ortaya çıktığında `-d <data-file>` modeli kullanılacaktır.
+Detaylı eşleme (`hangi veri hangi testte`) için bkz.
 `07-API-TESTING/README.md` — "Test Data Yaklaşımı".
 
 ---
 
-## 10. DB Validation Yaklaşımı
+## 11. DB Validation Yaklaşımı
 
 Yalnızca Orders (PAID/DECLINED/TIMEOUT) ve Notifications akışlarında
 — her `GET` için DB kontrolü konulmaz. Detay için bkz.
@@ -359,7 +462,7 @@ Yalnızca Orders (PAID/DECLINED/TIMEOUT) ve Notifications akışlarında
 
 ---
 
-## 11. Reporting Yaklaşımı
+## 12. Reporting Yaklaşımı
 
 Newman HTML raporları (`newman-reporter-htmlextra` vb.) **PLANNED
 (P5.8)** — henüz kurulmadı. P5.1/P5.2'de yalnızca Newman'ın standart
@@ -371,20 +474,20 @@ paket kapanışındaki execution (P4.4/P4.5 evidence pattern'i).
 
 ---
 
-## 12. Evidence Yaklaşımı
+## 13. Evidence Yaklaşımı
 
 `CONTRIBUTING.md` — Evidence Integrity kuralı aynen geçerlidir:
 gerçekten çalıştırılmamış bir Newman run'ı veya AJV validation'ı PASS
 olarak gösterilemez. P5.1'de gerçek bir Newman run'ı, P5.2'de gerçek
-bir AJV schema validation run'ı (+ negative proof) gerçek sisteme
-karşı çalıştırıldı ve sonuçları ilgili paketin
-`evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sinde kayıt altına
-alındı. Her sonraki paket kapanışında da aynı şekilde gerçek execution
+bir AJV schema validation run'ı (+ negative proof), P5.3'te gerçek bir
+auth/authorization suite run'ı gerçek sisteme karşı çalıştırıldı ve
+sonuçları ilgili paketin `evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sinde
+kayıt altına alındı. Her sonraki paket kapanışında da aynı şekilde gerçek execution
 kaydı üretilecektir.
 
 ---
 
-## 13. Security Boundaries
+## 14. Security Boundaries
 
 Bu klasördeki testler **penetration testing değildir**. Yalnızca
 QA-seviyeli authorization/ownership/negative doğrulama yapılır (IDOR,
@@ -394,14 +497,14 @@ güvenlik açığını istismar etmesi bu kapsamın **tamamen dışındadır**.
 
 ---
 
-## 14. Phase 5 Paketleri
+## 15. Phase 5 Paketleri
 
 | Paket | Amaç | Durum |
 |---|---|---|
 | P5.0 | API Scope & Contract (bu doküman + `07-API-TESTING/README.md`) | CLEAN |
 | P5.1 | Postman Foundation (collection, local environment, Newman runner, PUBLIC endpoint smoke) | CLEAN |
 | P5.2 | AJV/JSON Schema (`shared/schemas/` doldurulması, Newman Node API wrapper, negative proof) | CLEAN |
-| P5.3 | Authentication & Authorization API Tests | PLANNED |
+| P5.3 | Authentication & Authorization API Tests (protected collection, auth matrix, ownership/cross-user) | CLEAN |
 | P5.4 | Products API Tests | PLANNED |
 | P5.5 | Orders & Payment API Tests | PLANNED |
 | P5.6 | Notifications API Tests | PLANNED |
@@ -424,3 +527,4 @@ netleştirilecektir (Phase 4'te uygulanan pattern).
 - [../../shared/test-data/](../../shared/test-data/)
 - [../evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION/EXECUTION.md](../evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION/EXECUTION.md)
 - [../evidence/P5-API-TESTING/P5.2-AJV-SCHEMA/EXECUTION.md](../evidence/P5-API-TESTING/P5.2-AJV-SCHEMA/EXECUTION.md)
+- [../evidence/P5-API-TESTING/P5.3-AUTH-AUTHORIZATION/EXECUTION.md](../evidence/P5-API-TESTING/P5.3-AUTH-AUTHORIZATION/EXECUTION.md)

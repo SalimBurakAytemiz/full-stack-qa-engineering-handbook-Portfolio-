@@ -6,7 +6,8 @@
   "scripts": {
     "api:test:postman": "node scripts/run-schema-validation.js",
     "api:test:postman:basic": "newman run postman/collections/qa-demo-system-public.postman_collection.json -e postman/environments/local.postman_environment.json",
-    "api:test:schema:negative-proof": "node scripts/schema-negative-proof.js"
+    "api:test:schema:negative-proof": "node scripts/schema-negative-proof.js",
+    "api:test:auth": "newman run postman/collections/qa-demo-system-protected.postman_collection.json -e postman/environments/local.postman_environment.json"
   },
   "devDependencies": {
     "newman": "^6.2.2",
