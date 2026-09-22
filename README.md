@@ -61,3 +61,17 @@ PASS / FAIL
 EVIDENCE
     ↓
 PRACTICED
+```
+
+Bu Lab'ın gerçekten çalışan uygulaması:
+**[`QA-DEMO-SYSTEM/`](QA-DEMO-SYSTEM/README.md)** — Node.js + Express
++ SQLite ile kurulmuş, `npm install && npm run dev` ile lokal olarak
+ayağa kalkan, Authentication/Products/Orders/Payment/Events/
+Notifications akışlarını içeren kontrollü bir QA test target'ıdır.
+
+---
+
+# Repository Roadmap
+
+Fazların tam sırası, kapsamı ve mevcut durumu için bkz.
+[`ROADMAP.md`](ROADMAP.md).
