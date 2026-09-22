@@ -1,0 +1,529 @@
+{
+  "info": {
+    "_postman_id": "810f10ba-4f29-4fef-877e-1626ec3a76d2",
+    "name": "QA Demo System - Protected API / Auth & Authorization (P5.3)",
+    "description": "P5.3 — Authentication & Authorization API Tests. Kapsam: requireAuth middleware'i (no/invalid/malformed/valid token), ownership isolation ve cross-user access (Orders, Notifications). Business/functional senaryolar (order creation kuralları, stock, payment kombinasyonları, notification business akışı) bu koleksiyonun KAPSAMI DIŞINDADIR — bkz. 07-API-TESTING/README.md ve api-tests/README.md. Token'lar yalnızca runtime'da collection variable olarak tutulur, dosyaya yazılmaz.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Authentication Gate (No Token)",
+      "item": [
+        {
+          "name": "GET /api/orders/1 — no Authorization header -> 401",
+          "id": "19e3db92-0441-4d52-9894-749d0c0e9e1b",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/orders/1", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1"] },
+            "description": "P5.3'ün ilk uygulama adımı — tek gate request. Bu PASS olmadan koleksiyonun geri kalanına geçilmedi."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () {",
+                  "  pm.response.to.have.status(401);",
+                  "});",
+                  "pm.test('Content-Type is application/json', function () {",
+                  "  pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8');",
+                  "});",
+                  "pm.test('Error body: Yetkilendirme gerekli', function () {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('error', 'Yetkilendirme gerekli');",
+                  "  pm.expect(Object.keys(json)).to.eql(['error']);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "1. Token Bootstrap",
+      "item": [
+        {
+          "name": "Login as User A (test.active01)",
+          "id": "4a53bca0-669f-4208-a505-2a253f4f2623",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test.active01@example.com\",\n  \"password\": \"ValidPass123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "description": "Synthetic/deterministic test credential — shared/test-data/auth-users.json. USER A."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Response has token and user.id', function () {",
+                  "  pm.expect(json.token).to.be.a('string').and.not.empty;",
+                  "  pm.expect(json.user.id).to.be.a('number');",
+                  "});",
+                  "pm.collectionVariables.set('userAToken', json.token);",
+                  "pm.collectionVariables.set('userAId', json.user.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as User B (test.active02)",
+          "id": "e275af16-5d24-47a4-a9f1-4992ea226d09",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test.active02@example.com\",\n  \"password\": \"ValidPass123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "description": "Synthetic/deterministic test credential — shared/test-data/auth-users.json. USER B."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Response has token and user.id', function () {",
+                  "  pm.expect(json.token).to.be.a('string').and.not.empty;",
+                  "  pm.expect(json.user.id).to.be.a('number');",
+                  "});",
+                  "pm.test('User B is a different user than User A', function () {",
+                  "  pm.expect(json.user.id).to.not.eql(pm.collectionVariables.get('userAId'));",
+                  "});",
+                  "pm.collectionVariables.set('userBToken', json.token);",
+                  "pm.collectionVariables.set('userBId', json.user.id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication Matrix (GET /api/notifications)",
+      "item": [
+        {
+          "name": "No Authorization header -> 401 (Yetkilendirme gerekli)",
+          "id": "85c59145-53b7-4273-b9d5-55d3892ea6d2",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Error body: Yetkilendirme gerekli', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Yetkilendirme gerekli');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empty Authorization header -> 401 (Yetkilendirme gerekli)",
+          "id": "6ea2eea6-fe57-4e10-b6ee-34bfe16a2e71",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Error body: Yetkilendirme gerekli', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Yetkilendirme gerekli');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Wrong scheme (Basic) -> 401 (Yetkilendirme gerekli)",
+          "id": "25fd25b3-49ab-42af-b21b-ae137ac7e7c3",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Basic dXNlcjpwYXNz" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Error body: Yetkilendirme gerekli', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Yetkilendirme gerekli');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Malformed Bearer (scheme, no token) -> 401 (Yetkilendirme gerekli)",
+          "id": "6388c830-83ee-4231-8301-42801a066f95",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Error body: Yetkilendirme gerekli', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Yetkilendirme gerekli');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Random/unknown token -> 401 (Gecersiz veya suresi dolmus oturum)",
+          "id": "8cb658a5-f76b-4eb6-a221-d23d70a1c4ae",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer not-a-real-session-token-1234567890" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Error body: Gecersiz veya suresi dolmus oturum', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Geçersiz veya süresi dolmuş oturum');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Valid token (User A) -> 200",
+          "id": "b5deb97e-1ffe-4ae6-804d-b7510ffa2aee",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userAToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Content-Type is application/json', function () {",
+                  "  pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8');",
+                  "});",
+                  "pm.test('Authorization header actually sent as Bearer {{userAToken}}', function () {",
+                  "  pm.expect(pm.request.headers.get('Authorization')).to.eql('Bearer ' + pm.collectionVariables.get('userAToken'));",
+                  "});",
+                  "pm.test('Response has notifications array', function () {",
+                  "  pm.expect(pm.response.json().notifications).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Orders — Ownership & Cross-User",
+      "item": [
+        {
+          "name": "Create Order (User A) -> 201 PAID",
+          "id": "36e80f87-f3fa-4dde-8a1e-14ddcfa4eca2",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{userAToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [{ \"product_id\": 1, \"quantity\": 1 }],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] },
+            "description": "shared/test-data/payment-test-patterns.json — TEST-CARD-APPROVED (deterministic, fake payment)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Order is PAID', function () {",
+                  "  pm.expect(json.order.status).to.eql('PAID');",
+                  "});",
+                  "pm.collectionVariables.set('userAOrderId', json.order.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Order (User A, owner) -> 200",
+          "id": "be341add-387e-4bf0-b42e-a6e001e0e560",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userAToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{userAOrderId}}", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{userAOrderId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Order id matches (owner can see own order)', function () {",
+                  "  pm.expect(pm.response.json().order.id).to.eql(Number(pm.collectionVariables.get('userAOrderId')));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Order (User B, cross-user) -> 404 (ownership denial, not 403)",
+          "id": "ca07984d-6227-40ba-8649-fbaee17886ae",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userBToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{userAOrderId}}", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{userAOrderId}}"] },
+            "description": "IDOR-conscious contract: cross-user access to another user's order returns 404, not 403 (bkz. 07-API-TESTING/README.md Authorization Matrix)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404 (not 403 — IDOR-conscious)', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Error body: Siparis bulunamadi', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Sipariş bulunamadı');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Order (no token) -> 401",
+          "id": "b71e6f75-b3ff-4062-bba2-1e53b1757811",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{userAOrderId}}", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{userAOrderId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Error body: Yetkilendirme gerekli', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Yetkilendirme gerekli');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Order (invalid token) -> 401",
+          "id": "2b63c8db-d17a-463e-93ce-c220707c9f42",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer not-a-real-session-token-1234567890" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/{{userAOrderId}}", "host": ["{{baseUrl}}"], "path": ["api", "orders", "{{userAOrderId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Error body: Gecersiz veya suresi dolmus oturum', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Geçersiz veya süresi dolmuş oturum');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Unknown Order (User A) -> 404",
+          "id": "ec3e0e2d-e93f-4991-98e4-d277ae3d06ac",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userAToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/orders/999999999", "host": ["{{baseUrl}}"], "path": ["api", "orders", "999999999"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Error body: Siparis bulunamadi', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Sipariş bulunamadı');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Notifications — Ownership & Cross-User",
+      "item": [
+        {
+          "name": "Get Notifications (User A) — own order_id present",
+          "id": "75171df6-0bb7-4b32-8ad9-cf8dafd5afe4",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userAToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const notifications = pm.response.json().notifications;",
+                  "const userAOrderId = Number(pm.collectionVariables.get('userAOrderId'));",
+                  "pm.test('User A sees a notification for their own PAID order', function () {",
+                  "  const found = notifications.some((n) => n.order_id === userAOrderId);",
+                  "  pm.expect(found, 'expected a notification with order_id=' + userAOrderId).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Notifications (User B) — User A's order_id must NOT leak",
+          "id": "61baadc4-3ee3-4203-98b4-db7118b61541",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userBToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] },
+            "description": "Doğru assertion data-state-independent'tir: 'boş liste' değil, 'User A'nın order_id'si asla dönmez'."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const notifications = pm.response.json().notifications;",
+                  "const userAOrderId = Number(pm.collectionVariables.get('userAOrderId'));",
+                  "pm.test('User B never sees a notification for User A order_id (no cross-user leakage)', function () {",
+                  "  const leaked = notifications.some((n) => n.order_id === userAOrderId);",
+                  "  pm.expect(leaked, 'User A order_id leaked into User B notifications').to.eql(false);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Notifications (no token) -> 401",
+          "id": "c7ea48c9-d2f8-4d74-87de-a38ba1bc6849",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Error body: Yetkilendirme gerekli', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Yetkilendirme gerekli');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Notifications (invalid token) -> 401",
+          "id": "6c043413-f07a-472f-a789-01cc0cc4c539",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer not-a-real-session-token-1234567890" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api", "notifications"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Error body: Gecersiz veya suresi dolmus oturum', function () {",
+                  "  pm.expect(pm.response.json()).to.have.property('error', 'Geçersiz veya süresi dolmuş oturum');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
