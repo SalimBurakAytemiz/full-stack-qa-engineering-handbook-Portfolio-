@@ -1,11 +1,35 @@
 # P5.2 — AJV / JSON Schema Validation — Execution Evidence
 
 **Branch:** `feat/phase-5-2-ajv-json-schema`
-**Tarih:** 2026-09-22
+**Tarih:** 2026-09-22 (P5.2 ilk execution + Codex fix-delta güncellemesi)
 
 > Bu kayıt, aşağıdaki AJV/Newman run'larının ve negative proof'ların
 > **gerçekten çalıştırılmış** sonucudur (`CONTRIBUTING.md` — Evidence
 > Integrity). Hiçbir sonuç tahmin edilmemiş veya kurgulanmamıştır.
+
+## Codex Fix-Delta Notu (Bu Güncelleme)
+
+İlk Codex bağımsız delta review'i (commit `1510eb1`) **FAIL/CHANGES
+REQUIRED, 2 blocker + 1 non-blocking not** ile sonuçlandı:
+
+- **B1:** `auth/login-response.schema.json`'ın `token` alanı yalnızca
+  `type:"string"` idi — dokümantasyon "non-empty string" diyordu ama
+  şema `""` (boş string) değerini kabul ediyordu. **Düzeltildi:**
+  `minLength: 1` eklendi (gerçek contract — `auth.service.js`'teki
+  `demo-session-${crypto.randomUUID()}` üretimi asla boş string
+  üretmez — doğrulandı).
+- **B2:** İlk evidence "15/15 negative proof" diyordu ama gerçekte
+  yalnızca 13 `[PROOF-OK]` satırı vardı ve proof script repository'de
+  tracked değildi (geçici, commit edilmemiş bir dosyaydı) — sayı ile
+  kanıt uyuşmuyordu. **Düzeltildi:** Proof script artık
+  `QA-DEMO-SYSTEM/api-tests/scripts/schema-negative-proof.js` olarak
+  **tracked** ve `npm run api:test:schema:negative-proof` ile
+  **reproducible**; bu dosyadaki bölüm 5, script'in gerçek, deterministik
+  çıktısının birebir yapıştırılmasıdır — manuel sayım yok.
+- **Non-blocking:** `health-response.schema.json`'ın `status` alanı
+  yalnızca `type:"string"` idi; kaynak kod (`app.js` satır 14) tek,
+  koşulsuz bir literal (`{status:'ok'}`) ürettiği için **düzeltildi:**
+  `const:"ok"` (gerçek contract'ın birebir yansıması).
 
 ---
 
@@ -71,19 +95,19 @@ newman
 QA Demo System - Public API (P5.1)
 
 → GET /api/health
-  GET http://localhost:3000/api/health [200 OK, 249B, 21ms]
+  GET http://localhost:3000/api/health [200 OK, 249B, 29ms]
   ✓  Status code is 200
 
 → POST /api/auth/login (valid, deterministic test user)
-  POST http://localhost:3000/api/auth/login [200 OK, 349B, 7ms]
+  POST http://localhost:3000/api/auth/login [200 OK, 349B, 23ms]
   ✓  Status code is 200
 
 → GET /api/products
-  GET http://localhost:3000/api/products [200 OK, 582B, 5ms]
+  GET http://localhost:3000/api/products [200 OK, 582B, 3ms]
   ✓  Status code is 200
 
 → GET /api/products/:id (deterministic existing product)
-  GET http://localhost:3000/api/products/1 [200 OK, 329B, 3ms]
+  GET http://localhost:3000/api/products/1 [200 OK, 329B, 4ms]
   ✓  Status code is 200
 
 --- P5.2 AJV / Header Validation Results ---
@@ -97,86 +121,99 @@ AJV schema + Content-Type validations: PASS
 
 P5.2 schema validation run: PASS
 
-┌─────────────────────────┬─────────────────┬─────────────────┐
-│                         │        executed │          failed │
-├─────────────────────────┼─────────────────┼─────────────────┤
-│              iterations │               1 │               0 │
-├─────────────────────────┼─────────────────┼─────────────────┤
-│                requests │               4 │               0 │
-├─────────────────────────┼─────────────────┼─────────────────┤
-│            test-scripts │               4 │               0 │
-├─────────────────────────┼─────────────────┼─────────────────┤
-│      prerequest-scripts │               0 │               0 │
-├─────────────────────────┼─────────────────┼─────────────────┤
-│              assertions │               4 │               0 │
-├─────────────────────────┴─────────────────┴─────────────────┤
-│ total run duration: 119ms                                   │
-├─────────────────────────────────────────────────────────────┤
-│ total data received: 567B (approx)                          │
-├─────────────────────────────────────────────────────────────┤
-│ average response time: 9ms [min: 3ms, max: 21ms, s.d.: 7ms] │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────┬──────────────────┬──────────────────┐
+│                         │         executed │           failed │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              iterations │                1 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│                requests │                4 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│            test-scripts │                4 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│      prerequest-scripts │                0 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              assertions │                4 │                0 │
+├─────────────────────────┴──────────────────┴──────────────────┤
+│ total run duration: 161ms                                     │
+├───────────────────────────────────────────────────────────────┤
+│ total data received: 567B (approx)                            │
+├───────────────────────────────────────────────────────────────┤
+│ average response time: 14ms [min: 3ms, max: 29ms, s.d.: 11ms] │
+└───────────────────────────────────────────────────────────────┘
 ```
 
 **Sonuç:** 4/4 request PASS (status code), 4/4 AJV schema + Content-Type
-validation PASS, 0 failure.
+validation PASS, 0 failure. Bu re-run, B1/non-blocking şema
+düzeltmelerinden (token `minLength:1`, health `const:"ok"`) **sonra**
+alınmıştır — gerçek sunucu response'ları hâlâ 4/4 PASS veriyor
+(şemalar sıkılaştırıldı ama gerçek sistem davranışıyla hâlâ tam
+uyumlu).
 
 ---
 
-## 5. Negative Proof (AJV'nin Gerçekten Reddettiğinin Kanıtı)
+## 5. Negative/Positive Proof (Tracked, Reproducible Script)
 
-Uygulama kodu ve production response'ları **değiştirilmeden**, aynı
-şemalar + aynı pinlenmiş `ajv@8.20.0` sürümüyle, ayrı bir (repository'ye
-commit edilmemiş) proof script'inde kasıtlı olarak bozuk payload'lar
-test edildi:
+**Codex B2 düzeltmesi:** Proof script artık repository'de tracked bir
+dosya — `QA-DEMO-SYSTEM/api-tests/scripts/schema-negative-proof.js` —
+ve `npm run api:test:schema:negative-proof` ile herkes tarafından
+tekrar çalıştırılabilir. Uygulama kodunu veya production response'unu
+**değiştirmez**; yalnızca aynı canonical şemalara + aynı pinlenmiş
+`ajv@8.20.0` sürümüne, literal/kasıtlı fixture'lar besler. Script,
+kayıtlı vaka sayısını (`CASES.length`) kendi çıktısında yazdırır — bu
+yüzden aşağıdaki sayı ile gerçek çıktı arasında fark **olamaz**.
+
+**Gerçek komut ve çıktı** (`cd QA-DEMO-SYSTEM/api-tests && npm run
+api:test:schema:negative-proof`):
 
 ```text
-=== HEALTH ===
-[PROOF-OK] valid response -> valid=true (expected true)
-[PROOF-OK] missing required (status) -> valid=false (expected false)
+Total registered cases: 18
+
+[PROOF-OK] [HEALTH] valid response ({status:"ok"}) -> valid=true (expected true)
+[PROOF-OK] [HEALTH] missing required (status) -> valid=false (expected false)
     errors: must have required property 'status'
-[PROOF-OK] wrong type (status: number) -> valid=false (expected false)
+[PROOF-OK] [HEALTH] wrong type (status: number) -> valid=false (expected false)
+    errors: must be equal to constant
+[PROOF-OK] [HEALTH] wrong value, same type (status: "degraded") -> valid=false (expected false)
+    errors: must be equal to constant
+[PROOF-OK] [HEALTH] null (status: null) -> valid=false (expected false)
+    errors: must be equal to constant
+[PROOF-OK] [AUTH] valid response -> valid=true (expected true)
+[PROOF-OK] [AUTH] wrong type (token: number) -> valid=false (expected false)
     errors: must be string
-[PROOF-OK] null (status: null) -> valid=false (expected false)
-    errors: must be string
-
-=== AUTH LOGIN ===
-[PROOF-OK] valid response -> valid=true (expected true)
-[PROOF-OK] wrong type (token: number) -> valid=false (expected false)
-    errors: must be string
-[PROOF-OK] missing required (token) -> valid=false (expected false)
+[PROOF-OK] [AUTH] missing required (token) -> valid=false (expected false)
     errors: must have required property 'token'
-[PROOF-OK] null (token: null) -> valid=false (expected false)
+[PROOF-OK] [AUTH] null (token: null) -> valid=false (expected false)
     errors: must be string
-
-=== PRODUCTS ===
-[PROOF-OK] valid list -> valid=true (expected true)
-[PROOF-OK] valid detail -> valid=true (expected true)
-[PROOF-OK] invalid item type (id as string) -> valid=false (expected false)
+[PROOF-OK] [AUTH] empty string (token: "") -> valid=false (expected false)
+    errors: must NOT have fewer than 1 characters
+[PROOF-OK] [PRODUCTS] valid list -> valid=true (expected true)
+[PROOF-OK] [PRODUCTS] valid detail -> valid=true (expected true)
+[PROOF-OK] [PRODUCTS] invalid item type (id as string) -> valid=false (expected false)
     errors: must be integer
-[PROOF-OK] null forbidden (stock_quantity: null) -> valid=false (expected false)
+[PROOF-OK] [PRODUCTS] null forbidden (stock_quantity: null) -> valid=false (expected false)
     errors: must be integer
-[PROOF-OK] unexpected additional property -> valid=false (expected false)
+[PROOF-OK] [PRODUCTS] unexpected additional property -> valid=false (expected false)
     errors: must NOT have additional properties
+[PROOF-OK] [ERROR] real 400 body (POST /api/auth/login, missing password) -> valid=true (expected true)
+[PROOF-OK] [ERROR] real 401 body (POST /api/auth/login, wrong password) -> valid=true (expected true)
+[PROOF-OK] [ERROR] real 404 body (GET /api/products/9999) -> valid=true (expected true)
+
+--- Summary ---
+Total cases: 18
+PROOF-OK: 18
+PROOF-BROKEN: 0
+
+Schema negative/positive proof run: PASS
 ```
 
-**15/15 proof beklenen şekilde sonuçlandı.** `PROOF-OK`, "validator'ın
-davranışı beklentiyle eşleşti" anlamına gelir (geçerli payload → PASS,
-bozuk payload → FAIL) — bu, uygulamanın veya test suite'inin FAIL
-olduğu anlamına gelmez; tam tersine validator'ın gerçekten çalıştığının
-kanıtıdır.
-
-Ayrıca `common/error-response.schema.json`, gerçek 400/401/404
-response body'lerine (aynı oturumda `curl` ile yakalanan) karşı da
-doğrulandı:
-
-```text
-PASS  POST /api/auth/login 400 (missing password) -> {"error":"Email ve şifre zorunludur."}
-PASS  POST /api/auth/login 401 (wrong password) -> {"error":"Email veya şifre hatalı"}
-PASS  GET /api/products/9999 404 (unknown product) -> {"error":"Ürün bulunamadı"}
-```
-
-3/3 PASS.
+**Gerçek proof sayısı: 18/18 PROOF-OK** (HEALTH: 5, AUTH: 5 — B1'in
+`empty string (token:"")` case'i dahil, PRODUCTS: 5, ERROR: 3 — gerçek
+400/401/404 body'leriyle). Script `process.exitCode = 1` döner eğer
+herhangi bir vaka beklenenden farklı sonuçlanırsa (deterministic,
+CI-friendly). `PROOF-OK`, "validator'ın davranışı beklentiyle eşleşti"
+anlamına gelir (geçerli payload → kabul, bozuk payload → red) — bu,
+uygulamanın veya test suite'inin FAIL olduğu anlamına gelmez; tam
+tersine validator'ın gerçekten çalıştığının kanıtıdır.
 
 ---
 
@@ -194,9 +231,11 @@ kullanmıyor) — P5.3'te protected endpoint'lerle eklenecek.
 
 **PASS** — AJV compatibility gate netleşti (in-sandbox embedding
 güvenilir değil → Node API wrapper), 6 canonical şema oluşturuldu ve
-gerçek response'lara karşı doğrulandı, 15 negative proof + 3 error-schema
-proof beklenen şekilde sonuçlandı, 4/4 gerçek endpoint schema+header
-validation PASS.
+gerçek response'lara karşı doğrulandı, tracked/reproducible proof
+script'i ile **18/18 negative/positive proof** (HEALTH 5, AUTH 5,
+PRODUCTS 5, ERROR 3) beklenen şekilde sonuçlandı, 4/4 gerçek endpoint
+schema+header validation PASS. Codex B1 (empty token) ve non-blocking
+(health `const`) düzeltmeleri gerçek çalıştırma ile doğrulandı.
 
 ---
 

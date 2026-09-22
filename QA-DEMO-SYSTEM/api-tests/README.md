@@ -117,7 +117,8 @@ QA-DEMO-SYSTEM/api-tests/
 ├── package.json                                  (newman + ajv devDependency; "api:test:postman",
 │                                                    "api:test:postman:basic" script'leri)
 ├── scripts/
-│   └── run-schema-validation.js                  (P5.2 — Newman Node API + AJV wrapper)
+│   ├── run-schema-validation.js                  (P5.2 — Newman Node API + AJV wrapper)
+│   └── schema-negative-proof.js                  (P5.2 fix — tracked/reproducible negative+positive proof)
 └── postman/
     ├── collections/
     │   └── qa-demo-system-public.postman_collection.json   (P5.1 — 4 PUBLIC endpoint, status-code smoke)
@@ -154,11 +155,13 @@ shared/schemas/
 **Schema'lar burada değil `shared/schemas/` altında** (bkz. bölüm 7 —
 canonical karar, P5.2'de active hale geldi). Reports/evidence de
 burada değil `QA-DEMO-SYSTEM/evidence/P5-API-TESTING/` altında (bkz.
-bölüm 11). `scripts/` klasörü **P5.2'de oluşturuldu** — yalnızca tek
-bir dosya (`run-schema-validation.js`), AJV'nin pm.test() sandbox'ında
-güvenilir çalışmaması nedeniyle gereken Newman Node API wrapper'ı
-(bkz. bölüm 3 ve 7 — compatibility gate sonucu); "devasa" bir script
-altyapısı değildir.
+bölüm 11). `scripts/` klasörü **P5.2'de oluşturuldu** — iki dosya:
+`run-schema-validation.js` (AJV'nin pm.test() sandbox'ında güvenilir
+çalışmaması nedeniyle gereken Newman Node API wrapper'ı, bkz. bölüm 3
+ve 7 — compatibility gate sonucu) ve `schema-negative-proof.js`
+(tracked/reproducible negative+positive proof runner — Codex P5.2
+review'inin B2 bulgusuna karşılık eklendi, bkz. bölüm 7); "devasa" bir
+script altyapısı değildir.
 
 **`postman/data/`** P5.1'de **oluşturulmadı** — bu paketin tek
 data-driven ihtiyacı (`POST /api/auth/login` için tek bir deterministic
@@ -226,8 +229,8 @@ active hale getirildi** — `.gitkeep` kaldırıldı, 6 gerçek
 | Dosya | Kapsadığı Response | Not |
 |---|---|---|
 | `common/error-response.schema.json` | Tüm `{error:string}` hata response'ları | Reusable — auth 400/401 ve products 404'te ampirik doğrulandı |
-| `health/health-response.schema.json` | `GET /api/health` 200 | |
-| `auth/login-response.schema.json` | `POST /api/auth/login` 200 | |
+| `health/health-response.schema.json` | `GET /api/health` 200 | `status` alanı `const:"ok"` — kaynak kod tek, koşulsuz literal üretir (Codex fix) |
+| `auth/login-response.schema.json` | `POST /api/auth/login` 200 | `token` alanı `minLength:1` — boş string kabul edilmez (Codex fix B1) |
 | `products/product-item.schema.json` | Tek ürün nesnesi | Reusable, `$ref` ile list/detail'e bağlanır |
 | `products/products-list-response.schema.json` | `GET /api/products` 200 | `product-item`'a `$ref` |
 | `products/product-detail-response.schema.json` | `GET /api/products/:id` 200 | `product-item`'a `$ref` |
@@ -286,18 +289,20 @@ AJV instance'ı `{ strict: true, allErrors: true }` ile oluşturuldu;
 set edilmedi** — validator yalnızca gözlemler, test edilen response'u
 asla değiştirmez.
 
-### Negative Proof (Validator'ın Gerçekten Reddettiğinin Kanıtı)
+### Negative/Positive Proof (Validator'ın Gerçekten Doğru Karar Verdiğinin Kanıtı)
 
 Uygulama kodu veya production response'u değiştirilmeden, aynı
-şemalar + aynı pinlenmiş AJV sürümüyle, ayrı bir (repository'ye commit
-edilmemiş) proof script'inde kasıtlı olarak bozuk payload'lar test
-edildi — 15/15 proof beklenen şekilde sonuçlandı (bkz.
-`evidence/P5-API-TESTING/P5.2-AJV-SCHEMA/EXECUTION.md` bölüm
-"Negative Proof"): eksik `required` alan, yanlış `type`, `null`, ve
-beklenmeyen `additionalProperties` — her kategori (HEALTH, AUTH,
-PRODUCTS) için AJV tarafından doğru şekilde reddedildi. Ayrıca
-`common/error-response.schema.json`, gerçek 400/401/404 response
-body'lerine (curl ile yakalanan) karşı da doğrulandı — 3/3 PASS.
+şemalar + aynı pinlenmiş AJV sürümüyle, **tracked ve reproducible** bir
+proof script'inde (`api-tests/scripts/schema-negative-proof.js`, `npm
+run api:test:schema:negative-proof`) kasıtlı olarak bozuk (ve bazı
+geçerli) payload'lar test edildi — **18/18 proof beklenen şekilde
+sonuçlandı** (bkz. `evidence/P5-API-TESTING/P5.2-AJV-SCHEMA/EXECUTION.md`
+bölüm 5): eksik `required` alan, yanlış `type`, `null`, boş string
+(`token: ""`), ve beklenmeyen `additionalProperties` — her kategori
+(HEALTH 5, AUTH 5, PRODUCTS 5, ERROR 3) için AJV tarafından doğru
+şekilde kabul/reddedildi. Script kayıtlı vaka sayısını kendi çıktısında
+yazdırır (`CASES.length`) — evidence'teki sayı ile script çıktısı
+arasında fark olamaz.
 
 ---
 
