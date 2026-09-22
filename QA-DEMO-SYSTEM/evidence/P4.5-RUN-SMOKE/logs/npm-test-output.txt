@@ -1,0 +1,497 @@
+
+> qa-demo-system@0.1.0 test
+> npm test --workspace backend
+
+
+> qa-demo-system-backend@0.1.0 test
+> node --test tests/**/*.test.js
+
+TAP version 13
+# (node:1040) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: valid login returns 200 and a token
+ok 1 - valid login returns 200 and a token
+  ---
+  duration_ms: 64.776073
+  type: 'test'
+  ...
+# Subtest: invalid password returns 401 with generic BR-AUTH-003 message
+ok 2 - invalid password returns 401 with generic BR-AUTH-003 message
+  ---
+  duration_ms: 8.461262
+  type: 'test'
+  ...
+# Subtest: unknown user returns the same generic message as invalid password
+ok 3 - unknown user returns the same generic message as invalid password
+  ---
+  duration_ms: 15.330115
+  type: 'test'
+  ...
+# Subtest: two logins by the same user produce different, unpredictable tokens
+ok 4 - two logins by the same user produce different, unpredictable tokens
+  ---
+  duration_ms: 17.234198
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=cd7c9c55-e6af-4b0f-961c-fe3503db1f7b order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: a valid session token is accepted on a protected route
+ok 5 - a valid session token is accepted on a protected route
+  ---
+  duration_ms: 10.124915
+  type: 'test'
+  ...
+# Subtest: a forged/made-up token is rejected with 401 on a protected route
+ok 6 - a forged/made-up token is rejected with 401 on a protected route
+  ---
+  duration_ms: 4.936349
+  type: 'test'
+  ...
+# (node:1041) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# [event] emitted type=order.paid event_id=30edf682-77e9-416f-b324-b92f2c7979c9 order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: a PAID order emits exactly one order.paid event with a well-formed contract
+ok 7 - a PAID order emits exactly one order.paid event with a well-formed contract
+  ---
+  duration_ms: 76.271556
+  type: 'test'
+  ...
+# Subtest: a DECLINED order does not emit an order.paid event
+ok 8 - a DECLINED order does not emit an order.paid event
+  ---
+  duration_ms: 16.263849
+  type: 'test'
+  ...
+# Subtest: a TIMEOUT order does not emit an order.paid event
+ok 9 - a TIMEOUT order does not emit an order.paid event
+  ---
+  duration_ms: 10.365056
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=2685587d-9fb8-4707-9f0b-8a119ef40aa4 order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# [event] emitted type=order.paid event_id=98798a0b-2b17-4102-b814-369d168f46ba order_id=2
+# [notification] persisted id=2 user_id=1 order_id=2
+# Subtest: event_id values are unique across multiple paid orders
+ok 10 - event_id values are unique across multiple paid orders
+  ---
+  duration_ms: 21.318115
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=608474e3-6ca7-406b-ad23-c8d885826281 order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: the events table rejects a duplicate order.paid event for the same order
+ok 11 - the events table rejects a duplicate order.paid event for the same order
+  ---
+  duration_ms: 9.978416
+  type: 'test'
+  ...
+# (node:1042) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# [event] emitted type=order.paid event_id=dd5d20f9-3854-4c5c-b889-d3798b490f18 order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: a PAID order persists a notification for the owning user
+ok 12 - a PAID order persists a notification for the owning user
+  ---
+  duration_ms: 74.22685
+  type: 'test'
+  ...
+# Subtest: a DECLINED order does not create a notification
+ok 13 - a DECLINED order does not create a notification
+  ---
+  duration_ms: 47.318831
+  type: 'test'
+  ...
+# Subtest: a TIMEOUT order does not create a notification
+ok 14 - a TIMEOUT order does not create a notification
+  ---
+  duration_ms: 10.807129
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=e7e3a286-7513-4f7a-9e47-a25ae9d4ab0c order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: another user cannot see a different user's notifications
+ok 15 - another user cannot see a different user's notifications
+  ---
+  duration_ms: 14.227861
+  type: 'test'
+  ...
+# Subtest: anonymous access to GET /api/notifications is rejected with 401
+ok 16 - anonymous access to GET /api/notifications is rejected with 401
+  ---
+  duration_ms: 5.149494
+  type: 'test'
+  ...
+# Subtest: a forged token is rejected on GET /api/notifications with 401
+ok 17 - a forged token is rejected on GET /api/notifications with 401
+  ---
+  duration_ms: 3.6416
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=37cad785-8c11-4c41-b847-63d9e9d2ba2e order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: the notifications table rejects a duplicate order.paid notification for the same order
+ok 18 - the notifications table rejects a duplicate order.paid notification for the same order
+  ---
+  duration_ms: 6.999027
+  type: 'test'
+  ...
+# (node:1064) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# [event] emitted type=order.paid event_id=84541da0-9aee-4dc3-a723-9222e394559e order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: approved payment token creates a PAID order and decrements stock
+ok 19 - approved payment token creates a PAID order and decrements stock
+  ---
+  duration_ms: 95.241128
+  type: 'test'
+  ...
+# Subtest: declined payment token leaves order as PAYMENT_FAILED and stock unchanged
+ok 20 - declined payment token leaves order as PAYMENT_FAILED and stock unchanged
+  ---
+  duration_ms: 20.34213
+  type: 'test'
+  ...
+# Subtest: timeout payment token leaves order as PAYMENT_TIMEOUT and stock unchanged
+ok 21 - timeout payment token leaves order as PAYMENT_TIMEOUT and stock unchanged
+  ---
+  duration_ms: 12.40736
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=cbd158a9-4b66-45a4-b4c7-4385fc3e3b15 order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: omitting payment_token defaults to the approved pattern
+ok 22 - omitting payment_token defaults to the approved pattern
+  ---
+  duration_ms: 8.429293
+  type: 'test'
+  ...
+# Subtest: creating an order without a valid session token returns 401
+ok 23 - creating an order without a valid session token returns 401
+  ---
+  duration_ms: 6.296862
+  type: 'test'
+  ...
+# Subtest: ordering more than the available stock returns 409
+ok 24 - ordering more than the available stock returns 409
+  ---
+  duration_ms: 8.457357
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=4f9c343a-2aa7-4c29-823d-59e10e8a885a order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: GET /api/orders/:id returns the order with its items for the owning user
+ok 25 - GET /api/orders/:id returns the order with its items for the owning user
+  ---
+  duration_ms: 9.296102
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=74044e40-90ba-4897-8602-126a7e991778 order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: GET /api/orders/:id returns 404 for an order belonging to another user
+ok 26 - GET /api/orders/:id returns 404 for an order belonging to another user
+  ---
+  duration_ms: 8.781756
+  type: 'test'
+  ...
+# Subtest: duplicate product lines over stock: 409, no order created, stock untouched
+ok 27 - duplicate product lines over stock: 409, no order created, stock untouched
+  ---
+  duration_ms: 7.5111
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=8bf22bf6-c1e1-4816-8dfb-cdd6035bdb0b order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: duplicate product lines within stock: aggregated quantity is fulfilled once
+ok 28 - duplicate product lines within stock: aggregated quantity is fulfilled once
+  ---
+  duration_ms: 8.502754
+  type: 'test'
+  ...
+# Subtest: quantity true is rejected with 400, no mutation
+ok 29 - quantity true is rejected with 400, no mutation
+  ---
+  duration_ms: 8.103781
+  type: 'test'
+  ...
+# Subtest: quantity false is rejected with 400, no mutation
+ok 30 - quantity false is rejected with 400, no mutation
+  ---
+  duration_ms: 5.553891
+  type: 'test'
+  ...
+# Subtest: quantity [2] is rejected with 400, no mutation
+ok 31 - quantity [2] is rejected with 400, no mutation
+  ---
+  duration_ms: 5.356502
+  type: 'test'
+  ...
+# Subtest: quantity {} is rejected with 400, no mutation
+ok 32 - quantity {} is rejected with 400, no mutation
+  ---
+  duration_ms: 7.172344
+  type: 'test'
+  ...
+# Subtest: quantity null is rejected with 400, no mutation
+ok 33 - quantity null is rejected with 400, no mutation
+  ---
+  duration_ms: 5.831424
+  type: 'test'
+  ...
+# Subtest: quantity "2" is rejected with 400, no mutation
+ok 34 - quantity "2" is rejected with 400, no mutation
+  ---
+  duration_ms: 6.945318
+  type: 'test'
+  ...
+# Subtest: quantity "1.5" is rejected with 400, no mutation
+ok 35 - quantity "1.5" is rejected with 400, no mutation
+  ---
+  duration_ms: 10.24517
+  type: 'test'
+  ...
+# Subtest: quantity 1.5 is rejected with 400, no mutation
+ok 36 - quantity 1.5 is rejected with 400, no mutation
+  ---
+  duration_ms: 6.145926
+  type: 'test'
+  ...
+# Subtest: quantity 0 is rejected with 400, no mutation
+ok 37 - quantity 0 is rejected with 400, no mutation
+  ---
+  duration_ms: 5.773904
+  type: 'test'
+  ...
+# Subtest: quantity -1 is rejected with 400, no mutation
+ok 38 - quantity -1 is rejected with 400, no mutation
+  ---
+  duration_ms: 6.197343
+  type: 'test'
+  ...
+# Subtest: product_id true is rejected with 400, no mutation
+ok 39 - product_id true is rejected with 400, no mutation
+  ---
+  duration_ms: 5.108683
+  type: 'test'
+  ...
+# Subtest: product_id false is rejected with 400, no mutation
+ok 40 - product_id false is rejected with 400, no mutation
+  ---
+  duration_ms: 7.920151
+  type: 'test'
+  ...
+# Subtest: product_id [1] is rejected with 400, no mutation
+ok 41 - product_id [1] is rejected with 400, no mutation
+  ---
+  duration_ms: 4.655948
+  type: 'test'
+  ...
+# Subtest: product_id {} is rejected with 400, no mutation
+ok 42 - product_id {} is rejected with 400, no mutation
+  ---
+  duration_ms: 4.309305
+  type: 'test'
+  ...
+# Subtest: product_id null is rejected with 400, no mutation
+ok 43 - product_id null is rejected with 400, no mutation
+  ---
+  duration_ms: 4.616582
+  type: 'test'
+  ...
+# Subtest: product_id "1" is rejected with 400, no mutation
+ok 44 - product_id "1" is rejected with 400, no mutation
+  ---
+  duration_ms: 5.111557
+  type: 'test'
+  ...
+# Subtest: product_id 1.5 is rejected with 400, no mutation
+ok 45 - product_id 1.5 is rejected with 400, no mutation
+  ---
+  duration_ms: 5.084684
+  type: 'test'
+  ...
+# Subtest: product_id 0 is rejected with 400, no mutation
+ok 46 - product_id 0 is rejected with 400, no mutation
+  ---
+  duration_ms: 4.922953
+  type: 'test'
+  ...
+# Subtest: product_id -1 is rejected with 400, no mutation
+ok 47 - product_id -1 is rejected with 400, no mutation
+  ---
+  duration_ms: 4.907403
+  type: 'test'
+  ...
+# Subtest: payment_token null is rejected with 400, not silently defaulted
+ok 48 - payment_token null is rejected with 400, not silently defaulted
+  ---
+  duration_ms: 4.880554
+  type: 'test'
+  ...
+# Subtest: payment_token false is rejected with 400, not silently defaulted
+ok 49 - payment_token false is rejected with 400, not silently defaulted
+  ---
+  duration_ms: 5.107059
+  type: 'test'
+  ...
+# Subtest: payment_token 0 is rejected with 400, not silently defaulted
+ok 50 - payment_token 0 is rejected with 400, not silently defaulted
+  ---
+  duration_ms: 4.708984
+  type: 'test'
+  ...
+# Subtest: payment_token "" is rejected with 400, not silently defaulted
+ok 51 - payment_token "" is rejected with 400, not silently defaulted
+  ---
+  duration_ms: 4.965751
+  type: 'test'
+  ...
+# Subtest: an unrecognized payment_token string is rejected with 400
+ok 52 - an unrecognized payment_token string is rejected with 400
+  ---
+  duration_ms: 12.621498
+  type: 'test'
+  ...
+# Subtest: malformed JSON body returns 400, not 500
+ok 53 - malformed JSON body returns 400, not 500
+  ---
+  duration_ms: 4.879006
+  type: 'test'
+  ...
+# (node:1070) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: GET /api/products returns seeded products with in-stock and out-of-stock items
+ok 54 - GET /api/products returns seeded products with in-stock and out-of-stock items
+  ---
+  duration_ms: 57.323959
+  type: 'test'
+  ...
+# Subtest: GET /api/products/:id returns a single product
+ok 55 - GET /api/products/:id returns a single product
+  ---
+  duration_ms: 8.356717
+  type: 'test'
+  ...
+# Subtest: GET /api/products/:id returns 404 for an unknown id
+ok 56 - GET /api/products/:id returns 404 for an unknown id
+  ---
+  duration_ms: 11.659087
+  type: 'test'
+  ...
+# (node:1077) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: seedDatabase deterministically populates users and products tables
+ok 57 - seedDatabase deterministically populates users and products tables
+  ---
+  duration_ms: 1.896523
+  type: 'test'
+  ...
+# Subtest: reseeding after activity resets AUTOINCREMENT counters deterministically
+ok 58 - reseeding after activity resets AUTOINCREMENT counters deterministically
+  ---
+  duration_ms: 3.258848
+  type: 'test'
+  ...
+# Subtest: CHECK constraint rejects negative product stock at the database level
+ok 59 - CHECK constraint rejects negative product stock at the database level
+  ---
+  duration_ms: 4.765631
+  type: 'test'
+  ...
+# Subtest: CHECK constraint rejects a non-positive order_items quantity
+ok 60 - CHECK constraint rejects a non-positive order_items quantity
+  ---
+  duration_ms: 0.873231
+  type: 'test'
+  ...
+# Subtest: FOREIGN KEY constraint rejects an order_item referencing a nonexistent order
+ok 61 - FOREIGN KEY constraint rejects an order_item referencing a nonexistent order
+  ---
+  duration_ms: 0.748899
+  type: 'test'
+  ...
+# Subtest: reseeding clears events and notifications and resets notification ids deterministically
+ok 62 - reseeding clears events and notifications and resets notification ids deterministically
+  ---
+  duration_ms: 0.9591
+  type: 'test'
+  ...
+# Subtest: UNIQUE(order_id, event_type) prevents a duplicate order.paid event at the database level
+ok 63 - UNIQUE(order_id, event_type) prevents a duplicate order.paid event at the database level
+  ---
+  duration_ms: 0.730556
+  type: 'test'
+  ...
+# Subtest: UNIQUE(order_id, type) prevents a duplicate order.paid notification at the database level
+ok 64 - UNIQUE(order_id, type) prevents a duplicate order.paid notification at the database level
+  ---
+  duration_ms: 0.734872
+  type: 'test'
+  ...
+# (node:1085) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: an authenticated client can connect to the realtime WebSocket
+ok 65 - an authenticated client can connect to the realtime WebSocket
+  ---
+  duration_ms: 70.585027
+  type: 'test'
+  ...
+# Subtest: a connection with a missing or invalid token is rejected
+ok 66 - a connection with a missing or invalid token is rejected
+  ---
+  duration_ms: 6.608759
+  type: 'test'
+  ...
+# Subtest: a connection to a non-/ws path is rejected
+ok 67 - a connection to a non-/ws path is rejected
+  ---
+  duration_ms: 8.772679
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=4bba2841-dc86-45c2-a4a9-8c64994b5d8e order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# [websocket] delivered=true user_id=1 notification_id=1
+# Subtest: the owning user receives a realtime notification when their order is paid
+ok 68 - the owning user receives a realtime notification when their order is paid
+  ---
+  duration_ms: 10.837738
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=557694cc-878e-4ace-b627-1d9178e1fde5 order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: another connected user does not receive someone else's notification
+ok 69 - another connected user does not receive someone else's notification
+  ---
+  duration_ms: 125.798281
+  type: 'test'
+  ...
+# Subtest: a DECLINED order does not push any realtime message
+ok 70 - a DECLINED order does not push any realtime message
+  ---
+  duration_ms: 111.805419
+  type: 'test'
+  ...
+# Subtest: closing a connection removes it from the connected-user set
+ok 71 - closing a connection removes it from the connected-user set
+  ---
+  duration_ms: 57.80922
+  type: 'test'
+  ...
+# [event] emitted type=order.paid event_id=2c27866e-f2ad-4aed-b013-d8bd026eeeea order_id=1
+# [notification] persisted id=1 user_id=1 order_id=1
+# Subtest: an order created without any live connection still persists a fetchable notification
+ok 72 - an order created without any live connection still persists a fetchable notification
+  ---
+  duration_ms: 9.059067
+  type: 'test'
+  ...
+1..72
+# tests 72
+# suites 0
+# pass 72
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 988.37926
