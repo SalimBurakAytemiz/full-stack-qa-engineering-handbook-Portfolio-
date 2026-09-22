@@ -1,0 +1,13 @@
+{
+  "$id": "https://qa-demo-system.local/schemas/health/health-response.schema.json",
+  "title": "GET /api/health — 200 response",
+  "description": "Kaynak: QA-DEMO-SYSTEM/backend/src/app.js satır 14 — `app.get('/api/health', (req, res) => res.json({ status: 'ok' }));`. Handler'da koşul/dallanma yok — status alanı için tek, sabit, hardcoded literal değer üretilir; başka hiçbir status değeri kod tabanında üretilmez. Bu yüzden `type:string` yerine `const:\"ok\"` kullanıldı (gerçek contract'ın birebir yansıması, aşırı sıkılaştırma değil). Sistem ileride bir DB/dependency health-check dallanması eklerse (bugün yok) bu şema o değişiklikle birlikte güncellenmelidir.",
+  "type": "object",
+  "properties": {
+    "status": {
+      "const": "ok"
+    }
+  },
+  "required": ["status"],
+  "additionalProperties": false
+}

@@ -1,0 +1,13 @@
+{
+  "$id": "https://qa-demo-system.local/schemas/common/error-response.schema.json",
+  "title": "Standart hata response contract'ı",
+  "description": "Kaynak: routes/auth.routes.js (`res.status(result.status).json({ error: result.message })`), routes/products.routes.js (404 handler) — tüm hata response'ları aynı {error: string} şeklini kullanır. Ampirik doğrulama: POST /api/auth/login → 400 (eksik alan) ve 401 (yanlış şifre), GET /api/products/:id → 404 (bulunamayan ürün). Reusable — endpoint'e özel ayrı bir hata şeması oluşturulmadı (bkz. QA-DEMO-SYSTEM/api-tests/README.md).",
+  "type": "object",
+  "properties": {
+    "error": {
+      "type": "string"
+    }
+  },
+  "required": ["error"],
+  "additionalProperties": false
+}
