@@ -118,8 +118,13 @@ QA-DEMO-SYSTEM/
     └── P4.5-RUN-SMOKE/      P4.5 — clean-install + smoke execution evidence
 ```
 
-`shared/{test-data, schemas}/` (repository kökünde) da bu sistem
-tarafından kullanılır — bkz. `ARCHITECTURE.md` bölüm 14.
+`shared/test-data/` (repository kökünde: `auth-users.json`,
+`products.json`, `payment-test-patterns.json`) bu sistem tarafından
+**aktif olarak kullanılır** — seed data ve payment test pattern'leri
+buradan okunur. `shared/schemas/` şu an yalnızca `.gitkeep` içerir —
+Phase 5'in API contract/JSON Schema çalışması için **reserved/planned**
+bir konumdur, henüz doldurulmamıştır (bkz. `ARCHITECTURE.md` bölüm
+14).
 
 ---
 
@@ -173,7 +178,7 @@ blocker değildir.
 ## 12. Test Kapsamı Özeti
 
 `backend/tests/` altında `node --test` (harici framework yok) ile
-**72 test**, 6 dosyada: `auth`, `products`, `orders`, `events`,
+**72 test**, 7 dosyada: `auth`, `products`, `orders`, `events`,
 `notifications`, `websocket`, `seed`. Tüm testler P4.5 kapanışında
 72/72 PASS durumundaydı (bkz. `evidence/P4.5-RUN-SMOKE/logs/npm-test-output.txt`).
 

@@ -24,7 +24,7 @@ bkz. [`ARCHITECTURE.md`](ARCHITECTURE.md) (P4.0).
 | P4.3 | Events & Notifications Layer | CLEAN | PASS WITH NON-BLOCKING NOTES (0 blocker) |
 | P4.4 | Controlled Defect Reproduction (BUG-AUTH-EDU-001) | CLEAN | PASS WITH NON-BLOCKING NOTES (0 blocker) |
 | P4.5 | Run Documentation & Smoke Validation | CLEAN | PASS WITH NON-BLOCKING NOTES (0 blocker) |
-| P4.6 | Repository Integration & Closeout (bu doküman) | CLEAN | Beklemede (bu paket sonunda talep edilecek) |
+| P4.6 | Repository Integration & Closeout (bu doküman) | IN PROGRESS | İlk delta review: FAIL/CHANGES REQUIRED (2 blocker — API auth iddiası ve SQLite constraint sınıflandırması — düzeltildi); bağımsız re-review bekleniyor |
 
 **Not:** P4.2 gerçek review sürecinde önce 3 blocker + 6 non-blocking
 not bulundu (Codex ilk review), düzeltildi, ikinci bağımsız review'de
@@ -39,9 +39,19 @@ doğrulandı" anlamına gelir.
 - **Çalışan uygulama:** Node.js + Express backend, SQLite database,
   framework'süz frontend, WebSocket — `npm install && npm run dev` ile
   ayağa kalkıyor (bkz. [`README.md`](README.md) bölüm 5–7).
-- **API yüzeyi:** `/api/auth`, `/api/products`, `/api/orders`,
-  `/api/notifications`, `/ws` — hepsi authenticated/authorization
-  kontrolleriyle (bkz. `docs/RUN-INSTRUCTIONS.md`).
+- **API yüzeyi** (gerçek source code'dan doğrulanmıştır — bkz.
+  `backend/src/app.js`, `backend/src/routes/*.js`):
+  - **PUBLIC endpoint'ler** (auth gerektirmez): `GET /api/health`,
+    `POST /api/auth/login`, `GET /api/products`,
+    `GET /api/products/:id`.
+  - **PROTECTED endpoint'ler** (`requireAuth` middleware ile
+    korunur): `POST /api/orders`, `GET /api/orders/:id`,
+    `GET /api/notifications`.
+  - **WebSocket `/ws`**: ayrı bir mekanizma ile korunur — bağlantı
+    query string'deki `?token=` değeri `sessions` tablosuna karşı
+    doğrulanır (Express middleware değil, `websocketServer.js`
+    içinde upgrade aşamasında kontrol edilir).
+  - Detaylar ve tam endpoint tablosu: `docs/RUN-INSTRUCTIONS.md`.
 - **Gerçek defect evidence:** `BUG-AUTH-EDU-001`, Phase 3'ün kurgusal
   senaryosu, gerçek sistemde çalıştırıldı — sonuç **NOT REPRODUCED**
   (bkz. `evidence/BUG-AUTH-EDU-001/EXECUTION.md`), Phase 3 tarihsel
@@ -117,7 +127,7 @@ Phase 4 boyunca kabul edilen, hiçbiri blocker olmayan notlar:
 | # | Konu | Sınıflandırma | Kaynak | Detay |
 |---|---|---|---|---|
 | 1 | Request idempotency (`POST /api/orders` tekrarı ayrı sipariş üretir) | **Accepted Scope Boundary** | P4.2 | P4.0/P4.2 acceptance criteria'sında yok, bilinçli olarak kurulmadı — bkz. `docs/RUN-INSTRUCTIONS.md` "Bilinen Sınırlama — Idempotency" |
-| 2 | SQLite DB constraint hardening | **Resolved + Future Hardening** | P4.2 Codex review (ilk) | CHECK/FOREIGN KEY constraint'leri + transaction P4.2 fix'inde eklendi; ileri sertleştirme ihtiyaç olursa değerlendirilebilir |
+| 2 | SQLite DB constraint kapsamı — yalnızca yeni/temiz veritabanı | **Known Limitation** | P4.2 Codex review (ilk) + P4.6 Codex review | `schema.js`, tüm tabloları `CREATE TABLE IF NOT EXISTS` ile tanımlar (bkz. `backend/src/database/connection.js`/`schema.js`) — bu, SQLite'ın **var olan bir tabloyu değiştirmediği**, yalnızca hiç yoksa oluşturduğu anlamına gelir. Sonuç: **yeni/temiz** oluşturulan bir veritabanı (`backend/data/qa-demo.db` yoksa veya `npm run db:seed` ile sıfırdan kurulmuşsa) CHECK/FOREIGN KEY constraint'lerini **alır**; ancak P4.2 fix'inden **önce** oluşturulmuş ve o tarihten beri silinmemiş eski bir veritabanı dosyası varsa, bu dosyadaki tablolar **otomatik migrate edilmez** — eski şema (constraint'siz) olduğu gibi kalır. P4 kapsamında bir database migration/backfill mekanizması **kurulmamıştır** ve **P4.6'da da kurulmayacaktır**; pratikte etkisi düşüktür çünkü `RUN-INSTRUCTIONS.md`'nin standart kurulum akışı (`rm backend/data/qa-demo.db` veya `npm run db:seed`) zaten sıfırdan/temiz bir veritabanı üretir. |
 | 3 | Frontend'de GET/WebSocket yarışı → olası çift notification görünümü | **Known Limitation** (UI-only) | P4.3 Codex review | DB'de duplicate satır oluşmaz (`UNIQUE(order_id, type)`), yalnızca sunum sorunu |
 | 4 | `[event]`/`[notification]` logları transaction commit öncesi yazılıyor | **Known Limitation** | P4.3 Codex review | Hipotetik rollback durumunda log yanıltıcı olabilir, düşük risk |
 | 5 | WebSocket negatif testlerinde 100ms sabit bekleme penceresi | **Known Limitation / Future Hardening** | P4.3 Codex review | Yoğun ortamda teorik düşük olasılıklı false-positive riski |
@@ -133,10 +143,18 @@ paket/backlog maddeleridir.
 
 ## 10. Blocker Durumu
 
-**0 açık blocker.** Phase 4 boyunca tespit edilen tüm blocker'lar
-(P4.2 ilk review'daki 3 blocker: duplicate stock bypass, predictable
-session token, geçersiz tip kabulü) aynı paket içinde düzeltildi ve
-bağımsız ikinci review ile doğrulandı.
+**Sistemde (uygulama kodunda) 0 açık blocker.** Phase 4 boyunca
+tespit edilen tüm uygulama-seviyesi blocker'lar (P4.2 ilk review'daki
+3 blocker: duplicate stock bypass, predictable session token,
+geçersiz tip kabulü) aynı paket içinde düzeltildi ve bağımsız ikinci
+review ile doğrulandı.
+
+Ayrıca, **bu closeout dokümanının kendisinde** P4.6'nın ilk bağımsız
+delta review'i 2 blocker buldu (API authentication contract'ının
+yanlış "hepsi authenticated" olarak anlatılması; SQLite constraint
+kapsamının "resolved" olarak yanlış sınıflandırılması — her ikisi de
+yalnızca dokümantasyon doğruluğu sorunuydu, uygulama koduna dokunmadı)
+— bu paket kapsamında düzeltildi (bkz. bölüm 2, P4.6 satırı).
 
 ---
 
