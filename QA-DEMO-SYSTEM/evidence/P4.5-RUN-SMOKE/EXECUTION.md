@@ -247,3 +247,27 @@ gerçek sistem üzerinde PASS almıştır. Reproducibility iki bağımsız
 çalıştırmayla doğrulanmıştır. 3 dokümantasyon doğruluğu sorunu
 bulunmuş ve düzeltilmiştir; hiçbir uygulama/runtime bug'ı
 bulunmamıştır.
+
+---
+
+## 15. Bilinen Sınırlamalar — Codex P4.5 Delta Review Notları (Non-Blocking)
+
+Codex'in P4.5 bağımsız delta review'ünde (verdict: PASS WITH
+NON-BLOCKING NOTES, 0 blocker) tespit edilen, blocker sayılmayan 2
+konu:
+
+1. **Log kozmetiği (known limitation):**
+   `logs/first-run-server-log.txt` dosyasının sonunda uygulamaya ait
+   olmayan bir shell `Terminated` satırı bulunuyor — bu, sunucunun
+   `pkill` ile kasıtlı olarak durdurulmasının artığıdır, bir uygulama
+   hatası değildir. Evidence dosyasının kozmetik/saflık notu olarak
+   kaydedilmiştir; dosya değiştirilmemiştir.
+2. **NOTIF-05 dolaylı doğrulama (QA note):** Smoke checklist'inde
+   NOTIF-05 (declined/timeout → event/notification üretilmez),
+   doğrudan bir DB sorgusuyla değil, dolaylı sayım mantığıyla (3
+   sipariş sonrası toplam notification sayısının 1'de kalması)
+   doğrulanmıştır. Bu, blocker değildir — çünkü aynı senaryo,
+   `events.test.js` ve `notifications.test.js`'teki otomatik testlerde
+   (72/72 PASS'ın parçası) doğrudan ve açık şekilde doğrulanmaktadır.
+   Backlog: gelecekte `SMOKE-CHECKLIST.md` güncellenirse NOTIF-05 için
+   doğrudan bir DB sorgu adımı eklenmesi değerlendirilebilir.
