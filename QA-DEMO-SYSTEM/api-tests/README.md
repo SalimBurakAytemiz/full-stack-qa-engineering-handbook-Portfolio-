@@ -61,9 +61,21 @@ Schema, Newman) EXPERIENCE statüsüyle uyumludur.
 | `GET /api/products` | `GET /api/notifications` |
 | `GET /api/products/:id` | `WS /ws` (ayrı mekanizma) |
 
-Protected endpoint'ler `requireAuth` middleware'i (`backend/src/middleware/requireAuth.js`)
-ile korunur — `Authorization: Bearer <token>` zorunludur. Detaylı
-authorization matrix için bkz. `07-API-TESTING/README.md`.
+**REST protected endpoint'ler** (`POST /api/orders`, `GET /api/orders/:id`,
+`GET /api/notifications`) `requireAuth` middleware'i
+(`backend/src/middleware/requireAuth.js`) ile korunur —
+`Authorization: Bearer <token>` header'ı zorunludur, `sessions`
+tablosuna karşı doğrulanır.
+
+**`WS /ws` de protected/authenticated'dır, ancak REST `requireAuth`
+akışını kullanmaz** — token `?token=` query parametresi olarak
+gönderilir ve `websocketServer.js`'in HTTP upgrade handshake'i
+sırasında ayrı bir kontrolle aynı `sessions` tablosuna karşı
+doğrulanır (Express middleware zinciri veya `requireAuth` fonksiyonu
+devreye girmez). "Protected olmak" ile "aynı auth transport/middleware'i
+kullanmak" aynı şey değildir — bu ikisi karıştırılmamalıdır.
+
+Detaylı authorization matrix için bkz. `07-API-TESTING/README.md`.
 
 ---
 
@@ -98,8 +110,10 @@ ve (gerekirse) `scripts/` burada tutulur.
 
 **`postman/data/`** yalnızca Postman'e özgü bir format (örn. CSV data
 file, Collection Runner için) gerekirse P5.1'de değerlendirilecektir
-— mevcut `shared/test-data/` zaten JSON formatında ve doğrudan
-Postman pre-request script'lerinden okunabilir; bu yüzden
+— mevcut `shared/test-data/` zaten JSON formatındadır ve Newman'ın
+`-d <data-file>` parametresi veya Postman Collection Runner'ın data
+file mekanizmasıyla (doğrudan filesystem okuması değil,
+iteration-data API'si üzerinden) kullanılabilir; bu yüzden
 `postman/data/`'nın gerçekten gerekip gerekmediği P5.1'de netleşecek
 (duplicate test data sistemi kurulmayacak, bkz. bölüm 9).
 
@@ -153,8 +167,14 @@ bugün üretmediği için zorunlu tutulmaz (false failure üretilmez).
 
 Mevcut `shared/test-data/` (`auth-users.json`, `products.json`,
 `payment-test-patterns.json`) **aynen yeniden kullanılacaktır** —
-Postman environment/pre-request script'lerinden doğrudan okunacak
-(P5.1'de mekanizma netleşecek). **Duplicate bir test data sistemi
+ancak pre-request script'ler bu dosyaları **doğrudan filesystem'den
+okumaz**. Gerçek Newman/Postman modeli: local iteration data, Newman
+CLI'a `-d <data-file>` parametresiyle verilir (veya Postman Collection
+Runner'a data file olarak yüklenir); script'ler bu veriye runner'ın
+**iteration-data/variable API**'si üzerinden erişir (ör.
+`pm.iterationData.get(...)`), dosya yolunu kendileri açıp okumaz.
+Kesin komut/alan eşlemesi (`-d` ile hangi dosya, hangi alan adlarıyla)
+**P5.1**'de netleşecektir. **Duplicate bir test data sistemi
 kurulmayacaktır.** Detaylı eşleme (`hangi veri hangi testte`) için
 bkz. `07-API-TESTING/README.md` — "Test Data Yaklaşımı".
 

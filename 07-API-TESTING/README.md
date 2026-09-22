@@ -196,9 +196,22 @@ Bkz. **Reporting Yaklaşımı**.
 | Invalid/forged token → protected endpoint | `401` |
 | Valid token → protected endpoint | `200`/`201` |
 | Valid token, başka kullanıcının order'ı | `404` (`403` değil — IDOR-bilinçli) |
-| Valid token, başka kullanıcının notification listesi | Boş liste |
+| Valid token, başka kullanıcının notification listesi | Yalnızca kendi (`user_id`'ye scope'lu) notification kayıtları döner — başka kullanıcının kaydı asla dönmez |
 | WS: token yok/geçersiz | Upgrade reddi, `401` |
 | WS: yanlış path | Socket destroy |
+
+**Not (cross-user notification assertion):** Beklenen sonuç, test
+verisinin o an boş olup olmamasına **bağlı değildir** — "boş liste"
+yalnızca belirli bir controlled test-data durumunda geçerli bir
+gözlemdir, evrensel kontrat ifadesi değildir. Doğru/data-state-independent
+kontrat: (1) HTTP sonucu mevcut API kontratına uyar (`200`), (2)
+response yalnızca authenticated kullanıcının **kendi** notification
+kayıtlarını içerir, (3) başka hiçbir `user_id`'ye ait kayıt asla
+dönmez (cross-user data leakage yok). Kaynak:
+`notifications.service.js` — `listNotificationsForUser(db, userId)`
+sorgusu `WHERE user_id = ?` ile filtreler; test kullanıcısının kendi
+kaydı varsa liste dolu, yoksa boş olabilir — her iki durum da bu
+kontratla tutarlıdır.
 
 ---
 
