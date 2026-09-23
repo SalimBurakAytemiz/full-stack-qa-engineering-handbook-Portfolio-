@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "7d390869-ed44-41d3-a323-b7ac467bf755",
+    "_postman_id": "3deeb989-f8bb-42bd-b924-cfb34cbf2229",
     "name": "QA Demo System - Orders & Payment Business API (P5.5)",
     "description": "P5.5 — Orders & Payment API Tests. Kapsam: POST /api/orders'ın business-rule seviyesinde doğrulanması — duplicate line aggregation (P4.2 B1 regresyonu), stock validation, quantity/product/items strict type validation (P4.2 B3 regresyonu), payment outcome (approved/declined/timeout) ve payment_token contract'ı (P4.2 non-blocking #4 regresyonu), malformed JSON (P4.2 non-blocking #5 regresyonu), ve POST /api/orders için minimal auth regression gate. Ownership/cross-user erişimi (GET /api/orders/:id) P5.3'ün protected collection'ında zaten kapsanmıştır — burada duplike edilmedi. Notifications business akışı, API→DB validation, HTML reporting bu koleksiyonun KAPSAMI DIŞINDADIR. Token'lar yalnızca runtime'da collection variable olarak tutulur, dosyaya yazılmaz. ÖNKOŞUL: her tam suite çalıştırmasından önce `npm run db:seed` ile deterministic/fresh state sağlanmalıdır (stok mutasyonları nedeniyle reproducibility için gereklidir).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -11,7 +11,7 @@
       "item": [
         {
           "name": "Login as User A (test.active01)",
-          "id": "911a8120-7e8e-4526-8aaa-925299cbff09",
+          "id": "70671ab2-7316-4bf9-abde-4c7d71eee27b",
           "request": {
             "method": "POST",
             "header": [
@@ -55,7 +55,7 @@
         },
         {
           "name": "Login as User B (test.active02) — for auth regression reuse only",
-          "id": "7b070754-c498-4c68-bc1e-5ef1fd4b6f13",
+          "id": "bd5e1683-4ef2-4374-865b-89f6cf8be58e",
           "request": {
             "method": "POST",
             "header": [
@@ -102,7 +102,7 @@
       "item": [
         {
           "name": "Create Order — duplicate product lines aggregate before stock check (qty 2+3=5)",
-          "id": "74e25802-0706-4019-beac-8f4eb6edef51",
+          "id": "8bc6ca5c-2f7a-4df9-a916-cea56c7f18cb",
           "request": {
             "method": "POST",
             "header": [
@@ -138,6 +138,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('Content-Type is application/json', function () { pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8'); });",
                   "const json = pm.response.json();",
                   "pm.test('Order created with PAID status', function () { pm.expect(json.order.status).to.eql('PAID'); });",
                   "pm.collectionVariables.set('gateOrderId', json.order.id);"
@@ -149,7 +150,7 @@
         },
         {
           "name": "Verify order_items — exactly ONE aggregated row (quantity=5), not two",
-          "id": "e13bf741-cc6f-4ac4-b8d0-616fde7dc585",
+          "id": "8402539d-6637-47e1-9f13-b330ceb70de9",
           "request": {
             "method": "GET",
             "header": [
@@ -193,7 +194,7 @@
         },
         {
           "name": "Verify stock decreased by exactly the aggregated quantity (25 -> 20)",
-          "id": "96108ade-741b-47c7-b56c-9862bfe2148e",
+          "id": "5d3a07c3-340e-43e2-ba47-00bba1a6223a",
           "request": {
             "method": "GET",
             "header": [],
@@ -233,7 +234,7 @@
       "item": [
         {
           "name": "Approved payment — order PAID, stock decreases",
-          "id": "304ded00-e45f-48e2-990d-77182662a680",
+          "id": "36e1345a-2d9c-4474-8b36-c415f3052029",
           "request": {
             "method": "POST",
             "header": [
@@ -279,7 +280,7 @@
         },
         {
           "name": "Declined payment — order created but PAYMENT_FAILED, stock NOT decremented",
-          "id": "33676506-ed91-428a-a828-c1957396a58b",
+          "id": "6b3e017d-c85d-4ecd-93de-16c98fa11cb5",
           "request": {
             "method": "POST",
             "header": [
@@ -325,7 +326,7 @@
         },
         {
           "name": "Verify stock unchanged after declined payment (id=3 stays at 5)",
-          "id": "af9badf9-bb12-4122-b46a-b6da78846924",
+          "id": "80aff9b8-aeae-4ec7-9d47-18b573e85bb8",
           "request": {
             "method": "GET",
             "header": [],
@@ -357,7 +358,7 @@
         },
         {
           "name": "Timeout payment — order created but PAYMENT_TIMEOUT, stock NOT decremented",
-          "id": "dde2efd1-9ec2-43b3-b043-f1f1c62dca1f",
+          "id": "173c6a9d-ad68-4656-8178-7e53d0c2231c",
           "request": {
             "method": "POST",
             "header": [
@@ -402,7 +403,7 @@
         },
         {
           "name": "Verify stock unchanged after timeout payment (id=3 still at 5)",
-          "id": "2cb2dcd0-601a-45e0-aaa3-1251ee4181b9",
+          "id": "e4537aee-e949-4e5c-b1f9-8d3365bbd006",
           "request": {
             "method": "GET",
             "header": [],
@@ -439,7 +440,7 @@
       "item": [
         {
           "name": "Insufficient stock — single line exceeds available (qty=6 > 5) -> 409",
-          "id": "69434b78-2ac0-4507-bd2f-2530d73c9d67",
+          "id": "dd47d01d-e098-4f4b-980b-f59e7f8c85cb",
           "request": {
             "method": "POST",
             "header": [
@@ -483,7 +484,7 @@
         },
         {
           "name": "Verify no partial state — stock still 5, no order created for that attempt",
-          "id": "3b9ddb13-cce9-488f-8ad8-9f07ef7f20e4",
+          "id": "b1746f65-89c9-4405-8c12-462a45b3dce6",
           "request": {
             "method": "GET",
             "header": [],
@@ -515,7 +516,7 @@
         },
         {
           "name": "Duplicate lines aggregate to exceed stock (2+4=6 > 5) -> 409, not silently accepted",
-          "id": "e6e8e230-10d9-47a7-bae7-c86467a4609d",
+          "id": "da20a033-96b8-4f5c-92f8-8eb823861506",
           "request": {
             "method": "POST",
             "header": [
@@ -560,7 +561,7 @@
         },
         {
           "name": "Verify stock still untouched after duplicate-aggregate rejection (still 5)",
-          "id": "b7718af4-2f1b-465a-8c79-2c4abfa395b5",
+          "id": "f2a62949-12d7-4792-8f15-237a7834da5c",
           "request": {
             "method": "GET",
             "header": [],
@@ -597,7 +598,7 @@
       "item": [
         {
           "name": "Invalid quantity — zero (0)",
-          "id": "95ae606e-7edc-4d17-97c0-0e3fed7522b0",
+          "id": "eb3615f4-d39b-4597-b730-3303eb81f5c5",
           "request": {
             "method": "POST",
             "header": [
@@ -641,7 +642,7 @@
         },
         {
           "name": "Invalid quantity — negative (-1)",
-          "id": "22b0544c-f546-43a2-801b-d20c852f2057",
+          "id": "3db17f07-8a81-463f-80eb-ebec6e8ed8ab",
           "request": {
             "method": "POST",
             "header": [
@@ -685,7 +686,7 @@
         },
         {
           "name": "Invalid quantity — decimal (1.5)",
-          "id": "d4823ad1-1155-4e07-81d2-e1852229004b",
+          "id": "35faab1d-236e-467e-871c-f3960297c99e",
           "request": {
             "method": "POST",
             "header": [
@@ -729,7 +730,7 @@
         },
         {
           "name": "Invalid quantity — string (\"2\")",
-          "id": "e3a798ef-33cd-4631-97f6-468dcb03c978",
+          "id": "234d87c3-99de-43be-aeca-2977c24f1e3e",
           "request": {
             "method": "POST",
             "header": [
@@ -773,7 +774,7 @@
         },
         {
           "name": "Invalid quantity — boolean (true)",
-          "id": "89efcf52-5754-41f6-b01c-0697b4612e38",
+          "id": "f64b9bf5-f19a-4e25-abd1-f8a20fa0a6f3",
           "request": {
             "method": "POST",
             "header": [
@@ -817,7 +818,7 @@
         },
         {
           "name": "Invalid quantity — array ([2])",
-          "id": "8c740b64-4663-442c-a340-12c9f98e621a",
+          "id": "722d0182-1e7d-4039-894d-1a685c0624fa",
           "request": {
             "method": "POST",
             "header": [
@@ -861,7 +862,7 @@
         },
         {
           "name": "Invalid quantity — null",
-          "id": "68d69da2-7b40-4d73-a4e9-114369956e4a",
+          "id": "68cbd3ca-c1dc-46ea-9b73-92cc390aef0c",
           "request": {
             "method": "POST",
             "header": [
@@ -905,7 +906,7 @@
         },
         {
           "name": "Invalid quantity — missing field",
-          "id": "58b91b9c-3286-4f85-b9f1-f60abe1b103c",
+          "id": "63795add-3a99-4965-84b1-217314a3940f",
           "request": {
             "method": "POST",
             "header": [
@@ -949,7 +950,7 @@
         },
         {
           "name": "Invalid quantity — very large (format-valid, but exceeds any real stock -> 409, not a quantity-format 400)",
-          "id": "e8f8fb26-5e30-4cc8-993f-c7892504056c",
+          "id": "145c4b4b-da7b-49bf-902a-133ab7f8369b",
           "request": {
             "method": "POST",
             "header": [
@@ -999,7 +1000,7 @@
       "item": [
         {
           "name": "Unknown product_id (well-formed, not in seed) -> 400 (not 404 — different from GET /products/:id)",
-          "id": "614322c5-ed74-4ac1-969c-21340bf2bfbb",
+          "id": "41f76172-9906-430f-8331-6f4b68edf5ce",
           "request": {
             "method": "POST",
             "header": [
@@ -1044,7 +1045,7 @@
         },
         {
           "name": "product_id wrong type (string \"1\") -> 400",
-          "id": "0cc76c15-a300-4324-8cf4-5c4b17188270",
+          "id": "6d265336-530b-4218-9307-190a8f75dc83",
           "request": {
             "method": "POST",
             "header": [
@@ -1088,7 +1089,7 @@
         },
         {
           "name": "product_id null -> 400",
-          "id": "bd7c6370-23ac-45ad-9fe5-61e9874d25a9",
+          "id": "b01c2259-4c58-4190-9d3d-d3fa2c507d7c",
           "request": {
             "method": "POST",
             "header": [
@@ -1132,7 +1133,7 @@
         },
         {
           "name": "product_id missing -> 400",
-          "id": "0d81ec60-cad4-4830-b8a1-f1bb0a9aca6f",
+          "id": "665fad31-a267-45e8-af32-7a1976875be6",
           "request": {
             "method": "POST",
             "header": [
@@ -1181,7 +1182,7 @@
       "item": [
         {
           "name": "items missing entirely -> 400",
-          "id": "5e8033be-2d75-4594-a758-9382db9de293",
+          "id": "c02863f5-bdd3-47b8-84b5-7b12f9e0600b",
           "request": {
             "method": "POST",
             "header": [
@@ -1225,7 +1226,7 @@
         },
         {
           "name": "items null -> 400",
-          "id": "bbcbde83-61b7-44ff-8459-68ac3edadab1",
+          "id": "4008bdce-b387-49f0-98df-12cf75d6e1ba",
           "request": {
             "method": "POST",
             "header": [
@@ -1269,7 +1270,7 @@
         },
         {
           "name": "items empty array -> 400",
-          "id": "162ff991-5fa5-418e-b66a-64ad53e3ab3b",
+          "id": "b25d93fd-c949-473c-8638-09d45178fac7",
           "request": {
             "method": "POST",
             "header": [
@@ -1313,7 +1314,7 @@
         },
         {
           "name": "items wrong type (string, not array) -> 400",
-          "id": "74166e34-f95d-4fc7-a33f-417eae63594b",
+          "id": "1413cedf-efa9-48ef-b274-49d348651d34",
           "request": {
             "method": "POST",
             "header": [
@@ -1357,7 +1358,7 @@
         },
         {
           "name": "item entry invalid (null item in array) -> 400, no 500",
-          "id": "776d4daa-6138-40f5-90a3-08e3d22ddda9",
+          "id": "b3f96a92-fa25-4be8-a020-d703b291229a",
           "request": {
             "method": "POST",
             "header": [
@@ -1406,7 +1407,7 @@
       "item": [
         {
           "name": "payment_token omitted entirely -> defaults to approved (PAID)",
-          "id": "49723250-1a26-419b-9ca1-dcdeddb36b71",
+          "id": "f09b6dd1-06d0-42d1-bb22-fc907882fd05",
           "request": {
             "method": "POST",
             "header": [
@@ -1451,7 +1452,7 @@
         },
         {
           "name": "payment_token null -> 400 (does NOT silently default)",
-          "id": "427aad16-a6c3-41b5-a60e-01731466f8ad",
+          "id": "9de80e57-1363-4a19-b7d0-8daf79273f08",
           "request": {
             "method": "POST",
             "header": [
@@ -1495,7 +1496,7 @@
         },
         {
           "name": "payment_token empty string -> 400 (does NOT silently default)",
-          "id": "1e9ea35d-91ca-4000-808c-42694e030b3e",
+          "id": "e943a534-96cf-4e5c-8cdf-aabf27e2f018",
           "request": {
             "method": "POST",
             "header": [
@@ -1539,7 +1540,7 @@
         },
         {
           "name": "payment_token wrong type (number) -> 400 (does NOT silently default)",
-          "id": "1751d3bf-2866-4c4d-b2e5-680d89d751a6",
+          "id": "e9170bb9-8b0b-47e4-93ff-ecc5dee24e68",
           "request": {
             "method": "POST",
             "header": [
@@ -1583,7 +1584,7 @@
         },
         {
           "name": "payment_token unknown/random string -> 400, distinct \"unknown token\" message",
-          "id": "37e2e00a-393d-41e2-9218-a568f49c9ecd",
+          "id": "2b76b5c1-aa84-4799-a915-6253a8422bde",
           "request": {
             "method": "POST",
             "header": [
@@ -1633,7 +1634,7 @@
       "item": [
         {
           "name": "Malformed JSON body -> 400, not 500",
-          "id": "cd966878-054a-4a1a-809b-26cd23c409f8",
+          "id": "c26fee98-3691-4742-a100-66472e540c7f",
           "request": {
             "method": "POST",
             "header": [
@@ -1682,7 +1683,7 @@
       "item": [
         {
           "name": "No token -> 401 (representative gate; full auth matrix already in P5.3)",
-          "id": "ab2845af-03c9-4bfd-a368-29f2c37f7eb5",
+          "id": "b57969e2-a8da-47a4-affd-aa2564a3a487",
           "request": {
             "method": "POST",
             "header": [
@@ -1713,6 +1714,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Content-Type is application/json', function () { pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8'); });",
                   "const json = pm.response.json();\npm.test('Error body: Yetkilendirme gerekli', function () {\n  pm.expect(json).to.have.property('error', \"Yetkilendirme gerekli\");\n});"
                 ]
               }
@@ -1722,7 +1724,7 @@
         },
         {
           "name": "Invalid token -> 401",
-          "id": "36c52aac-fb69-434c-b7e4-5498ef806453",
+          "id": "1b4c68da-c929-4c32-94cf-3ffdbbb9fa9a",
           "request": {
             "method": "POST",
             "header": [

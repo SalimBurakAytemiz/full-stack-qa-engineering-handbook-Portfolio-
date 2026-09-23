@@ -30,10 +30,20 @@ newman run postman/collections/qa-demo-system-orders-payment.postman_collection.
 ```
 
 ```text
+❏ 0. Bootstrap
+↳ Login as User A (test.active01)
+  POST http://localhost:3000/api/auth/login [200 OK, 349B, 41ms]
+  ✓  Status code is 200
+
+↳ Login as User B (test.active02) — for auth regression reuse only
+  POST http://localhost:3000/api/auth/login [200 OK, 349B, 7ms]
+  ✓  Status code is 200
+
 ❏ 1. Duplicate Aggregation Gate
 ↳ Create Order — duplicate product lines aggregate before stock check (qty 2+3=5)
-  POST http://localhost:3000/api/orders [201 Created, 288B, 9ms]
+  POST http://localhost:3000/api/orders [201 Created, 288B, 8ms]
   ✓  Status code is 201
+  ✓  Content-Type is application/json
   ✓  Order created with PAID status
 
 ↳ Verify order_items — exactly ONE aggregated row (quantity=5), not two
@@ -43,12 +53,24 @@ newman run postman/collections/qa-demo-system-orders-payment.postman_collection.
   ✓  Aggregated quantity is 5 (2+3), not 2 or 3 separately
 
 ↳ Verify stock decreased by exactly the aggregated quantity (25 -> 20)
-  GET http://localhost:3000/api/products/1 [200 OK, 329B, 4ms]
+  GET http://localhost:3000/api/products/1 [200 OK, 329B, 3ms]
   ✓  Status code is 200
   ✓  Stock decreased by exactly 5 (25 -> 20) — no double-decrement, no bypass
+
+┌─────────────────────────┬──────────────────┬──────────────────┐
+│                         │         executed │           failed │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              iterations │                1 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│                requests │                5 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│      test-scripts       │                5 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              assertions │               10 │                0 │
+└─────────────────────────┴──────────────────┴──────────────────┘
 ```
 
-**Gate PASS (5/5 request, 9/9 assertion)** — P4.2'nin blocker B1'i
+**Gate PASS (5/5 request, 10/10 assertion)** — P4.2'nin blocker B1'i
 (duplicate-line stock bypass) **geri gelmemiş**: aynı `product_id`'ye
 ait iki ayrı satır (`quantity:2` + `quantity:3`), `aggregateItems()`
 tarafından TEK bir `product_id=1, quantity=5` girdisine toplanıyor;
@@ -69,7 +91,7 @@ kalanına geçilmedi.
   `shared/test-data/auth-users.json`).
 - USER B: yalnızca bootstrap'ta login olunur; P5.5'in kendi testlerinde
   **kullanılmaz** — ownership/cross-user P5.3'ün protected
-  collection'ında zaten kapsanmıştır (bkz. bölüm 9).
+  collection'ında zaten kapsanmıştır (bkz. bölüm 8).
 - Komut: `cd QA-DEMO-SYSTEM/api-tests && npm run api:test:orders-payment`.
 
 ## 3. Gerçek Çalıştırma Sonucu — RUN #1 (fresh `db:seed` sonrası)
@@ -185,17 +207,20 @@ QA Demo System - Orders & Payment Business API (P5.5)
 ├─────────────────────────┼─────────────────┼─────────────────┤
 │      prerequest-scripts │               0 │               0 │
 ├─────────────────────────┼─────────────────┼─────────────────┤
-│              assertions │              80 │               0 │
+│              assertions │              82 │               0 │
 ├─────────────────────────┴─────────────────┴─────────────────┤
-│ total run duration: 764ms                                   │
+│ total run duration: 704ms                                   │
 ├─────────────────────────────────────────────────────────────┤
 │ total data received: 2.56kB (approx)                        │
 ├─────────────────────────────────────────────────────────────┤
-│ average response time: 4ms [min: 2ms, max: 41ms, s.d.: 6ms] │
+│ average response time: 3ms [min: 2ms, max: 33ms, s.d.: 4ms] │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**RUN #1 sonucu: 40/40 request PASS, 80/80 assertion PASS, 0 failure.**
+**RUN #1 sonucu: 40/40 request PASS, 82/82 assertion PASS, 0 failure**
+(80 fonksiyonel/business assertion + 2 temsili `Content-Type` header
+assertion'ı — biri başarılı POST üzerinde, biri 401 hata yolu üzerinde;
+bkz. bölüm 6 — Header Validation).
 
 ## 4. Repeatability — RUN #2 (fresh `db:seed` reset sonrası, ikinci kez)
 
@@ -214,17 +239,17 @@ yeniden başlatıldıktan sonra **tekrar** çalıştırıldı:
 ├─────────────────────────┼─────────────────┼─────────────────┤
 │      prerequest-scripts │               0 │               0 │
 ├─────────────────────────┼─────────────────┼─────────────────┤
-│              assertions │              80 │               0 │
+│              assertions │              82 │               0 │
 ├─────────────────────────┴─────────────────┴─────────────────┤
-│ total run duration: 754ms                                   │
+│ total run duration: 785ms                                   │
 ├─────────────────────────────────────────────────────────────┤
 │ total data received: 2.56kB (approx)                        │
 ├─────────────────────────────────────────────────────────────┤
-│ average response time: 3ms [min: 2ms, max: 35ms, s.d.: 5ms] │
+│ average response time: 4ms [min: 2ms, max: 44ms, s.d.: 6ms] │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**RUN #2 sonucu: 40/40 request PASS, 80/80 assertion PASS, 0 failure —
+**RUN #2 sonucu: 40/40 request PASS, 82/82 assertion PASS, 0 failure —
 RUN #1 ile birebir aynı sayılar.** Deterministic/reproducible, manuel
 müdahale gerekmedi.
 
@@ -242,7 +267,22 @@ müdahale gerekmedi.
 | F) Duplicate line: aggregate quantity üzerinden stock check | **PASS** — hem gate (5 içeride) hem stock-validation (6>5 dışarıda) senaryosunda doğrulandı |
 | G) Failed order: sonraki valid order'ı bozmuyor | **PASS** — declined/timeout/rejected denemelerden sonraki approved order'lar (Payment Token Validation, Auth Regression öncesi) sorunsuz çalıştı |
 
-## 6. Token Güvenlik Hijyeni
+## 6. Header Validation Sonucu
+
+CURRENT header standardı (`07-API-TESTING/README.md`) — `Content-Type`
+— bu koleksiyonda **2 temsili request** üzerinde doğrulandı (P5.3'ün
+aynı "temsili, tüm request'lerde değil" yaklaşımı): gate'in başarılı
+`POST /api/orders` request'i (`201`) ve Auth Regression'ın `no-token`
+request'i (`401`) — hem başarı hem hata yolu için `Content-Type:
+application/json; charset=utf-8` doğrulandı. `Authorization` header'ı
+zaten her ilgili request'te gerçekten gönderiliyor (`{{userToken}}`
+veya bilerek gönderilmiyor); ayrıca doğrulanan `error`/`order` body
+içerikleri header contract'ını dolaylı olarak da destekliyor (JSON
+parse başarılı olmadan hiçbir assertion PASS olamaz). CORS/security
+header'ları — sistem bugün üretmediği için — zorunlu tutulmadı
+(FUTURE HARDENING).
+
+## 7. Token Güvenlik Hijyeni
 
 - `userToken`/`userBToken`, `Login` request'lerinin `pm.test()`
   script'i tarafından runtime'da `pm.collectionVariables.set(...)` ile
@@ -253,16 +293,17 @@ müdahale gerekmedi.
 - Bu evidence dosyasında ve konsol çıktısında gerçek token değeri
   hiçbir yerde yazılı değildir.
 
-## 7. Ownership / Order Retrieval — P5.3 ile Overlap Kararı
+## 8. Ownership / Order Retrieval — P5.3 ile Overlap Kararı
 
 P5.3'ün protected collection'ı (`qa-demo-system-protected.postman_collection.json`)
 zaten şunları kapsıyor: owner erişimi (`200`), cross-user erişimi
 (`404`, IDOR-bilinçli), no-token/invalid-token erişimi, bilinmeyen
 order (`404`). P5.5 bunları **duplike etmedi** — yalnızca
 `POST /api/orders`'a özgü, P5.3'te test edilmemiş minimal bir auth
-regression gate'i (no-token, invalid-token — bölüm 9) eklendi.
+regression gate'i (no-token, invalid-token — collection'ın "9. Auth
+Regression" klasörü) eklendi.
 
-## 8. Schema Kararı
+## 9. Schema Kararı
 
 Bu koleksiyon, P5.3'ün protected collection'ıyla **aynı mimari
 kararı** izler: plain `pm.test()` assertion'ları (Newman CLI,
@@ -276,7 +317,7 @@ doğrulanıyor; AJV eklemek bu noktada ek doğruluk sağlamazdı (bölüm 22
 
 ---
 
-## 9. Bulunan Bug'lar
+## 10. Bulunan Bug'lar
 
 **Application bug: YOK.** P4.2'nin geçmiş blocker'larının (B1
 duplicate-line bypass, B3 quantity coercion) hiçbiri geri gelmedi; ne
@@ -290,17 +331,18 @@ state bırakıyor.
 
 ---
 
-## 10. Sonuç
+## 11. Sonuç
 
 **PASS** — Orders & Payment business API'si (duplicate aggregation,
 stock sufficient/insufficient, quantity/product/items strict
 validation, approved/declined/timeout payment outcomes, payment_token
 contract'ı, malformed JSON, minimal auth regression) kapsamlı şekilde
 doğrulandı; 2 ayrı temiz-reset execution'da birebir aynı sonuç
-(40/40 request, 80/80 assertion); hiçbir application/test/schema bug'ı
-bulunmadı; P5.3 ile ownership konusunda duplicate test üretilmedi.
+(40/40 request, 82/82 assertion — 80 fonksiyonel/business + 2 temsili
+Content-Type header assertion'ı); hiçbir application/test/schema
+bug'ı bulunmadı; P5.3 ile ownership konusunda duplicate test üretilmedi.
 
-## 11. Bilinen Sınırlamalar (Bu Paket Kapsamında)
+## 12. Bilinen Sınırlamalar (Bu Paket Kapsamında)
 
 - API→DB doğrudan SQL assertion'ı **yok** — stock before/after kontrolü
   yalnızca public `GET /api/products/:id` response'u üzerinden yapıldı

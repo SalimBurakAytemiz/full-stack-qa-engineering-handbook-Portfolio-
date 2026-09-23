@@ -278,7 +278,7 @@ Bu, `newman run postman/collections/qa-demo-system-orders-payment.postman_collec
 -e postman/environments/local.postman_environment.json` komutunu
 çalıştırır — token bootstrap dahil tamamen otomatik. P5.5'te gerçek
 sisteme karşı **iki ayrı temiz-reset execution** ile çalıştırıldı:
-her ikisinde de **40/40 request PASS, 80/80 assertion PASS** —
+her ikisinde de **40/40 request PASS, 82/82 assertion PASS** —
 birebir aynı sonuç, repeatability kanıtlandı (bkz.
 `evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md`).
 
@@ -591,7 +591,7 @@ stok kontrolünü atlatması) regresyon testidir; gerçek response body
 canonical `npm run db:seed` komutu kullanıldı — yeni bir reset
 mekanizması **oluşturulmadı**. **Repeatability iki ayrı temiz-reset
 execution ile kanıtlandı** — ikisi de birebir aynı sonucu üretti
-(40/40 request, 80/80 assertion), bkz. evidence.
+(40/40 request, 82/82 assertion), bkz. evidence.
 
 **Ownership/order-retrieval:** P5.3'ün protected collection'ında
 zaten kapsanmıştır — burada **duplike edilmedi** (bkz. evidence bölüm 7).
@@ -601,6 +601,12 @@ assertion'ları (AJV/Node-wrapper değil). `shared/schemas/orders/`
 **oluşturulmadı** — mevcut plain assertion'lar zaten tam (alan+değer)
 doğrulama sağlıyor, yeni bir "schema fabrikası" kurulmadı.
 
+**Header validation:** `Content-Type` CURRENT standardı, **2 temsili
+request** üzerinde doğrulandı (P5.3'ün aynı "temsili, tüm request'lerde
+değil" yaklaşımı) — gate'in başarılı `POST /api/orders`'ı (`201`) ve
+Auth Regression'ın `no-token` request'i (`401`); hem başarı hem hata
+yolu kapsandı.
+
 **Bulunan bug:** **Yok.** P4.2'nin geçmiş blocker'larından (B1
 duplicate-line bypass, B3 quantity coercion, non-blocking #4 payment
 token fallback, non-blocking #5 malformed JSON 500) hiçbiri regresyon
@@ -608,7 +614,7 @@ olarak geri gelmedi.
 
 **Runner:** `npm run api:test:orders-payment`. P5.5'te gerçek sisteme
 karşı **2 ayrı temiz-reset execution** ile çalıştırıldı: her ikisinde
-de **40/40 request PASS, 80/80 assertion PASS** (bkz.
+de **40/40 request PASS, 82/82 assertion PASS** (bkz.
 `evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md`).
 
 ---
