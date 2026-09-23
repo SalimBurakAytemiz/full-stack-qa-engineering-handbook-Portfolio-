@@ -1051,15 +1051,18 @@ npm run api:report:all            # yukarıdaki 5'i sırayla çalıştırır
 Orders & Payment ve Notifications **stateful**'dir (stok/order/
 notification mutasyonu yapar) — `requiresReset: true` işaretli bu iki
 suite, `scripts/generate-html-report.js` içinde kendi çalışmalarından
-hemen önce otomatik olarak `npm run db:seed` (backend) çalıştırır;
-manuel reset gerekmez. Public/Auth/Products reset gerektirmez (mevcut
-`api:test:*` script'leriyle aynı konvansiyon — bkz. bölüm 6).
+hemen önce otomatik olarak reset script'ini çalıştırır; manuel reset
+gerekmez. Public/Auth/Products reset gerektirmez (mevcut `api:test:*`
+script'leriyle aynı konvansiyon — bkz. bölüm 6).
 
-Bu reset çağrısı platform'u kendi çözer (`process.platform === 'win32'`
-→ `npm.cmd`, aksi halde `npm`) — kullanıcının Windows'ta manuel olarak
-`npm.cmd` yazması GEREKMEZ, yukarıdaki komutlar Windows ve Linux'ta
-aynı şekilde çalışır (fix round, Codex B1 — bkz.
-`EXECUTION.md` bölüm 0 ve 10).
+Bu reset çağrısı npm'i hiç kullanmaz — `backend`'in `db:seed` script'i
+zaten yalnızca `node src/database/seed.js` olduğundan (shell özelliği
+yok), runner doğrudan `process.execPath` (o an çalışan Node
+binary'sinin Node'un kendisi tarafından çözülen tam yolu) ile reset
+script'inin gerçek path'ini çalıştırır. Kullanıcının Windows'ta manuel
+olarak `npm.cmd` yazması GEREKMEZ; yukarıdaki komutlar tüm
+platformlarda AYNI kod yolunu izler (fix round #2, Codex B1 — bkz.
+`EXECUTION.md` bölüm 0.1 ve 10).
 
 `api:report:all` suite'leri **sırayla** (paralel değil) çalıştırır,
 hiçbir suite'in başarısızlığını yutmaz/gizlemez — bir suite FAIL olsa
@@ -1114,11 +1117,14 @@ gömülü. **Bilinen sınırlama:** görsel stilleme 10 harici CDN kaynağına
 (jQuery/Bootstrap/Font Awesome/vb.) bağımlı — internet olmadan rapor
 yine açılır ve ham içerik okunabilir, ama tam stil yüklenmez. Path'ler
 `path.join(__dirname, ...)` ile tamamen relative — hardcoded Windows/
-Linux path yok. **Windows notu:** bu proje Linux tabanlı bir execution
-ortamında geliştirildi; Windows kolu (`npm.cmd` resolution, bkz. 15.2)
-kod seviyesinde doğrulandı ama gerçek bir Windows makinesinde literal
-olarak çalıştırılarak test edilmedi — Linux kolu 4 ayrı gerçek
-execution'da doğrulandı. Detay: `EXECUTION.md` bölüm 10.
+Linux path yok. **Windows notu:** reset artık `process.execPath` (Node
+tarafından çözülen, o an çalışan Node binary'sinin tam yolu) ile
+doğrudan çalışıyor — npm/npm.cmd hiç devreye girmiyor, dolayısıyla
+platforma özel ayrı bir kod dalı yok; tüm platformlar aynı kod yolunu
+izliyor (implementation-level cross-platform proof). Bu proje Linux
+tabanlı bir execution ortamında geliştirildiği için gerçek bir Windows
+makinesinde literal olarak çalıştırılarak test edilmedi — Linux'ta 6
+ayrı gerçek execution'da doğrulandı. Detay: `EXECUTION.md` bölüm 10.
 
 ---
 

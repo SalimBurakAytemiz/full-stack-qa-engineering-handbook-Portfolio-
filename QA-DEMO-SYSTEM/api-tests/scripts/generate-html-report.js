@@ -23,12 +23,18 @@ const ENVIRONMENT_PATH = path.join(API_TESTS_DIR, 'postman', 'environments', 'lo
 const REPORTS_DIR = path.join(API_TESTS_DIR, 'reports');
 const BACKEND_DIR = path.join(API_TESTS_DIR, '..', 'backend');
 
-// On Windows, npm is a .cmd shim; execFileSync (no shell) resolves plain
-// "npm" through Windows' own PATH lookup rules for executables, which does
-// not reliably find .cmd files. Resolving the binary name up front lets the
-// reset stay on execFileSync's default shell:false (array args, no shell
-// string interpolation) instead of opting into shell:true just for Windows.
-const NPM_COMMAND = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+// The reset step used to shell out to "npm run db:seed". On Windows, npm's
+// real binary is a .cmd shim, and Node's own child_process (fixed for
+// CVE-2024-27980) refuses to launch a .bat/.cmd file via execFileSync
+// without shell:true — so neither plain "npm" nor "npm.cmd" is a reliable,
+// shell-free cross-platform launch target. db:seed's own script
+// (backend/package.json) is just "node src/database/seed.js" with no shell
+// features (no &&, no globbing, no env expansion), so npm is skipped
+// entirely: this runs the same Node binary that is already executing this
+// script (process.execPath — never hardcoded, resolved by Node itself)
+// directly against the resolved seed script path. No .cmd/.bat file is
+// ever launched, so there is nothing for shell:true to work around.
+const RESET_SCRIPT_PATH = path.join(BACKEND_DIR, 'src', 'database', 'seed.js');
 
 // Redact the Authorization header (real session/JWT token) from every
 // generated report by default. Request/response BODIES are otherwise left
@@ -94,8 +100,8 @@ const SUITES = {
 };
 
 function resetDatabase() {
-  console.log('\n[reset] npm run db:seed (backend)');
-  execFileSync(NPM_COMMAND, ['run', 'db:seed'], { cwd: BACKEND_DIR, stdio: 'inherit' });
+  console.log('\n[reset] node src/database/seed.js (backend)');
+  execFileSync(process.execPath, [RESET_SCRIPT_PATH], { cwd: BACKEND_DIR, stdio: 'inherit' });
 }
 
 function runSuite(key) {
