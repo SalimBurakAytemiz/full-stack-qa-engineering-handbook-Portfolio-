@@ -106,6 +106,12 @@ async function getNotifications(token) {
   return res.json();
 }
 
+async function getProductStockViaApi(productId) {
+  const res = await fetch(`${BASE_URL}/api/products/${productId}`);
+  const body = await res.json();
+  return body.product.stock_quantity;
+}
+
 function dbCounts(db) {
   return {
     orders: db.prepare('SELECT count(*) AS c FROM orders').get().c,
@@ -117,6 +123,28 @@ function dbCounts(db) {
 
 function stockOf(db, productId) {
   return db.prepare('SELECT stock_quantity FROM products WHERE id = ?').get(productId).stock_quantity;
+}
+
+// Identity-level snapshot for "zero write" proofs (Codex B2): count-only or
+// single-product-stock comparisons cannot distinguish "nothing changed"
+// from "a different row was mutated but the count/one product balanced
+// out". This captures every relevant row's business-key fields (not just
+// row counts) across all four deterministic products, plus the full
+// orders/order_items/notifications row set (id + relationship fields) —
+// so any wrong-row update, cross-product stock mutation, or broken
+// order/notification relationship is caught, not just a count mismatch.
+function fullSnapshot(db) {
+  return {
+    orders: db.prepare('SELECT id, user_id, status, total FROM orders ORDER BY id').all(),
+    order_items: db
+      .prepare('SELECT id, order_id, product_id, quantity, unit_price FROM order_items ORDER BY id')
+      .all(),
+    notifications: db
+      .prepare('SELECT id, user_id, order_id, type, is_read FROM notifications ORDER BY id')
+      .all(),
+    events: db.prepare('SELECT event_id, event_type, user_id, order_id FROM events ORDER BY event_id').all(),
+    products: db.prepare('SELECT id, stock_quantity FROM products ORDER BY id').all(),
+  };
 }
 
 async function run() {
@@ -160,8 +188,7 @@ async function run() {
   // S1. GATE — rejected request (unknown product_id) -> zero write
   // ---------------------------------------------------------------
   const gate = await scenario('S1. GATE — unknown product_id request produces zero DB writes', async () => {
-    const before = withDb(dbCounts);
-    const beforeStock4 = withDb((db) => stockOf(db, 4));
+    const before = withDb(fullSnapshot);
 
     const { status, body } = await createOrder(userAToken, {
       items: [{ product_id: 99999, quantity: 1 }],
@@ -170,10 +197,12 @@ async function run() {
     assertEqual(status, 400, 'API rejects with 400');
     assertEqual(body && body.error, 'Ürün bulunamadı: 99999', 'API error message matches source contract');
 
-    const after = withDb(dbCounts);
-    const afterStock4 = withDb((db) => stockOf(db, 4));
-    assertEqual(after, before, 'orders/order_items/notifications/events counts unchanged (zero write)');
-    assertEqual(afterStock4, beforeStock4, 'product stock unchanged');
+    const after = withDb(fullSnapshot);
+    assertEqual(
+      after,
+      before,
+      'full identity-level DB state unchanged (all order/order_items/notifications/events rows + all 4 products stock — not count-only)'
+    );
   });
 
   if (gate.failed) {
@@ -189,8 +218,14 @@ async function run() {
   // ---------------------------------------------------------------
   let approvedOrderId;
   let approvedOrderCreatedAt;
-  await scenario('S2. Approved order — full API<->DB trace + duplicate-line aggregation DB proof', async () => {
-    const beforeStock1 = withDb((db) => stockOf(db, 1));
+  await scenario('S2. Approved order — full API<->DB trace + duplicate-line aggregation + API<->DB stock consistency', async () => {
+    // B1 (Codex re-review): capture BOTH sides of the stock value —
+    // the real GET /api/products/:id response AND the real DB row —
+    // before touching anything, then compare them to each other (not
+    // just to a hardcoded expectation).
+    const apiStockBefore = await getProductStockViaApi(1);
+    const dbStockBefore = withDb((db) => stockOf(db, 1));
+    assertEqual(apiStockBefore, dbStockBefore, 'API stock_quantity matches DB stock_quantity BEFORE the order (cross-layer, not assumed)');
 
     // Same aggregation shape P5.5 proved API-visible (2+3=5, product 1):
     // proving it here at the DB row level closes that package's own
@@ -206,6 +241,8 @@ async function run() {
     assertEqual(body.order.status, 'PAID', 'API order.status is PAID');
     approvedOrderId = body.order.id;
 
+    const effectiveQuantity = 5; // 2 + 3, the aggregated line
+
     withDb((db) => {
       const row = db.prepare('SELECT * FROM orders WHERE id = ?').get(approvedOrderId);
       assertTrue(Boolean(row), 'order row exists in DB', row ? JSON.stringify(row) : 'no row found');
@@ -220,21 +257,25 @@ async function run() {
       assertEqual(items.length, 1, 'exactly ONE order_items row (Map-based aggregation, not two separate rows)');
       if (items.length === 1) {
         assertEqual(items[0].product_id, 1, 'aggregated row product_id is 1');
-        assertEqual(items[0].quantity, 5, 'aggregated row quantity is 5 (2+3), proven via direct SQL not API inference');
+        assertEqual(items[0].quantity, effectiveQuantity, 'aggregated row quantity is 5 (2+3), proven via direct SQL not API inference');
         assertEqual(items[0].unit_price, 149.9, 'aggregated row unit_price matches product 1 price');
       }
-
-      const afterStock1 = stockOf(db, 1);
-      assertEqual(afterStock1, beforeStock1 - 5, 'product 1 stock decreased by exactly the aggregated quantity (5), read via direct SQL');
     });
+
+    // B1: AFTER side — both API and DB, compared to each other AND to
+    // their own captured BEFORE values by the real effective quantity.
+    const apiStockAfter = await getProductStockViaApi(1);
+    const dbStockAfter = withDb((db) => stockOf(db, 1));
+    assertEqual(apiStockAfter, dbStockAfter, 'API stock_quantity matches DB stock_quantity AFTER the order (cross-layer)');
+    assertEqual(dbStockAfter, dbStockBefore - effectiveQuantity, 'DB stock decreased by exactly the aggregated quantity (5)');
+    assertEqual(apiStockAfter, apiStockBefore - effectiveQuantity, 'API-visible stock decreased by exactly the aggregated quantity (5) — same delta as DB');
   });
 
   // ---------------------------------------------------------------
   // S3. Insufficient stock -> zero write
   // ---------------------------------------------------------------
   await scenario('S3. Insufficient stock request -> zero DB write', async () => {
-    const before = withDb(dbCounts);
-    const beforeStock3 = withDb((db) => stockOf(db, 3));
+    const before = withDb(fullSnapshot);
 
     const { status } = await createOrder(userAToken, {
       items: [{ product_id: 3, quantity: 6 }],
@@ -242,10 +283,8 @@ async function run() {
     });
     assertEqual(status, 409, 'API rejects with 409');
 
-    const after = withDb(dbCounts);
-    const afterStock3 = withDb((db) => stockOf(db, 3));
-    assertEqual(after, before, 'orders/order_items/notifications/events counts unchanged');
-    assertEqual(afterStock3, beforeStock3, 'product 3 stock unchanged');
+    const after = withDb(fullSnapshot);
+    assertEqual(after, before, 'full identity-level DB state unchanged (all rows + all 4 products stock)');
   });
 
   // ---------------------------------------------------------------
@@ -254,8 +293,7 @@ async function run() {
   // ---------------------------------------------------------------
   for (const [label, quantity] of [['string "2"', '2'], ['boolean true', true], ['null', null]]) {
     await scenario(`S4. Invalid quantity (${label}) -> zero DB write`, async () => {
-      const before = withDb(dbCounts);
-      const beforeStock1 = withDb((db) => stockOf(db, 1));
+      const before = withDb(fullSnapshot);
 
       const { status } = await createOrder(userAToken, {
         items: [{ product_id: 1, quantity }],
@@ -263,10 +301,8 @@ async function run() {
       });
       assertEqual(status, 400, 'API rejects with 400');
 
-      const after = withDb(dbCounts);
-      const afterStock1 = withDb((db) => stockOf(db, 1));
-      assertEqual(after, before, 'orders/order_items/notifications/events counts unchanged');
-      assertEqual(afterStock1, beforeStock1, 'product 1 stock unchanged');
+      const after = withDb(fullSnapshot);
+      assertEqual(after, before, 'full identity-level DB state unchanged (all rows + all 4 products stock)');
     });
   }
 
@@ -275,8 +311,7 @@ async function run() {
   // ---------------------------------------------------------------
   for (const [label, paymentToken] of [['false', false], ['0', 0]]) {
     await scenario(`S5. Invalid payment_token (${label}) -> zero DB write`, async () => {
-      const before = withDb(dbCounts);
-      const beforeStock4 = withDb((db) => stockOf(db, 4));
+      const before = withDb(fullSnapshot);
 
       const { status } = await createOrder(userAToken, {
         items: [{ product_id: 4, quantity: 1 }],
@@ -284,10 +319,8 @@ async function run() {
       });
       assertEqual(status, 400, 'API rejects with 400');
 
-      const after = withDb(dbCounts);
-      const afterStock4 = withDb((db) => stockOf(db, 4));
-      assertEqual(after, before, 'orders/order_items/notifications/events counts unchanged');
-      assertEqual(afterStock4, beforeStock4, 'product 4 stock unchanged');
+      const after = withDb(fullSnapshot);
+      assertEqual(after, before, 'full identity-level DB state unchanged (all rows + all 4 products stock)');
     });
   }
 
@@ -295,7 +328,7 @@ async function run() {
   // S6. Malformed JSON -> zero write
   // ---------------------------------------------------------------
   await scenario('S6. Malformed JSON body -> zero DB write', async () => {
-    const before = withDb(dbCounts);
+    const before = withDb(fullSnapshot);
 
     const res = await fetch(`${BASE_URL}/api/orders`, {
       method: 'POST',
@@ -304,8 +337,8 @@ async function run() {
     });
     assertEqual(res.status, 400, 'API rejects with 400');
 
-    const after = withDb(dbCounts);
-    assertEqual(after, before, 'orders/order_items/notifications/events counts unchanged');
+    const after = withDb(fullSnapshot);
+    assertEqual(after, before, 'full identity-level DB state unchanged (all rows + all 4 products stock)');
   });
 
   // ---------------------------------------------------------------
@@ -454,21 +487,28 @@ async function run() {
   });
 
   // ---------------------------------------------------------------
-  // S12. Relational integrity — no orphan rows after everything above
+  // S12. Relational integrity — OBSERVED DATA INTEGRITY (actual query
+  // against the actual rows, distinct from S13's DECLARED-IN-DDL check
+  // — Codex B3: these are two different claims, not one "FK PASS")
   // ---------------------------------------------------------------
-  await scenario('S12. Relational integrity — no orphan rows', async () => {
+  await scenario('S12. Relational integrity — OBSERVED DATA INTEGRITY (orphan-row queries)', async () => {
     withDb((db) => {
       const orphanItems = db
         .prepare('SELECT count(*) AS c FROM order_items oi LEFT JOIN orders o ON o.id = oi.order_id WHERE o.id IS NULL')
         .get().c;
       assertEqual(orphanItems, 0, 'no order_items row references a non-existent order');
 
-      const orphanNotifs = db
+      const orphanNotifOrders = db
         .prepare(
           'SELECT count(*) AS c FROM notifications n LEFT JOIN orders o ON o.id = n.order_id WHERE n.order_id IS NOT NULL AND o.id IS NULL'
         )
         .get().c;
-      assertEqual(orphanNotifs, 0, 'no notifications row references a non-existent order');
+      assertEqual(orphanNotifOrders, 0, 'no notifications row references a non-existent order');
+
+      const orphanNotifUsers = db
+        .prepare('SELECT count(*) AS c FROM notifications n LEFT JOIN users u ON u.id = n.user_id WHERE u.id IS NULL')
+        .get().c;
+      assertEqual(orphanNotifUsers, 0, 'no notifications row references a non-existent user (notifications.user_id)');
 
       const orphanEvents = db
         .prepare(
@@ -490,24 +530,50 @@ async function run() {
   });
 
   // ---------------------------------------------------------------
-  // S13. Constraint definitions — structural inspection only (no
-  // attempt to violate a constraint from this read-only script)
+  // S13. Constraint definitions — DECLARED IN DDL (structural text
+  // inspection of sqlite_master only — no attempt to violate a
+  // constraint from this read-only script; this is a claim about what
+  // the schema DECLARES, not about runtime enforcement — bkz. S12 for
+  // the separate, actual-data-based integrity check)
   // ---------------------------------------------------------------
-  await scenario('S13. Constraint definitions present in schema (structural, read-only)', async () => {
+  await scenario('S13. Constraint definitions — DECLARED IN DDL (structural, read-only)', async () => {
     withDb((db) => {
       const ddl = db
         .prepare("SELECT name, sql FROM sqlite_master WHERE type = 'table'")
         .all()
         .reduce((acc, row) => ({ ...acc, [row.name]: row.sql }), {});
 
+      // CHECK constraints
       assertTrue(/CHECK\s*\(stock_quantity\s*>=\s*0\)/.test(ddl.products || ''), 'products.stock_quantity has CHECK (>= 0)');
       assertTrue(/CHECK\s*\(quantity\s*>\s*0\)/.test(ddl.order_items || ''), 'order_items.quantity has CHECK (> 0)');
       assertTrue(/CHECK\s*\(is_read\s*IN\s*\(0,\s*1\)\)/.test(ddl.notifications || ''), 'notifications.is_read has CHECK (IN (0,1))');
+
+      // UNIQUE constraints
       assertTrue(/UNIQUE\s*\(order_id,\s*type\)/.test(ddl.notifications || ''), 'notifications has UNIQUE(order_id, type)');
       assertTrue(/UNIQUE\s*\(order_id,\s*event_type\)/.test(ddl.events || ''), 'events has UNIQUE(order_id, event_type)');
+
+      // FOREIGN KEY (REFERENCES) — every REFERENCES clause the schema
+      // actually declares, including notifications.user_id (Codex B3
+      // explicitly flagged this one as missing from the prior check)
       assertTrue(/user_id INTEGER NOT NULL REFERENCES users\(id\)/.test(ddl.orders || ''), 'orders.user_id REFERENCES users(id)');
       assertTrue(/order_id INTEGER NOT NULL REFERENCES orders\(id\)/.test(ddl.order_items || ''), 'order_items.order_id REFERENCES orders(id)');
       assertTrue(/product_id INTEGER NOT NULL REFERENCES products\(id\)/.test(ddl.order_items || ''), 'order_items.product_id REFERENCES products(id)');
+      assertTrue(/user_id INTEGER NOT NULL REFERENCES users\(id\)/.test(ddl.notifications || ''), 'notifications.user_id REFERENCES users(id)');
+      assertTrue(/user_id INTEGER NOT NULL REFERENCES users\(id\)/.test(ddl.events || ''), 'events.user_id REFERENCES users(id)');
+      assertTrue(/user_id INTEGER NOT NULL REFERENCES users\(id\)/.test(ddl.sessions || ''), 'sessions.user_id REFERENCES users(id)');
+
+      // NOT NULL — representative set across the schema (not exhaustive
+      // column-by-column, but covering every table that has business
+      // logic depending on the column never being NULL)
+      assertTrue(/user_id INTEGER NOT NULL/.test(ddl.orders || ''), 'orders.user_id is NOT NULL');
+      assertTrue(/status TEXT NOT NULL/.test(ddl.orders || ''), 'orders.status is NOT NULL');
+      assertTrue(/total REAL NOT NULL/.test(ddl.orders || ''), 'orders.total is NOT NULL');
+      assertTrue(/quantity INTEGER NOT NULL/.test(ddl.order_items || ''), 'order_items.quantity is NOT NULL');
+      assertTrue(/user_id INTEGER NOT NULL/.test(ddl.notifications || ''), 'notifications.user_id is NOT NULL');
+      assertTrue(/type TEXT NOT NULL/.test(ddl.notifications || ''), 'notifications.type is NOT NULL');
+      assertTrue(/message TEXT NOT NULL/.test(ddl.notifications || ''), 'notifications.message is NOT NULL');
+      assertTrue(/name TEXT NOT NULL/.test(ddl.products || ''), 'products.name is NOT NULL');
+      assertTrue(/price REAL NOT NULL/.test(ddl.products || ''), 'products.price is NOT NULL');
     });
   });
 
