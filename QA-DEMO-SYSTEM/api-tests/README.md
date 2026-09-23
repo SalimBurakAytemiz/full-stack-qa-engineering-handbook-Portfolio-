@@ -1,7 +1,7 @@
 # QA Demo System — API Tests
 
 **Phase: PHASE 5 — API TESTING**
-**Doküman Statüsü: P5.6 — Notifications API Tests**
+**Doküman Statüsü: P5.7 — API → DB Validation**
 
 > Bu klasör, Phase 5'in Postman/Newman/AJV tabanlı API test
 > katmanının giriş noktasıdır. P5.0'da yalnızca bu README (kapsam/
@@ -29,9 +29,21 @@
 > koydu; mark-as-read ve notification detail/id endpoint'leri kaynak
 > kodda yoktur, icat edilmedi (NOT IMPLEMENTED / OUT OF SCOPE); 2 ayrı
 > temiz-reset execution'da birebir aynı sonuç (repeatability
-> kanıtlandı). API→DB validation, WebSocket delivery consistency ve
-> HTML reporting **henüz yok** — aşağıda hâlâ "PLANNED" olarak
-> işaretlidir.
+> kanıtlandı). **P5.7'de, P5.1-P5.6'nın hiçbirinin açmadığı
+> veritabanının kendisi — gerçek, read-only bir SQLite bağlantısıyla
+> — açıldı.** Her senaryo gerçek bir API çağrısını gerçek DB satırıyla
+> karşılaştırır: approved/declined/timeout payment'ın persistence
+> contract'ı (declined/timeout'un aslında order/order_items satırı
+> BIRAKTIĞI, yalnızca stock/notification/event'in atlandığı — kaynak
+> koddan ve ampirik olarak doğrulandı), duplicate-line aggregation'ın
+> DB satırı seviyesinde kanıtı, reddedilen isteklerin gerçek sıfır-yazma
+> (zero-write) olduğu, notification API↔DB korelasyonu, ownership ve
+> relational integrity. Newman/Postman kullanılmadı (SQL çalıştıramaz)
+> — Node'un built-in `node:sqlite` + `fetch`'i dışında yeni dependency
+> eklemeyen minimal bir script yazıldı. 2 ayrı temiz-reset execution'da
+> (mutlak satır ID'leri dahil) birebir aynı sonuç. WebSocket delivery
+> consistency ve HTML reporting **henüz yok** — aşağıda hâlâ "PLANNED"
+> olarak işaretlidir.
 
 ---
 
@@ -73,6 +85,7 @@ Tam envanter (method/path/body/params/status/business rule) için bkz.
 | Products comprehensive suite | List/detail positive, negative, boundary, data-quality | **DONE (P5.4)** — `qa-demo-system-public.postman_collection.json` "Products" klasörü (bkz. bölüm 9) |
 | Orders & Payment business suite | Duplicate aggregation, stock, quantity/product/items validation, payment outcomes | **DONE (P5.5)** — `qa-demo-system-orders-payment.postman_collection.json` (bkz. bölüm 10) |
 | Notifications suite | PAID correlation, user isolation, declined/timeout non-generation, duplicate regression | **DONE (P5.6)** — `qa-demo-system-notifications.postman_collection.json` (bkz. bölüm 11) |
+| API → DB validation | node:sqlite (read-only) + fetch, API<->DB persistence/consistency/ownership/integrity | **DONE (P5.7)** — `api-tests/scripts/run-api-db-validation.js` (bkz. bölüm 12) |
 | Newman HTML reporter | Execution raporu | PLANNED (P5.8) |
 
 Postman **desktop uygulaması** kullanılmadı — collection ve
@@ -132,7 +145,7 @@ Detaylı authorization matrix için bkz. `07-API-TESTING/README.md`.
 
 ## 5. Klasör Yapısı
 
-### Mevcut (P5.6 sonunda)
+### Mevcut (P5.7 sonunda)
 
 ```text
 QA-DEMO-SYSTEM/api-tests/
@@ -141,7 +154,7 @@ QA-DEMO-SYSTEM/api-tests/
 │                                                    "api:test:postman:basic", "api:test:schema:negative-proof",
 │                                                    "api:test:auth", "api:test:orders-payment",
 │                                                    "api:test:orders-payment:basic", "api:test:notifications",
-│                                                    "api:test:notifications:basic" script'leri)
+│                                                    "api:test:notifications:basic", "api:test:db" script'leri)
 ├── scripts/
 │   ├── run-schema-validation.js                  (P5.2 — Newman Node API + AJV wrapper; P5.4'te
 │   │                                                Products klasörünü de kapsayacak şekilde genişletildi)
@@ -149,6 +162,8 @@ QA-DEMO-SYSTEM/api-tests/
 │   │                                                modeli, Orders & Payment collection'ına özel)
 │   ├── run-notifications-schema-validation.js    (P5.6 — aynı Newman Node API + AJV modeli,
 │   │                                                Notifications collection'ına özel)
+│   ├── run-api-db-validation.js                  (P5.7 — YENİ, Postman/Newman değil: built-in
+│   │                                                node:sqlite (read-only) + fetch, API<->DB karşılaştırması)
 │   └── schema-negative-proof.js                  (P5.2 fix — tracked/reproducible negative+positive proof;
 │                                                    P5.4'te 1 yeni vaka eklendi, 18→19)
 └── postman/
@@ -201,8 +216,10 @@ QA-DEMO-SYSTEM/api-tests/
                          oluşturulacak; bkz. not aşağıda)
 ```
 
-API→DB validation (P5.7) ve Newman HTML reporting (P5.8) bu klasör
-yapısına henüz eklenmedi — sırasıyla kendi paketlerinde ele alınacak.
+Newman HTML reporting (P5.8) bu klasör yapısına henüz eklenmedi —
+kendi paketinde ele alınacak. API→DB validation artık PLANNED değil —
+P5.7'de `scripts/run-api-db-validation.js` ile tamamlandı (bkz.
+bölüm 12).
 
 **Not (P5.5 schema kararı — fix round'da değişti):** P5.5 ilk uygulamada
 P5.3'ün protected collection'ıyla aynı mimari kararı izleyip plain
@@ -219,7 +236,7 @@ contract'ı için ayrı bir şema oluşturulmadı — mevcut
 **Schema'lar burada değil `shared/schemas/` altında** (bkz. bölüm 7 —
 canonical karar, P5.2'de active hale geldi). Reports/evidence de
 burada değil `QA-DEMO-SYSTEM/evidence/P5-API-TESTING/` altında (bkz.
-bölüm 14). `scripts/` klasörü **P5.2'de oluşturuldu** — iki dosya:
+bölüm 16 — Evidence Yaklaşımı). `scripts/` klasörü **P5.2'de oluşturuldu** — iki dosya:
 `run-schema-validation.js` (AJV'nin pm.test() sandbox'ında güvenilir
 çalışmaması nedeniyle gereken Newman Node API wrapper'ı, bkz. bölüm 3
 ve 7 — compatibility gate sonucu) ve `schema-negative-proof.js`
@@ -232,7 +249,7 @@ kullanıcısı ve P5.3'ün iki deterministic kullanıcısı (USER A/B) da
 ayrı request body'lerine doğrudan yazıldı, iterasyon data dosyası
 gerektirmedi. Gerçekten çoklu iterasyon/veri seti gerektiren bir
 senaryo (ör. büyük bir credential fuzzing/negative matrix) ortaya
-çıktığında, Newman'ın `-d <data-file>` mekanizmasıyla (bkz. bölüm 13)
+çıktığında, Newman'ın `-d <data-file>` mekanizmasıyla (bkz. bölüm 14)
 değerlendirilecektir.
 
 ---
@@ -339,6 +356,25 @@ temiz-reset execution** ile çalıştırıldı: her ikisinde de **20/20
 request PASS, 48/48 assertion PASS, 4/4 AJV schema + Content-Type
 validation PASS** — birebir aynı sonuç, repeatability kanıtlandı (bkz.
 `evidence/P5-API-TESTING/P5.6-NOTIFICATIONS/EXECUTION.md`).
+
+**API → DB validation (P5.7'de eklendi):**
+
+```bash
+cd QA-DEMO-SYSTEM/backend
+npm run db:seed           # her tam suite çalıştırmasından ÖNCE
+npm run dev                # ayrı bir terminalde
+cd ../api-tests && npm run api:test:db
+```
+
+Bu, `scripts/run-api-db-validation.js`'i çalıştırır — Postman/Newman
+**değil**, Node'un built-in `node:sqlite` (read-only) + `fetch`'i
+kullanan, yeni dependency eklemeyen bir script. Her senaryo gerçek bir
+API çağrısını gerçek SQLite satırıyla karşılaştırır. P5.7'de gerçek
+sisteme karşı **iki ayrı temiz-reset execution** ile çalıştırıldı: her
+ikisinde de **17/17 senaryo PASS, 88/88 assertion PASS, 0 failure** —
+yalnızca timestamp'ler hariç çıktı birebir aynı (mutlak satır ID'leri
+dahil), repeatability kanıtlandı (bkz.
+`evidence/P5-API-TESTING/P5.7-API-DB-VALIDATION/EXECUTION.md`).
 
 ---
 
@@ -786,7 +822,79 @@ schema + Content-Type validation PASS** (bkz.
 
 ---
 
-## 12. Header Validation Standardı
+## 12. API → DB Validation Standardı (P5.7)
+
+**Kapsam:** P5.1–P5.6'nın hiçbiri veritabanının kendisini açmadı —
+yalnızca HTTP response'un doğru göründüğünü kanıtladılar. P5.7 bu
+boşluğu kapatır: her senaryo gerçek bir API çağrısı yapar, sonra
+sunucunun **gerçekten yazdığı** SQLite dosyasına **read-only** bir
+bağlantıdan doğrudan `SELECT` çalıştırır ve ikisini karşılaştırır.
+Database redesign, yeni domain feature, ORM değişikliği, migration
+sistemi, performance tuning **bu paketin kapsamı dışındadır**.
+
+**Mimari:** Yeni bir dosya —
+`api-tests/scripts/run-api-db-validation.js`. Postman/Newman
+**kullanılmadı** (SQL çalıştıramaz — bkz. P5.2'nin compatibility-gate
+bulgusu, aynı gerekçe) ve mevcut Postman collection'ları da
+değiştirilmedi; bu, onlara **ek, dördüncü** bir doğrulama katmanıdır.
+Script, Node'un built-in `node:sqlite` (`DatabaseSync`, sunucunun
+kendi canonical bağlantı modülüyle aynı driver) ve built-in `fetch`'i
+dışında **hiçbir yeni dependency eklemez**. DB bağlantısı
+`{readOnly:true, open:true}` ile açılır — SQLite seviyesinde gerçek
+bir yazma-engeli garantisi; script hiçbir zaman `INSERT`/`UPDATE`/
+`DELETE` çalıştırmaz, tek reset mekanizması mevcut, canonical
+`npm run db:seed`'dir (script dışından, elle).
+
+**Kritik, tahmin edilmeyen bulgu (kaynak koddan + ampirik doğrulandı):**
+**Declined/timeout bir "zero write" senaryosu DEĞİLDİR.**
+`orders.service.js`'in `createOrder()`'ı, `order` ve `order_items`
+satırlarını `if (status === 'PAID')` kontrolünden **önce**, koşulsuz
+yazar — yalnızca stock decrement, event ve notification `PAID`'e
+özeldir. P5.5/P5.6'nın API-seviyesinde zaten doğru olarak belirttiği
+("declined → 201 döner, order oluşturulur") bu davranış, P5.7'de artık
+**doğrudan SQL ile, DB satırı seviyesinde** de kanıtlanmıştır.
+
+**Senaryolar (17 senaryo, 88 assertion, RUN #1 ve RUN #2'de birebir
+aynı — mutlak satır ID'leri dahil):**
+
+| # | Senaryo | Kanıtladığı |
+|---|---|---|
+| S0 | Baseline determinism | Reset sonrası tüm tablolar deterministik (orders/order_items/notifications/events=0, stok seed değerleriyle birebir) |
+| S1 | **GATE** — unknown product_id | Gerçek zero-write: hiçbir tabloya satır yazılmaz |
+| S2 | Approved order — tam API↔DB izi | Order/order_items satırları API response'uyla birebir; duplicate-line aggregation (2+3=5) TEK satır olarak DB'de kanıtlanır; stok azalması SQL ile okunur |
+| S3 | Insufficient stock | Zero-write |
+| S4 | Invalid quantity (×3 temsili) | Zero-write |
+| S5 | Invalid payment_token (false, 0) | Zero-write |
+| S6 | Malformed JSON | Zero-write |
+| S7 | Declined payment | order/order_items YAZILIR, stock/notification/event YAZILMAZ |
+| S8 | Timeout payment | Aynı contract |
+| S9 | Notification API↔DB korelasyonu | GET response'undaki notification ile DB satırı alan alan eşleşir |
+| S10 | Duplicate notification DB kontrolü | İki ayrı PAID order → iki ayrı, birleşmeyen notification satırı |
+| S11 | Ownership DB kontrolü | order/notification `user_id`'si doğru kullanıcıya ait, çapraz atama yok |
+| S12 | Relational integrity | orphan `order_items`/`notifications`/`events` satırı yok |
+| S13 | Constraint tanımları | `CHECK`/`UNIQUE`/`REFERENCES` tanımları gerçek DDL'de mevcut (yapısal inceleme, davranışsal ihlal denemesi değil) |
+
+**Runner:** `npm run api:test:db`. P5.7'de gerçek sisteme karşı **2
+ayrı temiz-reset execution** ile çalıştırıldı: her ikisinde de **17/17
+senaryo PASS, 88/88 assertion PASS, 0 failure** — yalnızca
+`created_at` timestamp'leri hariç çıktı birebir aynı (bkz.
+`evidence/P5-API-TESTING/P5.7-API-DB-VALIDATION/EXECUTION.md`).
+
+**Bulunan bug:** **Yok.** Approved/declined/timeout persistence,
+duplicate aggregation, stock consistency, notification correlation,
+ownership, relational integrity, constraint tanımları — hepsi kaynak
+kodun söylediğiyle birebir uyuştu.
+
+**Bilinen sınırlamalar:** Constraint ihlali davranışsal olarak
+tetiklenmedi (yalnızca DDL'de tanımlı olduğu doğrulandı); P4.3'ün
+bilinen event/notification commit-ordering limitation'ı bu pakette de
+bağımsız test edilmedi (black-box API+DB testinin gözlemleyebileceği
+bir şey değil — log satırı zamanlamasıyla ilgili, DB satırıyla değil).
+Detay: evidence bölüm 9.
+
+---
+
+## 13. Header Validation Standardı
 
 CURRENT (zorunlu) vs EXPECTED/FUTURE (yalnızca not edilir) ayrımı
 `07-API-TESTING/README.md`'de tanımlıdır. Özet: `Content-Type` ve
@@ -806,7 +914,7 @@ FUTURE HARDENING — assertion yok.
 
 ---
 
-## 13. Test Data Kullanımı
+## 14. Test Data Kullanımı
 
 Mevcut `shared/test-data/` (`auth-users.json`, `products.json`,
 `payment-test-patterns.json`) **aynen yeniden kullanılacaktır** —
@@ -833,14 +941,6 @@ Detaylı eşleme (`hangi veri hangi testte`) için bkz.
 
 ---
 
-## 14. DB Validation Yaklaşımı
-
-Yalnızca Orders (PAID/DECLINED/TIMEOUT) ve Notifications akışlarında
-— her `GET` için DB kontrolü konulmaz. Detay için bkz.
-`07-API-TESTING/README.md` — "API → Database Validation Kapsamı".
-
----
-
 ## 15. Reporting Yaklaşımı
 
 Newman HTML raporları (`newman-reporter-htmlextra` vb.) **PLANNED
@@ -862,11 +962,12 @@ bir AJV schema validation run'ı (+ negative proof), P5.3'te gerçek bir
 auth/authorization suite run'ı, P5.4'te gerçek bir Products suite
 run'ı (+ genişletilmiş negative proof), P5.5'te gerçek bir Orders &
 Payment business suite run'ı, P5.6'da gerçek bir Notifications suite
-run'ı (her ikisi **2 ayrı temiz-reset execution ile**, repeatability
-kanıtı) gerçek sisteme karşı çalıştırıldı ve sonuçları ilgili paketin
-`evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sinde kayıt altına
-alındı. Her sonraki paket kapanışında da aynı şekilde gerçek execution
-kaydı üretilecektir.
+run'ı, P5.7'de gerçek bir API→DB validation run'ı (dördü de **2 ayrı
+temiz-reset execution ile**, repeatability kanıtı — P5.7'de mutlak
+satır ID'leri dahil) gerçek sisteme karşı çalıştırıldı ve sonuçları
+ilgili paketin `evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sinde
+kayıt altına alındı. Her sonraki paket kapanışında da aynı şekilde
+gerçek execution kaydı üretilecektir.
 
 ---
 
@@ -891,7 +992,7 @@ güvenlik açığını istismar etmesi bu kapsamın **tamamen dışındadır**.
 | P5.4 | Products API Tests (list/detail positive+negative+boundary, data-quality, schema/negative-proof reuse) | CLEAN |
 | P5.5 | Orders & Payment API Tests (duplicate aggregation, stock, quantity/product/items validation, payment outcomes, repeatability) | CLEAN |
 | P5.6 | Notifications API Tests (PAID correlation, user isolation, declined/timeout non-generation, duplicate regression, repeatability) | CLEAN |
-| P5.7 | API → DB Validation | PLANNED |
+| P5.7 | API → DB Validation (persistence contract, duplicate-aggregation DB proof, ownership, relational integrity, constraint definitions, repeatability) | CLEAN |
 | P5.8 | Newman Reporting & Reproducible Execution | PLANNED |
 | P5.9 | Regression, Evidence & Phase 5 Closeout | PLANNED |
 
@@ -914,3 +1015,4 @@ netleştirilecektir (Phase 4'te uygulanan pattern).
 - [../evidence/P5-API-TESTING/P5.4-PRODUCTS/EXECUTION.md](../evidence/P5-API-TESTING/P5.4-PRODUCTS/EXECUTION.md)
 - [../evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md](../evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md)
 - [../evidence/P5-API-TESTING/P5.6-NOTIFICATIONS/EXECUTION.md](../evidence/P5-API-TESTING/P5.6-NOTIFICATIONS/EXECUTION.md)
+- [../evidence/P5-API-TESTING/P5.7-API-DB-VALIDATION/EXECUTION.md](../evidence/P5-API-TESTING/P5.7-API-DB-VALIDATION/EXECUTION.md)
