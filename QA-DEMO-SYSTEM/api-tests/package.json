@@ -11,7 +11,8 @@
     "api:test:orders-payment": "node scripts/run-orders-schema-validation.js",
     "api:test:orders-payment:basic": "newman run postman/collections/qa-demo-system-orders-payment.postman_collection.json -e postman/environments/local.postman_environment.json",
     "api:test:notifications": "node scripts/run-notifications-schema-validation.js",
-    "api:test:notifications:basic": "newman run postman/collections/qa-demo-system-notifications.postman_collection.json -e postman/environments/local.postman_environment.json"
+    "api:test:notifications:basic": "newman run postman/collections/qa-demo-system-notifications.postman_collection.json -e postman/environments/local.postman_environment.json",
+    "api:test:db": "node scripts/run-api-db-validation.js"
   },
   "devDependencies": {
     "newman": "^6.2.2",
