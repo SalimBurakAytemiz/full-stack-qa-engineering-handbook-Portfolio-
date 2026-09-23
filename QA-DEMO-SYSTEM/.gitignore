@@ -1,3 +1,4 @@
 node_modules/
 backend/data/
 *.log
+api-tests/reports/
