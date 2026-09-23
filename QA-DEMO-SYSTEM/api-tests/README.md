@@ -1025,9 +1025,13 @@ DEĞİŞTİRİLMEDİ. `npm audit` before/after paket-paket karşılaştırması
 yeni risk 0 critical / 0 high / 1 moderate (`@budibase/
 handlebars-helpers`, dev-only, runtime uygulamaya etkisi yok) — kabul
 edildi, blocker değil. Tüm critical/high bulgular zaten Newman'ın kendi
-transitive zincirinde P5.1'den beri mevcuttu. Detaylı paket-paket diff:
+transitive zincirinde P5.1'den beri mevcuttu. Handlebars advisory'si iki
+ayrı path'ten geliyor — biri Newman'ın kendi (pre-existing) zincirinden,
+biri reporter'ın kendi nested kopyasından; ikisi de dev-only, backend/
+frontend runtime koduna hiç girmiyor (KNOWN DEPENDENCY ADVISORY). Detaylı
+paket-paket diff ve dependency-chain analizi:
 `evidence/P5-API-TESTING/P5.8-NEWMAN-HTML-REPORTING/EXECUTION.md`
-bölüm 1.
+bölüm 2.
 
 ### 15.2 Rapor üretme komutları
 
@@ -1050,6 +1054,12 @@ suite, `scripts/generate-html-report.js` içinde kendi çalışmalarından
 hemen önce otomatik olarak `npm run db:seed` (backend) çalıştırır;
 manuel reset gerekmez. Public/Auth/Products reset gerektirmez (mevcut
 `api:test:*` script'leriyle aynı konvansiyon — bkz. bölüm 6).
+
+Bu reset çağrısı platform'u kendi çözer (`process.platform === 'win32'`
+→ `npm.cmd`, aksi halde `npm`) — kullanıcının Windows'ta manuel olarak
+`npm.cmd` yazması GEREKMEZ, yukarıdaki komutlar Windows ve Linux'ta
+aynı şekilde çalışır (fix round, Codex B1 — bkz.
+`EXECUTION.md` bölüm 0 ve 10).
 
 `api:report:all` suite'leri **sırayla** (paralel değil) çalıştırır,
 hiçbir suite'in başarısızlığını yutmaz/gizlemez — bir suite FAIL olsa
@@ -1075,7 +1085,7 @@ anlamına gelmez — her suite kendi `summary.run.failures.length`'ını
 kontrol eder. Bu, gerçek bir controlled-failure proof ile kanıtlandı
 (geçici, commit edilmeyen, session-local bir bozuk assertion kopyası
 üzerinden — exit code 1 ve HTML'de görünür hata render'ı doğrulandı,
-detay: `EXECUTION.md` bölüm 7).
+detay: `EXECUTION.md` bölüm 8).
 
 ### 15.5 Secret/token redaction
 
@@ -1083,14 +1093,18 @@ Her rapor `reporter.htmlextra.skipHeaders: "Authorization"` ile HTTP
 header satırlarındaki gerçek session token'ı gizler. Bunun YETERSİZ
 olduğu (login/bootstrap request'lerinin RESPONSE BODY'sinde gerçek
 `demo-session-<uuid>` token'ının göründüğü) P5.8'in kendi execution'ında
-bulundu ve `reporter.htmlextra.hideResponseBody` (yalnızca login/
-bootstrap request adları hedeflenerek) ile düzeltildi — diğer tüm
-request/response body'leri debug değeri için görünür kalır. Sentetik
-payment token'ları (`TEST-CARD-APPROVED/DECLINED/TIMEOUT`) ve order
-status değerleri (`PAID`/`PAYMENT_FAILED`/`PAYMENT_TIMEOUT`) bilinçli
-olarak maskelenMEdi — sentetik veri kullanıldığını kanıtlamaları
-gerekiyor. Detay ve tam tarama sonucu:
-`EXECUTION.md` bölüm 8.
+bulundu ve `reporter.htmlextra.hideResponseBody` ile düzeltildi. Codex
+delta review'i ayrıca login/bootstrap request'lerinin REQUEST body'sindeki
+sentetik password'ün (`ValidPass123!`) de görünür olduğunu belirtti —
+`reporter.htmlextra.hideRequestBody` aynı request isim listesiyle
+eklendi. Yalnızca login/bootstrap request'lerinin body'leri gizli;
+diğer tüm request/response body'leri debug değeri için görünür kalır.
+Sentetik payment token'ları (`TEST-CARD-APPROVED/DECLINED/TIMEOUT`) ve
+order status değerleri (`PAID`/`PAYMENT_FAILED`/`PAYMENT_TIMEOUT`)
+bilinçli olarak maskelenMEdi — sentetik veri kullanıldığını
+kanıtlamaları gerekiyor. Değer-bazlı (yalnızca field adı değil, gerçek
+captured token/password VALUE'su aranarak) tarama sonucu ve detay:
+`EXECUTION.md` bölüm 9.
 
 ### 15.6 Portability
 
@@ -1098,9 +1112,13 @@ Rapor tek bir `.html` dosyası, backend'e runtime bağımlılığı yok;
 içerik (summary/request/response/assertion verisi) dosyanın içinde
 gömülü. **Bilinen sınırlama:** görsel stilleme 10 harici CDN kaynağına
 (jQuery/Bootstrap/Font Awesome/vb.) bağımlı — internet olmadan rapor
-yine açılır ve ham içerik okunabilir, ama tam stil yüklenmez (bkz.
-`EXECUTION.md` bölüm 9). Path'ler `path.join(__dirname, ...)` ile
-tamamen relative — Windows/Linux'ta aynı şekilde çalışır.
+yine açılır ve ham içerik okunabilir, ama tam stil yüklenmez. Path'ler
+`path.join(__dirname, ...)` ile tamamen relative — hardcoded Windows/
+Linux path yok. **Windows notu:** bu proje Linux tabanlı bir execution
+ortamında geliştirildi; Windows kolu (`npm.cmd` resolution, bkz. 15.2)
+kod seviyesinde doğrulandı ama gerçek bir Windows makinesinde literal
+olarak çalıştırılarak test edilmedi — Linux kolu 4 ayrı gerçek
+execution'da doğrulandı. Detay: `EXECUTION.md` bölüm 10.
 
 ---
 

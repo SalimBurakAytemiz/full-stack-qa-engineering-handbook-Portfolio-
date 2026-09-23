@@ -23,6 +23,13 @@ const ENVIRONMENT_PATH = path.join(API_TESTS_DIR, 'postman', 'environments', 'lo
 const REPORTS_DIR = path.join(API_TESTS_DIR, 'reports');
 const BACKEND_DIR = path.join(API_TESTS_DIR, '..', 'backend');
 
+// On Windows, npm is a .cmd shim; execFileSync (no shell) resolves plain
+// "npm" through Windows' own PATH lookup rules for executables, which does
+// not reliably find .cmd files. Resolving the binary name up front lets the
+// reset stay on execFileSync's default shell:false (array args, no shell
+// string interpolation) instead of opting into shell:true just for Windows.
+const NPM_COMMAND = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+
 // Redact the Authorization header (real session/JWT token) from every
 // generated report by default. Request/response BODIES are otherwise left
 // untouched — synthetic payment tokens (TEST-CARD-APPROVED/DECLINED/
@@ -32,11 +39,21 @@ const SKIP_HEADERS = 'Authorization';
 
 // POST /api/auth/login's response BODY (not just its headers) contains the
 // real runtime session token (`demo-session-<uuid>`, see
-// backend/src/services/auth.service.js). skipHeaders only strips header
-// rows, so each suite's login/bootstrap request bodies are hidden here by
-// exact request name (case-insensitive match against item.name) to keep
-// that real secret out of the generated HTML — the only bodies hidden are
-// the ones that would otherwise show the live token.
+// backend/src/services/auth.service.js), and its REQUEST body contains the
+// deterministic synthetic test password in plaintext (e.g. "ValidPass123!",
+// see the collections' own login request bodies). skipHeaders only strips
+// header rows, so each suite's login/bootstrap request AND response bodies
+// are hidden here by exact request name (case-insensitive match against
+// item.name) — the only bodies hidden are the login/bootstrap ones; every
+// other request/response body stays visible for debugging.
+const LOGIN_REQUEST_NAMES = {
+  public: ['POST /api/auth/login (valid, deterministic test user)'],
+  auth: ['Login as User A (test.active01)', 'Login as User B (test.active02)'],
+  products: [],
+  orders: ['Login as User A (test.active01)'],
+  notifications: ['Login as User A (test.active01)', 'Login as User B (test.active02)'],
+};
+
 const SUITES = {
   public: {
     collectionFile: 'qa-demo-system-public.postman_collection.json',
@@ -44,7 +61,6 @@ const SUITES = {
     browserTitle: 'Public API Report',
     outputFile: 'public-api-report.html',
     requiresReset: false,
-    hideResponseBody: ['POST /api/auth/login (valid, deterministic test user)'],
   },
   auth: {
     collectionFile: 'qa-demo-system-protected.postman_collection.json',
@@ -52,7 +68,6 @@ const SUITES = {
     browserTitle: 'Auth API Report',
     outputFile: 'auth-api-report.html',
     requiresReset: false,
-    hideResponseBody: ['Login as User A (test.active01)', 'Login as User B (test.active02)'],
   },
   products: {
     collectionFile: 'qa-demo-system-public.postman_collection.json',
@@ -61,7 +76,6 @@ const SUITES = {
     browserTitle: 'Products API Report',
     outputFile: 'products-api-report.html',
     requiresReset: false,
-    hideResponseBody: [],
   },
   orders: {
     collectionFile: 'qa-demo-system-orders-payment.postman_collection.json',
@@ -69,7 +83,6 @@ const SUITES = {
     browserTitle: 'Orders & Payment API Report',
     outputFile: 'orders-payment-api-report.html',
     requiresReset: true,
-    hideResponseBody: ['Login as User A (test.active01)'],
   },
   notifications: {
     collectionFile: 'qa-demo-system-notifications.postman_collection.json',
@@ -77,13 +90,12 @@ const SUITES = {
     browserTitle: 'Notifications API Report',
     outputFile: 'notifications-api-report.html',
     requiresReset: true,
-    hideResponseBody: ['Login as User A (test.active01)', 'Login as User B (test.active02)'],
   },
 };
 
 function resetDatabase() {
   console.log('\n[reset] npm run db:seed (backend)');
-  execFileSync('npm', ['run', 'db:seed'], { cwd: BACKEND_DIR, stdio: 'inherit' });
+  execFileSync(NPM_COMMAND, ['run', 'db:seed'], { cwd: BACKEND_DIR, stdio: 'inherit' });
 }
 
 function runSuite(key) {
@@ -98,6 +110,7 @@ function runSuite(key) {
 
   const collectionPath = path.join(COLLECTIONS_DIR, config.collectionFile);
   const outputPath = path.join(REPORTS_DIR, config.outputFile);
+  const loginRequestNames = LOGIN_REQUEST_NAMES[key];
 
   const runOptions = {
     collection: require(collectionPath),
@@ -109,7 +122,8 @@ function runSuite(key) {
         title: config.title,
         browserTitle: config.browserTitle,
         skipHeaders: SKIP_HEADERS,
-        hideResponseBody: config.hideResponseBody,
+        hideRequestBody: loginRequestNames,
+        hideResponseBody: loginRequestNames,
       },
     },
   };
