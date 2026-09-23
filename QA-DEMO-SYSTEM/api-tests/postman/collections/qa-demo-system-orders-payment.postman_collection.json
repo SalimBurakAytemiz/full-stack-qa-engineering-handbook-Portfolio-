@@ -1,0 +1,1770 @@
+{
+  "info": {
+    "_postman_id": "7d390869-ed44-41d3-a323-b7ac467bf755",
+    "name": "QA Demo System - Orders & Payment Business API (P5.5)",
+    "description": "P5.5 — Orders & Payment API Tests. Kapsam: POST /api/orders'ın business-rule seviyesinde doğrulanması — duplicate line aggregation (P4.2 B1 regresyonu), stock validation, quantity/product/items strict type validation (P4.2 B3 regresyonu), payment outcome (approved/declined/timeout) ve payment_token contract'ı (P4.2 non-blocking #4 regresyonu), malformed JSON (P4.2 non-blocking #5 regresyonu), ve POST /api/orders için minimal auth regression gate. Ownership/cross-user erişimi (GET /api/orders/:id) P5.3'ün protected collection'ında zaten kapsanmıştır — burada duplike edilmedi. Notifications business akışı, API→DB validation, HTML reporting bu koleksiyonun KAPSAMI DIŞINDADIR. Token'lar yalnızca runtime'da collection variable olarak tutulur, dosyaya yazılmaz. ÖNKOŞUL: her tam suite çalıştırmasından önce `npm run db:seed` ile deterministic/fresh state sağlanmalıdır (stok mutasyonları nedeniyle reproducibility için gereklidir).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Bootstrap",
+      "item": [
+        {
+          "name": "Login as User A (test.active01)",
+          "id": "911a8120-7e8e-4526-8aaa-925299cbff09",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test.active01@example.com\",\n  \"password\": \"ValidPass123!\"\n}"
+            },
+            "description": "Synthetic/deterministic test credential — shared/test-data/auth-users.json."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('userToken', json.token);",
+                  "pm.collectionVariables.set('userId', json.user.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Login as User B (test.active02) — for auth regression reuse only",
+          "id": "7b070754-c498-4c68-bc1e-5ef1fd4b6f13",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test.active02@example.com\",\n  \"password\": \"ValidPass123!\"\n}"
+            },
+            "description": "Ownership/cross-user testleri P5.3'ün protected collection'ında zaten kapsanmıştır (duplicate edilmedi). userBToken burada yalnızca gelecekte gerekirse diye yakalanır; P5.5'in kendi testlerinde aktif kullanılmaz."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('userBToken', pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. Duplicate Aggregation Gate",
+      "item": [
+        {
+          "name": "Create Order — duplicate product lines aggregate before stock check (qty 2+3=5)",
+          "id": "74e25802-0706-4019-beac-8f4eb6edef51",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 2\n    },\n    {\n      \"product_id\": 1,\n      \"quantity\": 3\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "İlk uygulanan gate — P4.2 blocker B1 (duplicate-line stock bypass) regresyonu. id=1 (stock=25). Aynı product_id iki ayrı satırda: quantity 2 + 3. aggregateItems() bunları TEK bir Map girdisine (product_id=1, quantity=5) toplar; stock kontrolü 5 üzerinden yapılır, order_items tablosuna TEK satır (quantity=5) yazılır — iki ayrı satır değil."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Order created with PAID status', function () { pm.expect(json.order.status).to.eql('PAID'); });",
+                  "pm.collectionVariables.set('gateOrderId', json.order.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify order_items — exactly ONE aggregated row (quantity=5), not two",
+          "id": "e13bf741-cc6f-4ac4-b8d0-616fde7dc585",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{gateOrderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{gateOrderId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const order = pm.response.json().order;",
+                  "pm.test('Exactly one order_item row (aggregated, not duplicated)', function () {",
+                  "  pm.expect(order.items.length).to.eql(1);",
+                  "});",
+                  "pm.test('Aggregated quantity is 5 (2+3), not 2 or 3 separately', function () {",
+                  "  pm.expect(order.items[0].product_id).to.eql(1);",
+                  "  pm.expect(order.items[0].quantity).to.eql(5);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock decreased by exactly the aggregated quantity (25 -> 20)",
+          "id": "96108ade-741b-47c7-b56c-9862bfe2148e",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const product = pm.response.json().product;",
+                  "pm.test('Stock decreased by exactly 5 (25 -> 20) — no double-decrement, no bypass', function () {",
+                  "  pm.expect(product.stock_quantity).to.eql(20);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Payment Outcomes",
+      "item": [
+        {
+          "name": "Approved payment — order PAID, stock decreases",
+          "id": "304ded00-e45f-48e2-990d-77182662a680",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('status PAID', function () { pm.expect(json.order.status).to.eql('PAID'); });",
+                  "pm.test('total is a number', function () { pm.expect(json.order.total).to.be.a('number'); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Declined payment — order created but PAYMENT_FAILED, stock NOT decremented",
+          "id": "33676506-ed91-428a-a828-c1957396a58b",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 3,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-DECLINED\"\n}"
+            },
+            "description": "Kaynak: orders.service.js — declined/timeout de 201 döner (order oluşturulur), yalnızca status alanı farklıdır; stok yalnızca status===PAID ise düşülür. Bu \"başarısız = HTTP error\" varsayımını reddeder — gerçek contract budur."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('status PAYMENT_FAILED (not PAID, not an HTTP error)', function () { pm.expect(json.order.status).to.eql('PAYMENT_FAILED'); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after declined payment (id=3 stays at 5)",
+          "id": "af9badf9-bb12-4122-b46a-b6da78846924",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Stock unchanged after declined payment', function () { pm.expect(pm.response.json().product.stock_quantity).to.eql(5); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Timeout payment — order created but PAYMENT_TIMEOUT, stock NOT decremented",
+          "id": "dde2efd1-9ec2-43b3-b043-f1f1c62dca1f",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 3,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-TIMEOUT\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('status PAYMENT_TIMEOUT (not PAID, not an HTTP error)', function () { pm.expect(json.order.status).to.eql('PAYMENT_TIMEOUT'); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after timeout payment (id=3 still at 5)",
+          "id": "2cb2dcd0-601a-45e0-aaa3-1251ee4181b9",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Stock unchanged after timeout payment', function () { pm.expect(pm.response.json().product.stock_quantity).to.eql(5); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Stock Validation",
+      "item": [
+        {
+          "name": "Insufficient stock — single line exceeds available (qty=6 > 5) -> 409",
+          "id": "69434b78-2ac0-4507-bd2f-2530d73c9d67",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 3,\n      \"quantity\": 6\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', function () { pm.response.to.have.status(409); });",
+                  "const json = pm.response.json();\npm.test('Error body: Yetersiz stok: QA Demo Monitör', function () {\n  pm.expect(json).to.have.property('error', \"Yetersiz stok: QA Demo Monitör\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify no partial state — stock still 5, no order created for that attempt",
+          "id": "3b9ddb13-cce9-488f-8ad8-9f07ef7f20e4",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Stock still 5 after rejected order (no partial mutation)', function () { pm.expect(pm.response.json().product.stock_quantity).to.eql(5); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Duplicate lines aggregate to exceed stock (2+4=6 > 5) -> 409, not silently accepted",
+          "id": "e6e8e230-10d9-47a7-bae7-c86467a4609d",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 3,\n      \"quantity\": 2\n    },\n    {\n      \"product_id\": 3,\n      \"quantity\": 4\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "B1 regresyonu — aggregate (6) stock (5) üzerinde; her satır ayrı ayrı 5 altında kalsa bile (4<5) reddedilmeli."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', function () { pm.response.to.have.status(409); });",
+                  "const json = pm.response.json();\npm.test('Error body: Yetersiz stok: QA Demo Monitör', function () {\n  pm.expect(json).to.have.property('error', \"Yetersiz stok: QA Demo Monitör\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock still untouched after duplicate-aggregate rejection (still 5)",
+          "id": "b7718af4-2f1b-465a-8c79-2c4abfa395b5",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Stock still 5 — aggregate rejection did not partially decrement', function () { pm.expect(pm.response.json().product.stock_quantity).to.eql(5); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Quantity Validation",
+      "item": [
+        {
+          "name": "Invalid quantity — zero (0)",
+          "id": "95ae606e-7edc-4d17-97c0-0e3fed7522b0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 0\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — negative (-1)",
+          "id": "22b0544c-f546-43a2-801b-d20c852f2057",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": -1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — decimal (1.5)",
+          "id": "d4823ad1-1155-4e07-81d2-e1852229004b",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1.5\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — string (\"2\")",
+          "id": "e3a798ef-33cd-4631-97f6-468dcb03c978",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": \"2\"\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — boolean (true)",
+          "id": "89efcf52-5754-41f6-b01c-0697b4612e38",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": true\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — array ([2])",
+          "id": "8c740b64-4663-442c-a340-12c9f98e621a",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": [\n        2\n      ]\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — null",
+          "id": "68d69da2-7b40-4d73-a4e9-114369956e4a",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": null\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — missing field",
+          "id": "58b91b9c-3286-4f85-b9f1-f60abe1b103c",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — very large (format-valid, but exceeds any real stock -> 409, not a quantity-format 400)",
+          "id": "e8f8fb26-5e30-4cc8-993f-c7892504056c",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 99999999\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "isPositiveInteger() yalnızca type+integer+pozitiflik kontrolü yapar, üst sınır yok — bu yüzden formatça geçerli ama gerçekçi olmayan büyük bir quantity, quantity-format hatası (400) değil stock hatası (409) üretir. Kod akışından çıkarıldı, tahmin edilmedi."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', function () { pm.response.to.have.status(409); });",
+                  "const json = pm.response.json();\npm.test('Error body: Yetersiz stok: QA Demo Klavye', function () {\n  pm.expect(json).to.have.property('error', \"Yetersiz stok: QA Demo Klavye\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Product Validation",
+      "item": [
+        {
+          "name": "Unknown product_id (well-formed, not in seed) -> 400 (not 404 — different from GET /products/:id)",
+          "id": "614322c5-ed74-4ac1-969c-21340bf2bfbb",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 99999,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "Kaynak: orders.service.js createOrder() — bilinmeyen product_id 400 döner (\"Ürün bulunamadı: X\"), GET /api/products/:id'in 404'ünden FARKLI bir contract'tır. Tahmin edilmedi, kaynak koddan doğrulandı."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: Ürün bulunamadı: 99999', function () {\n  pm.expect(json).to.have.property('error', \"Ürün bulunamadı: 99999\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "product_id wrong type (string \"1\") -> 400",
+          "id": "0cc76c15-a300-4324-8cf4-5c4b17188270",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": \"1\",\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: product_id pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"product_id pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "product_id null -> 400",
+          "id": "bd7c6370-23ac-45ad-9fe5-61e9874d25a9",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": null,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: product_id pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"product_id pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "product_id missing -> 400",
+          "id": "0d81ec60-cad4-4830-b8a1-f1bb0a9aca6f",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: product_id pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"product_id pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Items Validation",
+      "item": [
+        {
+          "name": "items missing entirely -> 400",
+          "id": "5e8033be-2d75-4594-a758-9382db9de293",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: En az bir ürün gereklidir.', function () {\n  pm.expect(json).to.have.property('error', \"En az bir ürün gereklidir.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "items null -> 400",
+          "id": "bbcbde83-61b7-44ff-8459-68ac3edadab1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": null,\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: En az bir ürün gereklidir.', function () {\n  pm.expect(json).to.have.property('error', \"En az bir ürün gereklidir.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "items empty array -> 400",
+          "id": "162ff991-5fa5-418e-b66a-64ad53e3ab3b",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: En az bir ürün gereklidir.', function () {\n  pm.expect(json).to.have.property('error', \"En az bir ürün gereklidir.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "items wrong type (string, not array) -> 400",
+          "id": "74166e34-f95d-4fc7-a33f-417eae63594b",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": \"not-an-array\",\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: En az bir ürün gereklidir.', function () {\n  pm.expect(json).to.have.property('error', \"En az bir ürün gereklidir.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "item entry invalid (null item in array) -> 400, no 500",
+          "id": "776d4daa-6138-40f5-90a3-08e3d22ddda9",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    null\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: Geçersiz ürün girdisi.', function () {\n  pm.expect(json).to.have.property('error', \"Geçersiz ürün girdisi.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Payment Token Validation",
+      "item": [
+        {
+          "name": "payment_token omitted entirely -> defaults to approved (PAID)",
+          "id": "49723250-1a26-419b-9ca1-dcdeddb36b71",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "description": "Yalnızca gerçekten OMIT edilen payment_token default (TEST-CARD-APPROVED) alır — resolvePaymentToken() kaynağından doğrulandı."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('Defaults to PAID', function () { pm.expect(pm.response.json().order.status).to.eql('PAID'); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token null -> 400 (does NOT silently default)",
+          "id": "427aad16-a6c3-41b5-a60e-01731466f8ad",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": null\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token empty string -> 400 (does NOT silently default)",
+          "id": "1e9ea35d-91ca-4000-808c-42694e030b3e",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token wrong type (number) -> 400 (does NOT silently default)",
+          "id": "1751d3bf-2866-4c4d-b2e5-680d89d751a6",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": 123\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token unknown/random string -> 400, distinct \"unknown token\" message",
+          "id": "37e2e00a-393d-41e2-9218-a568f49c9ecd",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"RANDOM-TOKEN-999\"\n}"
+            },
+            "description": "Format olarak geçerli (non-empty string) ama tanınan pattern değil — resolvePaymentToken() değil simulatePayment() reddediyor, farklı bir mesaj."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: Bilinmeyen test payment token: RANDOM-TOKEN-999', function () {\n  pm.expect(json).to.have.property('error', \"Bilinmeyen test payment token: RANDOM-TOKEN-999\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "8. Malformed JSON",
+      "item": [
+        {
+          "name": "Malformed JSON body -> 400, not 500",
+          "id": "cd966878-054a-4a1a-809b-26cd23c409f8",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ this is not valid JSON"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: Geçersiz JSON gövdesi', function () {\n  pm.expect(json).to.have.property('error', \"Geçersiz JSON gövdesi\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "9. Auth Regression (POST /api/orders)",
+      "item": [
+        {
+          "name": "No token -> 401 (representative gate; full auth matrix already in P5.3)",
+          "id": "ab2845af-03c9-4bfd-a368-29f2c37f7eb5",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "const json = pm.response.json();\npm.test('Error body: Yetkilendirme gerekli', function () {\n  pm.expect(json).to.have.property('error', \"Yetkilendirme gerekli\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid token -> 401",
+          "id": "36c52aac-fb69-434c-b7e4-5498ef806453",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer not-a-real-session-token-1234567890"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "const json = pm.response.json();\npm.test('Error body: Geçersiz veya süresi dolmuş oturum', function () {\n  pm.expect(json).to.have.property('error', \"Geçersiz veya süresi dolmuş oturum\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    }
+  ]
+}
