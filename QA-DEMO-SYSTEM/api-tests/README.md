@@ -145,16 +145,19 @@ Detaylı authorization matrix için bkz. `07-API-TESTING/README.md`.
 
 ## 5. Klasör Yapısı
 
-### Mevcut (P5.7 sonunda)
+### Mevcut (P5.8 sonunda)
 
 ```text
 QA-DEMO-SYSTEM/api-tests/
 ├── README.md
-├── package.json                                  (newman + ajv devDependency; "api:test:postman",
-│                                                    "api:test:postman:basic", "api:test:schema:negative-proof",
-│                                                    "api:test:auth", "api:test:orders-payment",
-│                                                    "api:test:orders-payment:basic", "api:test:notifications",
-│                                                    "api:test:notifications:basic", "api:test:db" script'leri)
+├── package.json                                  (newman + ajv + newman-reporter-htmlextra devDependency;
+│                                                    "api:test:postman", "api:test:postman:basic",
+│                                                    "api:test:schema:negative-proof", "api:test:auth",
+│                                                    "api:test:orders-payment", "api:test:orders-payment:basic",
+│                                                    "api:test:notifications", "api:test:notifications:basic",
+│                                                    "api:test:db", "api:report:public", "api:report:auth",
+│                                                    "api:report:products", "api:report:orders",
+│                                                    "api:report:notifications", "api:report:all" script'leri)
 ├── scripts/
 │   ├── run-schema-validation.js                  (P5.2 — Newman Node API + AJV wrapper; P5.4'te
 │   │                                                Products klasörünü de kapsayacak şekilde genişletildi)
@@ -162,10 +165,15 @@ QA-DEMO-SYSTEM/api-tests/
 │   │                                                modeli, Orders & Payment collection'ına özel)
 │   ├── run-notifications-schema-validation.js    (P5.6 — aynı Newman Node API + AJV modeli,
 │   │                                                Notifications collection'ına özel)
-│   ├── run-api-db-validation.js                  (P5.7 — YENİ, Postman/Newman değil: built-in
+│   ├── run-api-db-validation.js                  (P5.7 — Postman/Newman değil: built-in
 │   │                                                node:sqlite (read-only) + fetch, API<->DB karşılaştırması)
+│   ├── generate-html-report.js                   (P5.8 — YENİ, newman.run() Node API + htmlextra reporter
+│   │                                                wrapper; 5 suite + "all" modu, bkz. bölüm 15)
 │   └── schema-negative-proof.js                  (P5.2 fix — tracked/reproducible negative+positive proof;
 │                                                    P5.4'te 1 yeni vaka eklendi, 18→19)
+├── reports/                                       (P5.8 — YENİ, GİT'E COMMIT EDİLMEZ, .gitignore'da;
+│                                                    `npm run api:report:*` ile üretilen HTML dosyaları
+│                                                    burada oluşur, bkz. bölüm 15)
 └── postman/
     ├── collections/
     │   ├── qa-demo-system-public.postman_collection.json          (P5.1: Health/Login + P5.4: "Products"
@@ -216,10 +224,10 @@ QA-DEMO-SYSTEM/api-tests/
                          oluşturulacak; bkz. not aşağıda)
 ```
 
-Newman HTML reporting (P5.8) bu klasör yapısına henüz eklenmedi —
-kendi paketinde ele alınacak. API→DB validation artık PLANNED değil —
-P5.7'de `scripts/run-api-db-validation.js` ile tamamlandı (bkz.
-bölüm 12).
+Newman HTML reporting artık PLANNED değil — P5.8'de
+`scripts/generate-html-report.js` ile tamamlandı (bkz. bölüm 15).
+API→DB validation da PLANNED değil — P5.7'de
+`scripts/run-api-db-validation.js` ile tamamlandı (bkz. bölüm 12).
 
 **Not (P5.5 schema kararı — fix round'da değişti):** P5.5 ilk uygulamada
 P5.3'ün protected collection'ıyla aynı mimari kararı izleyip plain
@@ -391,6 +399,12 @@ bir iddia değildir; zero-write assertion'ının kendisi her run'ın
 iki run'da da bağımsız olarak PASS oldu (repeatability kanıtlandı,
 bkz. `evidence/P5-API-TESTING/P5.7-API-DB-VALIDATION/EXECUTION.md`
 bölüm 8).
+
+**HTML rapor üretimi (P5.8'de eklendi):** yukarıdaki `api:test:*`
+komutları yalnızca CLI/console çıktısı üretir. Tarayıcıda açılabilir bir
+HTML raporu için `npm run api:report:<suite>` komutları kullanılır —
+tam komut listesi, çıktı konumu, reset gereksinimleri ve secret-masking
+detayları için bkz. bölüm 15.
 
 ---
 
@@ -985,13 +999,108 @@ Detaylı eşleme (`hangi veri hangi testte`) için bkz.
 
 ## 15. Reporting Yaklaşımı
 
-Newman HTML raporları (`newman-reporter-htmlextra` vb.) **PLANNED
-(P5.8)** — henüz kurulmadı. P5.1/P5.2'de yalnızca Newman'ın standart
-CLI çıktısı (console reporter) + `run-schema-validation.js`'nin kendi
-konsol özeti kullanıldı; bu çıktı ilgili paketin
-`evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sine gerçek execution
-kaydı olarak yazıldı — ara execution'lar commit edilmiyor, yalnızca
-paket kapanışındaki execution (P4.4/P4.5 evidence pattern'i).
+P5.1–P5.7'de yalnızca Newman'ın standart CLI çıktısı (console reporter)
++ AJV wrapper script'lerinin kendi konsol özeti kullanıldı; bu çıktı
+ilgili paketin `evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sine
+gerçek execution kaydı olarak yazıldı — ara execution'lar commit
+edilmiyor, yalnızca paket kapanışındaki execution (P4.4/P4.5 evidence
+pattern'i). **P5.8'de** bu console-only modele ek olarak, mevcut 5
+Newman collection'ı için tarayıcıda açılabilir bir HTML raporu
+üretilebilir hale getirildi — mevcut test mantığı/assertion'lar
+DEĞİŞMEDİ, yalnızca reporting eklendi.
+
+**P5.7 (`scripts/run-api-db-validation.js`) kapsam dışıdır** — bir
+Postman/Newman collection'ı değil, `node:sqlite` + `fetch` kullanan
+standalone bir Node script'i; kendi Markdown/evidence modeli aynen
+korunur, Newman HTML reporter'a zorlanmadı.
+
+### 15.1 Reporter ve dependency kararı
+
+`newman-reporter-htmlextra` (`^1.23.1`, dev-only devDependency) seçildi
+— `peerDependencies.newman: ^6.0.0` pinned `newman@^6.2.2` ile uyumlu,
+`engines.node: >=6` kullanılan Node ile uyumlu, deprecated değil.
+Newman'ın kendi major/minor versiyonu bu reporter'a uydurmak için
+DEĞİŞTİRİLMEDİ. `npm audit` before/after paket-paket karşılaştırması
+(`git stash` ile) yapıldı: reporter'ın kendi zincirinden gelen GERÇEK
+yeni risk 0 critical / 0 high / 1 moderate (`@budibase/
+handlebars-helpers`, dev-only, runtime uygulamaya etkisi yok) — kabul
+edildi, blocker değil. Tüm critical/high bulgular zaten Newman'ın kendi
+transitive zincirinde P5.1'den beri mevcuttu. Detaylı paket-paket diff:
+`evidence/P5-API-TESTING/P5.8-NEWMAN-HTML-REPORTING/EXECUTION.md`
+bölüm 1.
+
+### 15.2 Rapor üretme komutları
+
+```bash
+cd QA-DEMO-SYSTEM
+npm run dev                       # ayrı bir terminalde — sunucu ayakta kalmalı
+cd api-tests
+
+npm run api:report:public         # Public/Postman Foundation
+npm run api:report:auth           # Auth & Authorization
+npm run api:report:products       # Products (Public collection'ın "Products" klasörü, izole)
+npm run api:report:orders         # Orders & Payment — reset gerektirir (otomatik yapılır, aşağıya bkz.)
+npm run api:report:notifications  # Notifications — reset gerektirir (otomatik yapılır, aşağıya bkz.)
+npm run api:report:all            # yukarıdaki 5'i sırayla çalıştırır
+```
+
+Orders & Payment ve Notifications **stateful**'dir (stok/order/
+notification mutasyonu yapar) — `requiresReset: true` işaretli bu iki
+suite, `scripts/generate-html-report.js` içinde kendi çalışmalarından
+hemen önce otomatik olarak `npm run db:seed` (backend) çalıştırır;
+manuel reset gerekmez. Public/Auth/Products reset gerektirmez (mevcut
+`api:test:*` script'leriyle aynı konvansiyon — bkz. bölüm 6).
+
+`api:report:all` suite'leri **sırayla** (paralel değil) çalıştırır,
+hiçbir suite'in başarısızlığını yutmaz/gizlemez — bir suite FAIL olsa
+bile diğerleri çalışmaya devam eder, ama en sonda herhangi biri FAIL
+ise process exit code **1** olur.
+
+### 15.3 Çıktı konumu ve commit politikası
+
+Raporlar `QA-DEMO-SYSTEM/api-tests/reports/` altında, deterministik
+isimlerle üretilir: `public-api-report.html`, `auth-api-report.html`,
+`products-api-report.html`, `orders-payment-api-report.html`,
+`notifications-api-report.html`. Bu dizin `QA-DEMO-SYSTEM/.gitignore`'a
+eklendi (`api-tests/reports/`) — **üretilen HTML dosyaları default
+olarak git'e commit edilmez.** Paket kapanışı evidence'ı
+(`EXECUTION.md`) komutları/path'leri/özet sayıları kaydeder, ham HTML
+içeriğini DEĞİL.
+
+### 15.4 Exit code semantiği
+
+Reporter eklenmesi Newman'ın PASS=0/FAIL≠0 exit code semantiğini
+**değiştirmez**. "Rapor dosyası üretildi" hiçbir yerde "test geçti"
+anlamına gelmez — her suite kendi `summary.run.failures.length`'ını
+kontrol eder. Bu, gerçek bir controlled-failure proof ile kanıtlandı
+(geçici, commit edilmeyen, session-local bir bozuk assertion kopyası
+üzerinden — exit code 1 ve HTML'de görünür hata render'ı doğrulandı,
+detay: `EXECUTION.md` bölüm 7).
+
+### 15.5 Secret/token redaction
+
+Her rapor `reporter.htmlextra.skipHeaders: "Authorization"` ile HTTP
+header satırlarındaki gerçek session token'ı gizler. Bunun YETERSİZ
+olduğu (login/bootstrap request'lerinin RESPONSE BODY'sinde gerçek
+`demo-session-<uuid>` token'ının göründüğü) P5.8'in kendi execution'ında
+bulundu ve `reporter.htmlextra.hideResponseBody` (yalnızca login/
+bootstrap request adları hedeflenerek) ile düzeltildi — diğer tüm
+request/response body'leri debug değeri için görünür kalır. Sentetik
+payment token'ları (`TEST-CARD-APPROVED/DECLINED/TIMEOUT`) ve order
+status değerleri (`PAID`/`PAYMENT_FAILED`/`PAYMENT_TIMEOUT`) bilinçli
+olarak maskelenMEdi — sentetik veri kullanıldığını kanıtlamaları
+gerekiyor. Detay ve tam tarama sonucu:
+`EXECUTION.md` bölüm 8.
+
+### 15.6 Portability
+
+Rapor tek bir `.html` dosyası, backend'e runtime bağımlılığı yok;
+içerik (summary/request/response/assertion verisi) dosyanın içinde
+gömülü. **Bilinen sınırlama:** görsel stilleme 10 harici CDN kaynağına
+(jQuery/Bootstrap/Font Awesome/vb.) bağımlı — internet olmadan rapor
+yine açılır ve ham içerik okunabilir, ama tam stil yüklenmez (bkz.
+`EXECUTION.md` bölüm 9). Path'ler `path.join(__dirname, ...)` ile
+tamamen relative — Windows/Linux'ta aynı şekilde çalışır.
 
 ---
 
@@ -1006,10 +1115,13 @@ run'ı (+ genişletilmiş negative proof), P5.5'te gerçek bir Orders &
 Payment business suite run'ı, P5.6'da gerçek bir Notifications suite
 run'ı, P5.7'de gerçek bir API→DB validation run'ı (dördü de **2 ayrı
 temiz-reset execution ile**, repeatability kanıtı — P5.7'de mutlak
-satır ID'leri dahil) gerçek sisteme karşı çalıştırıldı ve sonuçları
-ilgili paketin `evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sinde
-kayıt altına alındı. Her sonraki paket kapanışında da aynı şekilde
-gerçek execution kaydı üretilecektir.
+satır ID'leri dahil), P5.8'de gerçek bir HTML report generation run'ı
+(5 suite'in tamamı, **2 ayrı temiz-reset execution ile**, request/
+assertion sayıları birebir aynı — repeatability kanıtı) gerçek sisteme
+karşı çalıştırıldı ve sonuçları ilgili paketin
+`evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sinde kayıt altına
+alındı. Her sonraki paket kapanışında da aynı şekilde gerçek execution
+kaydı üretilecektir.
 
 ---
 
@@ -1035,7 +1147,7 @@ güvenlik açığını istismar etmesi bu kapsamın **tamamen dışındadır**.
 | P5.5 | Orders & Payment API Tests (duplicate aggregation, stock, quantity/product/items validation, payment outcomes, repeatability) | CLEAN |
 | P5.6 | Notifications API Tests (PAID correlation, user isolation, declined/timeout non-generation, duplicate regression, repeatability) | CLEAN |
 | P5.7 | API → DB Validation (persistence contract, duplicate-aggregation DB proof, ownership, relational integrity, constraint definitions, repeatability) | CLEAN |
-| P5.8 | Newman Reporting & Reproducible Execution | PLANNED |
+| P5.8 | Newman HTML Reporting (`newman-reporter-htmlextra`, 5 suite report, secret redaction, controlled-failure proof, repeatability) | CLEAN |
 | P5.9 | Regression, Evidence & Phase 5 Closeout | PLANNED |
 
 Her paketin amaç/kapsam/dosya/test/AC/dependency/evidence/Codex
