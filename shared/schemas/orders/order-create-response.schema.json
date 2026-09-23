@@ -1,0 +1,27 @@
+{
+  "$id": "https://qa-demo-system.local/schemas/orders/order-create-response.schema.json",
+  "title": "POST /api/orders — 201 response",
+  "description": "Kaynak: routes/orders.routes.js — res.status(result.status).json({ order: { id: result.orderId, status: result.orderStatus, total: result.total } }). status alanı PAID/PAYMENT_FAILED/PAYMENT_TIMEOUT üçünden biridir (services/orders.service.js STATUS_BY_PAYMENT_RESULT) — declined/timeout da 201 ile bu contract'ı kullanır, ayrı bir hata response'u değildir. Ampirik doğrulama: onaylanan, reddedilen ve timeout olan sipariş response'ları P5.5 evidence'ında kaydedilmiştir.",
+  "type": "object",
+  "properties": {
+    "order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PAID", "PAYMENT_FAILED", "PAYMENT_TIMEOUT"]
+        },
+        "total": {
+          "type": "number"
+        }
+      },
+      "required": ["id", "status", "total"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["order"],
+  "additionalProperties": false
+}

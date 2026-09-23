@@ -1,0 +1,2597 @@
+{
+  "info": {
+    "_postman_id": "ee333bbb-8a3d-41d4-95ff-02e5ea37d695",
+    "name": "QA Demo System - Orders & Payment Business API (P5.5)",
+    "description": "P5.5 — Orders & Payment API Tests. Kapsam: POST /api/orders'ın business-rule seviyesinde doğrulanması — duplicate line aggregation (P4.2 B1 regresyonu), stock validation, quantity/product/items strict type validation (P4.2 B3 regresyonu), payment outcome (approved/declined/timeout) ve payment_token contract'ı (P4.2 non-blocking #4 regresyonu), malformed JSON (P4.2 non-blocking #5 regresyonu), ve POST /api/orders için minimal auth regression gate. Ownership/cross-user erişimi (GET /api/orders/:id) P5.3'ün protected collection'ında zaten kapsanmıştır — burada duplike edilmedi. Notifications business akışı, API→DB validation, HTML reporting bu koleksiyonun KAPSAMI DIŞINDADIR. Token'lar yalnızca runtime'da collection variable olarak tutulur, dosyaya yazılmaz. ÖNKOŞUL: her tam suite çalıştırmasından önce `npm run db:seed` ile deterministic/fresh state sağlanmalıdır (stok mutasyonları nedeniyle reproducibility için gereklidir).\n\nFIX ROUND (Codex delta review, head commit 9cac4cc, FAIL/4 blocker): B1 — approved payment artık gerçek before/after GET ile capture edilen, runtime'da hesaplanan (hardcoded değil) stok azalması kanıtlıyor. B2 — declined/timeout/insufficient-stock/duplicate-aggregate-exceeds-stock ve regresyon riski taşıyan temsili invalid-quantity girdileri (\"2\", true, [2], null) artık gerçek before/after stok kontrolüyle kanıtlanıyor; ayrıca yeni bir 'mixed valid+invalid product' atomicity testi eklendi. Bu koleksiyonun kanıtladığı her şey API-visible state ile sınırlıdır — doğrudan DB satır varlığı/yokluğu P5.7 (API→DB Validation) kapsamına bırakılmıştır. B3 — payment_token: false ve payment_token: 0 için ayrı test case'leri eklendi (OMITTED'dan farklı, sessiz default'a düşmediğini ve stoğu etkilemediğini kanıtlıyor). B4 — order success/error response contract'ı artık P5.2'nin kanonik AJV/Node-wrapper modeliyle (scripts/run-orders-schema-validation.js) shared/schemas/orders/ altındaki gerçek şemalara karşı doğrulanıyor. Non-blocking — kullanılmayan User B bootstrap request'i kaldırıldı.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Bootstrap",
+      "item": [
+        {
+          "name": "Login as User A (test.active01)",
+          "id": "a9a9b343-c42f-43f9-a5f4-505700d1d876",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test.active01@example.com\",\n  \"password\": \"ValidPass123!\"\n}"
+            },
+            "description": "Synthetic/deterministic test credential — shared/test-data/auth-users.json. Not: önceki bir revizyonda burada ayrıca bir User B (test.active02) bootstrap login'i vardı; Codex delta review (B-non-blocking) userBToken'ın P5.5 koleksiyonunda hiçbir assertion tarafından kullanılmadığını tespit etti — ownership/cross-user testleri zaten P5.3'ün protected collection'ında kapsanmıştır. Kullanılmayan bootstrap request'i kaldırıldı."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('userToken', json.token);",
+                  "pm.collectionVariables.set('userId', json.user.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. Duplicate Aggregation Gate",
+      "item": [
+        {
+          "name": "Create Order — duplicate product lines aggregate before stock check (qty 2+3=5)",
+          "id": "203fb664-8fa1-403f-97ce-7282bc934cf3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 2\n    },\n    {\n      \"product_id\": 1,\n      \"quantity\": 3\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "İlk uygulanan gate — P4.2 blocker B1 (duplicate-line stock bypass) regresyonu. id=1 (stock=25). Aynı product_id iki ayrı satırda: quantity 2 + 3. aggregateItems() bunları TEK bir Map girdisine (product_id=1, quantity=5) toplar; stock kontrolü 5 üzerinden yapılır, order_items tablosuna TEK satır (quantity=5) yazılır — iki ayrı satır değil."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('Content-Type is application/json', function () { pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8'); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Order created with PAID status', function () { pm.expect(json.order.status).to.eql('PAID'); });",
+                  "pm.collectionVariables.set('gateOrderId', json.order.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify order_items — exactly ONE aggregated row (quantity=5), not two",
+          "id": "a36d1b57-01bb-451c-937b-6f7f0f8d916b",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{gateOrderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{gateOrderId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const order = pm.response.json().order;",
+                  "pm.test('Exactly one order_item row (aggregated, not duplicated)', function () {",
+                  "  pm.expect(order.items.length).to.eql(1);",
+                  "});",
+                  "pm.test('Aggregated quantity is 5 (2+3), not 2 or 3 separately', function () {",
+                  "  pm.expect(order.items[0].product_id).to.eql(1);",
+                  "  pm.expect(order.items[0].quantity).to.eql(5);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock decreased by exactly the aggregated quantity (25 -> 20)",
+          "id": "3922f362-e98a-4033-a27b-852bbd94003b",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const product = pm.response.json().product;",
+                  "pm.test('Stock decreased by exactly 5 (25 -> 20) — no double-decrement, no bypass', function () {",
+                  "  pm.expect(product.stock_quantity).to.eql(20);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Payment Outcomes",
+      "item": [
+        {
+          "name": "Capture stock before approved payment (product 1)",
+          "id": "dc299405-e1f4-447b-aaac-9a271dfc84c7",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeApproved', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Approved payment — order PAID, stock decreases",
+          "id": "df414293-02c5-4ebe-9991-027035035f57",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('status PAID', function () { pm.expect(json.order.status).to.eql('PAID'); });",
+                  "pm.test('total is a number', function () { pm.expect(json.order.total).to.be.a('number'); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock decreased by exactly 1 after approved payment (product 1) — B1",
+          "id": "b40c154e-0eaf-4c57-9bfd-ac79064fdf2a",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeApproved');",
+                  "const expectedDecrement = 1;",
+                  "pm.test('Stock decreased by exactly ' + expectedDecrement + ' (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore - expectedDecrement); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Capture stock before declined payment (product 3)",
+          "id": "217513dd-eac8-4f3f-8ba1-004bfb19b9f5",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeDeclined', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Declined payment — order created but PAYMENT_FAILED, stock NOT decremented",
+          "id": "0c6ec838-3e6f-4469-afdc-0357b66090b8",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 3,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-DECLINED\"\n}"
+            },
+            "description": "Kaynak: orders.service.js — declined/timeout de 201 döner (order oluşturulur), yalnızca status alanı farklıdır; stok yalnızca status===PAID ise düşülür. Bu \"başarısız = HTTP error\" varsayımını reddeder — gerçek contract budur."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('status PAYMENT_FAILED (not PAID, not an HTTP error)', function () { pm.expect(json.order.status).to.eql('PAYMENT_FAILED'); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after declined payment (product 3) — captured before/after, not hardcoded",
+          "id": "e6e3a5d7-d747-4758-bd89-56fa2493788f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeDeclined');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Capture stock before timeout payment (product 3)",
+          "id": "29e5fd16-ebda-4ff7-b1cd-7cba6282411e",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeTimeout', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Timeout payment — order created but PAYMENT_TIMEOUT, stock NOT decremented",
+          "id": "51b9005a-b5aa-4dc4-a10e-195938891494",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 3,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-TIMEOUT\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('status PAYMENT_TIMEOUT (not PAID, not an HTTP error)', function () { pm.expect(json.order.status).to.eql('PAYMENT_TIMEOUT'); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after timeout payment (product 3) — captured before/after, not hardcoded",
+          "id": "6ad25770-e9d3-43f3-bbe5-b5b2aab0408f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeTimeout');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Stock Validation",
+      "item": [
+        {
+          "name": "Capture stock before insufficient-stock rejection (product 3)",
+          "id": "b975e41f-6b96-4458-8c5a-b2298d9767b4",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeInsufficient', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Insufficient stock — single line exceeds available (qty=6 > 5) -> 409",
+          "id": "2996d645-dd25-43fa-8af3-5686eeec93c2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 3,\n      \"quantity\": 6\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', function () { pm.response.to.have.status(409); });",
+                  "const json = pm.response.json();\npm.test('Error body: Yetersiz stok: QA Demo Monitör', function () {\n  pm.expect(json).to.have.property('error', \"Yetersiz stok: QA Demo Monitör\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after insufficient-stock rejection (API-visible only — DB order-row existence: bkz. EXECUTION.md bölüm 12, P5.7)",
+          "id": "517c563c-9a50-44b8-8d18-c0f1919d99b2",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeInsufficient');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Capture stock before duplicate-aggregate-exceeds-stock rejection (product 3)",
+          "id": "7fbf1fd8-a6db-49e7-b124-ad03887f636c",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeDupExceeds', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Duplicate lines aggregate to exceed stock (2+4=6 > 5) -> 409, not silently accepted",
+          "id": "0a8d51f7-7b13-4607-b76a-2f014d680ed5",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 3,\n      \"quantity\": 2\n    },\n    {\n      \"product_id\": 3,\n      \"quantity\": 4\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "B1 regresyonu — aggregate (6) stock (5) üzerinde; her satır ayrı ayrı 5 altında kalsa bile (4<5) reddedilmeli."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', function () { pm.response.to.have.status(409); });",
+                  "const json = pm.response.json();\npm.test('Error body: Yetersiz stok: QA Demo Monitör', function () {\n  pm.expect(json).to.have.property('error', \"Yetersiz stok: QA Demo Monitör\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock still untouched after duplicate-aggregate rejection — captured before/after, not hardcoded",
+          "id": "30f19d9c-4be0-4fd8-b5ca-81c39591d1b3",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "3"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeDupExceeds');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Quantity Validation",
+      "item": [
+        {
+          "name": "Invalid quantity — zero (0)",
+          "id": "abf65867-294a-4f93-af72-9741e5115391",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 0\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — negative (-1)",
+          "id": "2fc277d4-dc27-4476-8806-069e043c81ad",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": -1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — decimal (1.5)",
+          "id": "a23eecad-ddb8-4b80-bd5d-da7255260f33",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1.5\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Capture stock before invalid quantity — string (\"2\") (product 1)",
+          "id": "b2e837b4-0f23-4412-85d1-de3b5f9ef686",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeQtyString', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — string (\"2\")",
+          "id": "dcd0dc92-72b4-4cee-ac81-4d474201b4fd",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": \"2\"\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after invalid quantity — string (\"2\") — B2 representative regression-risk input",
+          "id": "e9cecdcc-6e97-4e92-bf2f-fd43973abb5f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeQtyString');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Capture stock before invalid quantity — boolean (true) (product 1)",
+          "id": "1a94ef11-8cb5-4552-9a27-80075193b6dd",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeQtyBool', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — boolean (true)",
+          "id": "b7071165-7eb2-4295-8462-4026657f222b",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": true\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after invalid quantity — boolean (true) — B2 representative regression-risk input",
+          "id": "b350de54-040f-4599-a0c9-63ec68415c09",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeQtyBool');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Capture stock before invalid quantity — array ([2]) (product 1)",
+          "id": "958db5c6-7904-49ac-9b60-3ee300444fde",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeQtyArray', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — array ([2])",
+          "id": "bc4c5a7b-9af4-440e-8890-a1130d3fb284",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": [\n        2\n      ]\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after invalid quantity — array ([2]) — B2 representative regression-risk input",
+          "id": "e61d777b-9d77-4b9d-9d9b-104c80ea2995",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeQtyArray');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Capture stock before invalid quantity — null (product 1)",
+          "id": "b0a178c0-8edb-41ca-bba5-2f4e0d8912d5",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeQtyNull', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — null",
+          "id": "fa4d297c-d857-4242-bd1c-724dccf3fddc",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": null\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after invalid quantity — null — B2 representative regression-risk input",
+          "id": "df9ed6d9-0d49-40c9-a56b-98e8a1fd8599",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeQtyNull');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — missing field",
+          "id": "d86c483f-7ba8-42fb-8323-8177b1a301ed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: quantity pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"quantity pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid quantity — very large (format-valid, but exceeds any real stock -> 409, not a quantity-format 400)",
+          "id": "def5c3bf-af52-4f49-83cf-b95b3bf8a2a0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 99999999\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "isPositiveInteger() yalnızca type+integer+pozitiflik kontrolü yapar, üst sınır yok — bu yüzden formatça geçerli ama gerçekçi olmayan büyük bir quantity, quantity-format hatası (400) değil stock hatası (409) üretir. Kod akışından çıkarıldı, tahmin edilmedi."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', function () { pm.response.to.have.status(409); });",
+                  "const json = pm.response.json();\npm.test('Error body: Yetersiz stok: QA Demo Klavye', function () {\n  pm.expect(json).to.have.property('error', \"Yetersiz stok: QA Demo Klavye\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Product Validation",
+      "item": [
+        {
+          "name": "Unknown product_id (well-formed, not in seed) -> 400 (not 404 — different from GET /products/:id)",
+          "id": "bdd8735b-ede1-4e58-acea-794020c9bd14",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 99999,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "Kaynak: orders.service.js createOrder() — bilinmeyen product_id 400 döner (\"Ürün bulunamadı: X\"), GET /api/products/:id'in 404'ünden FARKLI bir contract'tır. Tahmin edilmedi, kaynak koddan doğrulandı."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: Ürün bulunamadı: 99999', function () {\n  pm.expect(json).to.have.property('error', \"Ürün bulunamadı: 99999\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "product_id wrong type (string \"1\") -> 400",
+          "id": "4ce07742-088a-48b9-bb80-02fdbc694fd5",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": \"1\",\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: product_id pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"product_id pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "product_id null -> 400",
+          "id": "542506e3-a361-4923-8894-ebbc4c331913",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": null,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: product_id pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"product_id pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "product_id missing -> 400",
+          "id": "6c182ffa-f162-4e84-8d8e-8122dfb8f3fb",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: product_id pozitif bir tam sayı olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"product_id pozitif bir tam sayı olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Capture stock before mixed valid+invalid product request (product 1)",
+          "id": "586e3668-8f92-4cf6-8252-c92746eb4199",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeAtomicity', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Mixed valid + invalid product in one request -> 400 (product_id 99999 unknown)",
+          "id": "0d06c5b6-7160-4b13-b23e-e26ba7d3f994",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    },\n    {\n      \"product_id\": 99999,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "B2 regresyonu — temsili çok satırlı istek. Satır 1 gerçek/geçerli bir ürün (id=1), satır 2 var olmayan bir ürün (id=99999). Kaynak koddan doğrulandı: createOrder() tüm satırları stock check'ten ÖNCE, tek tek sırayla resolve eder — ilk bilinmeyen product_id'de tüm istek 400 ile reddedilir; bu okumaya göre DB'ye herhangi bir INSERT/UPDATE çalışmadan (transaction hiç BEGIN edilmeden) önce reddedilir. Bu request, yalnızca API-visible sonucu (400 + product 1'in stoğunun değişmediği) ölçer; DB'de order/order_items satırının hiç yazılmadığı iddiası burada test edilmez — doğrudan SQL gerektirir, P5.7'ye bırakılmıştır (bkz. EXECUTION.md bölüm 12)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: Ürün bulunamadı: 99999', function () {\n  pm.expect(json).to.have.property('error', \"Ürün bulunamadı: 99999\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify product 1 stock unchanged after mixed valid+invalid rejection (API-visible only)",
+          "id": "d3ae1b73-3efa-4936-b012-829b57d2206d",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeAtomicity');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Items Validation",
+      "item": [
+        {
+          "name": "items missing entirely -> 400",
+          "id": "8350cb98-8d57-4073-8d48-b2374fabbc68",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: En az bir ürün gereklidir.', function () {\n  pm.expect(json).to.have.property('error', \"En az bir ürün gereklidir.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "items null -> 400",
+          "id": "fbe63ea1-0ab7-4537-8c10-b48837fe623e",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": null,\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: En az bir ürün gereklidir.', function () {\n  pm.expect(json).to.have.property('error', \"En az bir ürün gereklidir.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "items empty array -> 400",
+          "id": "cdcbdbf7-a1c3-4123-bb38-f0131e1dfa05",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: En az bir ürün gereklidir.', function () {\n  pm.expect(json).to.have.property('error', \"En az bir ürün gereklidir.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "items wrong type (string, not array) -> 400",
+          "id": "9d15148c-c62c-4201-bc09-6efe76a9d2bf",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": \"not-an-array\",\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: En az bir ürün gereklidir.', function () {\n  pm.expect(json).to.have.property('error', \"En az bir ürün gereklidir.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "item entry invalid (null item in array) -> 400, no 500",
+          "id": "fe0c1bab-b5e3-4e48-ab41-774c4912329f",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    null\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: Geçersiz ürün girdisi.', function () {\n  pm.expect(json).to.have.property('error', \"Geçersiz ürün girdisi.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Payment Token Validation",
+      "item": [
+        {
+          "name": "Capture stock before omitted payment_token (canonical default) (product 1)",
+          "id": "8e043907-6ea9-4011-8c5d-5aa3a5624bce",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeTokenOmitted', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token omitted entirely -> defaults to approved (PAID)",
+          "id": "7f66876c-d4ae-49d4-b25a-ef1926004846",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "description": "Yalnızca gerçekten OMIT edilen payment_token default (TEST-CARD-APPROVED) alır — resolvePaymentToken() kaynağından doğrulandı. Bu, false/null/0/\"\" gibi \"açıkça gönderilmiş ama geçersiz\" değerlerden AYRI bir senaryodur (OMITTED !== null !== false !== 0 !== \"\")."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('Defaults to PAID', function () { pm.expect(pm.response.json().order.status).to.eql('PAID'); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock decreased by exactly 1 after omitted payment_token (canonical default) — distinct from false/0/null/empty rejections",
+          "id": "06e77a08-6bf9-4017-8690-a6a78924b69a",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeTokenOmitted');",
+                  "const expectedDecrement = 1;",
+                  "pm.test('Stock decreased by exactly ' + expectedDecrement + ' (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore - expectedDecrement); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token null -> 400 (does NOT silently default)",
+          "id": "a9eb7b24-2cce-4f88-b201-145109278654",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": null\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token empty string -> 400 (does NOT silently default)",
+          "id": "a6908fb6-0b6b-42b7-9833-83e8a72f69ae",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token wrong type (number) -> 400 (does NOT silently default)",
+          "id": "f93f21d5-4e6c-4e6f-ba70-ed2558e99733",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": 123\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Capture stock before payment_token: false (product 1)",
+          "id": "51fb2614-afc7-4403-9eb3-5690f90b99e4",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeTokenFalse', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token false -> 400 (does NOT silently default to approved) — B3",
+          "id": "808fd7e9-8241-47b3-8efe-11dbd20b2ee6",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": false\n}"
+            },
+            "description": "Codex delta review B3 — regresyon riski: eski bir bug'da falsy payment_token değerleri sessizce default'a (approved) düşüyordu. Kaynak koddan doğrulandı: resolvePaymentToken() yalnızca `paymentToken === undefined` ise default alır; `typeof false !== 'string'` olduğundan false açıkça reddedilir — null/\"\"/123 ile AYNI hata mesajını üretir, ama OMITTED'dan farklı, ayrı bir test case'idir."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after payment_token: false rejection — proves no silent fallback to approved — B3",
+          "id": "067b6fcf-4a0e-4730-9bfd-0510a74158ee",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeTokenFalse');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Capture stock before payment_token: 0 (product 1)",
+          "id": "9d2bb51d-4335-41f7-930e-7b1ad086fc0f",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('stockBeforeTokenZero', pm.response.json().product.stock_quantity);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token 0 -> 400 (does NOT silently default to approved) — B3",
+          "id": "141cff47-a143-4af3-bcde-7c38e2d54676",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": 0\n}"
+            },
+            "description": "Codex delta review B3 — regresyon riski: eski bir bug'da falsy payment_token değerleri sessizce default'a (approved) düşüyordu. Kaynak koddan doğrulandı: `typeof 0 !== 'string'` olduğundan 0 açıkça reddedilir — false/null/\"\"/123 ile AYNI hata mesajını üretir, ama OMITTED'dan farklı, ayrı bir test case'idir."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.', function () {\n  pm.expect(json).to.have.property('error', \"payment_token gönderilmişse geçerli, boş olmayan bir metin olmalıdır.\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify stock unchanged after payment_token: 0 rejection — proves no silent fallback to approved — B3",
+          "id": "1279c9df-a73e-44cf-8149-34200118b8f8",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const stockAfter = pm.response.json().product.stock_quantity;",
+                  "const stockBefore = pm.collectionVariables.get('stockBeforeTokenZero');",
+                  "pm.test('Stock unchanged (before=' + stockBefore + ', after=' + stockAfter + ')', function () { pm.expect(stockAfter).to.eql(stockBefore); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "payment_token unknown/random string -> 400, distinct \"unknown token\" message",
+          "id": "00f38c7c-23e5-4472-8b75-a4c210dfc2e1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"RANDOM-TOKEN-999\"\n}"
+            },
+            "description": "Format olarak geçerli (non-empty string) ama tanınan pattern değil — resolvePaymentToken() değil simulatePayment() reddediyor, farklı bir mesaj."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: Bilinmeyen test payment token: RANDOM-TOKEN-999', function () {\n  pm.expect(json).to.have.property('error', \"Bilinmeyen test payment token: RANDOM-TOKEN-999\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "8. Malformed JSON",
+      "item": [
+        {
+          "name": "Malformed JSON body -> 400, not 500",
+          "id": "bffc73d2-636c-4d29-bd9e-0d7b10bad964",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ this is not valid JSON"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "const json = pm.response.json();\npm.test('Error body: Geçersiz JSON gövdesi', function () {\n  pm.expect(json).to.have.property('error', \"Geçersiz JSON gövdesi\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "9. Auth Regression (POST /api/orders)",
+      "item": [
+        {
+          "name": "No token -> 401 (representative gate; full auth matrix already in P5.3)",
+          "id": "b2e9bbf0-5bc0-4d9e-b276-856f4cd4d3e3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Content-Type is application/json', function () { pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8'); });",
+                  "const json = pm.response.json();\npm.test('Error body: Yetkilendirme gerekli', function () {\n  pm.expect(json).to.have.property('error', \"Yetkilendirme gerekli\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid token -> 401",
+          "id": "e35d8f0b-b20f-43e6-b09d-73fec04b2c2c",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer not-a-real-session-token-1234567890"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "const json = pm.response.json();\npm.test('Error body: Geçersiz veya süresi dolmuş oturum', function () {\n  pm.expect(json).to.have.property('error', \"Geçersiz veya süresi dolmuş oturum\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    }
+  ]
+}
