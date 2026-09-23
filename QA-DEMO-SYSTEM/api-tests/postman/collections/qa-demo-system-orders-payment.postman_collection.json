@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "e4934ff4-e9ae-46b9-a49c-ed4059ef90c8",
+    "_postman_id": "ee333bbb-8a3d-41d4-95ff-02e5ea37d695",
     "name": "QA Demo System - Orders & Payment Business API (P5.5)",
     "description": "P5.5 — Orders & Payment API Tests. Kapsam: POST /api/orders'ın business-rule seviyesinde doğrulanması — duplicate line aggregation (P4.2 B1 regresyonu), stock validation, quantity/product/items strict type validation (P4.2 B3 regresyonu), payment outcome (approved/declined/timeout) ve payment_token contract'ı (P4.2 non-blocking #4 regresyonu), malformed JSON (P4.2 non-blocking #5 regresyonu), ve POST /api/orders için minimal auth regression gate. Ownership/cross-user erişimi (GET /api/orders/:id) P5.3'ün protected collection'ında zaten kapsanmıştır — burada duplike edilmedi. Notifications business akışı, API→DB validation, HTML reporting bu koleksiyonun KAPSAMI DIŞINDADIR. Token'lar yalnızca runtime'da collection variable olarak tutulur, dosyaya yazılmaz. ÖNKOŞUL: her tam suite çalıştırmasından önce `npm run db:seed` ile deterministic/fresh state sağlanmalıdır (stok mutasyonları nedeniyle reproducibility için gereklidir).\n\nFIX ROUND (Codex delta review, head commit 9cac4cc, FAIL/4 blocker): B1 — approved payment artık gerçek before/after GET ile capture edilen, runtime'da hesaplanan (hardcoded değil) stok azalması kanıtlıyor. B2 — declined/timeout/insufficient-stock/duplicate-aggregate-exceeds-stock ve regresyon riski taşıyan temsili invalid-quantity girdileri (\"2\", true, [2], null) artık gerçek before/after stok kontrolüyle kanıtlanıyor; ayrıca yeni bir 'mixed valid+invalid product' atomicity testi eklendi. Bu koleksiyonun kanıtladığı her şey API-visible state ile sınırlıdır — doğrudan DB satır varlığı/yokluğu P5.7 (API→DB Validation) kapsamına bırakılmıştır. B3 — payment_token: false ve payment_token: 0 için ayrı test case'leri eklendi (OMITTED'dan farklı, sessiz default'a düşmediğini ve stoğu etkilemediğini kanıtlıyor). B4 — order success/error response contract'ı artık P5.2'nin kanonik AJV/Node-wrapper modeliyle (scripts/run-orders-schema-validation.js) shared/schemas/orders/ altındaki gerçek şemalara karşı doğrulanıyor. Non-blocking — kullanılmayan User B bootstrap request'i kaldırıldı.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -11,7 +11,7 @@
       "item": [
         {
           "name": "Login as User A (test.active01)",
-          "id": "07c37823-048b-41a2-ad77-6eac536314cd",
+          "id": "a9a9b343-c42f-43f9-a5f4-505700d1d876",
           "request": {
             "method": "POST",
             "header": [
@@ -60,7 +60,7 @@
       "item": [
         {
           "name": "Create Order — duplicate product lines aggregate before stock check (qty 2+3=5)",
-          "id": "cda2c606-0585-4d65-ae55-ec6ba2442e9c",
+          "id": "203fb664-8fa1-403f-97ce-7282bc934cf3",
           "request": {
             "method": "POST",
             "header": [
@@ -108,7 +108,7 @@
         },
         {
           "name": "Verify order_items — exactly ONE aggregated row (quantity=5), not two",
-          "id": "6509e599-e09b-411e-a014-15c9165238cd",
+          "id": "a36d1b57-01bb-451c-937b-6f7f0f8d916b",
           "request": {
             "method": "GET",
             "header": [
@@ -152,7 +152,7 @@
         },
         {
           "name": "Verify stock decreased by exactly the aggregated quantity (25 -> 20)",
-          "id": "947be691-29f2-4e0f-8423-a8704c313ee9",
+          "id": "3922f362-e98a-4033-a27b-852bbd94003b",
           "request": {
             "method": "GET",
             "header": [],
@@ -192,7 +192,7 @@
       "item": [
         {
           "name": "Capture stock before approved payment (product 1)",
-          "id": "b2a96a33-7337-4c89-b884-30e9a161b21c",
+          "id": "dc299405-e1f4-447b-aaac-9a271dfc84c7",
           "request": {
             "method": "GET",
             "header": [],
@@ -224,7 +224,7 @@
         },
         {
           "name": "Approved payment — order PAID, stock decreases",
-          "id": "e28b5852-48b0-41e9-a677-dbe4666d6c00",
+          "id": "df414293-02c5-4ebe-9991-027035035f57",
           "request": {
             "method": "POST",
             "header": [
@@ -270,7 +270,7 @@
         },
         {
           "name": "Verify stock decreased by exactly 1 after approved payment (product 1) — B1",
-          "id": "5768a9e2-ac7a-4199-a20e-6c71dc74cf6c",
+          "id": "b40c154e-0eaf-4c57-9bfd-ac79064fdf2a",
           "request": {
             "method": "GET",
             "header": [],
@@ -305,7 +305,7 @@
         },
         {
           "name": "Capture stock before declined payment (product 3)",
-          "id": "7987a7b7-a525-42c8-b248-b7f086e6ce89",
+          "id": "217513dd-eac8-4f3f-8ba1-004bfb19b9f5",
           "request": {
             "method": "GET",
             "header": [],
@@ -337,7 +337,7 @@
         },
         {
           "name": "Declined payment — order created but PAYMENT_FAILED, stock NOT decremented",
-          "id": "4a6fcc7d-3c75-4c63-917f-056e6161dfd5",
+          "id": "0c6ec838-3e6f-4469-afdc-0357b66090b8",
           "request": {
             "method": "POST",
             "header": [
@@ -383,7 +383,7 @@
         },
         {
           "name": "Verify stock unchanged after declined payment (product 3) — captured before/after, not hardcoded",
-          "id": "6c91d02b-a152-4a3a-912b-26170229de18",
+          "id": "e6e3a5d7-d747-4758-bd89-56fa2493788f",
           "request": {
             "method": "GET",
             "header": [],
@@ -417,7 +417,7 @@
         },
         {
           "name": "Capture stock before timeout payment (product 3)",
-          "id": "f10fed82-914f-47c9-a0d9-98412d2d05c0",
+          "id": "29e5fd16-ebda-4ff7-b1cd-7cba6282411e",
           "request": {
             "method": "GET",
             "header": [],
@@ -449,7 +449,7 @@
         },
         {
           "name": "Timeout payment — order created but PAYMENT_TIMEOUT, stock NOT decremented",
-          "id": "24424bd1-24f6-4960-8dd7-66ece999bc4b",
+          "id": "51b9005a-b5aa-4dc4-a10e-195938891494",
           "request": {
             "method": "POST",
             "header": [
@@ -494,7 +494,7 @@
         },
         {
           "name": "Verify stock unchanged after timeout payment (product 3) — captured before/after, not hardcoded",
-          "id": "7404ee36-6495-4771-94ac-5f993b3b3f37",
+          "id": "6ad25770-e9d3-43f3-bbe5-b5b2aab0408f",
           "request": {
             "method": "GET",
             "header": [],
@@ -533,7 +533,7 @@
       "item": [
         {
           "name": "Capture stock before insufficient-stock rejection (product 3)",
-          "id": "54c1a347-3f76-440d-b63a-f4cee6cec1e4",
+          "id": "b975e41f-6b96-4458-8c5a-b2298d9767b4",
           "request": {
             "method": "GET",
             "header": [],
@@ -565,7 +565,7 @@
         },
         {
           "name": "Insufficient stock — single line exceeds available (qty=6 > 5) -> 409",
-          "id": "a6447636-3182-4ef4-ae95-3e26cc32308c",
+          "id": "2996d645-dd25-43fa-8af3-5686eeec93c2",
           "request": {
             "method": "POST",
             "header": [
@@ -608,8 +608,8 @@
           "response": []
         },
         {
-          "name": "Verify no partial state — stock unchanged, no order created for that attempt (API-visible only; bkz. EXECUTION.md P5.7 notu)",
-          "id": "33d8dbb5-2baf-4baa-a05b-36236ff381ba",
+          "name": "Verify stock unchanged after insufficient-stock rejection (API-visible only — DB order-row existence: bkz. EXECUTION.md bölüm 12, P5.7)",
+          "id": "517c563c-9a50-44b8-8d18-c0f1919d99b2",
           "request": {
             "method": "GET",
             "header": [],
@@ -643,7 +643,7 @@
         },
         {
           "name": "Capture stock before duplicate-aggregate-exceeds-stock rejection (product 3)",
-          "id": "7ec2709a-4ef9-4f7e-832a-828415ff3381",
+          "id": "7fbf1fd8-a6db-49e7-b124-ad03887f636c",
           "request": {
             "method": "GET",
             "header": [],
@@ -675,7 +675,7 @@
         },
         {
           "name": "Duplicate lines aggregate to exceed stock (2+4=6 > 5) -> 409, not silently accepted",
-          "id": "f5737fe4-f798-4ed6-af97-a10c996e7a27",
+          "id": "0a8d51f7-7b13-4607-b76a-2f014d680ed5",
           "request": {
             "method": "POST",
             "header": [
@@ -720,7 +720,7 @@
         },
         {
           "name": "Verify stock still untouched after duplicate-aggregate rejection — captured before/after, not hardcoded",
-          "id": "38e7e519-244d-4f95-a7be-ec0c9f5cb231",
+          "id": "30f19d9c-4be0-4fd8-b5ca-81c39591d1b3",
           "request": {
             "method": "GET",
             "header": [],
@@ -759,7 +759,7 @@
       "item": [
         {
           "name": "Invalid quantity — zero (0)",
-          "id": "9a27d4e9-3a72-488e-927e-4d990fc84e3a",
+          "id": "abf65867-294a-4f93-af72-9741e5115391",
           "request": {
             "method": "POST",
             "header": [
@@ -803,7 +803,7 @@
         },
         {
           "name": "Invalid quantity — negative (-1)",
-          "id": "39ef7386-d6f3-4ba0-ab43-9cf20ecd3106",
+          "id": "2fc277d4-dc27-4476-8806-069e043c81ad",
           "request": {
             "method": "POST",
             "header": [
@@ -847,7 +847,7 @@
         },
         {
           "name": "Invalid quantity — decimal (1.5)",
-          "id": "3164eca7-213a-4fcf-ac43-537c4b21c8f1",
+          "id": "a23eecad-ddb8-4b80-bd5d-da7255260f33",
           "request": {
             "method": "POST",
             "header": [
@@ -891,7 +891,7 @@
         },
         {
           "name": "Capture stock before invalid quantity — string (\"2\") (product 1)",
-          "id": "e18e680b-6811-4f47-b5ec-b320f27395e5",
+          "id": "b2e837b4-0f23-4412-85d1-de3b5f9ef686",
           "request": {
             "method": "GET",
             "header": [],
@@ -923,7 +923,7 @@
         },
         {
           "name": "Invalid quantity — string (\"2\")",
-          "id": "4e536b7f-3d88-475c-a8c5-90147768ec6f",
+          "id": "dcd0dc92-72b4-4cee-ac81-4d474201b4fd",
           "request": {
             "method": "POST",
             "header": [
@@ -967,7 +967,7 @@
         },
         {
           "name": "Verify stock unchanged after invalid quantity — string (\"2\") — B2 representative regression-risk input",
-          "id": "d280c106-1b71-4929-aacd-babaf506604c",
+          "id": "e9cecdcc-6e97-4e92-bf2f-fd43973abb5f",
           "request": {
             "method": "GET",
             "header": [],
@@ -1001,7 +1001,7 @@
         },
         {
           "name": "Capture stock before invalid quantity — boolean (true) (product 1)",
-          "id": "978d4718-d26b-41a8-af57-2f1b5f331406",
+          "id": "1a94ef11-8cb5-4552-9a27-80075193b6dd",
           "request": {
             "method": "GET",
             "header": [],
@@ -1033,7 +1033,7 @@
         },
         {
           "name": "Invalid quantity — boolean (true)",
-          "id": "612524d4-d705-4343-99ff-77af0e22c4f6",
+          "id": "b7071165-7eb2-4295-8462-4026657f222b",
           "request": {
             "method": "POST",
             "header": [
@@ -1077,7 +1077,7 @@
         },
         {
           "name": "Verify stock unchanged after invalid quantity — boolean (true) — B2 representative regression-risk input",
-          "id": "f46ddf58-b72d-4c8c-833c-f4abe2fd10b8",
+          "id": "b350de54-040f-4599-a0c9-63ec68415c09",
           "request": {
             "method": "GET",
             "header": [],
@@ -1111,7 +1111,7 @@
         },
         {
           "name": "Capture stock before invalid quantity — array ([2]) (product 1)",
-          "id": "f202f2ac-56b5-4f73-98bd-0c94e803e734",
+          "id": "958db5c6-7904-49ac-9b60-3ee300444fde",
           "request": {
             "method": "GET",
             "header": [],
@@ -1143,7 +1143,7 @@
         },
         {
           "name": "Invalid quantity — array ([2])",
-          "id": "f381c74e-95b8-4dcd-b41b-33f29f126e5b",
+          "id": "bc4c5a7b-9af4-440e-8890-a1130d3fb284",
           "request": {
             "method": "POST",
             "header": [
@@ -1187,7 +1187,7 @@
         },
         {
           "name": "Verify stock unchanged after invalid quantity — array ([2]) — B2 representative regression-risk input",
-          "id": "bdd3a6d9-3263-4706-933b-44b96e0029bf",
+          "id": "e61d777b-9d77-4b9d-9d9b-104c80ea2995",
           "request": {
             "method": "GET",
             "header": [],
@@ -1221,7 +1221,7 @@
         },
         {
           "name": "Capture stock before invalid quantity — null (product 1)",
-          "id": "40559d6e-6eca-4d43-8cca-768cdefcdec1",
+          "id": "b0a178c0-8edb-41ca-bba5-2f4e0d8912d5",
           "request": {
             "method": "GET",
             "header": [],
@@ -1253,7 +1253,7 @@
         },
         {
           "name": "Invalid quantity — null",
-          "id": "a688e40b-d70e-4f75-837d-c02f0c9ca018",
+          "id": "fa4d297c-d857-4242-bd1c-724dccf3fddc",
           "request": {
             "method": "POST",
             "header": [
@@ -1297,7 +1297,7 @@
         },
         {
           "name": "Verify stock unchanged after invalid quantity — null — B2 representative regression-risk input",
-          "id": "24347471-f6e6-4c5d-b138-c67e7e95fc3d",
+          "id": "df9ed6d9-0d49-40c9-a56b-98e8a1fd8599",
           "request": {
             "method": "GET",
             "header": [],
@@ -1331,7 +1331,7 @@
         },
         {
           "name": "Invalid quantity — missing field",
-          "id": "619c95c0-0b28-4a2f-b89d-89263d7a2c0a",
+          "id": "d86c483f-7ba8-42fb-8323-8177b1a301ed",
           "request": {
             "method": "POST",
             "header": [
@@ -1375,7 +1375,7 @@
         },
         {
           "name": "Invalid quantity — very large (format-valid, but exceeds any real stock -> 409, not a quantity-format 400)",
-          "id": "c3a51192-9d1b-47bb-ac10-043964db5b1d",
+          "id": "def5c3bf-af52-4f49-83cf-b95b3bf8a2a0",
           "request": {
             "method": "POST",
             "header": [
@@ -1425,7 +1425,7 @@
       "item": [
         {
           "name": "Unknown product_id (well-formed, not in seed) -> 400 (not 404 — different from GET /products/:id)",
-          "id": "c0118a38-b83a-4527-a90c-8abde72724ee",
+          "id": "bdd8735b-ede1-4e58-acea-794020c9bd14",
           "request": {
             "method": "POST",
             "header": [
@@ -1470,7 +1470,7 @@
         },
         {
           "name": "product_id wrong type (string \"1\") -> 400",
-          "id": "42996209-cfc7-4b3e-aa7e-863805000c59",
+          "id": "4ce07742-088a-48b9-bb80-02fdbc694fd5",
           "request": {
             "method": "POST",
             "header": [
@@ -1514,7 +1514,7 @@
         },
         {
           "name": "product_id null -> 400",
-          "id": "06df8387-26db-4f69-b7ff-5a7e0adaa58e",
+          "id": "542506e3-a361-4923-8894-ebbc4c331913",
           "request": {
             "method": "POST",
             "header": [
@@ -1558,7 +1558,7 @@
         },
         {
           "name": "product_id missing -> 400",
-          "id": "e0a2d31b-1288-4181-a50a-cde0d5aeee07",
+          "id": "6c182ffa-f162-4e84-8d8e-8122dfb8f3fb",
           "request": {
             "method": "POST",
             "header": [
@@ -1601,8 +1601,8 @@
           "response": []
         },
         {
-          "name": "Capture stock before mixed valid+invalid product atomicity check (product 1)",
-          "id": "cbfe75d1-d129-40ea-8456-8a519bc43b2f",
+          "name": "Capture stock before mixed valid+invalid product request (product 1)",
+          "id": "586e3668-8f92-4cf6-8252-c92746eb4199",
           "request": {
             "method": "GET",
             "header": [],
@@ -1633,8 +1633,8 @@
           "response": []
         },
         {
-          "name": "Mixed valid + invalid product in one request -> 400, all-or-nothing (no partial write)",
-          "id": "c310b26b-f733-4393-927e-ba0465305acc",
+          "name": "Mixed valid + invalid product in one request -> 400 (product_id 99999 unknown)",
+          "id": "0d06c5b6-7160-4b13-b23e-e26ba7d3f994",
           "request": {
             "method": "POST",
             "header": [
@@ -1661,7 +1661,7 @@
               "mode": "raw",
               "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    },\n    {\n      \"product_id\": 99999,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
             },
-            "description": "B2 regresyonu — atomicity kanıtı. Satır 1 gerçek/geçerli bir ürün (id=1), satır 2 var olmayan bir ürün (id=99999). Kaynak koddan doğrulandı: createOrder() tüm satırları stock check'ten ÖNCE, tek tek sırayla resolve eder — ilk bilinmeyen product_id'de tüm istek 400 ile reddedilir; DB'ye herhangi bir INSERT/UPDATE çalışmadan (transaction hiç BEGIN edilmeden) önce. Bu, geçerli satırın \"kısmen\" işlenmediğini (partial write olmadığını) product 1'in stock'unun değişmediğini göstererek API-visible olarak kanıtlar."
+            "description": "B2 regresyonu — temsili çok satırlı istek. Satır 1 gerçek/geçerli bir ürün (id=1), satır 2 var olmayan bir ürün (id=99999). Kaynak koddan doğrulandı: createOrder() tüm satırları stock check'ten ÖNCE, tek tek sırayla resolve eder — ilk bilinmeyen product_id'de tüm istek 400 ile reddedilir; bu okumaya göre DB'ye herhangi bir INSERT/UPDATE çalışmadan (transaction hiç BEGIN edilmeden) önce reddedilir. Bu request, yalnızca API-visible sonucu (400 + product 1'in stoğunun değişmediği) ölçer; DB'de order/order_items satırının hiç yazılmadığı iddiası burada test edilmez — doğrudan SQL gerektirir, P5.7'ye bırakılmıştır (bkz. EXECUTION.md bölüm 12)."
           },
           "event": [
             {
@@ -1678,8 +1678,8 @@
           "response": []
         },
         {
-          "name": "Verify product 1 stock unchanged after mixed valid+invalid rejection — proves all-or-nothing, not partial write",
-          "id": "a72098b2-2f5b-473b-9a49-359213ce469e",
+          "name": "Verify product 1 stock unchanged after mixed valid+invalid rejection (API-visible only)",
+          "id": "d3ae1b73-3efa-4936-b012-829b57d2206d",
           "request": {
             "method": "GET",
             "header": [],
@@ -1718,7 +1718,7 @@
       "item": [
         {
           "name": "items missing entirely -> 400",
-          "id": "daa73dfd-1a36-4399-af74-37ba8d5a7cd1",
+          "id": "8350cb98-8d57-4073-8d48-b2374fabbc68",
           "request": {
             "method": "POST",
             "header": [
@@ -1762,7 +1762,7 @@
         },
         {
           "name": "items null -> 400",
-          "id": "0e8f2ca5-3935-426a-9206-70ab29cb6440",
+          "id": "fbe63ea1-0ab7-4537-8c10-b48837fe623e",
           "request": {
             "method": "POST",
             "header": [
@@ -1806,7 +1806,7 @@
         },
         {
           "name": "items empty array -> 400",
-          "id": "d05a03ce-ad89-486b-b82a-9aae6d958d93",
+          "id": "cdcbdbf7-a1c3-4123-bb38-f0131e1dfa05",
           "request": {
             "method": "POST",
             "header": [
@@ -1850,7 +1850,7 @@
         },
         {
           "name": "items wrong type (string, not array) -> 400",
-          "id": "3e31d3a6-2ba3-492b-b05a-42827dbb5b5e",
+          "id": "9d15148c-c62c-4201-bc09-6efe76a9d2bf",
           "request": {
             "method": "POST",
             "header": [
@@ -1894,7 +1894,7 @@
         },
         {
           "name": "item entry invalid (null item in array) -> 400, no 500",
-          "id": "c7a29c9a-46df-4e83-a21b-e357dbb919a3",
+          "id": "fe0c1bab-b5e3-4e48-ab41-774c4912329f",
           "request": {
             "method": "POST",
             "header": [
@@ -1943,7 +1943,7 @@
       "item": [
         {
           "name": "Capture stock before omitted payment_token (canonical default) (product 1)",
-          "id": "33726793-18f1-447c-8d33-e232fe6876a1",
+          "id": "8e043907-6ea9-4011-8c5d-5aa3a5624bce",
           "request": {
             "method": "GET",
             "header": [],
@@ -1975,7 +1975,7 @@
         },
         {
           "name": "payment_token omitted entirely -> defaults to approved (PAID)",
-          "id": "56a5602d-012f-49b5-a9ec-9c740dc08a33",
+          "id": "7f66876c-d4ae-49d4-b25a-ef1926004846",
           "request": {
             "method": "POST",
             "header": [
@@ -2020,7 +2020,7 @@
         },
         {
           "name": "Verify stock decreased by exactly 1 after omitted payment_token (canonical default) — distinct from false/0/null/empty rejections",
-          "id": "0637c283-e895-47fc-b5ef-5ad23859d7f6",
+          "id": "06e77a08-6bf9-4017-8690-a6a78924b69a",
           "request": {
             "method": "GET",
             "header": [],
@@ -2055,7 +2055,7 @@
         },
         {
           "name": "payment_token null -> 400 (does NOT silently default)",
-          "id": "0b876325-ea58-4960-b368-efc379f20610",
+          "id": "a9eb7b24-2cce-4f88-b201-145109278654",
           "request": {
             "method": "POST",
             "header": [
@@ -2099,7 +2099,7 @@
         },
         {
           "name": "payment_token empty string -> 400 (does NOT silently default)",
-          "id": "2c7e6f02-9947-4c80-97f1-ddf40887dc2c",
+          "id": "a6908fb6-0b6b-42b7-9833-83e8a72f69ae",
           "request": {
             "method": "POST",
             "header": [
@@ -2143,7 +2143,7 @@
         },
         {
           "name": "payment_token wrong type (number) -> 400 (does NOT silently default)",
-          "id": "b6a726f4-c185-45e2-b717-c496720e6376",
+          "id": "f93f21d5-4e6c-4e6f-ba70-ed2558e99733",
           "request": {
             "method": "POST",
             "header": [
@@ -2187,7 +2187,7 @@
         },
         {
           "name": "Capture stock before payment_token: false (product 1)",
-          "id": "3261cf6a-76b9-4a20-8987-3f4279403466",
+          "id": "51fb2614-afc7-4403-9eb3-5690f90b99e4",
           "request": {
             "method": "GET",
             "header": [],
@@ -2219,7 +2219,7 @@
         },
         {
           "name": "payment_token false -> 400 (does NOT silently default to approved) — B3",
-          "id": "d77b7882-b679-4bd9-a94e-72870ff33e8e",
+          "id": "808fd7e9-8241-47b3-8efe-11dbd20b2ee6",
           "request": {
             "method": "POST",
             "header": [
@@ -2264,7 +2264,7 @@
         },
         {
           "name": "Verify stock unchanged after payment_token: false rejection — proves no silent fallback to approved — B3",
-          "id": "fb1fcf13-a7f9-4e7b-8b7f-b19d1f58d7bd",
+          "id": "067b6fcf-4a0e-4730-9bfd-0510a74158ee",
           "request": {
             "method": "GET",
             "header": [],
@@ -2298,7 +2298,7 @@
         },
         {
           "name": "Capture stock before payment_token: 0 (product 1)",
-          "id": "152616cc-f553-4d1b-9928-56d3ac6aa592",
+          "id": "9d2bb51d-4335-41f7-930e-7b1ad086fc0f",
           "request": {
             "method": "GET",
             "header": [],
@@ -2330,7 +2330,7 @@
         },
         {
           "name": "payment_token 0 -> 400 (does NOT silently default to approved) — B3",
-          "id": "46b7838e-7f9b-4e9a-980c-c629eb6c45c5",
+          "id": "141cff47-a143-4af3-bcde-7c38e2d54676",
           "request": {
             "method": "POST",
             "header": [
@@ -2375,7 +2375,7 @@
         },
         {
           "name": "Verify stock unchanged after payment_token: 0 rejection — proves no silent fallback to approved — B3",
-          "id": "e9bb2385-410d-4f6f-8d4f-34e0578dbe2c",
+          "id": "1279c9df-a73e-44cf-8149-34200118b8f8",
           "request": {
             "method": "GET",
             "header": [],
@@ -2409,7 +2409,7 @@
         },
         {
           "name": "payment_token unknown/random string -> 400, distinct \"unknown token\" message",
-          "id": "bdb1bbd5-3f7d-41d8-a5cc-72e2606551f6",
+          "id": "00f38c7c-23e5-4472-8b75-a4c210dfc2e1",
           "request": {
             "method": "POST",
             "header": [
@@ -2459,7 +2459,7 @@
       "item": [
         {
           "name": "Malformed JSON body -> 400, not 500",
-          "id": "bbe8ab89-b02a-4c66-a661-0d684d9f85e9",
+          "id": "bffc73d2-636c-4d29-bd9e-0d7b10bad964",
           "request": {
             "method": "POST",
             "header": [
@@ -2508,7 +2508,7 @@
       "item": [
         {
           "name": "No token -> 401 (representative gate; full auth matrix already in P5.3)",
-          "id": "9531a2ad-1fa2-4ff1-8e73-94576fccfe85",
+          "id": "b2e9bbf0-5bc0-4d9e-b276-856f4cd4d3e3",
           "request": {
             "method": "POST",
             "header": [
@@ -2549,7 +2549,7 @@
         },
         {
           "name": "Invalid token -> 401",
-          "id": "9625d9c4-06f4-4da0-bb42-2f377a33a4dd",
+          "id": "e35d8f0b-b20f-43e6-b09d-73fec04b2c2c",
           "request": {
             "method": "POST",
             "header": [

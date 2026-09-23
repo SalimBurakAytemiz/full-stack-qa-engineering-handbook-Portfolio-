@@ -1,9 +1,11 @@
 # P5.5 — Orders & Payment API Tests — Execution Evidence
 
 **Branch:** `feat/phase-5-5-orders-payment-api-tests`
-**Tarih:** 2026-09-23 (ilk uygulama), **fix round: 2026-09-23** (Codex delta
-review, head commit `9cac4cc`, FAIL/4 blocker + 1 non-blocking not düzeltme
-turu)
+**Tarih:** 2026-09-23 (ilk uygulama), **fix round #1: 2026-09-23** (Codex
+delta review, head commit `9cac4cc`, FAIL/4 blocker + 1 non-blocking not
+düzeltme turu), **fix round #2: 2026-09-23** (Codex kısa fix-delta
+re-review, head commit `29c5fa8`, FAIL/1 açık kalan blocker (B2 wording) +
+1 non-blocking not düzeltme turu)
 
 > Bu kayıt, aşağıdaki Newman run'larının **gerçekten çalıştırılmış**
 > sonucudur (`CONTRIBUTING.md` — Evidence Integrity). Hiçbir sonuç
@@ -20,26 +22,34 @@ turu)
 
 ---
 
-## 0. Fix Round Özeti (Codex Delta Review — 4 Blocker + 1 Non-blocking)
+## 0. Fix Round Özeti
 
-Bu bölüm, `9cac4cc` üzerinde alınan **FAIL/CHANGES REQUIRED** verdiktine
-yanıttır. Aşağıdaki bölümlerin tamamı bu fix round'un **gerçek**
-sonuçlarını yansıtır — eski (40 request/82 assertion) sayılar artık
-**geçersizdir**, korunmamıştır.
+### Fix Round #1 (Codex Delta Review — 4 Blocker + 1 Non-blocking, head `9cac4cc`)
+
+Bu round, `9cac4cc` üzerinde alınan **FAIL/CHANGES REQUIRED** verdiktine
+yanıttır. Eski (40 request/82 assertion) sayılar artık **geçersizdir**,
+korunmamıştır.
 
 | Bulgu | Durum | Nasıl düzeltildi |
 |---|---|---|
-| **B1** — Approved order stock before/after kanıtı yok | **Düzeltildi** | `Payment Outcomes` klasörüne gerçek `GET /api/products/1` before/after çifti eklendi; azalma miktarı runtime'da `stockBefore - stockAfter` olarak hesaplanıyor, hardcoded değil (`stockAssertDecreasedBy` helper'ı). |
-| **B2** — Bazı negative senaryolarda "state unchanged" iddiası gerçek assertion'a dayanmıyordu | **Düzeltildi** | Declined/timeout/insufficient-stock/duplicate-aggregate-exceeds-stock ve regresyon riski taşıyan temsili invalid-quantity girdileri (`"2"`, `true`, `[2]`, `null`) artık gerçek before/after `GET` çifti ile kanıtlanıyor (`stockAssertUnchanged` helper'ı). Yeni bir "mixed valid+invalid product" atomicity testi eklendi. API-visible/DB-direct ayrımı bu dosyada her yerde açıkça belirtiliyor (bkz. bölüm 5 ve 12). |
+| **B1** — Approved order stock before/after kanıtı yok | **Düzeltildi** | `Payment Outcomes` klasörüne gerçek `GET /api/products/1` before/after çifti eklendi; azalma miktarı runtime'da `stockBefore - stockAfter` olarak hesaplanıyor, hardcoded değil (Postman request test script'lerindeki inline assertion, bkz. bölüm 0 — Fix Round #2 non-blocking notu). |
+| **B2** — Bazı negative senaryolarda "state unchanged" iddiası gerçek assertion'a dayanmıyordu | **Düzeltildi (round #1), wording round #2'de daha da düzeltildi** | Declined/timeout/insufficient-stock/duplicate-aggregate-exceeds-stock ve regresyon riski taşıyan temsili invalid-quantity girdileri (`"2"`, `true`, `[2]`, `null`) artık gerçek before/after `GET` çifti ile kanıtlanıyor (inline assertion). Yeni bir "mixed valid+invalid product" testi eklendi. **Round #1'de bu ayrım hâlâ tam netleşmemişti** — bkz. aşağıdaki Fix Round #2 tablosu. |
 | **B3** — `payment_token: false` ve `payment_token: 0` matriste eksikti | **Düzeltildi** | İki ayrı test case eklendi; her biri 400 + değişmeyen stok ile "sessiz default'a düşmüyor" kanıtlıyor. `omitted` senaryosu (canonical default, PAID) ayrı, kendi before/after kanıtıyla korunuyor — `OMITTED !== null !== false !== 0 !== ""` ayrımı testlerin isimlerinde ve açıklamalarında açık. |
 | **B4** — Order/error response contract'ı gerçek şema doğrulaması ile test edilmiyordu | **Düzeltildi** | P5.2'nin kanonik AJV/Node-wrapper modeli yeniden kullanıldı (`scripts/run-orders-schema-validation.js`), yeni `shared/schemas/orders/order-create-response.schema.json` oluşturuldu; hata contract'ı mevcut `shared/schemas/common/error-response.schema.json` ile aynı olduğu için yeni bir hata şeması **oluşturulmadı** (gerekçe: bölüm 9). |
 | Non-blocking — kullanılmayan User B bootstrap | **Düzeltildi (kaldırıldı)** | P5.5'in kendi collection'ında `userBToken` hiçbir assertion tarafından kullanılmıyordu; bootstrap request'i kaldırıldı. Ownership/cross-user P5.3'te zaten kapsanıyor. |
 
+### Fix Round #2 (Codex Kısa Fix-Delta Re-review — 1 Açık Kalan Blocker + 1 Non-blocking, head `29c5fa8`)
+
+| Bulgu | Durum | Nasıl düzeltildi |
+|---|---|---|
+| **B2 (açık kalan)** — Collection/evidence hâlâ bazı yerlerde "order oluşmadı" / "partial write yok" / "all-or-nothing" gibi P5.5'in API-visible testlerinin doğrudan kanıtlamadığı DB-seviyesi iddialar kullanıyordu | **Düzeltildi** | Collection'da 2 request adı + 1 description düzeltildi (`Verify no partial state — ... no order created for that attempt` → `Verify stock unchanged after insufficient-stock rejection (API-visible only — DB order-row existence: bkz. ... P5.7)`; `Mixed valid + invalid product in one request -> 400, all-or-nothing (no partial write)` → `... -> 400 (product_id 99999 unknown)`, description'daki "kanıtlar" iddiası kaldırıldı). EXECUTION.md'nin ilgili transkript satırları ve business-invariant tablosu bu yeni, doğru-kapsamlı ifadelerle **gerçek bir yeniden çalıştırmadan** senkronize edildi (bkz. bölüm 3-4). |
+| Non-blocking — evidence'ta var olmayan `stockAssertDecreasedBy`/`stockAssertUnchanged` helper isimleri | **Düzeltildi** | Bu isimler yalnızca commit edilmemiş, scratch bir collection-generator script'inin (repo dışı) iç fonksiyon adlarıydı — gerçek, commit edilen collection'da böyle bir helper/module yok; her request'in test script'i kendi inline `pm.test()` assertion'larını içeriyor. Evidence'taki tüm referanslar "Postman request test script'lerindeki inline stock before/after assertion'ları" şeklinde düzeltildi. |
+
 Uygulama business logic'inde (`orders.service.js`, `payment.service.js`,
-`errorHandler.js`) **hiçbir değişiklik yapılmadı** — yalnızca test
-collection'ı, yeni şema dosyaları ve yeni bir AJV wrapper script'i
-eklendi/değiştirildi. Root-cause kanıtlanmış bir application bug
-bulunmadı (bkz. bölüm 10).
+`errorHandler.js`) **hiçbir değişiklik yapılmadı** (ne round #1'de ne
+round #2'de) — yalnızca test collection'ı, evidence wording'i, yeni şema
+dosyaları ve yeni bir AJV wrapper script'i eklendi/değiştirildi.
+Root-cause kanıtlanmış bir application bug bulunmadı (bkz. bölüm 10).
 
 ---
 
@@ -170,7 +180,7 @@ iki ayrı satır olarak işlenmiyor.
   ✓  Status code is 409
   ✓  Error body: Yetersiz stok: QA Demo Monitör
 
-↳ Verify no partial state — stock unchanged, no order created for that attempt (API-visible only; bkz. bölüm 12 — P5.7 notu)
+↳ Verify stock unchanged after insufficient-stock rejection (API-visible only — DB order-row existence: bkz. EXECUTION.md bölüm 12, P5.7)
   GET http://localhost:3000/api/products/3 [200 OK, 330B, 2ms]
   ✓  Status code is 200
   ✓  Stock unchanged (before=5, after=5)
@@ -211,9 +221,12 @@ iki ayrı satır olarak işlenmiyor.
 ↳ product_id wrong type (string "1") -> 400 "product_id pozitif bir tam sayı olmalıdır."
 ↳ product_id null -> 400 (aynı mesaj)
 ↳ product_id missing -> 400 (aynı mesaj)
-↳ [before/after capture] Mixed valid + invalid product in one request -> 400, all-or-nothing (B2 atomicity testi — YENİ)
-  GET/POST/GET: Stock unchanged (before=19, after=19) — product 1'in geçerli satırı, product 99999'un
-  bilinmezliği yüzünden KISMEN dahi işlenmedi; transaction hiç BEGIN edilmeden reddedildi
+↳ [before/after capture] Mixed valid + invalid product in one request -> 400 (product_id 99999 unknown) (B2 — YENİ temsili çok satırlı istek)
+  GET/POST/GET: Stock unchanged (before=19, after=19) — API-visible olarak ÖLÇÜLEN tek şey budur:
+  400 + product 1'in stoğu değişmedi. Kaynak koddan (createOrder(), bkz. bölüm 9 evidence) okunduğuna göre
+  bu request transaction hiç BEGIN edilmeden reddediliyor; ama bu satır BİR KAYNAK KODU OKUMASIdır, bu
+  testin API-visible ölçtüğü bir şey DEĞİLDİR. DB'de order/order_items satırının hiç yazılmadığı iddiası
+  burada test edilmez — P5.7'ye bırakılmıştır (bkz. bölüm 12).
   — 7/7 request, 13/13 assertion, hepsi PASS
 
 ❏ 6. Items Validation
@@ -333,8 +346,9 @@ P5.5 schema validation run: PASS
 RUN #1 ile birebir aynı sayılar.** Ayrıca tüm computed before/after stok
 değerleri de RUN #1 ile birebir aynı çıktı (her iki run'da da: gate
 25→20, approved 20→19, declined/timeout 5→5, insufficient/duplicate-
-aggregate 5→5, quantity-matrix representative case'leri 19→19,
-atomicity testi 19→19, payment_token omitted 19→18, false/0 18→18) —
+aggregate 5→5, quantity-matrix representative case'leri 19→19, mixed
+valid+invalid product testi 19→19, payment_token omitted 19→18,
+false/0 18→18) —
 deterministic/reproducible, manuel müdahale gerekmedi.
 
 ---
@@ -351,7 +365,7 @@ yapılmaz (bkz. bölüm 12).
 | B) Declined payment: stock tüketilmiyor | **PASS** | Gerçek before/after GET, id=3: 5→5 |
 | C) Timeout: stock tüketilmiyor | **PASS** | Gerçek before/after GET, id=3: 5→5 |
 | D) Invalid request: stock değişmiyor (temsili) | **PASS** | Insufficient-stock (5→5), duplicate-aggregate-exceeds-stock (5→5), regresyon riski taşıyan quantity `"2"`/`true`/`[2]`/`null` (19→19), payment_token `false`/`0` (18→18) — hepsi gerçek before/after GET ile |
-| E) Unknown product: partial order oluşmuyor (atomicity) | **PASS (API-visible)** | YENİ atomicity testi: `{product 1 (geçerli), product 99999 (yok)}` -> 400; product 1'in stoğu before/after GET ile **değişmediği** kanıtlandı — geçerli satır bile kısmen işlenmedi. DB'de order/order_items satırının hiç yazılmadığı iddiası doğrudan SQL gerektirir — **P5.7'ye bırakıldı**, burada iddia edilmedi |
+| E) Unknown product içeren istek: geçerli satırın stoğu da değişmiyor (API-visible) | **PASS (API-visible)** | YENİ temsili test: `{product 1 (geçerli), product 99999 (yok)}` -> 400; product 1'in stoğu before/after GET ile **değişmediği** kanıtlandı. Bu, yalnızca API-visible bir gözlemdir. "Order/order_items DB'de hiç yazılmadı" / "kısmen işlenmedi" gibi bir DB-seviyesi atomicity iddiası **bu tabloda yapılmıyor** — `createOrder()`'ın transaction'ı BEGIN etmeden önce reddettiği yalnızca kaynak kod okumasıyla bilinir (bkz. bölüm 12), bu testin ölçtüğü bir şey değildir; doğrudan SQL ile doğrulama **P5.7'ye bırakıldı** |
 | F) Duplicate line: aggregate quantity üzerinden stock check | **PASS** | Gate (5 içeride, aggregate kabul) ve Stock Validation (6>5 dışarıda, aggregate red + stok değişmedi) senaryolarının ikisinde de gerçek assertion |
 | G) Failed order: sonraki valid order'ı bozmuyor | **PASS** | Declined/timeout/rejected denemelerden sonraki approved order'lar (payment_token omitted case'i, Payment Outcomes/Stock Validation'dan sonra) sorunsuz 201/PAID döndü ve stoğu doğru şekilde azalttı |
 
@@ -501,6 +515,15 @@ bulunmadı; P5.3 ile ownership konusunda duplicate test üretilmedi
   "ilgili ürünün API-visible stoğu değişmedi" kanıtlanmıştır. DB satırı
   seviyesindeki doğrudan doğrulama **P5.7 — API→DB Validation**'ın
   kapsamıdır.
+- **Kaynak kod okuması ≠ test tarafından ölçülen sonuç.** Bölüm 5'in
+  E satırındaki "mixed valid+invalid product" testinde, `createOrder()`
+  (`orders.service.js`) kaynak kodundan okunduğuna göre tüm satırlar
+  stock check'ten önce, transaction hiç `BEGIN` edilmeden resolve
+  edilir/reddedilir. Bu, kaynak kodun **statik okunmasından** çıkan bir
+  gözlemdir — P5.5'in Postman testleri bunu bir DB assertion'ı ile
+  doğrudan ÖLÇMEZ; yalnızca ilgili ürünün API-visible stoğunun
+  değişmediği ölçülür. Bu ikisi evidence boyunca birbirine
+  karıştırılmamalıdır.
 - Notifications'ın business akışı (declined/timeout'ta notification
   üretilmemesi vb.) bu pakette test edilmedi — P5.6'nın işi.
 - Ownership/order-retrieval P5.3'te zaten kapsandığı için burada

@@ -587,7 +587,7 @@ ayrı dosya tercih edildi.
 | 2. Payment Outcomes | Approved (PAID, stok gerçek before/after GET ile azalır — B1), Declined (PAYMENT_FAILED, **201**, stok gerçek before/after GET ile değişmez), Timeout (PAYMENT_TIMEOUT, **201**, aynı şekilde) |
 | 3. Stock Validation | Insufficient stock (409, tek satır) ve duplicate-aggregate stoğu aşıyor (409, iki satır toplamı) — ikisi de artık gerçek before/after GET ile "stok değişmedi" kanıtlıyor (B2) |
 | 4. Quantity Validation | 0, -1, 1.5, `"2"`, `true`, `[2]`, `null`, missing, çok büyük (9 vaka — P4.2 B3 regresyon testi); `"2"`/`true`/`[2]`/`null` artık ayrıca before/after stok kanıtı taşıyor (B2, regresyon riski temsili) |
-| 5. Product Validation | unknown id (**400**, `GET /products/:id`'in 404'ünden farklı), wrong type, null, missing + YENİ: mixed valid+invalid product atomicity testi (before/after GET, B2) |
+| 5. Product Validation | unknown id (**400**, `GET /products/:id`'in 404'ünden farklı), wrong type, null, missing + YENİ: mixed valid+invalid product testi — geçerli satırın stoğu değişmiyor, API-visible (before/after GET, B2; DB-seviyesi "partial write yok" iddiası P5.7'ye bırakıldı, bkz. evidence bölüm 12) |
 | 6. Items Validation | items missing/null/empty/wrong-type, geçersiz item objesi |
 | 7. Payment Token Validation | omitted (default, artık before/after GET ile stok azalması kanıtlı), null, empty string, wrong type (number), **`false`, `0`** (YENİ — B3, ikisi de before/after GET ile "sessizce default'a düşmüyor" kanıtlı), unknown string |
 | 8. Malformed JSON | Bozuk JSON gövdesi → 400, 500 değil (P4.2 non-blocking #5 regresyon testi) |
