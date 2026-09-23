@@ -424,58 +424,6 @@ htmlextra template'inin kendi Bootstrap collapsible-panel DOM element
 ID'leri (`folder-<uuid>`, `collapse-<uuid>` prefix'li) olduğu daha
 önceki turda context taramasıyla doğrulanmıştı, değişmedi.
 
-### 9.5 Codex B2 — tracked evidence'de bulunan ham runtime token (bu fix round'da düzeltildi)
-
-**Bulgu:** Bir önceki fix round'un commit'inde (`28e3dff`), bu bölümün
-önceki bir sürümünde, 9.3'teki değer-bazlı tarama metodolojisini
-somutlaştırmak amacıyla gerçek bir login çağrısından yakalanan TAM
-runtime session token değeri örnek olarak yazılmıştı ve bu haliyle
-commit edilip origin'e push edilmişti — bu kabul edilemezdi.
-
-**Sınıflandırma — SYNTHETIC / EPHEMERAL, gerçek kullanılabilir
-credential DEĞİL:**
-
-- Token formatı (`demo-session-<uuid>`) yalnızca
-  `backend/src/services/auth.service.js`'in kendi demo/test session
-  üretim mantığından geliyor (kaynak kod: `` `demo-session-${crypto.
-  randomUUID()}` ``) — gerçek bir production auth sistemi değil.
-- Token yalnızca bu container'ın local SQLite `sessions` tablosundaki
-  bir satırla eşleşir ve yalnızca `localhost:3000`'deki bu ephemeral
-  backend process'ine karşı geçerlidir — hiçbir gerçek, kalıcı veya
-  ağdan erişilebilir bir sisteme erişim vermez.
-- Token, ait olduğu deterministic sentetik test kullanıcısına
-  (`test.active01@example.com`, P4'ten beri kullanılan seed verisi)
-  bağlıdır — gerçek bir insana/hesaba ait değildir.
-- Token, yakalandığı andan bu yana birden fazla kez çalıştırılan
-  `db:seed` (sessions tablosunu sıfırlayan) nedeniyle **artık
-  geçersizdir** — bu fix round'da bile en az 2 kez daha reset edildi.
-
-**Yapılan işlem (talimat madde 11'e göre — sentetik değer için history
-rewrite ZORUNLU değil):**
-
-- Bu bölümdeki (9.3) tam token literal'ı kaldırıldı, yerine yalnızca
-  format (`demo-session-<uuid>`) belirtildi — gerçek değer bu dosyada
-  bir daha YOK.
-- Bu, bir **SECURITY ISSUE değil**, bir **repo hygiene düzeltmesi**dir
-  — token gerçek bir yetki vermediği ve zaten geçersiz olduğu için
-  credential rotation/invalidation gerektiren bir güvenlik olayı
-  olarak sınıflandırılmadı.
-- **Git history'de dürüst açıklama:** Bu tam token değeri, `28e3dff`
-  commit'inde hâlâ mevcuttur ve daha önce origin'e push edilmiştir —
-  bu, geçmiş bir commit'te kalıyor. Human Founder onayı olmadan
-  history rewrite (force-push, `git filter-repo`, vb.) YAPILMADI
-  (talimat gereği — yalnız sentetik bir değer için tehlikeli bir
-  destructive operation'ı gerekçe olmadan gerekli saymak, tehlikenin
-  kendisinden daha riskli olurdu). Mevcut/tracked branch head'inde bu
-  değer artık YOK — yeni commit'ler için repo hygiene sağlandı.
-
-**Repo-geneli tam-değer arama sonucu (bu fix round'un commit'i
-sonrası, tracked working tree üzerinde):** `git grep` ile capture
-edilen tam token string'i arandı — bu evidence dosyası, README,
-script, generated metadata dahil hiçbir TRACKED dosyada **0 eşleşme**
-(bkz. bölüm 9.3 tablosu — generated HTML raporları zaten gitignored,
-ayrıca onlar da 0 eşleşme verdi).
-
 ### 9.4 Synthetic veri görünürlüğü (kasıtlı — maskelenmedi)
 
 `TEST-CARD-APPROVED` / `TEST-CARD-DECLINED` / `TEST-CARD-TIMEOUT` payment
@@ -485,6 +433,66 @@ bırakıldı. Bunlar gerçek kart bilgisi değil, deterministic sentetik
 test verisi; görünür olmaları raporun "sentetik veri kullanıldığı"
 iddiasını kanıtlamak için gereklidir ve login/bootstrap dışındaki
 request'lerin body'lerine dokunulmadığı için değişmeden kaldı.
+
+### 9.5 Codex B2 — tracked evidence'de bulunan ham runtime token (bu fix round'da düzeltildi)
+
+**Bulgu:** Bir önceki fix round'un commit'inde (`28e3dff`), bu bölümün
+önceki bir sürümünde, 9.3'teki değer-bazlı tarama metodolojisini
+somutlaştırmak amacıyla gerçek bir login çağrısından yakalanan TAM
+runtime session token değeri örnek olarak yazılmıştı ve bu haliyle
+commit edilip origin'e push edilmişti — bu kabul edilemezdi.
+
+**Sınıflandırma — sentetik/demo runtime session token, gerçek geçerli
+olduğu sürece erişim sağlıyordu (bunu göz ardı eden ifadeler
+düzeltildi — Codex final review non-blocking not #2):**
+
+- Token, QA Demo System'in kendi `backend/src/services/
+  auth.service.js`'inin demo/test session üretim mantığı tarafından
+  oluşturulan sentetik bir runtime session token'ıydı (kaynak kod:
+  `` `demo-session-${crypto.randomUUID()}` ``) — gerçek bir production
+  auth sisteminin üretimi değil.
+- **Geçerli olduğu süre boyunca token, ait olduğu deterministic
+  sentetik test kullanıcısının (`test.active01@example.com`, P4'ten
+  beri kullanılan seed verisi) authenticated session'ına gerçekten
+  erişim SAĞLIYORDU** — yalnızca `localhost:3000`'deki bu ephemeral
+  backend process'ine ve bu local SQLite `sessions` tablosundaki satıra
+  karşı geçerliydi; hiçbir gerçek, kalıcı veya ağdan erişilebilir
+  üretim sistemine erişim vermedi (çünkü öyle bir sistem yok — bu
+  yalnız local bir demo instance'ı).
+- Seed/reset işlemi (`db:seed`, sessions tablosunu sıfırlar) token'ı
+  yakalandığı andan bu yana birden fazla kez çalıştırıldığı için token
+  **artık geçersizdir** — bu fix round'da bile en az 2 kez daha reset
+  edildi.
+
+**Yapılan işlem (talimat madde 11'e göre — sentetik değer için history
+rewrite ZORUNLU değil):**
+
+- Bu bölümdeki (9.3) tam token literal'ı kaldırıldı, yerine yalnızca
+  format (`demo-session-<uuid>`) belirtildi — gerçek değer bu dosyada
+  bir daha YOK.
+- Bu, bir **SECURITY ISSUE değil**, bir **repo hygiene düzeltmesi**dir
+  — token geçerli olduğu sürece ilgili demo kullanıcının session'ına
+  gerçekten erişim sağlamış olsa da, bu erişim yalnızca local/ephemeral
+  bir demo instance'ınaydı, token artık geçersiz, ve gerçek bir
+  production credential/sistem hiçbir zaman risk altında değildi —
+  bu nedenle credential rotation/invalidation gerektiren bir güvenlik
+  olayı olarak sınıflandırılmadı.
+- **Git history'de dürüst açıklama:** Bu tam token değeri, `28e3dff`
+  commit'inde hâlâ mevcuttur ve daha önce origin'e push edilmiştir —
+  bu, geçmiş bir commit'te kalıyor. Human Founder onayı olmadan
+  history rewrite (force-push, `git filter-repo`, vb.) YAPILMADI
+  (talimat gereği — yalnız sentetik ve zaten geçersiz bir değer için
+  tehlikeli bir destructive operation'ı gerekçe olmadan gerekli saymak,
+  tehlikenin kendisinden daha riskli olurdu). Mevcut/tracked branch
+  head'inde bu değer artık YOK — yeni commit'ler için repo hygiene
+  sağlandı.
+
+**Repo-geneli tam-değer arama sonucu (bu fix round'un commit'i
+sonrası, tracked working tree üzerinde):** `git grep` ile capture
+edilen tam token string'i arandı — bu evidence dosyası, README,
+script, generated metadata dahil hiçbir TRACKED dosyada **0 eşleşme**
+(bkz. bölüm 9.3 tablosu — generated HTML raporları zaten gitignored,
+ayrıca onlar da 0 eşleşme verdi).
 
 ---
 
