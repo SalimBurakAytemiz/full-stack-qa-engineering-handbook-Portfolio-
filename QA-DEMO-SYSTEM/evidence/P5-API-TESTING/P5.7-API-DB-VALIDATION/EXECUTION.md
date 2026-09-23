@@ -1,9 +1,11 @@
 # P5.7 — API → DB Validation — Execution Evidence
 
 **Branch:** `feat/phase-5-7-api-db-validation`
-**Tarih:** 2026-09-23 (ilk uygulama), **fix round: 2026-09-23** (Codex
-bağımsız delta review, head commit `658424b`, FAIL/3 blocker + 1
-non-blocking not düzeltme turu)
+**Tarih:** 2026-09-23 (ilk uygulama), **fix round #1: 2026-09-23**
+(Codex bağımsız delta review, head commit `658424b`, FAIL/3 blocker +
+1 non-blocking not düzeltme turu), **fix round #2: 2026-09-23** (Codex
+kısa fix-delta re-review, head commit `e93d3fb`, FAIL/1 açık kalan
+blocker [B2, kapsam] + 2 non-blocking not düzeltme turu)
 
 > Bu kayıt, aşağıdaki validation run'larının **gerçekten çalıştırılmış**
 > sonucudur (`CONTRIBUTING.md` — Evidence Integrity). Hiçbir sonuç
@@ -15,18 +17,28 @@ non-blocking not düzeltme turu)
 
 ---
 
-## 0. Fix Round Özeti (Codex Bağımsız Delta Review — 3 Blocker + 1 Non-blocking, head `658424b`)
+## 0. Fix Round Özeti
+
+### Fix Round #1 (Codex Bağımsız Delta Review — 3 Blocker + 1 Non-blocking, head `658424b`)
 
 | Bulgu | Durum | Nasıl düzeltildi |
 |---|---|---|
 | **B1** — "API↔DB stock consistency" iddia ediliyordu ama gerçek API `GET /api/products/:id` çağrısı hiç yapılmıyordu | **Düzeltildi** | S2'ye gerçek `GET /api/products/:id` çağrıları eklendi — approved order öncesi/sonrası hem API hem DB'den okunan stok değerleri birbirleriyle VE kendi before/after delta'larıyla (effective quantity=5) karşılaştırılıyor. Artık gerçekten cross-layer bir kanıt. |
-| **B2** — "Zero-write" iddiaları yalnızca table count + tek bir ürünün stoğuyla ölçülüyordu; yanlış bir satırın update edilmesi veya farklı bir ürünün stoğunun değişmesi bu kontrolle yakalanamazdı | **Düzeltildi** | Yeni `fullSnapshot()` helper'ı — tüm `orders`/`order_items`/`notifications`/`events` satırlarını (id + ilişki alanları) VE 4 ürünün TAMAMININ stoğunu identity-level yakalar. S1 (gate), S3, S4 (×3), S5 (×2), S6 artık bunu kullanıyor — count-only karşılaştırma tamamen kaldırıldı. |
+| **B2** — "Zero-write" iddiaları yalnızca table count + tek bir ürünün stoğuyla ölçülüyordu; yanlış bir satırın update edilmesi veya farklı bir ürünün stoğunun değişmesi bu kontrolle yakalanamazdı | **Kısmen düzeltildi (round #2'de tamamlandı)** | Yeni `fullSnapshot()` helper'ı — tüm `orders`/`order_items`/`notifications`/`events` satırlarını (id + ilişki alanları) VE 4 ürünün TAMAMININ stoğunu identity-level yakalar. S1 (gate), S3, S4 (×3), S5 (×2), S6 artık bunu kullanıyor. **Round #2'de Codex bu kapsamın hâlâ eksik olduğunu bulmuştur** — bkz. aşağıdaki tablo. |
 | **B3** — Relational integrity kısmi: `notifications.user_id` için orphan kontrolü yoktu; DECLARED-IN-DDL ve OBSERVED-DATA-INTEGRITY ayrımı belirsizdi | **Düzeltildi** | S12'ye `notifications.user_id → users.id` orphan sorgusu eklendi. S12/S13 başlıkları ve iç yorumları artık açıkça ayrılıyor: S12 = OBSERVED DATA INTEGRITY (gerçek satırlar üzerinde sorgu), S13 = DECLARED IN DDL (yalnızca şema metni incelemesi). S13'e `notifications.user_id REFERENCES users(id)`, `events.user_id REFERENCES users(id)`, `sessions.user_id REFERENCES users(id)` ve representative `NOT NULL` kontrolleri eklendi. |
-| Non-blocking — Run #1/#2 mutlak ID eşitliği iddiası yeterince somut gösterilmiyordu | **Düzeltildi** | Bölüm 6'da gerçek Run #1 ve Run #2 değerleri yan yana gösterildi. Ayrıca bu turda gerçek bir ayrım keşfedildi ve dürüstçe raporlandı: `orders.id`/`order_items.id`/`notifications.id` (INTEGER AUTOINCREMENT) iki run'da **gerçekten birebir aynı** — ama `events.event_id` (`crypto.randomUUID()`) tasarım gereği **her çalıştırmada farklıdır**. Önceki evidence'ın "mutlak ID'ler dahil birebir aynı" ifadesi bu istisnayı belirtmiyordu; şimdi açıkça belirtiliyor. |
+| Non-blocking — Run #1/#2 mutlak ID eşitliği iddiası yeterince somut gösterilmiyordu | **Düzeltildi (round #1), wording round #2'de daha da netleştirildi** | Bölüm 8'de gerçek Run #1 ve Run #2 değerleri yan yana gösterildi; `events.event_id` (UUID) istisnası belirtildi. |
 
-Uygulama/database mimarisi bu turda **hiçbir şekilde değiştirilmedi** —
+### Fix Round #2 (Codex Kısa Fix-Delta Re-review — 1 Açık Kalan Blocker [B2] + 2 Non-blocking, head `e93d3fb`)
+
+| Bulgu | Durum | Nasıl düzeltildi |
+|---|---|---|
+| **B2 (açık kalan)** — `fullSnapshot()` yalnızca id + ilişki alanlarını yakalıyordu; `notifications.message` ve `events.payload` gibi mutation-sensitive İÇERİK alanları snapshot'ın dışındaydı — bir satırın id'si/count'u aynı kalırken İÇERİĞİ sessizce değişse bile test PASS verebilirdi (özellikle malformed JSON senaryosunun "zero-write" iddiası bu yüzden yeterince güçlü değildi) | **Düzeltildi** | `fullSnapshot()` genişletildi: `notifications` sorgusuna `message` ve `created_at`, `events` sorgusuna `payload` ve `created_at` eklendi — ikisi de gerçek `schema.js`'te var olan, uydurulmamış sütunlar. `events.payload`'ın `JSON.stringify({orderId,userId,total})` ile TEK bir sabit key-order'la yazıldığı kaynak koddan doğrulandı (`events.service.js`) — bu yüzden herhangi bir JSON re-parse/normalize adımına gerek yok, ham TEXT string olarak karşılaştırılıyor (yanlış-pozitif/negatif riski yok). `created_at`'ın aynı run içindeki before/after karşılaştırmasında güvenli olduğu gerekçelendirildi: dokunulmayan bir satırın `created_at`'ı değişemez (yalnızca INSERT'te set edilir). Assertion label'ları da "identity-level" yerine "content-level" olarak güncellendi. |
+| Non-blocking #1 — Run #1/#2 wording'i hâlâ "snapshot JSON birebir aynı" gibi mutlak ifadeler içeriyordu, UUID istisnası tabloda vardı ama düzyazıda tam netleşmemişti | **Düzeltildi** | Bölüm 8 yeniden yazıldı: AUTOINCREMENT satırların deterministik eşitliği ile `events.event_id` UUID'sinin **tasarım gereği** farklı olması arasındaki ayrım, hem tabloda hem düzyazıda tutarlı şekilde ifade ediliyor; "tamamen birebir" gibi mutlak/genel ifadeler kaldırıldı. |
+| Non-blocking #2 — 88→97 assertion artışının itemized açıklaması (bölüm 7'de "+3/+1/+5") gerçek dağılımla uyuşmuyordu | **Düzeltildi** | Round #1 ile round #2 arası çalıştırmaların ham çıktısı senaryo senaryo yeniden sayıldı (bkz. bölüm 7 — gerçek dağılım: S2 +3, S12 +1, S13 +12; S1/S3/S4×3/S5×2'de count+tek-ürün kontrolü TEK bir `fullSnapshot` assertion'ına birleştiği için toplam −7; net +9, 88+9=97). Eski, yanlış "+5 DDL" itemization'ı düzeltildi. |
+
+Uygulama/database mimarisi bu turlarda **hiçbir şekilde değiştirilmedi** —
 yalnızca `scripts/run-api-db-validation.js` (validation script)
-güçlendirildi. Application/database bug bulunmadı (bkz. bölüm 8).
+güçlendirildi. Application/database bug bulunmadı (bkz. bölüm 9).
 
 ---
 
@@ -95,7 +107,7 @@ sorgusu — ikisi karşılaştırılır.
   `crypto.randomUUID()` ile üretilir (`events.service.js`) — bu sütun
   AUTOINCREMENT değildir, dolayısıyla reset'ten bağımsız olarak her
   çalıştırmada farklı bir değer alır; bu, bir reset-determinism
-  eksikliği değil, UUID'nin doğası gereğidir (bkz. bölüm 6).
+  eksikliği değil, UUID'nin doğası gereğidir (bkz. bölüm 8).
 - **Baseline (S0, gerçek sorgu sonucu):** `orders=0`, `order_items=0`,
   `notifications=0`, `events=0`, `users=2`, `products` stok:
   `{1:25, 2:0, 3:5, 4:12}`.
@@ -103,31 +115,31 @@ sorgusu — ikisi karşılaştırılır.
   (sunucunun ayakta olması ve hemen öncesinde `db:seed` çalıştırılmış
   olması önkoşuldur).
 
-## 5. Senaryo Kategorileri (Fix Round Sonrası)
+## 5. Senaryo Kategorileri (Fix Round #2 Sonrası)
 
-| # | Senaryo | Kategori | Fix round'da değişen |
+| # | Senaryo | Kategori | Fix round'larda değişen |
 |---|---|---|---|
 | S0 | Baseline determinism | Reset | — |
-| S1 | **GATE** — unknown product_id → zero write | Atomicity | B2: identity-level `fullSnapshot` |
-| S2 | Approved order — full API↔DB trace + duplicate aggregation + **API↔DB stock consistency** | Persistence + Consistency | B1: gerçek `GET /api/products/:id` before/after eklendi |
-| S3 | Insufficient stock → zero write | Atomicity | B2: identity-level `fullSnapshot` |
-| S4 | Invalid quantity (×3 temsili) → zero write | Atomicity | B2: identity-level `fullSnapshot` |
-| S5 | Invalid payment_token (false, 0) → zero write | Atomicity | B2: identity-level `fullSnapshot` |
-| S6 | Malformed JSON → zero write | Atomicity | B2: identity-level `fullSnapshot` |
+| S1 | **GATE** — unknown product_id → zero write | Atomicity | Round #1: identity-level `fullSnapshot`. Round #2: content-level (message/payload dahil) |
+| S2 | Approved order — full API↔DB trace + duplicate aggregation + **API↔DB stock consistency** | Persistence + Consistency | Round #1 (B1): gerçek `GET /api/products/:id` before/after eklendi |
+| S3 | Insufficient stock → zero write | Atomicity | Round #1: identity-level. Round #2: content-level |
+| S4 | Invalid quantity (×3 temsili) → zero write | Atomicity | Round #1: identity-level. Round #2: content-level |
+| S5 | Invalid payment_token (false, 0) → zero write | Atomicity | Round #1: identity-level. Round #2: content-level |
+| S6 | Malformed JSON → zero write | Atomicity | Round #1: identity-level. Round #2: content-level (bu senaryonun kanıt gücü Codex'in özellikle işaret ettiği yerdi) |
 | S7 | Declined payment → persistence contract | Persistence | — |
 | S8 | Timeout payment → persistence contract | Persistence | — |
 | S9 | Notification API↔DB correlation | Consistency | — |
 | S10 | Duplicate notification DB check | Persistence | — |
 | S11 | Ownership DB check | Ownership | — |
-| S12 | Relational integrity — **OBSERVED DATA INTEGRITY** | Integrity | B3: `notifications.user_id` orphan check eklendi |
-| S13 | Constraint definitions — **DECLARED IN DDL** | Constraint | B3: `notifications.user_id`/`events.user_id`/`sessions.user_id` REFERENCES + 9 representative NOT NULL kontrolü eklendi |
+| S12 | Relational integrity — **OBSERVED DATA INTEGRITY** | Integrity | Round #1 (B3): `notifications.user_id` orphan check eklendi |
+| S13 | Constraint definitions — **DECLARED IN DDL** | Constraint | Round #1 (B3): `notifications.user_id`/`events.user_id`/`sessions.user_id` REFERENCES + 9 representative NOT NULL kontrolü eklendi |
 
 **Duplike edilmeyen/gerekçeli atlanan maddeler (değişmedi):** unknown
 product_id zero-write, S1'in gate'iyle aynı regresyon olduğu için ayrı
 test edilmedi. Event/notification commit-ordering (P4.3, log
 zamanlaması) black-box API+DB testiyle gözlemlenemeyeceği için bu
 pakette bağımsız test edilmedi — KNOWN LIMITATION olarak kalır (bkz.
-bölüm 10).
+bölüm 11).
 
 ## 6. DECLARED IN DDL vs OBSERVED DATA INTEGRITY — Neden Ayrı
 
@@ -158,14 +170,15 @@ bir DB dosyasının aynı constraint'lere sahip olacağını **garanti
 etmez** (bkz. `PHASE-4-CLOSEOUT.md` bölüm 9, madde 2) — migration/
 backfill bu paketin de kapsamı dışındadır.
 
-## 7. Runner ve Gerçek Çalıştırma Sonucu — RUN #1 (Fix Round)
+## 7. Runner ve Gerçek Çalıştırma Sonucu — RUN #1 (Fix Round #2)
 
 ```bash
 cd QA-DEMO-SYSTEM/backend && npm run db:seed
 cd QA-DEMO-SYSTEM/api-tests && npm run api:test:db
 ```
 
-Tam çıktı (RUN #1, fix round sonrası ilk çalıştırma):
+Tam çıktı (RUN #1, fix round #2 — content-level `fullSnapshot`
+sonrası ilk çalıştırma):
 
 ```text
 --- P5.7 API -> DB Validation Results ---
@@ -181,13 +194,13 @@ PASS  S0. Baseline determinism (post db:seed)
 PASS  S1. GATE — unknown product_id request produces zero DB writes
   ✓  API rejects with 400 — = 400
   ✓  API error message matches source contract — = "Ürün bulunamadı: 99999"
-  ✓  full identity-level DB state unchanged (all order/order_items/notifications/events rows + all 4 products stock — not count-only) — = {"orders":[],"order_items":[],"notifications":[],"events":[],"products":[{"id":1,"stock_quantity":25},{"id":2,"stock_quantity":0},{"id":3,"stock_quantity":5},{"id":4,"stock_quantity":12}]}
+  ✓  full content-level DB state unchanged (all order/order_items/notifications/events rows including notification.message && event.payload + all 4 products stock — not count-only) — = {"orders":[],"order_items":[],"notifications":[],"events":[],"products":[{"id":1,"stock_quantity":25},{"id":2,"stock_quantity":0},{"id":3,"stock_quantity":5},{"id":4,"stock_quantity":12}]}
 
 PASS  S2. Approved order — full API<->DB trace + duplicate-line aggregation + API<->DB stock consistency
   ✓  API stock_quantity matches DB stock_quantity BEFORE the order (cross-layer, not assumed) — = 25
   ✓  API returns 201 — = 201
   ✓  API order.status is PAID — = "PAID"
-  ✓  order row exists in DB — {"id":1,"user_id":1,"status":"PAID","total":749.5,"created_at":"2026-09-23 21:33:09"}
+  ✓  order row exists in DB — {"id":1,"user_id":1,"status":"PAID","total":749.5,"created_at":"2026-09-23 21:47:04"}
   ✓  order.user_id in DB matches authenticated USER A (seeded id 1) — = 1
   ✓  order.status in DB matches API response — = "PAID"
   ✓  order.total in DB matches API response — = 749.5
@@ -201,31 +214,31 @@ PASS  S2. Approved order — full API<->DB trace + duplicate-line aggregation + 
 
 PASS  S3. Insufficient stock request -> zero DB write
   ✓  API rejects with 409 — = 409
-  ✓  full identity-level DB state unchanged (all rows + all 4 products stock) — = {"orders":[{"id":1,"user_id":1,"status":"PAID","total":749.5}],"order_items":[{"id":1,"order_id":1,"product_id":1,"quantity":5,"unit_price":149.9}],"notifications":[{"id":1,"user_id":1,"order_id":1,"type":"order.paid","is_read":0}],"events":[{"event_id":"20b54d9f-b874-461d-8e69-ec6ede43c057","event_type":"order.paid","user_id":1,"order_id":1}],"products":[{"id":1,"stock_quantity":20},{"id":2,"stock_quantity":0},{"id":3,"stock_quantity":5},{"id":4,"stock_quantity":12}]}
+  ✓  full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock) — = {"orders":[{"id":1,"user_id":1,"status":"PAID","total":749.5}],"order_items":[{"id":1,"order_id":1,"product_id":1,"quantity":5,"unit_price":149.9}],"notifications":[{"id":1,"user_id":1,"order_id":1,"type":"order.paid","message":"Order #1 payment approved.","is_read":0,"created_at":"2026-09-23 21:47:04"}],"events":[{"event_id":"18350b30-8fb5-418f-8e3c-f2054529889e","event_type":"order.paid","user_id":1,"order_id":1,"payload":"{\"orderId\":1,\"userId\":1,\"total\":749.5}","created_at":"2026-09-23 21:47:04"}],"products":[{"id":1,"stock_quantity":20},{"id":2,"stock_quantity":0},{"id":3,"stock_quantity":5},{"id":4,"stock_quantity":12}]}
 
 PASS  S4. Invalid quantity (string "2") -> zero DB write
   ✓  API rejects with 400 — = 400
-  ✓  full identity-level DB state unchanged (all rows + all 4 products stock) — [aynı snapshot, değişmedi]
+  ✓  full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock) — [aynı snapshot, değişmedi]
 
 PASS  S4. Invalid quantity (boolean true) -> zero DB write
   ✓  API rejects with 400 — = 400
-  ✓  full identity-level DB state unchanged (all rows + all 4 products stock) — [aynı snapshot, değişmedi]
+  ✓  full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock) — [aynı snapshot, değişmedi]
 
 PASS  S4. Invalid quantity (null) -> zero DB write
   ✓  API rejects with 400 — = 400
-  ✓  full identity-level DB state unchanged (all rows + all 4 products stock) — [aynı snapshot, değişmedi]
+  ✓  full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock) — [aynı snapshot, değişmedi]
 
 PASS  S5. Invalid payment_token (false) -> zero DB write
   ✓  API rejects with 400 — = 400
-  ✓  full identity-level DB state unchanged (all rows + all 4 products stock) — [aynı snapshot, değişmedi]
+  ✓  full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock) — [aynı snapshot, değişmedi]
 
 PASS  S5. Invalid payment_token (0) -> zero DB write
   ✓  API rejects with 400 — = 400
-  ✓  full identity-level DB state unchanged (all rows + all 4 products stock) — [aynı snapshot, değişmedi]
+  ✓  full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock) — [aynı snapshot, değişmedi]
 
 PASS  S6. Malformed JSON body -> zero DB write
   ✓  API rejects with 400 — = 400
-  ✓  full identity-level DB state unchanged (all rows + all 4 products stock) — [aynı snapshot, değişmedi]
+  ✓  full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock) — [aynı snapshot, değişmedi — bu senaryonun kanıt gücü Codex'in özellikle işaret ettiği yerdi, artık message/payload içeriği de kapsam dahilinde]
 
 PASS  S7. Declined payment — order+order_items persisted, stock/notification/event are not
   ✓  API returns 201 (declined is not an HTTP error) — = 201
@@ -309,42 +322,72 @@ P5.7 API -> DB validation run: PASS
 ```
 
 **RUN #1 sonucu: 17/17 senaryo PASS, 97/97 assertion PASS, 0 failure.**
-(Eski 88 sayısı artık **geçersizdir** — B1/B2/B3 fix'leri 9 yeni gerçek
-assertion ekledi: 3 API↔DB stock karşılaştırması [S2] + 1 orphan check
-[S12] + 5 yeni DDL kontrolü [S13, notifications/events/sessions
-REFERENCES + fazladan NOT NULL'lar]; `fullSnapshot` geçişi assertion
-sayısını artırmadı, yalnızca her zero-write kontrolünün TEK bir daha
-güçlü assertion'a dönüşmesini sağladı.)
+(Eski 88 sayısı artık **geçersizdir**.)
 
-## 8. Repeatability — RUN #2 (Fix Round)
+**Gerçek 88→97 dağılımı (fix round #2'de senaryo senaryo yeniden
+sayılarak doğrulandı — önceki "+3/+1/+5" itemization'ı yanlıştı,
+düzeltildi):**
+
+| Senaryo | Öncesi | Sonrası | Fark | Neden |
+|---|---|---|---|---|
+| S1 | 4 | 3 | −1 | count+tek-ürün-stok kontrolü TEK `fullSnapshot` assertion'ına birleşti |
+| S2 | 11 | 14 | +3 | B1 — API↔DB stock before/after/delta karşılaştırması eklendi |
+| S3 | 3 | 2 | −1 | aynı birleşme |
+| S4 (×3) | 3 her biri (9) | 2 her biri (6) | −3 | aynı birleşme |
+| S5 (×2) | 3 her biri (6) | 2 her biri (4) | −2 | aynı birleşme |
+| S6 | 2 | 2 | 0 | sayı aynı kaldı, İÇERİK güçlendi (round #2) |
+| S12 | 5 | 6 | +1 | B3 — `notifications.user_id` orphan check eklendi |
+| S13 | 8 | 20 | +12 | B3 — `notifications`/`events`/`sessions.user_id` REFERENCES (+3) + 9 representative NOT NULL kontrolü (+9) |
+| Diğerleri (S0,S7,S8,S9,S10,S11) | değişmedi | değişmedi | 0 | — |
+
+Net: (+3+1+12) − (1+1+3+2) = 16 − 7 = **+9** → 88+9=97. Fix round #2
+(`fullSnapshot`'a `message`/`payload`/`created_at` eklenmesi) bu
+dağılımı **değiştirmedi** — aynı sayıda assertion, daha zengin
+karşılaştırılan içerik (bkz. bölüm 0, Fix Round #2 tablosu).
+
+## 8. Repeatability — RUN #2 (Fix Round #2)
 
 `npm run db:seed` ile tekrar reset edildikten sonra **aynı komut**
 tekrar çalıştırıldı: **17/17 senaryo PASS, 97/97 assertion PASS, 0
 failure.**
 
-**Somut ID karşılaştırması (Codex non-blocking notuna yanıt — artık
-gerçek değerler yan yana):**
+**Somut karşılaştırma (Codex'in her iki turdaki non-blocking notuna
+yanıt — gerçek değerler yan yana, ve fix round #2'de `fullSnapshot`'a
+`created_at`/`payload` eklendiği için bu tablo tekrar, dikkatle
+gözden geçirildi):**
 
 | Alan | RUN #1 | RUN #2 | Eşit mi? |
 |---|---|---|---|
-| S2 `orders.id` (approved order) | `1` | `1` | ✅ Evet |
-| S2 `order_items.id` (aggregated row) | `1` | `1` | ✅ Evet |
-| S9 `notifications.id` (S2'nin notification'ı) | `1` | `1` | ✅ Evet |
-| S3-S6 zero-write snapshot'ları (`orders`/`order_items`/`notifications` id+alanları) | birebir aynı JSON | birebir aynı JSON | ✅ Evet |
-| `events.event_id` (S3-S6 snapshot'ı içinde) | `20b54d9f-b874-461d-8e69-ec6ede43c057` | `fd0bd467-0461-4080-aad3-10bcb041163e` | ❌ **Hayır — beklenen** |
-| `created_at` (tüm satırlarda) | gerçek wall-clock zaman damgası | gerçek wall-clock zaman damgası | ❌ **Hayır — beklenen** |
+| S2 `orders.id` (approved order) | `1` | `1` | ✅ Evet — AUTOINCREMENT, deterministik |
+| S2 `order_items.id` (aggregated row) | `1` | `1` | ✅ Evet — AUTOINCREMENT |
+| S9 `notifications.id` (S2'nin notification'ı) | `1` | `1` | ✅ Evet — AUTOINCREMENT |
+| S3-S6 snapshot'larındaki iş alanları (`user_id`, `status`, `total`, `product_id`, `quantity`, `unit_price`, `type`, `message`, `is_read`, tüm ürün `stock_quantity`'leri) | aynı değerler | aynı değerler | ✅ Evet — deterministik business state |
+| S3-S6 snapshot'larının **TAM JSON metni** (`created_at`/`event_id`/`payload` dahil) | ör. `"created_at":"...21:47:33"`, `event_id:"3fa267ca-..."` | ör. `"created_at":"...21:47:38"`, `event_id:"be120b0e-..."` | ❌ **Hayır — beklenen, aşağıda açıklanıyor** |
+| `events.event_id` | UUID (`crypto.randomUUID()`) | farklı UUID | ❌ **Hayır — beklenen** |
+| `created_at` (tüm satırlarda) | gerçek wall-clock zaman damgası | farklı wall-clock zaman damgası | ❌ **Hayır — beklenen** |
 
-**Doğru, tam kapsamlı ifade:** `INTEGER PRIMARY KEY AUTOINCREMENT`
-sütunlu her tablonun (`orders`, `order_items`, `notifications`,
-`products`, `users`) ID'leri iki run'da **gerçekten birebir aynıdır**
-— `seed.js`'in AUTOINCREMENT sayaçlarını da sıfırlaması sayesinde.
-`events.event_id` bu kuralın **istisnasıdır**: `TEXT PRIMARY KEY`
-olup `crypto.randomUUID()` ile üretilir (AUTOINCREMENT değil,
-dolayısıyla reset-determinism kapsamında değil) — bu, tasarım gereği
-her çalıştırmada farklı bir değer üretir ve bir hata/tutarsızlık
-DEĞİLDİR. Önceki (fix round öncesi) evidence'ın "mutlak satır ID'leri
-dahil birebir aynı" ifadesi bu istisnayı ayırt etmiyordu; bu artık
-düzeltilmiştir.
+**Doğru, tam kapsamlı ifade (fix round #2'de düzeltildi):**
+`INTEGER PRIMARY KEY AUTOINCREMENT` sütunlu her tablonun (`orders`,
+`order_items`, `notifications`, `products`, `users`) ID'leri VE bu
+satırların iş-mantığı alanları (durum, miktar, fiyat, stok, mesaj
+metni, `is_read`) iki run'da **gerçekten birebir aynıdır** —
+`seed.js`'in AUTOINCREMENT sayaçlarını da sıfırlaması ve business
+logic'in deterministik olması sayesinde. **Ancak** fix round #2'de
+`fullSnapshot`'a eklenen `created_at` ve `events.payload`/`event_id`
+alanları YÜZÜNDEN, S3-S6'nın before/after karşılaştırmasında
+kullanılan snapshot'ın **TAM JSON metni**, RUN #1 ile RUN #2 arasında
+**artık birebir aynı DEĞİLDİR** — her run kendi gerçek wall-clock
+`created_at`'ını ve kendi rastgele `event_id`'sini üretir. **Bu bir
+hata değildir ve zero-write assertion'ını geçersiz kılmaz:** S3-S6'nın
+gerçek assertion'ı, AYNI RUN içinde alınan before-snapshot ile
+after-snapshot'ın birbirine eşit olduğunu kanıtlar (`assertEqual(after,
+before, ...)`) — bu karşılaştırma RUN #1'in kendi içinde ve RUN #2'nin
+kendi içinde ayrı ayrı, gerçekten PASS oldu (her ikisinde de 0
+failure). RUN #1 ile RUN #2'nin snapshot'larını birbirine eşitlemek
+gibi bir iddia script'te **hiç yoktu ve evidence'ta da artık iddia
+edilmiyor** — yalnızca yukarıdaki tabloda özetlenen, gerçekten
+deterministik olan alt-küme (AUTOINCREMENT ID'ler + iş alanları)
+run'lar arası karşılaştırılıyor.
 
 ---
 
@@ -369,15 +412,23 @@ hatası değil, kanıt gücü/kapsam eksikliğiydi).
 
 ## 10. Sonuç
 
-**PASS** — API→DB tutarlılığı artık şunları gerçek, cross-layer
-kanıtla içeriyor: approved order için hem API hem DB'den okunan stok
-değerinin birbirine ve gerçek before/after delta'sına eşit olduğu
-(B1); zero-write iddialarının identity-level (yalnızca count değil)
-kanıtlandığı (B2); relational integrity'nin DECLARED-IN-DDL ve
-OBSERVED-DATA-INTEGRITY olarak ayrı ayrı, `notifications.user_id`
-dahil tam raporlandığı (B3). 2 ayrı temiz-reset execution'da AUTOINCREMENT
-ID'ler dahil birebir aynı sonuç (UUID `event_id` hariç, beklenen
-istisna). Hiçbir application veya database-contract bug'ı bulunmadı.
+**PASS** — API→DB tutarlılığı, **test edilen senaryolar kapsamında**,
+şunları gerçek, cross-layer kanıtla içeriyor: approved order için hem
+API hem DB'den okunan stok değerinin birbirine ve gerçek before/after
+delta'sına eşit olduğu (B1); zero-write iddialarının artık
+content-level (yalnızca count/identity değil — `notifications.message`
+ve `events.payload` dahil mutation-sensitive içerik) kanıtlandığı
+(B2, iki fix round'da tamamlandı); relational integrity'nin
+DECLARED-IN-DDL ve OBSERVED-DATA-INTEGRITY olarak ayrı ayrı,
+`notifications.user_id` dahil tam raporlandığı (B3). 2 ayrı
+temiz-reset execution'da AUTOINCREMENT ID'ler ve iş-mantığı alanları
+birebir aynı sonuç verdi (yalnızca `created_at` ve `events.event_id`
+run'lar arası farklı — tasarım gereği, bkz. bölüm 8). Bu, "tüm
+veritabanı byte-for-byte değişmedi" veya "genel ACID sertifikasyonu"
+gibi bir iddia DEĞİLDİR — yalnızca S1/S3/S4/S5/S6'nın test ettiği
+senaryolarda, ilgili tablo/alan kümesinin gözlemlendiği şekliyle
+değişmediği kanıtlanmıştır. Hiçbir application veya database-contract
+bug'ı bulunmadı.
 
 ## 11. Bilinen Sınırlamalar (Bu Paket Kapsamında)
 

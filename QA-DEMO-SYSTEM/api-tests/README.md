@@ -370,20 +370,27 @@ Bu, `scripts/run-api-db-validation.js`'i çalıştırır — Postman/Newman
 **değil**, Node'un built-in `node:sqlite` (read-only) + `fetch`'i
 kullanan, yeni dependency eklemeyen bir script. Her senaryo gerçek bir
 API çağrısını gerçek SQLite satırıyla karşılaştırır — zero-write
-kontrolleri identity-level `fullSnapshot` (yalnızca count değil,
-`orders`/`order_items`/`notifications`/`events`'in tüm satırları + 4
-ürünün tamamının stoğu) ile yapılır; approved order senaryosu ayrıca
-gerçek `GET /api/products/:id` çağrısıyla API↔DB stok tutarlılığını
+kontrolleri content-level `fullSnapshot` (yalnızca count/identity
+değil; `orders`/`order_items`/`notifications`/`events`'in tüm
+satırları — `notifications.message` ve `events.payload` gibi
+mutation-sensitive içerik alanları dahil — + 4 ürünün tamamının
+stoğu) ile yapılır; approved order senaryosu ayrıca gerçek
+`GET /api/products/:id` çağrısıyla API↔DB stok tutarlılığını
 cross-layer kanıtlar; relational integrity DECLARED-IN-DDL (yapısal)
 ve OBSERVED-DATA-INTEGRITY (gerçek satır sorgusu) olarak ayrı ayrı
-raporlanır. P5.7'de, Codex delta review fix round'u dahil, gerçek
+raporlanır. P5.7'de, iki Codex delta review fix round'u dahil, gerçek
 sisteme karşı **iki ayrı temiz-reset execution** ile çalıştırıldı: her
 ikisinde de **17/17 senaryo PASS, 97/97 assertion PASS, 0 failure** —
-`INTEGER PRIMARY KEY AUTOINCREMENT` satır ID'leri dahil birebir aynı
-(yalnızca `events.event_id` — `crypto.randomUUID()` ile üretilir,
-AUTOINCREMENT değildir — ve timestamp'ler beklenen şekilde farklı),
-repeatability kanıtlandı (bkz.
-`evidence/P5-API-TESTING/P5.7-API-DB-VALIDATION/EXECUTION.md`).
+`INTEGER PRIMARY KEY AUTOINCREMENT` satır ID'leri VE iş-mantığı
+alanları (durum, miktar, fiyat, stok, mesaj metni) run'lar arası
+birebir aynı; yalnızca `events.event_id` (`crypto.randomUUID()`,
+AUTOINCREMENT değil) ve `created_at` zaman damgaları — tasarım gereği
+— run'lar arası farklı. Bu, "tüm DB byte-for-byte aynı" gibi mutlak
+bir iddia değildir; zero-write assertion'ının kendisi her run'ın
+**kendi içindeki** before/after karşılaştırmasına dayanır, bu da her
+iki run'da da bağımsız olarak PASS oldu (repeatability kanıtlandı,
+bkz. `evidence/P5-API-TESTING/P5.7-API-DB-VALIDATION/EXECUTION.md`
+bölüm 8).
 
 ---
 
@@ -870,12 +877,12 @@ satır ID'leri dahil):**
 | # | Senaryo | Kanıtladığı |
 |---|---|---|
 | S0 | Baseline determinism | Reset sonrası tüm tablolar deterministik (orders/order_items/notifications/events=0, stok seed değerleriyle birebir) |
-| S1 | **GATE** — unknown product_id | Gerçek zero-write: `fullSnapshot` ile identity-level kanıt — yalnızca count değil, tüm satırlar + tüm ürün stokları |
+| S1 | **GATE** — unknown product_id | Gerçek zero-write: `fullSnapshot` ile content-level kanıt — yalnızca count değil, tüm satırlar (message/payload dahil) + tüm ürün stokları |
 | S2 | Approved order — tam API↔DB izi + **API↔DB stock consistency** | Order/order_items satırları API response'uyla birebir; duplicate-line aggregation (2+3=5) TEK satır olarak DB'de kanıtlanır; **gerçek `GET /api/products/:id` çağrısıyla** API stoğu DB stoğuyla cross-layer karşılaştırılır |
-| S3 | Insufficient stock | Zero-write (identity-level) |
-| S4 | Invalid quantity (×3 temsili) | Zero-write (identity-level) |
-| S5 | Invalid payment_token (false, 0) | Zero-write (identity-level) |
-| S6 | Malformed JSON | Zero-write (identity-level) |
+| S3 | Insufficient stock | Zero-write (content-level — message/payload dahil) |
+| S4 | Invalid quantity (×3 temsili) | Zero-write (content-level — message/payload dahil) |
+| S5 | Invalid payment_token (false, 0) | Zero-write (content-level — message/payload dahil) |
+| S6 | Malformed JSON | Zero-write (content-level — message/payload dahil) |
 | S7 | Declined payment | order/order_items YAZILIR, stock/notification/event YAZILMAZ |
 | S8 | Timeout payment | Aynı contract |
 | S9 | Notification API↔DB korelasyonu | GET response'undaki notification ile DB satırı alan alan eşleşir |
@@ -884,17 +891,29 @@ satır ID'leri dahil):**
 | S12 | Relational integrity — **OBSERVED DATA INTEGRITY** | Gerçek satırlar üzerinde orphan sorgusu — `notifications.user_id` dahil |
 | S13 | Constraint tanımları — **DECLARED IN DDL** | `CHECK`/`UNIQUE`/`REFERENCES`/`NOT NULL` tanımları gerçek DDL'de mevcut (yapısal inceleme; S12'den bilinçli olarak ayrı, tek bir "FK PASS" cümlesine birleştirilmedi) |
 
-**Fix round (Codex bağımsız delta review, FAIL/3 blocker + 1
+**Fix round #1 (Codex bağımsız delta review, FAIL/3 blocker + 1
 non-blocking):** B1 — S2'ye gerçek API↔DB stok karşılaştırması
 eklendi (önceden yalnızca DB okunuyordu). B2 — zero-write kontrolleri
 count+tek-ürün'den identity-level `fullSnapshot`'a yükseltildi (S1,
 S3, S4, S5, S6). B3 — `notifications.user_id` orphan kontrolü (S12)
 ve DDL kontrolü (S13) eklendi; DECLARED-IN-DDL/OBSERVED-DATA-INTEGRITY
 ayrımı başlıklarda ve yorumlarda açık hale getirildi. Non-blocking —
-Run #1/#2 ID karşılaştırması artık evidence'ta somut değerlerle
-gösteriliyor, `events.event_id`'nin (UUID) AUTOINCREMENT ID'lerden
-farklı olarak reset-determinism kapsamında OLMADIĞI dürüstçe
-belirtildi. Detay: `evidence/.../EXECUTION.md` bölüm 0.
+Run #1/#2 ID karşılaştırması evidence'ta somut değerlerle gösterildi.
+
+**Fix round #2 (Codex kısa fix-delta re-review, FAIL/1 açık kalan
+blocker [B2] + 2 non-blocking):** B2 (tamamlandı) — `fullSnapshot`
+identity-level'dan content-level'a genişletildi:
+`notifications.message` ve `events.payload` (+`created_at`)
+mutation-sensitive alanları eklendi — bir satırın id'si/count'u aynı
+kalırken içeriği sessizce değişmesi artık yakalanıyor (özellikle
+malformed JSON senaryosunun kanıt gücü güçlendi). Non-blocking #1 —
+Run #1/#2 wording'i, AUTOINCREMENT ID'lerin/iş alanlarının
+deterministik eşitliği ile `events.event_id`/`created_at`'ın run'lar
+arası **beklenen şekilde farklı** olması arasında artık net bir ayrım
+yapıyor; "snapshot JSON birebir aynı" gibi mutlak ifadeler kaldırıldı.
+Non-blocking #2 — 88→97 assertion artışının itemized açıklaması
+yanlıştı (+5 DDL yerine gerçekte +12); senaryo senaryo yeniden
+sayılarak düzeltildi. Detay: `evidence/.../EXECUTION.md` bölüm 0.
 
 **Runner:** `npm run api:test:db`. P5.7'de, fix round dahil, gerçek
 sisteme karşı **2 ayrı temiz-reset execution** ile çalıştırıldı: her

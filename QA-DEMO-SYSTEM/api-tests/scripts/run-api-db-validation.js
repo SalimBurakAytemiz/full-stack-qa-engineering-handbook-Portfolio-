@@ -125,14 +125,33 @@ function stockOf(db, productId) {
   return db.prepare('SELECT stock_quantity FROM products WHERE id = ?').get(productId).stock_quantity;
 }
 
-// Identity-level snapshot for "zero write" proofs (Codex B2): count-only or
-// single-product-stock comparisons cannot distinguish "nothing changed"
-// from "a different row was mutated but the count/one product balanced
-// out". This captures every relevant row's business-key fields (not just
-// row counts) across all four deterministic products, plus the full
-// orders/order_items/notifications row set (id + relationship fields) —
-// so any wrong-row update, cross-product stock mutation, or broken
-// order/notification relationship is caught, not just a count mismatch.
+// Identity-level snapshot for "zero write" proofs (Codex B2, strengthened
+// again in the second re-review). Count-only or single-product-stock
+// comparisons cannot distinguish "nothing changed" from "a different row
+// was mutated but the count/one product balanced out" — and even an
+// id+relationship-only snapshot (the first B2 fix) misses a row whose
+// CONTENT was silently mutated while its id/relationships stayed put
+// (e.g. notification.message rewritten, event.payload rewritten). This
+// snapshot therefore includes every mutation-sensitive column the real
+// schema defines for these tables, not just identity/relationship
+// columns: notifications.message and .created_at, events.payload and
+// .created_at, plus the previously-covered id/relationship fields and
+// all four products' stock. No field is invented — every column named
+// here exists in schema.js.
+//
+// created_at is safe to include in a same-run before/after comparison:
+// a row that isn't touched by the request under test keeps the exact
+// created_at it already had (SQLite only sets it on INSERT), so it
+// cannot flip between two snapshots taken in the same script run unless
+// something actually wrote to that row — which is precisely what "zero
+// write" is being asked to prove.
+//
+// events.payload is a TEXT column holding `JSON.stringify({orderId,
+// userId, total})` (events.service.js) — written once, with the same
+// object-literal key order every time, so no JSON re-serialization or
+// key-order normalization is needed here: it's read and compared as
+// the raw stored string, exactly as SQLite has it, with no re-parsing
+// step that could introduce false positives/negatives of its own.
 function fullSnapshot(db) {
   return {
     orders: db.prepare('SELECT id, user_id, status, total FROM orders ORDER BY id').all(),
@@ -140,9 +159,13 @@ function fullSnapshot(db) {
       .prepare('SELECT id, order_id, product_id, quantity, unit_price FROM order_items ORDER BY id')
       .all(),
     notifications: db
-      .prepare('SELECT id, user_id, order_id, type, is_read FROM notifications ORDER BY id')
+      .prepare(
+        'SELECT id, user_id, order_id, type, message, is_read, created_at FROM notifications ORDER BY id'
+      )
       .all(),
-    events: db.prepare('SELECT event_id, event_type, user_id, order_id FROM events ORDER BY event_id').all(),
+    events: db
+      .prepare('SELECT event_id, event_type, user_id, order_id, payload, created_at FROM events ORDER BY event_id')
+      .all(),
     products: db.prepare('SELECT id, stock_quantity FROM products ORDER BY id').all(),
   };
 }
@@ -201,7 +224,7 @@ async function run() {
     assertEqual(
       after,
       before,
-      'full identity-level DB state unchanged (all order/order_items/notifications/events rows + all 4 products stock — not count-only)'
+      'full content-level DB state unchanged (all order/order_items/notifications/events rows including notification.message && event.payload + all 4 products stock — not count-only)'
     );
   });
 
@@ -284,7 +307,7 @@ async function run() {
     assertEqual(status, 409, 'API rejects with 409');
 
     const after = withDb(fullSnapshot);
-    assertEqual(after, before, 'full identity-level DB state unchanged (all rows + all 4 products stock)');
+    assertEqual(after, before, 'full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock)');
   });
 
   // ---------------------------------------------------------------
@@ -302,7 +325,7 @@ async function run() {
       assertEqual(status, 400, 'API rejects with 400');
 
       const after = withDb(fullSnapshot);
-      assertEqual(after, before, 'full identity-level DB state unchanged (all rows + all 4 products stock)');
+      assertEqual(after, before, 'full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock)');
     });
   }
 
@@ -320,7 +343,7 @@ async function run() {
       assertEqual(status, 400, 'API rejects with 400');
 
       const after = withDb(fullSnapshot);
-      assertEqual(after, before, 'full identity-level DB state unchanged (all rows + all 4 products stock)');
+      assertEqual(after, before, 'full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock)');
     });
   }
 
@@ -338,7 +361,7 @@ async function run() {
     assertEqual(res.status, 400, 'API rejects with 400');
 
     const after = withDb(fullSnapshot);
-    assertEqual(after, before, 'full identity-level DB state unchanged (all rows + all 4 products stock)');
+    assertEqual(after, before, 'full content-level DB state unchanged (all rows including notification.message && event.payload + all 4 products stock)');
   });
 
   // ---------------------------------------------------------------
