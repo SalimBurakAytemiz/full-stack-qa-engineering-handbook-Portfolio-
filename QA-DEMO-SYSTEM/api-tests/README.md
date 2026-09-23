@@ -130,10 +130,13 @@ QA-DEMO-SYSTEM/api-tests/
 ├── README.md
 ├── package.json                                  (newman + ajv devDependency; "api:test:postman",
 │                                                    "api:test:postman:basic", "api:test:schema:negative-proof",
-│                                                    "api:test:auth", "api:test:orders-payment" script'leri)
+│                                                    "api:test:auth", "api:test:orders-payment",
+│                                                    "api:test:orders-payment:basic" script'leri)
 ├── scripts/
 │   ├── run-schema-validation.js                  (P5.2 — Newman Node API + AJV wrapper; P5.4'te
 │   │                                                Products klasörünü de kapsayacak şekilde genişletildi)
+│   ├── run-orders-schema-validation.js           (P5.5 fix round, Codex B4 — aynı Newman Node API + AJV
+│   │                                                modeli, Orders & Payment collection'ına özel)
 │   └── schema-negative-proof.js                  (P5.2 fix — tracked/reproducible negative+positive proof;
 │                                                    P5.4'te 1 yeni vaka eklendi, 18→19)
 └── postman/
@@ -142,24 +145,30 @@ QA-DEMO-SYSTEM/api-tests/
     │   │                                                            klasörü — 11 request)
     │   ├── qa-demo-system-protected.postman_collection.json       (P5.3 — 19 request: auth gate, token
     │   │                                                            bootstrap, auth matrix, ownership/cross-user)
-    │   └── qa-demo-system-orders-payment.postman_collection.json  (P5.5 — 40 request: duplicate aggregation
-    │                                                                gate, payment outcomes, stock/quantity/
-    │                                                                product/items validation, payment token
-    │                                                                matrix, malformed JSON, auth regression)
+    │   └── qa-demo-system-orders-payment.postman_collection.json  (P5.5, fix round sonrası — 64 request:
+    │                                                                duplicate aggregation gate, payment
+    │                                                                outcomes (gerçek before/after stok
+    │                                                                kanıtıyla), stock/quantity/product/items
+    │                                                                validation (temsili state-integrity
+    │                                                                kanıtıyla), payment token matrix (false/0
+    │                                                                dahil), malformed JSON, auth regression)
     └── environments/
         └── local.postman_environment.json                  (P5.1 — baseUrl)
 
 shared/schemas/                                    (P5.2 — canonical, active)
 ├── common/
-│   └── error-response.schema.json
+│   └── error-response.schema.json                (P5.5 fix round'da orders/error contract'ı için de
+│                                                    yeniden kullanıldı — bkz. bölüm 10)
 ├── health/
 │   └── health-response.schema.json
 ├── auth/
 │   └── login-response.schema.json
-└── products/
-    ├── product-item.schema.json                  (reusable, $ref'lenir)
-    ├── products-list-response.schema.json
-    └── product-detail-response.schema.json
+├── products/
+│   ├── product-item.schema.json                  (reusable, $ref'lenir)
+│   ├── products-list-response.schema.json
+│   └── product-detail-response.schema.json
+└── orders/                                        (P5.5 fix round, Codex B4 — YENİ)
+    └── order-create-response.schema.json
 ```
 
 ### Hâlâ Planlanan (sonraki paketlerde kademeli olarak oluşturulacak)
@@ -175,11 +184,17 @@ shared/schemas/
 └── notifications/  (P5.6 — gerçek Notifications response'ları belirlendiğinde)
 ```
 
-**Not (P5.5 schema kararı):** `shared/schemas/orders/` **oluşturulmadı** —
-P5.5, P5.3'ün protected collection'ıyla aynı mimari kararı izleyerek
-plain `pm.test()` assertion'ları kullandı (AJV/Node-wrapper değil);
-test edilen tüm response şekilleri zaten tam olarak (alan+değer)
-doğrulanıyor. Bkz. bölüm 10.
+**Not (P5.5 schema kararı — fix round'da değişti):** P5.5 ilk uygulamada
+P5.3'ün protected collection'ıyla aynı mimari kararı izleyip plain
+`pm.test()` assertion'ları kullanmıştı (AJV/Node-wrapper yoktu). Codex
+delta review (blocker B4) bu kararı geçersiz kıldı; fix round'da
+`shared/schemas/orders/order-create-response.schema.json` oluşturuldu
+ve P5.2'nin kanonik AJV/Node-wrapper modeli
+(`scripts/run-orders-schema-validation.js`) yeniden kullanıldı. Hata
+contract'ı için ayrı bir şema oluşturulmadı — mevcut
+`shared/schemas/common/error-response.schema.json` yeniden kullanıldı
+(gerekçe: bölüm 10). Bkz. bölüm 10 ve
+`evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md` bölüm 9.
 
 **Schema'lar burada değil `shared/schemas/` altında** (bkz. bölüm 7 —
 canonical karar, P5.2'de active hale geldi). Reports/evidence de
@@ -274,12 +289,14 @@ npm run dev                # ayrı bir terminalde
 cd api-tests && npm run api:test:orders-payment
 ```
 
-Bu, `newman run postman/collections/qa-demo-system-orders-payment.postman_collection.json
--e postman/environments/local.postman_environment.json` komutunu
-çalıştırır — token bootstrap dahil tamamen otomatik. P5.5'te gerçek
-sisteme karşı **iki ayrı temiz-reset execution** ile çalıştırıldı:
-her ikisinde de **40/40 request PASS, 82/82 assertion PASS** —
-birebir aynı sonuç, repeatability kanıtlandı (bkz.
+Bu, `scripts/run-orders-schema-validation.js`'i çalıştırır (P5.2'nin
+Newman Node API + AJV wrapper modeli, Orders & Payment collection'ına
+özel — fix round, Codex B4); ham Newman CLI için
+`npm run api:test:orders-payment:basic`. Token bootstrap dahil tamamen
+otomatik. P5.5 fix round'da gerçek sisteme karşı **iki ayrı
+temiz-reset execution** ile çalıştırıldı: her ikisinde de **64/64
+request PASS, 118/118 assertion PASS, 6/6 AJV schema + Content-Type
+validation PASS** — birebir aynı sonuç, repeatability kanıtlandı (bkz.
 `evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md`).
 
 ---
@@ -300,6 +317,7 @@ active hale getirildi** — `.gitkeep` kaldırıldı, 6 gerçek
 | `products/product-item.schema.json` | Tek ürün nesnesi | Reusable, `$ref` ile list/detail'e bağlanır |
 | `products/products-list-response.schema.json` | `GET /api/products` 200 | `product-item`'a `$ref` |
 | `products/product-detail-response.schema.json` | `GET /api/products/:id` 200 | `product-item`'a `$ref` |
+| `orders/order-create-response.schema.json` | `POST /api/orders` 201 | P5.5 fix round (Codex B4) — `status` alanı `enum:[PAID,PAYMENT_FAILED,PAYMENT_TIMEOUT]`; hata response'ları için ayrı şema yok, `common/error-response.schema.json` yeniden kullanılıyor (kaynak koddan doğrulandı, contract aynı) |
 
 Tüm şemalar gerçek kaynak koddan (`services/*.js`) ve gerçek
 `curl`/Newman execution'larından doğrulandı — tahmin edilmedi. Her
@@ -544,25 +562,34 @@ validation PASS** (bkz.
 feature testi kapsamı dışındadır** — Notifications'ın business akışı
 P5.6'nın işi; API→DB doğrudan SQL doğrulaması P5.7'nin işi.
 
+> **Fix round notu (Codex delta review, head commit `9cac4cc`, FAIL/4
+> blocker + 1 non-blocking):** Bu bölüm, delta review sonrası yapılan
+> düzeltmeleri yansıtır. Değişenler: gerçek before/after stok kanıtları
+> (B1/B2), `payment_token: false`/`0` matris vakaları (B3), AJV/Node-
+> wrapper şema doğrulaması (B4), kullanılmayan User B bootstrap'ının
+> kaldırılması (non-blocking). Eski (40 request/82 assertion, AJV-yok)
+> hâli **geçersizdir**. Tam detay:
+> `evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md` bölüm 0.
+
 **Collection:** Ayrı bir dosya —
 `postman/collections/qa-demo-system-orders-payment.postman_collection.json`
-(40 request, 10 klasör). Karar (P5.5'e özgü): P5.3'ün protected
-collection'ına eklenmedi — P5.3 "Authentication & Authorization"a özel
-kapsamlı, kapanmış (CLEAN) bir paket; P5.5 tamamen farklı, çok daha
-geniş bir concern'dir (business rules). P5.4'ün "Products, mevcut
-public collection'a katıl" kararının tersine, burada ayrı dosya
-tercih edildi.
+(fix round sonrası **64 request, 10 klasör**). Karar (P5.5'e özgü):
+P5.3'ün protected collection'ına eklenmedi — P5.3 "Authentication &
+Authorization"a özel kapsamlı, kapanmış (CLEAN) bir paket; P5.5 tamamen
+farklı, çok daha geniş bir concern'dir (business rules). P5.4'ün
+"Products, mevcut public collection'a katıl" kararının tersine, burada
+ayrı dosya tercih edildi.
 
 | Klasör | İçerik |
 |---|---|
-| 0. Bootstrap | Login User A + User B (User B yalnızca ileride gerekirse diye yakalanır, bu pakette aktif kullanılmaz) |
-| 1. Duplicate Aggregation Gate | **İlk uygulanan adım.** P4.2 B1 regresyon testi — id=1, qty 2+3 aynı product_id'de → tek satırda quantity=5, stok 25→20 |
-| 2. Payment Outcomes | Approved (PAID, stok azalır), Declined (PAYMENT_FAILED, **201**, stok değişmez), Timeout (PAYMENT_TIMEOUT, **201**, stok değişmez) |
-| 3. Stock Validation | Insufficient stock (409, tek satır), duplicate-aggregate stoğu aşıyor (409, iki satır toplamı) |
-| 4. Quantity Validation | 0, -1, 1.5, `"2"`, `true`, `[2]`, `null`, missing, çok büyük (9 vaka — P4.2 B3 regresyon testi) |
-| 5. Product Validation | unknown id (**400**, `GET /products/:id`'in 404'ünden farklı), wrong type, null, missing |
+| 0. Bootstrap | Login User A (User B bootstrap'ı fix round'da kaldırıldı — hiçbir assertion tarafından kullanılmıyordu, bkz. bölüm 8 evidence) |
+| 1. Duplicate Aggregation Gate | **İlk uygulanan adım.** P4.2 B1 regresyon testi — id=1, qty 2+3 aynı product_id'de → tek satırda quantity=5, stok 25→20 (gerçek before/after GET ile) |
+| 2. Payment Outcomes | Approved (PAID, stok gerçek before/after GET ile azalır — B1), Declined (PAYMENT_FAILED, **201**, stok gerçek before/after GET ile değişmez), Timeout (PAYMENT_TIMEOUT, **201**, aynı şekilde) |
+| 3. Stock Validation | Insufficient stock (409, tek satır) ve duplicate-aggregate stoğu aşıyor (409, iki satır toplamı) — ikisi de artık gerçek before/after GET ile "stok değişmedi" kanıtlıyor (B2) |
+| 4. Quantity Validation | 0, -1, 1.5, `"2"`, `true`, `[2]`, `null`, missing, çok büyük (9 vaka — P4.2 B3 regresyon testi); `"2"`/`true`/`[2]`/`null` artık ayrıca before/after stok kanıtı taşıyor (B2, regresyon riski temsili) |
+| 5. Product Validation | unknown id (**400**, `GET /products/:id`'in 404'ünden farklı), wrong type, null, missing + YENİ: mixed valid+invalid product atomicity testi (before/after GET, B2) |
 | 6. Items Validation | items missing/null/empty/wrong-type, geçersiz item objesi |
-| 7. Payment Token Validation | omitted (default), null, empty string, wrong type, unknown string (P4.2 non-blocking #4 regresyon testi) |
+| 7. Payment Token Validation | omitted (default, artık before/after GET ile stok azalması kanıtlı), null, empty string, wrong type (number), **`false`, `0`** (YENİ — B3, ikisi de before/after GET ile "sessizce default'a düşmüyor" kanıtlı), unknown string |
 | 8. Malformed JSON | Bozuk JSON gövdesi → 400, 500 değil (P4.2 non-blocking #5 regresyon testi) |
 | 9. Auth Regression | `POST /api/orders`'a özgü minimal no-token/invalid-token gate (P5.3 GET endpoint'lerini test etmişti, bu request şeklini etmemişti) |
 
@@ -586,35 +613,53 @@ stok kontrolünü atlatması) regresyon testidir; gerçek response body
   değil** — `isPositiveInteger()`'ın üst sınırı yok; format-geçerli
   ama gerçekçi olmayan bir değer format aşamasını geçip stok
   aşamasında reddedilir.
+- **`payment_token: false`/`0` → `400`, sessiz default değil** (B3
+  regresyon doğrulaması) — `resolvePaymentToken()` yalnızca gerçek
+  `undefined` için default alır; `typeof paymentToken !== 'string'`
+  kontrolü `false`/`0`'ı da `null`/`""`/sayı gibi açıkça reddeder.
 
 **Test state reset:** Her tam suite çalıştırmasından önce mevcut,
 canonical `npm run db:seed` komutu kullanıldı — yeni bir reset
 mekanizması **oluşturulmadı**. **Repeatability iki ayrı temiz-reset
 execution ile kanıtlandı** — ikisi de birebir aynı sonucu üretti
-(40/40 request, 82/82 assertion), bkz. evidence.
+(64/64 request, 118/118 assertion, hem functional hem AJV katmanında),
+bkz. evidence bölüm 3-4.
 
 **Ownership/order-retrieval:** P5.3'ün protected collection'ında
-zaten kapsanmıştır — burada **duplike edilmedi** (bkz. evidence bölüm 7).
+zaten kapsanmıştır — burada **duplike edilmedi** (bkz. evidence bölüm 8).
+Bu kararın önkoşulu olan User B bootstrap'ı, hiç kullanılmadığı için
+fix round'da kaldırıldı.
 
-**Schema kararı:** P5.3 ile aynı mimari — plain `pm.test()`
-assertion'ları (AJV/Node-wrapper değil). `shared/schemas/orders/`
-**oluşturulmadı** — mevcut plain assertion'lar zaten tam (alan+değer)
-doğrulama sağlıyor, yeni bir "schema fabrikası" kurulmadı.
+**Schema kararı (fix round'da değişti — B4):** Codex delta review,
+P5.3'ün "plain assertion, AJV yok" kararını P5.5 için geçersiz kıldı.
+Artık P5.2'nin kanonik AJV/Node-wrapper modeli
+(`scripts/run-orders-schema-validation.js`) kullanılıyor; yeni
+`shared/schemas/orders/order-create-response.schema.json` oluşturuldu.
+Hata contract'ı için ayrı bir şema **oluşturulmadı** — kaynak koddan
+doğrulandı: tüm hata yolları (400/401/409) aynı `{error:string}`
+şeklini kullanıyor, bu zaten `shared/schemas/common/error-response.schema.json`
+ile birebir aynı; gereksiz duplicate şema yaratılmadı. Detay: evidence
+bölüm 9.
 
-**Header validation:** `Content-Type` CURRENT standardı, **2 temsili
-request** üzerinde doğrulandı (P5.3'ün aynı "temsili, tüm request'lerde
-değil" yaklaşımı) — gate'in başarılı `POST /api/orders`'ı (`201`) ve
-Auth Regression'ın `no-token` request'i (`401`); hem başarı hem hata
-yolu kapsandı.
+**Header validation:** `Content-Type` CURRENT standardı, hem **2
+temsili `pm.test()` request**inde (P5.3'ün aynı "temsili, tüm
+request'lerde değil" yaklaşımı — gate'in başarılı `POST /api/orders`'ı
+`201` ve Auth Regression'ın `no-token` request'i `401`) hem de fix
+round'da eklenen **AJV wrapper'ın 6 request'inde bağımsız olarak**
+doğrulanıyor.
 
 **Bulunan bug:** **Yok.** P4.2'nin geçmiş blocker'larından (B1
 duplicate-line bypass, B3 quantity coercion, non-blocking #4 payment
 token fallback, non-blocking #5 malformed JSON 500) hiçbiri regresyon
-olarak geri gelmedi.
+olarak geri gelmedi; Codex'in B1-B4 bulguları da test/evidence
+eksiklikleriydi, application kodunda bir hata değildi.
 
-**Runner:** `npm run api:test:orders-payment`. P5.5'te gerçek sisteme
+**Runner:** `npm run api:test:orders-payment` (AJV/Node-wrapper —
+functional + schema doğrulaması; ham Newman CLI için
+`npm run api:test:orders-payment:basic`). Fix round'da gerçek sisteme
 karşı **2 ayrı temiz-reset execution** ile çalıştırıldı: her ikisinde
-de **40/40 request PASS, 82/82 assertion PASS** (bkz.
+de **64/64 request PASS, 118/118 assertion PASS, 6/6 AJV schema +
+Content-Type validation PASS** (bkz.
 `evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md`).
 
 ---

@@ -8,7 +8,8 @@
     "api:test:postman:basic": "newman run postman/collections/qa-demo-system-public.postman_collection.json -e postman/environments/local.postman_environment.json",
     "api:test:schema:negative-proof": "node scripts/schema-negative-proof.js",
     "api:test:auth": "newman run postman/collections/qa-demo-system-protected.postman_collection.json -e postman/environments/local.postman_environment.json",
-    "api:test:orders-payment": "newman run postman/collections/qa-demo-system-orders-payment.postman_collection.json -e postman/environments/local.postman_environment.json"
+    "api:test:orders-payment": "node scripts/run-orders-schema-validation.js",
+    "api:test:orders-payment:basic": "newman run postman/collections/qa-demo-system-orders-payment.postman_collection.json -e postman/environments/local.postman_environment.json"
   },
   "devDependencies": {
     "newman": "^6.2.2",
