@@ -86,7 +86,7 @@ Tam envanter (method/path/body/params/status/business rule) için bkz.
 | Orders & Payment business suite | Duplicate aggregation, stock, quantity/product/items validation, payment outcomes | **DONE (P5.5)** — `qa-demo-system-orders-payment.postman_collection.json` (bkz. bölüm 10) |
 | Notifications suite | PAID correlation, user isolation, declined/timeout non-generation, duplicate regression | **DONE (P5.6)** — `qa-demo-system-notifications.postman_collection.json` (bkz. bölüm 11) |
 | API → DB validation | node:sqlite (read-only) + fetch, API<->DB persistence/consistency/ownership/integrity | **DONE (P5.7)** — `api-tests/scripts/run-api-db-validation.js` (bkz. bölüm 12) |
-| Newman HTML reporter | Execution raporu | PLANNED (P5.8) |
+| Newman HTML reporter | Execution raporu | **DONE (P5.8)** — `newman-reporter-htmlextra@^1.23.1` devDependency, `api-tests/scripts/generate-html-report.js` (bkz. bölüm 15) |
 
 Postman **desktop uygulaması** kullanılmadı — collection ve
 environment dosyaları doğrudan geçerli Postman v2.1.0 JSON formatında
