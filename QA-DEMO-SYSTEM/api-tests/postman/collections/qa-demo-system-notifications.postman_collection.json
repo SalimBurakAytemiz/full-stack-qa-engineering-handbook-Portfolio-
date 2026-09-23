@@ -1,0 +1,896 @@
+{
+  "info": {
+    "_postman_id": "e3374798-56fc-49ce-b2ae-b1d387f7fdc5",
+    "name": "QA Demo System - Notifications API (P5.6)",
+    "description": "P5.6 — Notifications API Tests. Kapsam: GET /api/notifications'ın business-rule seviyesinde doğrulanması — PAID order -> tam olarak bir korelasyonlu notification (gate), notification list contract, user isolation/cross-user leakage, declined/timeout payment -> notification ÜRETİLMEMESİ, birden fazla PAID order için duplicate/merge olmayan notification davranışı, ve GET /api/notifications için minimal auth regression. Gerçek source code inventory (routes/notifications.routes.js) yalnızca TEK bir endpoint ortaya koydu: GET /api/notifications. Mark-as-read/detail/id-bazlı endpoint YOKTUR — bu koleksiyon böyle bir endpoint icat ETMEZ; ilgili testler NOT IMPLEMENTED / OUT OF SCOPE olarak dokümante edilmiştir (bkz. evidence). Direct DB/event/transaction seviyesi doğrulama (API→DB) bu koleksiyonun KAPSAMI DIŞINDADIR — P5.7'ye bırakılmıştır. WebSocket delivery consistency de bu REST-only koleksiyonun kapsamı dışındadır (bkz. evidence bölüm — Known Limitations). Token'lar yalnızca runtime'da collection variable olarak tutulur, dosyaya yazılmaz. ÖNKOŞUL: her tam suite çalıştırmasından önce `npm run db:seed` ile deterministic/fresh state sağlanmalıdır (notification/order state mutasyonları nedeniyle reproducibility için gereklidir).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Bootstrap",
+      "item": [
+        {
+          "name": "Login as User A (test.active01)",
+          "id": "3760fefc-e125-4fb4-abce-4fa8dd80f29e",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test.active01@example.com\",\n  \"password\": \"ValidPass123!\"\n}"
+            },
+            "description": "Synthetic/deterministic test credential — shared/test-data/auth-users.json."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('userToken', json.token);",
+                  "pm.collectionVariables.set('userId', json.user.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Login as User B (test.active02)",
+          "id": "72571359-dbcf-4434-9cf7-7e8af766434a",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test.active02@example.com\",\n  \"password\": \"ValidPass123!\"\n}"
+            },
+            "description": "P5.6'da User B gerçekten kullanılır (P5.5'in aksine) — cross-user notification isolation/leakage testleri için gereklidir (bkz. bölüm 3)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('userBToken', json.token);",
+                  "pm.collectionVariables.set('userBId', json.user.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. PAID Order -> Exactly One Correlated Notification (Gate)",
+      "item": [
+        {
+          "name": "Capture notification baseline before PAID order (User A)",
+          "id": "17bf9315-2950-4784-a983-36c220d33dfc",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('notifBeforeCount', json.notifications.length);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Create PAID order for notification correlation (User A, product 4 qty 1)",
+          "id": "38621bb0-0e25-4beb-b908-1ef9b065ff46",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 4,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "İlk uygulanan tek gate. product_id=4 (QA Demo Webcam, stock=12) bu koleksiyonda başka hiçbir yerde kullanılmaz — cross-test stock coupling riskinden kaçınmak için."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Order created with PAID status', function () { pm.expect(json.order.status).to.eql('PAID'); });",
+                  "pm.collectionVariables.set('gateOrderId', json.order.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify exactly one new, correlated notification appears (order.paid)",
+          "id": "1b90b1c6-7800-4a96-bbaa-812b9a06d7e8",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            },
+            "description": "Kaynak koddan doğrulandı: notifications.service.js createNotificationFromOrderPaidEvent() — id, type, message, order_id, is_read, created_at alanları. user_id response'da YOK (listNotificationsForUser() sorgusunda seçilmiyor). is_read gerçek çalıştırmada INTEGER 0 döner, boolean false DEĞİL — tahmin edilmedi, curl ile ampirik doğrulandı."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Content-Type is application/json', function () { pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8'); });",
+                  "const json = pm.response.json();",
+                  "const before = pm.collectionVariables.get('notifBeforeCount');",
+                  "const orderId = pm.collectionVariables.get('gateOrderId');",
+                  "pm.test('Notification count increased by exactly 1', function () { pm.expect(json.notifications.length).to.eql(before + 1); });",
+                  "const matches = json.notifications.filter(function (n) { return n.order_id === orderId; });",
+                  "pm.test('Exactly one notification correlated to this order_id', function () { pm.expect(matches.length).to.eql(1); });",
+                  "const n = matches[0];",
+                  "pm.test('Correlated notification has correct contract fields (type/message/is_read/id/created_at)', function () {",
+                  "  pm.expect(n.type).to.eql('order.paid');",
+                  "  pm.expect(n.message).to.eql('Order #' + orderId + ' payment approved.');",
+                  "  pm.expect(n.is_read).to.eql(0);",
+                  "  pm.expect(typeof n.id).to.eql('number');",
+                  "  pm.expect(typeof n.created_at).to.eql('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Notification List — Positive / Contract",
+      "item": [
+        {
+          "name": "GET /api/notifications — valid token, contract",
+          "id": "ed934054-9175-48a1-b9a3-03ba93d9d40d",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            },
+            "description": "Response boş olmak ZORUNDA değildir — bu request gate'ten sonra çalıştığı için en az 1 kayıt içerir, ama bu klasör sabit bir sayıya güvenmez; yalnızca contract'ı (array, ek top-level alan yok) doğrular. Şema/tip doğruluğu AJV wrapper'ında ayrıca doğrulanır (bkz. README bölüm 7/11)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Content-Type is application/json', function () { pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8'); });",
+                  "const json = pm.response.json();",
+                  "pm.test('notifications is an array', function () { pm.expect(json.notifications).to.be.an('array'); });",
+                  "pm.test('response has no extra top-level fields', function () { pm.expect(Object.keys(json)).to.eql(['notifications']); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. User Isolation / Cross-user Leakage",
+      "item": [
+        {
+          "name": "Create PAID order for User B (product 1 qty 1)",
+          "id": "30f9a361-4b03-41c9-a08c-eaac2b2e5acc",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userBToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            },
+            "description": "product_id=1 (QA Demo Klavye, stock=25) — User A'nın gate'te kullandığı product_id=4'ten farklı, ürün bazlı çakışma yok."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('Order created with PAID status', function () { pm.expect(json.order.status).to.eql('PAID'); });",
+                  "pm.collectionVariables.set('userBOrderId', json.order.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify User B sees their own notification",
+          "id": "e1e3d84f-9cd8-4218-8405-48989c7d9f21",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userBToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "const orderId = pm.collectionVariables.get('userBOrderId');",
+                  "const matches = json.notifications.filter(function (n) { return n.order_id === orderId; });",
+                  "pm.test('User B notification list contains own order', function () { pm.expect(matches.length).to.eql(1); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify User A notification list does NOT contain User B notification (cross-user leakage)",
+          "id": "ebde52ea-e7c5-4a0a-9468-9afaf39fdf56",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "const userBOrderId = pm.collectionVariables.get('userBOrderId');",
+                  "const leaked = json.notifications.filter(function (n) { return n.order_id === userBOrderId; });",
+                  "pm.test('No cross-user leakage: User A list does not contain User B order_id', function () { pm.expect(leaked.length).to.eql(0); });",
+                  "const gateOrderId = pm.collectionVariables.get('gateOrderId');",
+                  "const own = json.notifications.filter(function (n) { return n.order_id === gateOrderId; });",
+                  "pm.test('User A still sees own gate notification (no cross-contamination)', function () { pm.expect(own.length).to.eql(1); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify User B notification list does NOT contain User A gate notification (cross-user leakage)",
+          "id": "1ddd6337-2b28-4ae9-b871-f9f0bf446307",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userBToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "const gateOrderId = pm.collectionVariables.get('gateOrderId');",
+                  "const leaked = json.notifications.filter(function (n) { return n.order_id === gateOrderId; });",
+                  "pm.test('No cross-user leakage: User B list does not contain User A order_id', function () { pm.expect(leaked.length).to.eql(0); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Declined Payment -> No Notification",
+      "item": [
+        {
+          "name": "Capture notification state before declined payment (User A)",
+          "id": "e84683da-e07d-41d2-ad26-13abd2a4b1ac",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('declinedBeforeCount', json.notifications.length);",
+                  "pm.collectionVariables.set('declinedBeforeIds', JSON.stringify(json.notifications.map(function (n) { return n.order_id; }).sort()));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Declined payment order (User A, product 4 qty 1)",
+          "id": "a0f8655b-7178-43d3-99f8-4143c01e8ae6",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 4,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-DECLINED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('status PAYMENT_FAILED (not PAID)', function () { pm.expect(json.order.status).to.eql('PAYMENT_FAILED'); });",
+                  "pm.collectionVariables.set('declinedOrderId', json.order.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify no new notification after declined payment",
+          "id": "dfed00b4-072f-4e41-bb96-5d628f383b8b",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            },
+            "description": "Kaynak koddan doğrulandı: orders.service.js createOrder() yalnızca status===PAID ise createOrderPaidEvent()/createNotificationFromOrderPaidEvent() çağırır. Declined/timeout hiçbir event/notification üretmez."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "const beforeCount = pm.collectionVariables.get('declinedBeforeCount');",
+                  "const beforeIds = pm.collectionVariables.get('declinedBeforeIds');",
+                  "const afterIds = JSON.stringify(json.notifications.map(function (n) { return n.order_id; }).sort());",
+                  "pm.test('Notification count unchanged after declined payment', function () { pm.expect(json.notifications.length).to.eql(beforeCount); });",
+                  "pm.test('Notification set unchanged (same order_id set)', function () { pm.expect(afterIds).to.eql(beforeIds); });",
+                  "const declinedOrderId = pm.collectionVariables.get('declinedOrderId');",
+                  "const matches = json.notifications.filter(function (n) { return n.order_id === declinedOrderId; });",
+                  "pm.test('No notification correlated to the declined order_id', function () { pm.expect(matches.length).to.eql(0); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Timeout Payment -> No Notification",
+      "item": [
+        {
+          "name": "Capture notification state before timeout payment (User A)",
+          "id": "86f291c4-ebe7-4a92-b5b7-da73943df172",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('timeoutBeforeCount', json.notifications.length);",
+                  "pm.collectionVariables.set('timeoutBeforeIds', JSON.stringify(json.notifications.map(function (n) { return n.order_id; }).sort()));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Timeout payment order (User A, product 4 qty 1)",
+          "id": "74a0f3d9-2ad9-4882-955c-08021f859d82",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 4,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-TIMEOUT\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('status PAYMENT_TIMEOUT (not PAID)', function () { pm.expect(json.order.status).to.eql('PAYMENT_TIMEOUT'); });",
+                  "pm.collectionVariables.set('timeoutOrderId', json.order.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify no new notification after timeout payment",
+          "id": "f86c6a37-26ce-479a-835e-57cf25f91d6d",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "const beforeCount = pm.collectionVariables.get('timeoutBeforeCount');",
+                  "const beforeIds = pm.collectionVariables.get('timeoutBeforeIds');",
+                  "const afterIds = JSON.stringify(json.notifications.map(function (n) { return n.order_id; }).sort());",
+                  "pm.test('Notification count unchanged after timeout payment', function () { pm.expect(json.notifications.length).to.eql(beforeCount); });",
+                  "pm.test('Notification set unchanged (same order_id set)', function () { pm.expect(afterIds).to.eql(beforeIds); });",
+                  "const timeoutOrderId = pm.collectionVariables.get('timeoutOrderId');",
+                  "const matches = json.notifications.filter(function (n) { return n.order_id === timeoutOrderId; });",
+                  "pm.test('No notification correlated to the timeout order_id', function () { pm.expect(matches.length).to.eql(0); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Duplicate Notification Regression",
+      "item": [
+        {
+          "name": "Create second PAID order for User A (product 4 qty 1)",
+          "id": "cd28fbd8-015c-4f75-9ad7-52cf2ec788fb",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": 4,\n      \"quantity\": 1\n    }\n  ],\n  \"payment_token\": \"TEST-CARD-APPROVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test('status PAID', function () { pm.expect(json.order.status).to.eql('PAID'); });",
+                  "pm.collectionVariables.set('secondOrderId', json.order.id);"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Verify exactly one notification per order — no merging/duplication across multiple PAID orders",
+          "id": "055ec36c-0003-41b1-a2be-88f0a0831b15",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            },
+            "description": "Kaynak koddan doğrulandı: notifications tablosunda UNIQUE(order_id, type) constraint'i vardır (schema.js). Ancak bu, normal POST /api/orders akışında REST API üzerinden tetiklenemez — her sipariş yeni bir auto-increment order_id alır, aynı order_id ile ikinci bir createNotificationFromOrderPaidEvent() çağrısı normal akışta olmaz. Bu test, gerçekten REST-visible olan invariant'ı kanıtlar: birden fazla ayrı PAID order, her biri için TAM OLARAK BİR, birbirinden bağımsız notification üretir — hiçbiri birleşmez/kaybolmaz/tekrarlanmaz. Doğrudan SQL ile UNIQUE constraint ihlali testi (P5.7 kapsamı) burada yapılmamıştır. Bu ayrıca P4.3'ün bilinen non-blocking notundan (GET/WebSocket yarışı → yalnızca UI-seviyesi görsel çift gösterim riski, DB'de duplicate satır oluşmaz) FARKLI bir konudur — o, bu paketin REST-only kapsamının dışındadır."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "const gateOrderId = pm.collectionVariables.get('gateOrderId');",
+                  "const secondOrderId = pm.collectionVariables.get('secondOrderId');",
+                  "const gateMatches = json.notifications.filter(function (n) { return n.order_id === gateOrderId; });",
+                  "const secondMatches = json.notifications.filter(function (n) { return n.order_id === secondOrderId; });",
+                  "pm.test('Exactly one notification for the first (gate) order — not duplicated', function () { pm.expect(gateMatches.length).to.eql(1); });",
+                  "pm.test('Exactly one notification for the second order — distinct, not merged', function () { pm.expect(secondMatches.length).to.eql(1); });",
+                  "pm.test('The two notifications are different records', function () { pm.expect(gateMatches[0].id).to.not.eql(secondMatches[0].id); });"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Auth Regression",
+      "item": [
+        {
+          "name": "No token -> 401",
+          "id": "f7c2dfaa-99be-482d-a8ca-a4b3a47b0261",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            },
+            "description": "P5.3'ün protected collection'ı GET /api/notifications için zaten tam bir authentication matrix'i kapsıyor (token yok, boş, yanlış scheme, malformed Bearer, bilinmeyen token, valid token). Bu klasör o matrisi TEKRARLAMAZ — yalnızca P5.6'nın kendi collection'ının standalone çalışabilmesi için minimal, temsili bir regression gate'idir (2 request: no-token, invalid-token). Bkz. EXECUTION.md bölüm — P5.3 Overlap Kararı."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('Content-Type is application/json', function () { pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8'); });",
+                  "const json = pm.response.json();\npm.test('Error body: Yetkilendirme gerekli', function () {\n  pm.expect(json).to.have.property('error', \"Yetkilendirme gerekli\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Invalid token -> 401",
+          "id": "3ada626f-e323-4a5c-a240-be89b5f60212",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer not-a-real-session-token-1234567890"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });",
+                  "const json = pm.response.json();\npm.test('Error body: Geçersiz veya süresi dolmuş oturum', function () {\n  pm.expect(json).to.have.property('error', \"Geçersiz veya süresi dolmuş oturum\");\n});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    }
+  ]
+}

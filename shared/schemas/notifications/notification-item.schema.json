@@ -1,0 +1,30 @@
+{
+  "$id": "https://qa-demo-system.local/schemas/notifications/notification-item.schema.json",
+  "title": "Tek bir notification nesnesi (Notification list response'unda kullanılır, reusable)",
+  "description": "Kaynak: QA-DEMO-SYSTEM/backend/src/services/notifications.service.js — listNotificationsForUser(): SELECT id, type, message, order_id, is_read, created_at (user_id sorguya dahil DEĞİL, response'da yok). type alanı ampirik + kaynak koddan doğrulandı: sistemde şu an yalnızca events.service.js'in ORDER_PAID_EVENT_TYPE ('order.paid') değeri üretiliyor — başka bir notification-creation call-site yok. is_read INTEGER NOT NULL DEFAULT 0 CHECK (is_read IN (0,1)) (schema.js) — response'da gerçek çalıştırmada sayı 0 döner, boolean false DEĞİL (curl ile ampirik doğrulandı, tahmin edilmedi). created_at, SQLite CURRENT_TIMESTAMP formatındadır ('YYYY-MM-DD HH:MM:SS'), ISO 8601/RFC3339 DEĞİLDİR — bu yüzden AJV 'format:date-time' kullanılmadı (yanlış-pozitif red üretirdi); yalnızca type:string doğrulanır.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["order.paid"]
+    },
+    "message": {
+      "type": "string"
+    },
+    "order_id": {
+      "type": "integer"
+    },
+    "is_read": {
+      "type": "integer",
+      "enum": [0, 1]
+    },
+    "created_at": {
+      "type": "string"
+    }
+  },
+  "required": ["id", "type", "message", "order_id", "is_read", "created_at"],
+  "additionalProperties": false
+}

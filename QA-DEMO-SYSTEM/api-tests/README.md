@@ -1,7 +1,7 @@
 # QA Demo System — API Tests
 
 **Phase: PHASE 5 — API TESTING**
-**Doküman Statüsü: P5.5 — Orders & Payment API Tests**
+**Doküman Statüsü: P5.6 — Notifications API Tests**
 
 > Bu klasör, Phase 5'in Postman/Newman/AJV tabanlı API test
 > katmanının giriş noktasıdır. P5.0'da yalnızca bu README (kapsam/
@@ -12,17 +12,25 @@
 > gerçek protected REST API yüzeyinde authentication matrix, ownership
 > isolation ve cross-user access testleri eklendi. P5.4'te Products
 > API'si (list/detail, in-stock/out-of-stock, negative matrix,
-> data-quality) kapsamlı şekilde doğrulandı.
-> **P5.5'te `POST /api/orders`'ın business-rule seviyesi (duplicate
-> line aggregation, stock sufficient/insufficient, quantity/product/
-> items strict validation, approved/declined/timeout payment
-> outcomes, payment_token contract'ı, malformed JSON, minimal auth
-> regression) ayrı bir business collection ile doğrulandı** — P4.2'nin
-> geçmiş blocker'larının (duplicate-line stock bypass, quantity
-> coercion) hiçbiri regresyon olarak geri gelmedi; 2 ayrı temiz-reset
+> data-quality) kapsamlı şekilde doğrulandı. P5.5'te `POST
+> /api/orders`'ın business-rule seviyesi (duplicate line aggregation,
+> stock sufficient/insufficient, quantity/product/items strict
+> validation, approved/declined/timeout payment outcomes,
+> payment_token contract'ı, malformed JSON, minimal auth regression)
+> ayrı bir business collection ile doğrulandı — 2 ayrı temiz-reset
 > execution'da birebir aynı sonuç (repeatability kanıtlandı).
-> Notifications'ın **business/functional** senaryoları, DB validation
-> ve HTML reporting **henüz yok** — aşağıda hâlâ "PLANNED" olarak
+> **P5.6'da `GET /api/notifications`'ın business-rule seviyesi (PAID
+> order → tam olarak bir korelasyonlu notification, user isolation/
+> cross-user leakage, declined/timeout → notification ÜRETİLMEMESİ,
+> birden fazla PAID order için duplicate/merge olmayan davranış,
+> response contract'ı gerçek AJV şema doğrulamasıyla) ayrı bir
+> business collection ile doğrulandı** — kaynak kod inventory'si
+> yalnızca TEK bir gerçek endpoint (`GET /api/notifications`) ortaya
+> koydu; mark-as-read ve notification detail/id endpoint'leri kaynak
+> kodda yoktur, icat edilmedi (NOT IMPLEMENTED / OUT OF SCOPE); 2 ayrı
+> temiz-reset execution'da birebir aynı sonuç (repeatability
+> kanıtlandı). API→DB validation, WebSocket delivery consistency ve
+> HTML reporting **henüz yok** — aşağıda hâlâ "PLANNED" olarak
 > işaretlidir.
 
 ---
@@ -64,6 +72,7 @@ Tam envanter (method/path/body/params/status/business rule) için bkz.
 | Auth/Authorization suite | Protected endpoint auth matrix + ownership | **DONE (P5.3)** — `postman/collections/qa-demo-system-protected.postman_collection.json` (bkz. bölüm 8) |
 | Products comprehensive suite | List/detail positive, negative, boundary, data-quality | **DONE (P5.4)** — `qa-demo-system-public.postman_collection.json` "Products" klasörü (bkz. bölüm 9) |
 | Orders & Payment business suite | Duplicate aggregation, stock, quantity/product/items validation, payment outcomes | **DONE (P5.5)** — `qa-demo-system-orders-payment.postman_collection.json` (bkz. bölüm 10) |
+| Notifications suite | PAID correlation, user isolation, declined/timeout non-generation, duplicate regression | **DONE (P5.6)** — `qa-demo-system-notifications.postman_collection.json` (bkz. bölüm 11) |
 | Newman HTML reporter | Execution raporu | PLANNED (P5.8) |
 
 Postman **desktop uygulaması** kullanılmadı — collection ve
@@ -123,7 +132,7 @@ Detaylı authorization matrix için bkz. `07-API-TESTING/README.md`.
 
 ## 5. Klasör Yapısı
 
-### Mevcut (P5.5 sonunda)
+### Mevcut (P5.6 sonunda)
 
 ```text
 QA-DEMO-SYSTEM/api-tests/
@@ -131,12 +140,15 @@ QA-DEMO-SYSTEM/api-tests/
 ├── package.json                                  (newman + ajv devDependency; "api:test:postman",
 │                                                    "api:test:postman:basic", "api:test:schema:negative-proof",
 │                                                    "api:test:auth", "api:test:orders-payment",
-│                                                    "api:test:orders-payment:basic" script'leri)
+│                                                    "api:test:orders-payment:basic", "api:test:notifications",
+│                                                    "api:test:notifications:basic" script'leri)
 ├── scripts/
 │   ├── run-schema-validation.js                  (P5.2 — Newman Node API + AJV wrapper; P5.4'te
 │   │                                                Products klasörünü de kapsayacak şekilde genişletildi)
 │   ├── run-orders-schema-validation.js           (P5.5 fix round, Codex B4 — aynı Newman Node API + AJV
 │   │                                                modeli, Orders & Payment collection'ına özel)
+│   ├── run-notifications-schema-validation.js    (P5.6 — aynı Newman Node API + AJV modeli,
+│   │                                                Notifications collection'ına özel)
 │   └── schema-negative-proof.js                  (P5.2 fix — tracked/reproducible negative+positive proof;
 │                                                    P5.4'te 1 yeni vaka eklendi, 18→19)
 └── postman/
@@ -145,20 +157,26 @@ QA-DEMO-SYSTEM/api-tests/
     │   │                                                            klasörü — 11 request)
     │   ├── qa-demo-system-protected.postman_collection.json       (P5.3 — 19 request: auth gate, token
     │   │                                                            bootstrap, auth matrix, ownership/cross-user)
-    │   └── qa-demo-system-orders-payment.postman_collection.json  (P5.5, fix round sonrası — 64 request:
-    │                                                                duplicate aggregation gate, payment
-    │                                                                outcomes (gerçek before/after stok
-    │                                                                kanıtıyla), stock/quantity/product/items
-    │                                                                validation (temsili state-integrity
-    │                                                                kanıtıyla), payment token matrix (false/0
-    │                                                                dahil), malformed JSON, auth regression)
+    │   ├── qa-demo-system-orders-payment.postman_collection.json  (P5.5, fix round sonrası — 64 request:
+    │   │                                                            duplicate aggregation gate, payment
+    │   │                                                            outcomes (gerçek before/after stok
+    │   │                                                            kanıtıyla), stock/quantity/product/items
+    │   │                                                            validation (temsili state-integrity
+    │   │                                                            kanıtıyla), payment token matrix (false/0
+    │   │                                                            dahil), malformed JSON, auth regression)
+    │   └── qa-demo-system-notifications.postman_collection.json   (P5.6 — 20 request: PAID order → tam
+    │                                                                bir korelasyonlu notification gate,
+    │                                                                list contract, user isolation/cross-user
+    │                                                                leakage, declined/timeout → notification
+    │                                                                üretilmemesi, duplicate/merge olmayan
+    │                                                                davranış, minimal auth regression)
     └── environments/
         └── local.postman_environment.json                  (P5.1 — baseUrl)
 
 shared/schemas/                                    (P5.2 — canonical, active)
 ├── common/
-│   └── error-response.schema.json                (P5.5 fix round'da orders/error contract'ı için de
-│                                                    yeniden kullanıldı — bkz. bölüm 10)
+│   └── error-response.schema.json                (P5.5 fix round'da orders/error contract'ı, P5.6'da
+│                                                    notifications 401 contract'ı için de yeniden kullanıldı)
 ├── health/
 │   └── health-response.schema.json
 ├── auth/
@@ -167,8 +185,11 @@ shared/schemas/                                    (P5.2 — canonical, active)
 │   ├── product-item.schema.json                  (reusable, $ref'lenir)
 │   ├── products-list-response.schema.json
 │   └── product-detail-response.schema.json
-└── orders/                                        (P5.5 fix round, Codex B4 — YENİ)
-    └── order-create-response.schema.json
+├── orders/                                        (P5.5 fix round, Codex B4)
+│   └── order-create-response.schema.json
+└── notifications/                                 (P5.6 — YENİ)
+    ├── notification-item.schema.json              (reusable, $ref'lenir)
+    └── notifications-list-response.schema.json
 ```
 
 ### Hâlâ Planlanan (sonraki paketlerde kademeli olarak oluşturulacak)
@@ -176,13 +197,12 @@ shared/schemas/                                    (P5.2 — canonical, active)
 ```text
 QA-DEMO-SYSTEM/api-tests/
 └── postman/
-    ├── collections/   + Notifications business-functional collection'ı (P5.6)
     └── data/           (yalnızca gerçekten data-driven/multi-iteration bir senaryo gerektiğinde
                          oluşturulacak; bkz. not aşağıda)
-
-shared/schemas/
-└── notifications/  (P5.6 — gerçek Notifications response'ları belirlendiğinde)
 ```
+
+API→DB validation (P5.7) ve Newman HTML reporting (P5.8) bu klasör
+yapısına henüz eklenmedi — sırasıyla kendi paketlerinde ele alınacak.
 
 **Not (P5.5 schema kararı — fix round'da değişti):** P5.5 ilk uygulamada
 P5.3'ün protected collection'ıyla aynı mimari kararı izleyip plain
@@ -212,7 +232,7 @@ kullanıcısı ve P5.3'ün iki deterministic kullanıcısı (USER A/B) da
 ayrı request body'lerine doğrudan yazıldı, iterasyon data dosyası
 gerektirmedi. Gerçekten çoklu iterasyon/veri seti gerektiren bir
 senaryo (ör. büyük bir credential fuzzing/negative matrix) ortaya
-çıktığında, Newman'ın `-d <data-file>` mekanizmasıyla (bkz. bölüm 12)
+çıktığında, Newman'ın `-d <data-file>` mekanizmasıyla (bkz. bölüm 13)
 değerlendirilecektir.
 
 ---
@@ -299,6 +319,27 @@ request PASS, 118/118 assertion PASS, 6/6 AJV schema + Content-Type
 validation PASS** — birebir aynı sonuç, repeatability kanıtlandı (bkz.
 `evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md`).
 
+**Notifications suite (P5.6'da eklendi):**
+
+```bash
+cd QA-DEMO-SYSTEM
+npm run db:seed           # her tam suite çalıştırmasından ÖNCE — order/
+                           # notification state mutasyonları nedeniyle
+                           # reproducibility için zorunlu
+npm run dev                # ayrı bir terminalde
+cd api-tests && npm run api:test:notifications
+```
+
+Bu, `scripts/run-notifications-schema-validation.js`'i çalıştırır
+(aynı P5.2 Newman Node API + AJV wrapper modeli, Notifications
+collection'ına özel); ham Newman CLI için
+`npm run api:test:notifications:basic`. Token bootstrap (User A + User
+B) dahil tamamen otomatik. P5.6'da gerçek sisteme karşı **iki ayrı
+temiz-reset execution** ile çalıştırıldı: her ikisinde de **20/20
+request PASS, 48/48 assertion PASS, 4/4 AJV schema + Content-Type
+validation PASS** — birebir aynı sonuç, repeatability kanıtlandı (bkz.
+`evidence/P5-API-TESTING/P5.6-NOTIFICATIONS/EXECUTION.md`).
+
 ---
 
 ## 7. Schema Validation Standardı
@@ -318,6 +359,8 @@ active hale getirildi** — `.gitkeep` kaldırıldı, 6 gerçek
 | `products/products-list-response.schema.json` | `GET /api/products` 200 | `product-item`'a `$ref` |
 | `products/product-detail-response.schema.json` | `GET /api/products/:id` 200 | `product-item`'a `$ref` |
 | `orders/order-create-response.schema.json` | `POST /api/orders` 201 | P5.5 fix round (Codex B4) — `status` alanı `enum:[PAID,PAYMENT_FAILED,PAYMENT_TIMEOUT]`; hata response'ları için ayrı şema yok, `common/error-response.schema.json` yeniden kullanılıyor (kaynak koddan doğrulandı, contract aynı) |
+| `notifications/notification-item.schema.json` | Tek notification nesnesi | Reusable, `$ref` ile list'e bağlanır. `type` alanı `enum:["order.paid"]` (sistemde şu an tek üretilebilir değer, kaynak koddan doğrulandı). `is_read` `type:integer, enum:[0,1]` — gerçek çalıştırmada `0`/`1` döner, boolean DEĞİL (ampirik doğrulandı) |
+| `notifications/notifications-list-response.schema.json` | `GET /api/notifications` 200 | `notification-item`'a `$ref`; boş dizi geçerlidir. Hata response'ları için ayrı şema yok, `common/error-response.schema.json` yeniden kullanılıyor (401, kaynak koddan doğrulandı) |
 
 Tüm şemalar gerçek kaynak koddan (`services/*.js`) ve gerçek
 `curl`/Newman execution'larından doğrulandı — tahmin edilmedi. Her
@@ -664,7 +707,86 @@ Content-Type validation PASS** (bkz.
 
 ---
 
-## 11. Header Validation Standardı
+## 11. Notifications API Test Standardı (P5.6)
+
+**Kapsam:** `GET /api/notifications`'ın business-rule seviyesi. Kaynak
+kod inventory'si (`routes/notifications.routes.js`,
+`services/notifications.service.js`) sistemde **yalnızca tek bir
+gerçek endpoint** ortaya koydu — mark-as-read ve notification detail/id
+endpoint'i **yoktur**, icat edilmedi (bkz. evidence bölüm 8-9, NOT
+IMPLEMENTED / OUT OF SCOPE). **API→DB validation ve WebSocket delivery
+consistency bu paketin kapsamı dışındadır** — sırasıyla P5.7 ve future
+dedicated coverage'ın işi.
+
+**Collection:** Ayrı bir dosya —
+`postman/collections/qa-demo-system-notifications.postman_collection.json`
+(20 request, 8 klasör). P5.4/P5.5 ile aynı gerekçeyle ayrı dosya
+tercih edildi (business-rule concern, mevcut collection'lara
+eklenmedi).
+
+| Klasör | İçerik |
+|---|---|
+| 0. Bootstrap | Login User A + User B — P5.6'da User B **gerçekten kullanılır** (P5.5'in aksine), cross-user isolation testleri için |
+| 1. PAID Order -> Exactly One Correlated Notification (Gate) | **İlk uygulanan tek adım.** PAID order sonrası tam olarak 1, order_id ile korelasyonlu notification oluştuğu gerçek before/after `GET` ile (hardcoded değil) kanıtlanır |
+| 2. Notification List — Positive / Contract | Valid token, 200, array contract, ek top-level alan yok |
+| 3. User Isolation / Cross-user Leakage | User B kendi order'ı için notification görür; User A/User B birbirinin `order_id`'sini görmez (bkz. P5.3 overlap kararı, evidence bölüm 10) |
+| 4. Declined Payment -> No Notification | Gerçek before/after GET: count/`order_id` set'i değişmez, declined order'a korelasyonlu notification yok |
+| 5. Timeout Payment -> No Notification | Aynı desen, timeout order için |
+| 6. Duplicate Notification Regression | İki ayrı PAID order → her biri için tam olarak 1, birbirinden bağımsız, farklı `id`'li notification (bkz. evidence bölüm 7 — DB `UNIQUE(order_id,type)` neden doğrudan test edilmedi) |
+| 7. Auth Regression | `GET /api/notifications` için minimal no-token/invalid-token gate (P5.3'ün tam matrisini tekrarlamaz, bkz. evidence bölüm 10) |
+
+**İlk uygulanan adım (gate):** Yalnızca `0. Bootstrap` + `1. PAID Order
+-> Exactly One Correlated Notification (Gate)` klasörleri izole
+çalıştırıldı ve PASS aldıktan sonra suite'in geri kalanına geçildi.
+
+**Kritik, tahmin edilmeyen bulgular (kaynak koddan + ampirik doğrulandı):**
+- **`is_read` gerçek çalıştırmada INTEGER `0` döner, boolean `false`
+  DEĞİL** — schema.js'in `CHECK (is_read IN (0, 1))` kısıtına uygun.
+  Şema ve assertion'lar buna göre yazıldı.
+- **Response'da `user_id` alanı YOKTUR** — `listNotificationsForUser()`
+  sorgusu onu seçmez; leakage riski yapısal olarak azalır.
+- **`type` sistemde şu an yalnızca `"order.paid"` değerini alabilir** —
+  tek call-site, tek event type. Şemada gerçek, doğrulanmış bir `enum`
+  olarak yazıldı, varsayılmadı.
+- **`notifications` tablosunda `UNIQUE(order_id, type)` DB constraint'i
+  var ama normal REST akışında tetiklenemez** — her sipariş yeni bir
+  `order_id` alır. P5.6, gerçekten REST-visible olan invariant'ı
+  (birden fazla PAID order → hiçbiri birleşmez/kaybolmaz) kanıtlar;
+  doğrudan constraint-violation testi P5.7'ye bırakıldı.
+
+**Test state reset:** Her tam suite çalıştırmasından önce mevcut,
+canonical `npm run db:seed` komutu kullanıldı — yeni bir reset
+mekanizması **oluşturulmadı**. **Repeatability iki ayrı temiz-reset
+execution ile kanıtlandı** — ikisi de birebir aynı sonucu üretti
+(20/20 request, 48/48 assertion, 4/4 AJV doğrulaması), bkz. evidence
+bölüm 3-4.
+
+**P5.3 overlap kararı:** P5.3'ün protected collection'ı `GET
+/api/notifications` için zaten bir ownership/cross-user leakage kanıtı
+ve tam bir authentication matrix'i içeriyor. P5.6 bunu **tekrar
+etmedi** — Auth Regression klasörü minimal (2 request) tutuldu, User
+Isolation klasörü ise P5.6'nın kendi paketinin ürettiği notification'lar
+üzerinde, kendi self-contained suite'i içinde aynı invariant'ı yeniden
+doğrular (P5.3'e bağımlı olmadan). Detaylı gerekçe: evidence bölüm 10.
+
+**Header validation:** `Content-Type` CURRENT standardı, 2 temsili
+`pm.test()` request'inde (gate'in başarı yolu, Auth Regression'ın
+no-token hata yolu) ve AJV wrapper'ın 4 request'inde bağımsız olarak
+doğrulandı.
+
+**Bulunan bug:** **Yok.** PAID order korelasyonu, user isolation,
+declined/timeout non-generation, çoklu-order duplicate/merge olmayan
+davranış — hepsi gerçek assertion'larla doğrulandı, sapma bulunmadı.
+
+**Runner:** `npm run api:test:notifications` (AJV/Node-wrapper). P5.6'da
+gerçek sisteme karşı **2 ayrı temiz-reset execution** ile çalıştırıldı:
+her ikisinde de **20/20 request PASS, 48/48 assertion PASS, 4/4 AJV
+schema + Content-Type validation PASS** (bkz.
+`evidence/P5-API-TESTING/P5.6-NOTIFICATIONS/EXECUTION.md`).
+
+---
+
+## 12. Header Validation Standardı
 
 CURRENT (zorunlu) vs EXPECTED/FUTURE (yalnızca not edilir) ayrımı
 `07-API-TESTING/README.md`'de tanımlıdır. Özet: `Content-Type` ve
@@ -684,7 +806,7 @@ FUTURE HARDENING — assertion yok.
 
 ---
 
-## 12. Test Data Kullanımı
+## 13. Test Data Kullanımı
 
 Mevcut `shared/test-data/` (`auth-users.json`, `products.json`,
 `payment-test-patterns.json`) **aynen yeniden kullanılacaktır** —
@@ -711,7 +833,7 @@ Detaylı eşleme (`hangi veri hangi testte`) için bkz.
 
 ---
 
-## 13. DB Validation Yaklaşımı
+## 14. DB Validation Yaklaşımı
 
 Yalnızca Orders (PAID/DECLINED/TIMEOUT) ve Notifications akışlarında
 — her `GET` için DB kontrolü konulmaz. Detay için bkz.
@@ -719,7 +841,7 @@ Yalnızca Orders (PAID/DECLINED/TIMEOUT) ve Notifications akışlarında
 
 ---
 
-## 14. Reporting Yaklaşımı
+## 15. Reporting Yaklaşımı
 
 Newman HTML raporları (`newman-reporter-htmlextra` vb.) **PLANNED
 (P5.8)** — henüz kurulmadı. P5.1/P5.2'de yalnızca Newman'ın standart
@@ -731,7 +853,7 @@ paket kapanışındaki execution (P4.4/P4.5 evidence pattern'i).
 
 ---
 
-## 15. Evidence Yaklaşımı
+## 16. Evidence Yaklaşımı
 
 `CONTRIBUTING.md` — Evidence Integrity kuralı aynen geçerlidir:
 gerçekten çalıştırılmamış bir Newman run'ı veya AJV validation'ı PASS
@@ -739,15 +861,16 @@ olarak gösterilemez. P5.1'de gerçek bir Newman run'ı, P5.2'de gerçek
 bir AJV schema validation run'ı (+ negative proof), P5.3'te gerçek bir
 auth/authorization suite run'ı, P5.4'te gerçek bir Products suite
 run'ı (+ genişletilmiş negative proof), P5.5'te gerçek bir Orders &
-Payment business suite run'ı (**2 ayrı temiz-reset execution ile**,
-repeatability kanıtı) gerçek sisteme karşı çalıştırıldı ve sonuçları
-ilgili paketin `evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sinde
-kayıt altına alındı. Her sonraki paket kapanışında da aynı şekilde gerçek execution
+Payment business suite run'ı, P5.6'da gerçek bir Notifications suite
+run'ı (her ikisi **2 ayrı temiz-reset execution ile**, repeatability
+kanıtı) gerçek sisteme karşı çalıştırıldı ve sonuçları ilgili paketin
+`evidence/P5-API-TESTING/<paket>/EXECUTION.md`'sinde kayıt altına
+alındı. Her sonraki paket kapanışında da aynı şekilde gerçek execution
 kaydı üretilecektir.
 
 ---
 
-## 16. Security Boundaries
+## 17. Security Boundaries
 
 Bu klasördeki testler **penetration testing değildir**. Yalnızca
 QA-seviyeli authorization/ownership/negative doğrulama yapılır (IDOR,
@@ -757,7 +880,7 @@ güvenlik açığını istismar etmesi bu kapsamın **tamamen dışındadır**.
 
 ---
 
-## 17. Phase 5 Paketleri
+## 18. Phase 5 Paketleri
 
 | Paket | Amaç | Durum |
 |---|---|---|
@@ -767,7 +890,7 @@ güvenlik açığını istismar etmesi bu kapsamın **tamamen dışındadır**.
 | P5.3 | Authentication & Authorization API Tests (protected collection, auth matrix, ownership/cross-user) | CLEAN |
 | P5.4 | Products API Tests (list/detail positive+negative+boundary, data-quality, schema/negative-proof reuse) | CLEAN |
 | P5.5 | Orders & Payment API Tests (duplicate aggregation, stock, quantity/product/items validation, payment outcomes, repeatability) | CLEAN |
-| P5.6 | Notifications API Tests | PLANNED |
+| P5.6 | Notifications API Tests (PAID correlation, user isolation, declined/timeout non-generation, duplicate regression, repeatability) | CLEAN |
 | P5.7 | API → DB Validation | PLANNED |
 | P5.8 | Newman Reporting & Reproducible Execution | PLANNED |
 | P5.9 | Regression, Evidence & Phase 5 Closeout | PLANNED |
@@ -790,3 +913,4 @@ netleştirilecektir (Phase 4'te uygulanan pattern).
 - [../evidence/P5-API-TESTING/P5.3-AUTH-AUTHORIZATION/EXECUTION.md](../evidence/P5-API-TESTING/P5.3-AUTH-AUTHORIZATION/EXECUTION.md)
 - [../evidence/P5-API-TESTING/P5.4-PRODUCTS/EXECUTION.md](../evidence/P5-API-TESTING/P5.4-PRODUCTS/EXECUTION.md)
 - [../evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md](../evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT/EXECUTION.md)
+- [../evidence/P5-API-TESTING/P5.6-NOTIFICATIONS/EXECUTION.md](../evidence/P5-API-TESTING/P5.6-NOTIFICATIONS/EXECUTION.md)
