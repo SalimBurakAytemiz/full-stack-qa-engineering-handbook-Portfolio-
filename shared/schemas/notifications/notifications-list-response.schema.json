@@ -1,0 +1,16 @@
+{
+  "$id": "https://qa-demo-system.local/schemas/notifications/notifications-list-response.schema.json",
+  "title": "GET /api/notifications — 200 response",
+  "description": "Kaynak: routes/notifications.routes.js — { notifications: listNotificationsForUser(db, req.userId) }. notification-item.schema.json'a $ref eder (aynı AJV instance'ına addSchema ile eklenmiş, reusable). Boş dizi geçerlidir (yeni/hiç PAID order'ı olmayan bir kullanıcı için). Bu tek endpoint'in tek response şeklidir — detail/mark-as-read endpoint'i kaynak kodda yoktur (bkz. evidence P5.6 EXECUTION.md).",
+  "type": "object",
+  "properties": {
+    "notifications": {
+      "type": "array",
+      "items": {
+        "$ref": "https://qa-demo-system.local/schemas/notifications/notification-item.schema.json"
+      }
+    }
+  },
+  "required": ["notifications"],
+  "additionalProperties": false
+}
