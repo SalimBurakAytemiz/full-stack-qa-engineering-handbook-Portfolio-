@@ -4,3 +4,4 @@ backend/data/
 api-tests/reports/
 web-tests/playwright-report/
 web-tests/test-results/
+automation-labs/jmeter/results/

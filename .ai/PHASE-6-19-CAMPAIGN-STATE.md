@@ -61,8 +61,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 7 | Database Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9e83721 | 8a31c62 |
 | 8 | Web & Mobile QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 8a31c62 | 026623c |
 | 9 | Visual & Accessibility | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 026623c | 5b94cea |
-| 10 | Automation Learning Labs (Selenium/Appium/JMeter) | IN PROGRESS | 5b94cea | — |
-| 11 | Security-Aware QA | NOT STARTED | — | — |
+| 10 | Automation Learning Labs (Selenium/Appium/JMeter) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 5b94cea | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 11 | Security-Aware QA | IN PROGRESS | *(Phase 10 head)* | — |
 | 12 | CI/CD & Environment | NOT STARTED | — | — |
 | 13 | Logging / Observability / Production QA | NOT STARTED | — | — |
 | 14 | Modern QA Learning Labs | NOT STARTED | — | — |
@@ -135,45 +135,61 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Açık blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-9-VISUAL-ACCESSIBILITY/EXECUTION.md`
 
+## Phase 10 — Kapanış Özeti (tamamlandı)
+
+- **Selenium:** Gerçek POM kodu yazıldı (`automation-labs/selenium/`),
+  gerçek backend'e (port 4400) karşı çalıştırıldı. Kök neden kesin
+  izole edildi: chromedriver 147.x + Chromium 141.x uyumsuz, eşleşen
+  driver'ı hem Selenium Manager hem `npm install chromedriver@141`
+  indiremedi (`googlechromelabs.github.io` allowlist dışı, 403). CODE
+  COMPLETE — EXECUTION BLOCKED (doğrulanmış).
+- **JMeter:** Gerçek `.jmx` planı yazıldı, gerçek backend'e (port 4500)
+  karşı çalıştırıldı. Hata (`ForbiddenClassException: ScriptWrapper`)
+  JMeter'ın KENDİ stok şablonuyla çapraz doğrulanarak dosya değil
+  kurulum sorunu olduğu KANITLANDI — apt `jmeter 2.13` (2015) + sistem
+  `libxstream-java 1.4.20` (tek mevcut sürüm) uyumsuzluğu. CODE
+  COMPLETE — EXECUTION BLOCKED (doğrulanmış).
+- **Appium:** LEARNING-only (Phase 8 Mobile ile aynı gerekçe).
+- Tam backend regresyonu: 111/111. Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/`
+
 ## NEXT EXACT ACTION
 
-Phase 10 (Automation Learning Labs) implementasyonuna başla — ROADMAP
-kapsamı üç alt-bölüm, hepsi "LEARNING → PRACTICED" statüsünde:
+Phase 11 (Security-Aware QA) implementasyonuna başla — ROADMAP kapsamı:
 
-**Selenium** — GERÇEK bir engel DOĞRULANDI (varsayım değil, bu
-oturumda test edildi): Bu ortamda yalnızca `chromedriver 147.x` var
-(`/opt/node22/bin/chromedriver`), yalnızca Chromium `141.x` var
-(`/opt/pw-browsers/chromium-1194`) — chromedriver bunu reddediyor
-("This version of ChromeDriver only supports Chrome version 147").
-Selenium Manager'ın kendisi de eşleşen bir driver İNDİREMİYOR:
-`googlechromelabs.github.io` proxy allowlist'inde YOK (`403: request
-blocked: no rule or allowlist entry allows host`), `npm install
-chromedriver@141` postinstall'ı da AYNI nedenle başarısız oldu (ikisi
-de bu oturumda gerçekten denendi). Bu nedenle: GERÇEK, doğru Selenium
-WebDriver + Page Object Model kodu yazılacak (Setup/WebDriver/
-Locators/Waits/Assertions/POM/Test Data), çalıştırma denenecek,
-DOĞRULANMIŞ hata belgelenecek — "CODE COMPLETE — EXECUTION BLOCKED
-(infrastructure, doğrulandı)" olarak sınıflandırılacak, asla sahte
-PASS üretilmeyecek. Parallel Execution/Cross Browser/Selenium
-Grid/CI-CD → temel execution zaten blocked olduğundan LEARNING-only.
+**EXPERIENCE:** Authentication, Authorization, RBAC, Session, Token,
+OTP, Rate Limiting, IDOR/BOLA-style checks, Sensitive Data, Input
+Validation, XSS-oriented validation, SQL Injection-oriented
+validation, Mass Assignment, File Upload, Security Defects.
 
-**Appium** — Phase 8 Mobile ile AYNI gerekçe: gerçek cihaz/emulator
-yok → LEARNING-only.
+**Kaynak kod ÖNCEDEN doğrulandı (bu oturumda):** `grep` ile
+`rate.limit|role|RBAC|multer|upload` aranıp sıfır sonuç bulundu —
+sistemde RBAC/roller, rate limiting ve file upload YOKTUR. Bunlar
+İCAT EDİLMEYECEK, dürüstçe NOT IMPLEMENTED olarak belgelenecek. OTP de
+yoktur (tek-faktörlü authentication, `auth.service.js`). Authentication/
+Authorization/Session/Token zaten Phase 5 (P5.3) tarafından kapsamlı
+test edilmiştir — burada TEKRAR edilmeyecek, güvenlik-spesifik YENİ
+açılardan (IDOR/BOLA, XSS-oriented, SQLi-oriented, Mass Assignment,
+Sensitive Data exposure) genişletilecek.
 
-**JMeter** — GERÇEKTEN ÇALIŞIYOR (`jmeter --version` bu oturumda
-doğrulandı, v2.13/2015, eski ama fonksiyonel). Gerçek bir `.jmx` test
-planı (Thread Group, HTTP Sampler'lar → `/api/health`,
-`/api/products`, `/api/auth/login`, Header Manager, CSV Data Config,
-Response Assertion, Aggregate Report P90/P95/P99) yazılacak ve gerçek
-backend'e karşı GERÇEKTEN çalıştırılacak (küçük, container-güvenli
-thread sayısı/süre). Load/Stress/Spike/Soak → aynı planın farklı
-parametrelerle en az 2 gerçek çalıştırması (temel Load + hızlı bir
-Spike varyantı).
-
-1. `QA-DEMO-SYSTEM/automation-labs/selenium/` — POM + test dosyaları,
-   gerçek çalıştırma denemesi, doğrulanmış hata evidence'a kaydedilecek.
-2. `QA-DEMO-SYSTEM/automation-labs/jmeter/` — `.jmx` planı + gerçek
-   çalıştırma çıktısı (özet istatistikler, ham JTL değil — küçük,
-   commit edilebilir).
-3. Appium → `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/APPIUM-LEARNING.md`.
-4. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md`
+1. Gerçek bir security-focused test dosyası (`backend/tests/
+   security.test.js` veya `automation-labs`/`api-tests` altında) —
+   IDOR/BOLA: başka kullanıcının order'ına erişim denemesi (P5.3'te
+   kısmen var, burada explicit güvenlik çerçevesinde referans
+   verilecek), XSS-oriented: ürün/sipariş response'larında HTML
+   injection payload'larının ham döndüğü (React/framework olmadığı
+   için server-side encoding sorumluluğu netleştirilecek — vanilla
+   frontend `textContent`/`innerHTML` kullanımı P8'de zaten incelendi),
+   SQLi-oriented: parametreli sorgular (`db.prepare(...).run(?)`)
+   nedeniyle SQL injection'a karşı yapısal dayanıklılık kanıtı,
+   Mass Assignment: `createOrder`'ın yalnızca beklenen alanları kabul
+   ettiği (fazladan `user_id` gibi alan gönderilse bile override
+   edilemediği) kanıtı, Sensitive Data: response'larda password/token
+   hash'lerinin sızmadığı kanıtı.
+2. OWASP API Security Top 10 → gerçek bulgularla eşleştirilmiş bir
+   dokümantasyon (hangi madde bu sistemde test edildi, hangisi N/A).
+3. Burp Suite / OWASP ZAP → LEARNING-only (GUI/lisanslı araçlar,
+   Tooling tablosunda zaten doğrulanmış altyapı eksikliği).
+4. RBAC / Rate Limiting / OTP / File Upload → NOT IMPLEMENTED, dürüstçe
+   belgelenecek (icat edilmeyecek).
+5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md`

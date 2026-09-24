@@ -6,7 +6,8 @@
   "workspaces": [
     "backend",
     "api-tests",
-    "web-tests"
+    "web-tests",
+    "automation-labs"
   ],
   "scripts": {
     "dev": "npm run dev --workspace backend",
@@ -14,6 +15,7 @@
     "db:seed": "npm run db:seed --workspace backend",
     "test": "npm test --workspace backend",
     "api:test:postman": "npm run api:test:postman --workspace api-tests",
-    "web:test": "npm test --workspace web-tests"
+    "web:test": "npm test --workspace web-tests",
+    "selenium:test": "npm run selenium:test --workspace automation-labs"
   }
 }
