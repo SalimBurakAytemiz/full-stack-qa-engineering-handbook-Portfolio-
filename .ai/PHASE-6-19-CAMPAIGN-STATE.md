@@ -61,8 +61,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 7 | Database Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9e83721 | 8a31c62 |
 | 8 | Web & Mobile QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 8a31c62 | 026623c |
 | 9 | Visual & Accessibility | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 026623c | 5b94cea |
-| 10 | Automation Learning Labs (Selenium/Appium/JMeter) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 5b94cea | *(bu checkpoint commit'i — bkz. `git log -1`)* |
-| 11 | Security-Aware QA | IN PROGRESS | *(Phase 10 head)* | — |
+| 10 | Automation Learning Labs (Selenium/Appium/JMeter) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 5b94cea | 9d4d6a6 |
+| 11 | Security-Aware QA | IN PROGRESS | 9d4d6a6 | — |
 | 12 | CI/CD & Environment | NOT STARTED | — | — |
 | 13 | Logging / Observability / Production QA | NOT STARTED | — | — |
 | 14 | Modern QA Learning Labs | NOT STARTED | — | — |
