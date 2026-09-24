@@ -76,6 +76,62 @@ test('the access-log line records the real mounted path, not a router-internal s
   assert.match(line, /path=\/api\/products(?!\S)/, `access log must record the real path: ${line}`);
 });
 
+// Codex fix-campaign B6 (P2, Phase 13): requestContext was registered
+// AFTER express.json()/jsonParseErrorHandler, so a malformed-JSON request
+// never reached it — jsonParseErrorHandler is error-handling middleware
+// that responds directly (no next()), so the response had no
+// X-Request-Id and no access-log line at all. Fixed by moving
+// requestContext to run first (see app.js) — it has no dependency on the
+// parsed body, so every response, including a parse failure, now carries
+// a real correlation id.
+test('malformed JSON still returns 400 with a real X-Request-Id header (regression lock for B6)', async (t) => {
+  const ctx = startTestServer();
+  t.after(() => ctx.close());
+
+  const res = await fetch(`${ctx.baseUrl}/api/orders`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: '{ this is not valid JSON',
+  });
+
+  assert.equal(res.status, 400);
+  const requestId = res.headers.get('x-request-id');
+  assert.ok(requestId, 'a malformed-JSON 400 response must still carry X-Request-Id');
+  assert.match(requestId, /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+
+  const body = await res.json();
+  assert.equal(body.error, 'Geçersiz JSON gövdesi');
+});
+
+test('malformed JSON still produces an [http] access-log line with the real request id and path', async (t) => {
+  const ctx = startTestServer();
+  t.after(() => ctx.close());
+
+  const logLines = [];
+  const originalLog = console.log;
+  console.log = (...args) => {
+    logLines.push(args.join(' '));
+    originalLog(...args);
+  };
+
+  let requestId;
+  try {
+    const res = await fetch(`${ctx.baseUrl}/api/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{ still not valid JSON',
+    });
+    requestId = res.headers.get('x-request-id');
+  } finally {
+    console.log = originalLog;
+  }
+
+  const line = logLines.find((l) => l.includes('[http]') && l.includes(`request_id=${requestId}`));
+  assert.ok(line, 'expected an [http] access-log line correlated to the malformed-JSON response');
+  assert.match(line, /status=400/);
+  assert.match(line, /path=\/api\/orders(?!\S)/);
+});
+
 test('a real request lifecycle (login) produces a distinct request id from the request it triggers next', async (t) => {
   const ctx = startTestServer();
   t.after(() => ctx.close());
