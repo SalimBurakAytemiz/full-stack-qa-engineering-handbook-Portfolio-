@@ -68,8 +68,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 14 | Modern QA Learning Labs | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | d6848a1 | 90a4b04 |
 | 15 | Case Studies (7) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 90a4b04 | 27ea9d8 |
 | 16 | Interview Preparation | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 27ea9d8 | f8b4188 |
-| 17 | Final Integration | IN PROGRESS | f8b4188 | — |
-| 18 | Independent Review (Claude self-audit) | NOT STARTED | — | — |
+| 17 | Final Integration | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | f8b4188 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 18 | Independent Review (Claude self-audit) | IN PROGRESS | *(Phase 17 head)* | — |
 | 19 | Clean | NOT STARTED | — | — |
 
 ---
@@ -266,38 +266,53 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
   blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-16-INTERVIEW-PREPARATION/`
 
+## Phase 17 — Kapanış Özeti (tamamlandı)
+
+- 13 kontrol (broken links, terminology, knowledge status, tests,
+  automation, reports, evidence, CI, security, secrets, repository
+  navigation, case study traceability, documentation consistency)
+  çalıştırıldı.
+- **1 gerçek tutarsızlık bulundu ve düzeltildi:** Case Study 05'teki
+  `web-tests/realtime-notification.spec.js` referansı `tests/`
+  alt-dizinini atlıyordu — düzeltildi.
+- **GERÇEK CI geçmişi doğrulandı:** GitHub Actions API ile 6/6
+  çalıştırma SUCCESS (Phase 12'den bu yana HER push'ta) — bu, Phase
+  13-16'da eklenen tüm yeni testlerin CI'da da gerçekten PASS ettiğinin
+  bağımsız kanıtı.
+- Tam backend regresyonu: 128/128. Tam web-tests regresyonu: 23/23.
+- Kapsamlı secret taraması (69 dosya, 7102 satır — tüm Phase 6-19
+  diff'i): sıfır gerçek secret.
+- ROADMAP.md'nin "Current Status" bölümü BİLİNÇLİ olarak dokunulmadı
+  (Phase 6-19 henüz Codex tarafından incelenmedi, Phase 5'te durduğu
+  gibi kalması DOĞRU).
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-17-FINAL-INTEGRATION/`
+
 ## NEXT EXACT ACTION
 
-Phase 17 (Final Integration) implementasyonuna başla — ROADMAP amacı:
-"Bütün repository'nin TEK kalite sistemi olarak çalışmasını sağlamak."
-Kontroller: Documentation consistency, Broken links, Terminology,
-Knowledge Status correctness, Tests, Automation, Reports, Evidence,
-CI, Security, Secrets, Repository navigation, Case Study traceability.
+Phase 18 (Independent Review) implementasyonuna başla. ROADMAP'ın
+kendi Phase 18'i "Repository bağımsız reviewer tarafından
+incelenecektir" der — ancak bu campaign'in başında zaten netleştirildi
+(bkz. yukarıdaki "Phase 18 — Independent Review netliği" bölümü):
+Codex Phase 6-19 boyunca KULLANILMIYOR, bu nedenle campaign İÇİNDEKİ
+"Phase 18", Claude'un KENDİ yapılandırılmış self-audit'idir —
+GERÇEK, bağımsız üçüncü-taraf inceleme YERİNE GEÇMEZ ve evidence'ta
+ASLA öyle sunulmaz. Gerçek "Independent Review", campaign'in sonunda
+yapılacak asıl Codex audit'i ile sağlanacaktır.
 
-Bu, Phase 6-16'nın TÜMÜNÜ kapsayan bir REPOSITORY-GENELİ tutarlılık
-denetimidir — yeni özellik kodu YAZILMAYACAK, yalnızca:
+ROADMAP'ın Phase 18 review kapsamı: Technical correctness, QA
+correctness, Architecture, Test quality, Documentation, Security,
+Maintainability, **False evidence**, **Unsupported experience claims**.
 
-1. **Broken links / Repository navigation:** Her evidence dosyasındaki
-   dosya-yolu referanslarının (Phase 16'da yapılan doğrulamaya benzer
-   şekilde, ama TÜM Phase 6-16 evidence dosyaları için) gerçekten var
-   olduğunu doğrula.
-2. **Tests/Automation/Reports/Evidence:** TEK bir son, tam backend
-   regresyonu (`node --test`) + `web-tests` suite'i + varsa diğer
-   gerçek çalıştırılabilir suite'ler ÇALIŞTIRILIP genel bir "hepsi
-   yeşil mi" tablosu üretilecek.
-3. **CI:** `.github/workflows/ci.yml`'in hâlâ güncel/doğru olduğu
-   (Phase 12'den beri backend/web-tests'e eklenen yeni testlerin CI'da
-   da GERÇEKTEN çalıştığı) — gerekirse GERÇEK bir CI run daha
-   tetiklenip GitHub API ile doğrulanacak.
-4. **Security/Secrets:** Tüm campaign boyunca oluşturulan dosyalarda
-   (Phase 6-16) kapsamlı bir secret-scan.
-5. **Terminology/Knowledge Status correctness:** "CLAUDE IMPLEMENTATION
-   COMPLETE — PENDING FINAL CODEX AUDIT" ifadesinin HER phase evidence
-   dosyasında tutarlı kullanıldığının doğrulanması (asla "CODEX
-   CERTIFIED" gibi yanlış bir ifade sızmadığının kontrolü).
-6. **Case Study traceability:** Phase 15'in 7 case study'sinin
-   referans verdiği test dosyalarının hâlâ gerçek ve PASS olduğunun
-   (Phase 15'te zaten yapıldı, burada TEKRAR doğrulanacak) teyidi.
-7. Bulunan herhangi bir tutarsızlık/kırık referans DÜZELTİLECEK
-   (fix-then-lock-in deseni, bu campaign boyunca defalarca uygulandı).
-8. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-17-FINAL-INTEGRATION/EXECUTION.md`
+1. Claude, TÜM Phase 6-17 evidence dosyalarını (11+1=12 phase dizini)
+   KENDİ bakış açısından, bir "dış gözlemci gibi" yeniden gözden
+   geçirecek — her "GERÇEK" iddiasının GERÇEKTEN bir komut
+   çalıştırmasına/dosya varlığına dayandığını, her "LEARNING-only"
+   iddiasının GERÇEKTEN doğrulanmış bir altyapı eksikliğine dayandığını
+   yeniden teyit edecek.
+2. Özellikle "False evidence" ve "Unsupported experience claims"
+   maddelerine odaklanılacak — abartılı/belirsiz ifade var mı?
+3. Bulunan herhangi bir sorun (varsa) DÜZELTİLECEK.
+4. Evidence, dosyanın adında ve içeriğinde AÇIKÇA "CLAUDE SELF-AUDIT —
+   NOT AN INDEPENDENT THIRD-PARTY REVIEW" olarak etiketlenecek.
+5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-18-INDEPENDENT-REVIEW/CLAUDE-SELF-AUDIT.md`

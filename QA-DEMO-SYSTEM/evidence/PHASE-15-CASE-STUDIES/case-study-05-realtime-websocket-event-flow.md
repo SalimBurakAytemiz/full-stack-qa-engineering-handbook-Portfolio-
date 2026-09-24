@@ -33,7 +33,7 @@ bağlı DEĞİLSE, bildirim yalnızca DB'de kalır, sonradan
 
 **Gerçek regresyon:** `websocket.test.js` (7 test, P4.3) +
 `websocket-events-advanced.test.js` (5 test, Phase 6) — 128 testlik
-tam suite'in parçası, ayrıca `web-tests/realtime-notification.spec.js`
+tam suite'in parçası, ayrıca `web-tests/tests/realtime-notification.spec.js`
 ile GERÇEK bir tarayıcıda uçtan uca doğrulandı (Phase 8).
 
 ## Bilinen Sınırlamalar
