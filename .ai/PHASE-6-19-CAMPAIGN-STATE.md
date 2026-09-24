@@ -58,8 +58,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | Phase | Adı | Durum | Base SHA | Head SHA |
 |---|---|---|---|---|
 | 6 | GraphQL / WebSocket / Event Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 837ff2f | 9e83721 |
-| 7 | Database Testing | IN PROGRESS | 9e83721 | — |
-| 8 | Web & Mobile QA | NOT STARTED | — | — |
+| 7 | Database Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9e83721 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 8 | Web & Mobile QA | IN PROGRESS | *(Phase 7 head)* | — |
 | 9 | Visual & Accessibility | NOT STARTED | — | — |
 | 10 | Automation Learning Labs (Selenium/Appium/JMeter) | NOT STARTED | — | — |
 | 11 | Security-Aware QA | NOT STARTED | — | — |
@@ -83,35 +83,54 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Firebase Events → dürüstçe LEARNING-only (gerçek bulut hesabı yok).
 - Açık blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-6-GRAPHQL-WEBSOCKET-EVENT/EXECUTION.md`
-- Detaylar için evidence dosyasına bakınız — bu state dosyası onun
+
+## Phase 7 — Kapanış Özeti (tamamlandı)
+
+- 15 yeni test (`tests/database-testing.test.js`) — SELECT/WHERE/JOIN/
+  Sorting, CRUD lifecycle, NULL/UNIQUE(email) validation, financial
+  SUM-aggregate cross-check, timestamp format+monotonicity, UI→DB
+  end-to-end, seed-vs-source-JSON determinism proof.
+- Mevcut Phase 4/5 testleri (`seed.test.js`/`events.test.js`/
+  `notifications.test.js`) zaten CHECK/FK/UNIQUE(order_id,*) kapsıyordu
+  — tekrar edilmedi, evidence'ta referans verildi.
+- Tam backend regresyonu: 111/111. Yeni dependency yok.
+- Audit/History → dürüstçe NOT IMPLEMENTED (kaynak kodda audit tablosu yok).
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md`
+- Detaylar için evidence dosyalarına bakınız — bu state dosyası onların
   yerine geçmez.
 
 ## NEXT EXACT ACTION
 
-Phase 7 (Database Testing) implementasyonuna başla — ROADMAP kapsamı:
-SQL/SELECT/WHERE/JOIN/Filtering/Sorting, API→DB Validation, UI→DB
-Validation, CRUD State Validation, Data Integrity, Duplicate
-Validation, Null Validation, Financial Data Validation, Timestamp
-Validation, Audit/History, Test Data Preparation.
+Phase 8 (Web & Mobile QA) implementasyonuna başla — ROADMAP kapsamı iki
+alt-bölüm:
 
-1. Mevcut DB şemasını (`backend/src/database/schema.js`) ve P5.7'nin
-   zaten kapsadığı API→DB validasyonunu (tekrar etmemek için) gözden
-   geçir.
-2. Gerçek, çalıştırılabilir bir SQL test paketi kur: SELECT/WHERE/JOIN/
-   filtering/sorting'i doğrudan `node:sqlite` `DatabaseSync` üzerinden
-   çalıştıran testler (backend test yardımcılarını kullanarak, in-memory DB).
-3. CRUD State Validation + Data Integrity + Duplicate/Null Validation:
-   gerçek insert/update/delete akışları + constraint (FK, CHECK, UNIQUE)
-   ihlali denemeleri ile.
-4. Financial Data Validation: `orders.total`/`order_items.unit_price`
-   hesaplamalarının DB seviyesinde tutarlılığı (zaten P5.7'de kısmen
-   kanıtlandı — burada SQL-native JOIN/aggregate sorgularla genişletilecek).
-5. Timestamp Validation + Audit/History: `created_at` alanlarının
-   gerçek formatı/monotonluğu; sistemde ayrı bir audit-log tablosu
-   YOKSA bu dürüstçe NOT IMPLEMENTED olarak belgelenecek (icat edilmeyecek).
-6. UI→DB Validation: frontend'in gerçek bir kullanıcı akışını tetikleyip
-   (mevcut vanilla frontend + fetch tabanlı akış, veya minimal bir
-   Playwright kullanımı) DB'deki sonucu doğrudan sorgulayarak doğrulama.
-7. Test Data Preparation: mevcut `seed.js`'in QA-perspektifinden
-   (deterministik, tekrarlanabilir test verisi) belgelenmesi.
-8. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md`
+**Web** (gerçekten test edilebilir — Playwright + `/opt/pw-browsers/chromium`
+kurulu, bkz. Tooling tablosu): Functional Testing, Responsive Testing,
+Cross-Browser Testing, Browser DevTools, Network Inspection, Storage,
+Cookies, Frontend/Backend Validation.
+
+**Mobile** (Android/iOS/Native/Hybrid/WebView/Device Matrix/Permissions/
+Orientation/Background-Foreground/Kill-Relaunch/Network Interruption/
+Offline/Push Notification/Deep Link/Localization/Feature Parity): bu
+container'da gerçek bir Android/iOS emulator/simulator YOK (Tooling
+tablosunda zaten doğrulandı) — **infrastructure gap**, dürüstçe
+LEARNING/dokümantasyon olarak ele alınacak, sahte "ran on real device"
+evidence üretilmeyecek.
+
+1. Playwright'ı backend'e değil, ayrı bir web-test paketine (örn.
+   `QA-DEMO-SYSTEM/web-tests/` veya mevcut bir konuma) `devDependency`
+   olarak ekle — gerekçe/lisans/bakım durumu kısaca değerlendirilip
+   yazılacak (campaign dependency-policy).
+2. Gerçek, çalıştırılabilir Playwright testleri: mevcut vanilla
+   frontend'e karşı (login, ürün listeleme, sipariş oluşturma akışı) —
+   Functional + Frontend/Backend Validation.
+3. Responsive/Cross-Browser: Playwright'ın viewport/device-emulation ve
+   (mevcut kurulum yalnızca Chromium içerdiği için) çoklu-viewport
+   testleri; gerçek Firefox/WebKit yoksa bu dürüstçe belirtilecek.
+4. Browser DevTools/Network Inspection/Storage/Cookies: Playwright'ın
+   kendi API'leri (`page.on('request')`, `context.cookies()`,
+   `page.evaluate(() => localStorage)`) ile gerçek doğrulama.
+5. Mobile bölümü: LEARNING/dokümantasyon dosyası (gerçek kod/test YOK,
+   dürüstçe infrastructure-gap olarak işaretlenecek).
+6. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-8-WEB-MOBILE-QA/EXECUTION.md`
