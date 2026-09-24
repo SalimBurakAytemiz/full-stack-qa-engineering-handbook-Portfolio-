@@ -1,0 +1,12 @@
+{
+  "name": "web-tests",
+  "version": "0.1.0",
+  "private": true,
+  "description": "QA Demo System — Phase 8 Web QA (Playwright, real browser against the real backend+frontend)",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  }
+}

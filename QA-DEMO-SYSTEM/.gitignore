@@ -2,3 +2,5 @@ node_modules/
 backend/data/
 *.log
 api-tests/reports/
+web-tests/playwright-report/
+web-tests/test-results/

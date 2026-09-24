@@ -59,8 +59,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 |---|---|---|---|---|
 | 6 | GraphQL / WebSocket / Event Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 837ff2f | 9e83721 |
 | 7 | Database Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9e83721 | 8a31c62 |
-| 8 | Web & Mobile QA | IN PROGRESS | 8a31c62 | — |
-| 9 | Visual & Accessibility | NOT STARTED | — | — |
+| 8 | Web & Mobile QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 8a31c62 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 9 | Visual & Accessibility | IN PROGRESS | *(Phase 8 head)* | — |
 | 10 | Automation Learning Labs (Selenium/Appium/JMeter) | NOT STARTED | — | — |
 | 11 | Security-Aware QA | NOT STARTED | — | — |
 | 12 | CI/CD & Environment | NOT STARTED | — | — |
@@ -100,37 +100,55 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Detaylar için evidence dosyalarına bakınız — bu state dosyası onların
   yerine geçmez.
 
+## Phase 8 — Kapanış Özeti (tamamlandı)
+
+- Yeni `web-tests` npm workspace, `@playwright/test` (devDependency),
+  önceden kurulu Chromium (`/opt/pw-browsers/chromium-1194`) kullanıldı,
+  indirme yapılmadı.
+- 14 yeni Playwright testi (Functional, Responsive, Network Inspection,
+  Storage, Cookies-negatif, DevTools console, Frontend/Backend
+  Validation, gerçek WS→DOM realtime bildirim). İki ardışık çalıştırma
+  ikisinde de 14/14 (flaky değil).
+- Tam backend regresyonu: 111/111 (yeni workspace backend'i etkilemedi).
+- Cross-Browser → yalnızca Chromium (dürüstçe belirtildi, Firefox/WebKit yok).
+- Mobile (16 madde) → dürüstçe LEARNING-only (`MOBILE-LEARNING.md`).
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-8-WEB-MOBILE-QA/EXECUTION.md` + `MOBILE-LEARNING.md`
+
 ## NEXT EXACT ACTION
 
-Phase 8 (Web & Mobile QA) implementasyonuna başla — ROADMAP kapsamı iki
-alt-bölüm:
+Phase 9 (Visual & Accessibility) implementasyonuna başla — ROADMAP
+kapsamı iki alt-bölüm:
 
-**Web** (gerçekten test edilebilir — Playwright + `/opt/pw-browsers/chromium`
-kurulu, bkz. Tooling tablosu): Functional Testing, Responsive Testing,
-Cross-Browser Testing, Browser DevTools, Network Inspection, Storage,
-Cookies, Frontend/Backend Validation.
+**Visual:** Pixel Perfect, Figma Comparison, Screenshot Comparison,
+Difference Visualization, Threshold/Tolerance, Visual Regression.
+Playwright'ın yerleşik `expect(page).toHaveScreenshot()` API'si
+(pixelmatch tabanlı, gerçek piksel-fark/threshold desteği) ile GERÇEK
+olarak test edilebilir — **Figma Comparison HARİÇ** (gerçek bir Figma
+dosyası/hesabı yok, bu tek madde LEARNING-only olacak).
 
-**Mobile** (Android/iOS/Native/Hybrid/WebView/Device Matrix/Permissions/
-Orientation/Background-Foreground/Kill-Relaunch/Network Interruption/
-Offline/Push Notification/Deep Link/Localization/Feature Parity): bu
-container'da gerçek bir Android/iOS emulator/simulator YOK (Tooling
-tablosunda zaten doğrulandı) — **infrastructure gap**, dürüstçe
-LEARNING/dokümantasyon olarak ele alınacak, sahte "ran on real device"
-evidence üretilmeyecek.
+**Accessibility:** Keyboard Navigation, Focus, Accessibility Labels,
+Screen Reader controls, Contrast, WCAG concepts. `@axe-core/playwright`
+(devDependency olarak değerlendirilip eklenecek — MIT lisanslı,
+endüstri standardı, gerekçe kısaca yazılacak) ile WCAG/contrast/label
+kontrolleri gerçek olarak otomatize edilebilir; Keyboard Navigation/
+Focus Playwright'ın kendi `page.keyboard`/`page.locator().focus()`
+API'leriyle test edilecek. Gerçek ekran okuyucu (NVDA/VoiceOver)
+otomasyonu bu headless container'da mümkün DEĞİL — yalnızca "Screen
+Reader controls" alt-maddesinin gerçek ekran-okuyucu-yazılımı kısmı
+LEARNING-only olacak (ARIA/accessible-name doğrulaması gerçek testle
+yapılacak, bu ekran okuyucuların temel dayanağıdır).
 
-1. Playwright'ı backend'e değil, ayrı bir web-test paketine (örn.
-   `QA-DEMO-SYSTEM/web-tests/` veya mevcut bir konuma) `devDependency`
-   olarak ekle — gerekçe/lisans/bakım durumu kısaca değerlendirilip
-   yazılacak (campaign dependency-policy).
-2. Gerçek, çalıştırılabilir Playwright testleri: mevcut vanilla
-   frontend'e karşı (login, ürün listeleme, sipariş oluşturma akışı) —
-   Functional + Frontend/Backend Validation.
-3. Responsive/Cross-Browser: Playwright'ın viewport/device-emulation ve
-   (mevcut kurulum yalnızca Chromium içerdiği için) çoklu-viewport
-   testleri; gerçek Firefox/WebKit yoksa bu dürüstçe belirtilecek.
-4. Browser DevTools/Network Inspection/Storage/Cookies: Playwright'ın
-   kendi API'leri (`page.on('request')`, `context.cookies()`,
-   `page.evaluate(() => localStorage)`) ile gerçek doğrulama.
-5. Mobile bölümü: LEARNING/dokümantasyon dosyası (gerçek kod/test YOK,
-   dürüstçe infrastructure-gap olarak işaretlenecek).
-6. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-8-WEB-MOBILE-QA/EXECUTION.md`
+1. `web-tests` içine (mevcut Playwright kurulumunu paylaşarak)
+   screenshot-based visual regression testleri ekle: login sayfası ve
+   ürün listesi sayfası için baseline screenshot + fark toleransı.
+2. `@axe-core/playwright` ekle, dependency-policy kısaca değerlendir
+   (lisans/bakım/güvenlik), products.html ve index.html üzerinde
+   gerçek WCAG taraması çalıştır.
+3. Keyboard Navigation + Focus: login formunda Tab sırası ve focus
+   ring'in gerçek DOM `document.activeElement` ile doğrulanması.
+4. Contrast: axe-core'un `color-contrast` kuralı (gerçek CSS renkleri
+   üzerinden).
+5. Figma Comparison + gerçek ekran-okuyucu otomasyonu → LEARNING-only,
+   dürüstçe belgelenecek.
+6. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-9-VISUAL-ACCESSIBILITY/EXECUTION.md`
