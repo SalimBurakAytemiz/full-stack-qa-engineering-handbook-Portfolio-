@@ -267,7 +267,16 @@ cd api-tests && npm run api:test:db
 
 **Sonuç: PASS** — Scenarios: 17 (failed: 0), Assertions: 97 (failed: 0). Exit code 0.
 
-P5.7'nin kendi FINAL (post-fix) baseline'ıyla (17/17, 97/97) **birebir tutarlı**. Bu run'da gözlenen doğrulamalar arasında: approved order persistence, order/order_items, API↔DB stok tutarlılığı, zero-write representative failure'lar (declined/timeout/insufficient/malformed-JSON), notification correlation, ownership, relational integrity (`order_items.order_id/product_id`, `notifications.user_id`, `events.user_id`, `sessions.user_id` REFERENCES; `orders.user_id/status/total`, `order_items.quantity`, `notifications.user_id/type/message`, `products.name/price` NOT NULL) — hepsi gerçek satır sorgusuyla PASS. **"ACID sertifikalı" gibi kanıtlanmamış bir sonuç üretilmedi** — yalnız test edilen senaryolarda gözlem raporlanıyor (P5.7'nin kendi diliyle tutarlı).
+P5.7'nin kendi FINAL (post-fix) baseline'ıyla (17/17, 97/97) **birebir tutarlı**. Bu run'da gözlenen doğrulamalar, P5.7'nin kendi senaryo ayrımı korunarak:
+
+- **S2 — Approved order:** tam API↔DB trace + duplicate-line aggregation + API↔DB stok tutarlılığı (cross-layer, gerçek `GET /api/products/:id` çağrısıyla) — PASS.
+- **S1, S3, S4, S5, S6 — Gerçek zero-write senaryoları** (unknown product_id, insufficient stock, invalid quantity ×3 temsili, invalid payment_token false/0, malformed JSON): API 400/409 ile reddediyor, DB'de **hiçbir** satır (order/order_items/notifications/events) ve hiçbir ürünün stoğu content-level olarak (mesaj/payload dahil) değişmiyor — PASS. **Declined/timeout bu listede DEĞİL** (aşağıya bkz.).
+- **S7 (Declined) ve S8 (Timeout) — zero-write DEĞİL, kısmi persistence contract'ı:** API 201 döner (declined/timeout bir HTTP hatası değildir); `orders` satırı GERÇEKTEN OLUŞUR (`status = PAYMENT_FAILED` / `PAYMENT_TIMEOUT`); `order_items` satırı da GERÇEKTEN OLUŞUR; ancak ilgili ürünün stoğu DEĞİŞMEZ, hiçbir `notifications` satırı ve hiçbir `events` satırı o order_id'ye korelasyonlu olarak OLUŞMAZ. P5.7'nin kendi evidence'ı bunu açıkça "declined is NOT a zero-write case" / "timeout is NOT a zero-write case" olarak etiketliyor — PASS.
+- **Notification correlation, ownership:** PASS (S9, S10, S11).
+- **S12 — Relational integrity, OBSERVED DATA INTEGRITY (gerçek satır sorgusu, `LEFT JOIN ... WHERE ... IS NULL`):** 6 orphan-satır kontrolü (`order_items→orders`, `notifications→orders`, `notifications.user_id→users`, `events→orders`, `order_items→products`, `orders.user_id→users`) — hiçbir orphan satır yok, PASS. Bu, **verinin** tutarlı olduğunu kanıtlar.
+- **S13 — Constraint definitions, DECLARED IN DDL (yalnızca `sqlite_master` şema METNİ incelemesi, read-only, runtime sorgusu DEĞİL):** 3 CHECK + 2 UNIQUE + 6 REFERENCES + 9 NOT NULL = 20 kontrol — hepsi DDL'de **tanımlı**, PASS. Bu, constraint'in runtime'da **gerçekten uygulandığını** (bir ihlal denemesiyle) KANITLAMAZ — yalnızca DDL metninde var olduğunu kanıtlar (P5.7'nin kendi B3 fix'inin ayırdığı gibi, S12/OBSERVED ile S13/DECLARED asla tek bir "FK PASS" cümlesinde birleştirilmedi).
+
+**"ACID sertifikalı" gibi kanıtlanmamış bir sonuç üretilmedi** — yalnız test edilen senaryolarda gözlem raporlanıyor (P5.7'nin kendi diliyle tutarlı).
 
 ---
 
@@ -336,7 +345,7 @@ Bkz. `evidence/P5-API-TESTING/P5.9-REGRESSION-CLOSEOUT/` — aşağıdaki tablo 
 | Cross-user order → 404 (403 değil) | Ownership denial | `api:test:auth` | P5.3 | PASS | Bilinçli tasarım, limitation değil |
 | **PRODUCTS** |
 | List/detail contract | Products list/detail | `api:test:postman` | P5.4 | PASS | — |
-| Invalid ID matrisi (6 case) → 404 değil 500 | Negative/boundary | `api:test:postman` | P5.4 | PASS | — |
+| Invalid ID matrisi (6 case: Unknown Product + non-numeric/zero/negative/decimal/very-large) — gerçek sonuç: **HTTP 404 Not Found** (HTTP 500 Internal Server Error DÖNMEZ) | Negative/boundary | `api:test:postman` | P5.4 EXECUTION.md §5/§6 (gerçek Newman çıktısı: `[404 Not Found, ...]` her 6 case'de) | PASS | — |
 | Data quality | Data-quality checks | `api:test:postman` | P5.4 | PASS | — |
 | **ORDERS** |
 | Duplicate line aggregation | Duplicate Aggregation Gate | `api:test:orders-payment` | P5.5 | PASS | — |
@@ -399,7 +408,7 @@ hiç kullanılmamış, bu pakette de icat edilmedi.
 | # | Bulgu | Kaynak | Severity | Durum |
 |---|---|---|---|---|
 | 1 | `POST /api/orders` idempotent değil | Phase 4 devralınan | Low | KNOWN LIMITATION / FUTURE HARDENING |
-| 2 | SQLite constraint'leri yalnız fresh DB'de geçerli | Phase 4 devralınan, P5.7 teyit | Medium | KNOWN LIMITATION / FUTURE HARDENING |
+| 2 | `CREATE TABLE IF NOT EXISTS` yalnızca dosya hiç yokken gerçekten yeni şemayı (güncel constraint tanımlarıyla) oluşturur; daha önceden var olan, hiç yeniden oluşturulmamış bir SQLite tablosu bu constraint güncellemelerini OTOMATİK olarak almaz (migrate/backfill edilmez) — existing-DB migration/backfill ayrı bir future-hardening konusudur | Phase 4 devralınan (P4.6), P5.7'de teyit | Medium | KNOWN LIMITATION / FUTURE HARDENING |
 | 3 | CORS/güvenlik header'ları yok | P5.0 | Low | KNOWN LIMITATION |
 | 4 | Event/notification log commit-öncesi yazılıyor | Phase 4 (P4.3) devralınan | Medium | KNOWN LIMITATION / FUTURE HARDENING |
 | 5 | Frontend GET/WS race → olası çift GÖRÜNÜM (DB duplicate yok) | Phase 4 devralınan | Low | KNOWN LIMITATION |
@@ -426,7 +435,7 @@ hiç kullanılmamış, bu pakette de icat edilmedi.
 | Critical (açık) | 0 |
 | High (açık) | 0 |
 | Medium (açık, known limitation olarak disclosed) | 4 (#2, #4, #6, #8) |
-| Low (açık, known limitation olarak disclosed) | 7 (#1, #3, #5, #10, #11, #12, #13, #14 — 8 madde) |
+| Low (açık, known limitation olarak disclosed) | 8 (#1, #3, #5, #10, #11, #12, #13, #14) |
 | N/A (bilinçli tasarım/kapsam kararı) | 3 (#7, #9, ve ayrıca ownership-404 kararı) |
 | Documentation drift | 2 (#15 belgelendi, #16 düzeltildi) |
 
@@ -495,7 +504,9 @@ Bu final regression'da **hiçbir FAIL çıkmadı** — bölüm 28'deki failure-h
 
 ## 25. Regression Verdict
 
-**PASS.** Tüm 6 regresyon adımı (Public+Schema, Negative-Proof, Auth, Orders&Payment, Notifications, API→DB, HTML Reporting) gerçek sisteme karşı, canonical reset akışıyla, exit code 0 ile çalıştı; tüm sayılar ilgili paketin kendi FINAL baseline'ıyla birebir tutarlı; hiçbir application/test/schema/documentation bug bulunmadı (yalnız 1 dokümantasyon drift'i tespit edildi ve düzeltildi); secret scan temiz; generated artifact policy'ye uyum tam; working tree CLEAN.
+**PASS.** Tüm 7 regresyon adımı (Public+Schema, Negative-Proof, Auth, Orders&Payment, Notifications, API→DB, HTML Reporting) gerçek sisteme karşı, canonical reset akışıyla, exit code 0 ile çalıştı; tüm sayılar ilgili paketin kendi FINAL baseline'ıyla birebir tutarlı; hiçbir application/test/schema/documentation bug bulunmadı (yalnız 1 dokümantasyon drift'i tespit edildi ve düzeltildi); secret scan temiz; generated artifact policy'ye uyum tam; working tree CLEAN.
+
+**Kapsam netliği (gerçekten neyin yeniden çalıştırıldığı vs merged evidence'a çapraz-referans):** Bu P5.9 paketinde, bölüm 7–13'te dökümante edilen 7 komutun (`api:test:postman`, `api:test:schema:negative-proof`, `api:test:auth`, `api:test:orders-payment`, `api:test:notifications`, `api:test:db`, `api:report:all`) **her biri bu oturumda gerçekten, canlı sunucuya karşı, gerçekten çalıştırıldı** — bunlar P5.1–P5.8'in kendi runner'larının BİREBİR AYNISI, tahmin/simülasyon değil. Bölüm 2'deki (Cross-Reference Matrix) "Son execution sonucu (historical)" satırları ise P5.1–P5.8'in KENDİ önceki (bu P5.9'dan önceki, merged) EXECUTION.md'lerinden alınan geçmiş kayıtlardır — P5.9 bu paketlerin geçmiş fix-round anlatılarını (ör. Codex bulgu tabloları, RUN#1/RUN#2 repeatability detayları) yeniden üretmedi, yalnızca onların FINAL sayılarını bu oturumdaki taze execution'ın sayılarıyla karşılaştırdı ve birebir eşleştiğini doğruladı. "Tam suite'in P5.9'da yeniden execute edildiği" iddiası yalnızca bölüm 7–13'teki 7 komut için geçerlidir; P5.1'in kendi orijinal `api:test:postman:basic` (raw, AJV'siz) run'ı veya P5.2'nin ilk (P5.4-öncesi) izole run'ı gibi tarihsel ara-adımlar bu P5.9 execution'ında AYRICA tekrarlanmadı — onların sonuçları yalnızca merged evidence'tan aktarılmıştır (bölüm 2).
 
 ---
 
