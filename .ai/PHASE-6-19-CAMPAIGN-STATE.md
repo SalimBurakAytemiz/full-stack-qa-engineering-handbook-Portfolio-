@@ -347,11 +347,36 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Açık blocker: **0**.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-19-CLEAN/EXECUTION.md`
 
-## Campaign Statüsü: CLAUDE BUILD CAMPAIGN COMPLETE — CODEX AUDIT PENDING
+## [GÜNCELLEME] Codex'in Bağımsız İlk Audit'i ve TEK TOPLU FIX CAMPAIGN
 
-Phase 6'dan Phase 19'a kadar TÜM fazlar Claude tarafından otonom
-olarak tamamlanmıştır. Main'e merge YAPILMADI, PR AÇILMADI, branch
-SİLİNMEDİ, history SIKIŞTIRILMADI — campaign kendi kurallarına göre
-burada durur. Bir sonraki adım, bu campaign'in dışında, ayrı bir
-görev olarak yapılacak GERÇEK Codex audit'idir
-(`.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, Bölüm 7).
+Yukarıdaki "CLAUDE BUILD CAMPAIGN COMPLETE — CODEX AUDIT PENDING"
+durumu, Codex'in GERÇEK bağımsız ilk audit'i ile test edildi.
+**FINAL VERDICT: FAIL / CHANGES REQUIRED — 9 blocker (B1-B9, P1×2 +
+P2×7), 7 non-blocking not (N1-N7).** Bu, "0 blocker" iddiasının
+YANLIŞ olduğunu ve Claude'un kendi self-audit'inin (Phase 18) bu
+blocker'ların HİÇBİRİNİ yakalamadığını kanıtladı — tam olarak
+campaign'in kendi kurallarının öngördüğü, gerçek bağımsız incelemenin
+neden gerekli olduğunun kanıtı.
+
+Bunun üzerine TEK TOPLU BİR FIX CAMPAIGN yürütüldü (aynı dal üzerinde,
+`a359b39` → `8fab168`, 7 commit, FIX-1'den FIX-6'ya): B1-B9'un
+TAMAMI ve N1-N7'nin TAMAMI ele alındı. Detaylar:
+`.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md` (Bölüm 1b) ve
+`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`.
+
+**Final durum: B1-B9 hepsi RESOLVED, N1-N7 hepsi RESOLVED/VERIFIED/
+DOCUMENTED. Açık blocker: 0. Final regresyon: Backend 144/144, Web-tests
+26/26, API-tests 6 suite (5 live + 1 local/static) 0 fail, GitHub
+Actions 4/4 job SUCCESS (yeni selenium-lab job'u dahil, GERÇEKTEN
+PASS).**
+
+## Campaign Statüsü: CLAUDE FIX CAMPAIGN COMPLETE — CODEX FIX-DELTA RE-REVIEW PENDING
+
+Phase 6'dan Phase 19'a kadar TÜM fazlar VE Codex'in bulduğu TÜM
+blocker'lar/non-blocking notlar ele alınmıştır. Main'e merge
+YAPILMADI, PR AÇILMADI, branch SİLİNMEDİ, history SIKIŞTIRILMADI —
+campaign kendi kurallarına göre burada durur. Bir sonraki adım, bu
+campaign'in dışında, ayrı bir görev olarak yapılacak Codex'in
+FIX-DELTA re-review'udur (`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`)
+— Codex'in Phase 6-19'un TAMAMINI yeniden taramasına GEREK YOKTUR,
+yalnızca `a359b39..8fab168` delta'sını incelemesi yeterlidir.
