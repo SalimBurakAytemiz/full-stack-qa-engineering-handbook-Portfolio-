@@ -38,10 +38,16 @@ module.exports = defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        // Pre-installed Chromium in this sandboxed environment — see
-        // EXECUTION.md "Cross-Browser Testing" section for why Firefox/
-        // WebKit are NOT run here (not installed, no download available).
-        launchOptions: { executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' },
+        // PLAYWRIGHT_CHROMIUM_PATH pins a specific binary (used in this
+        // repo's sandboxed dev session, where PLAYWRIGHT_SKIP_BROWSER_
+        // DOWNLOAD=1 is set and only a pre-installed Chromium revision is
+        // available — see EXECUTION.md "Cross-Browser Testing"). Leaving
+        // it unset (e.g. in CI, see .github/workflows/ci.yml) lets
+        // Playwright resolve its own normally-installed browser, so this
+        // config is portable rather than hardcoded to one machine.
+        launchOptions: process.env.PLAYWRIGHT_CHROMIUM_PATH
+          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
+          : {},
       },
     },
   ],

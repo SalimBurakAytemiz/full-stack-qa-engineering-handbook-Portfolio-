@@ -1,0 +1,74 @@
+name: QA Demo System CI
+
+# Phase 12 — CI/CD & Environment. A real, runnable pipeline (unlike the
+# Selenium/JMeter labs in Phase 10, this runs on GitHub's own runners and
+# is not subject to this repository's sandboxed-session network
+# restrictions) — genuinely verifiable via the Actions run it produces.
+on:
+  push:
+    branches:
+      - main
+      - 'feat/**'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+defaults:
+  run:
+    working-directory: QA-DEMO-SYSTEM
+
+jobs:
+  backend-tests:
+    name: Backend unit/integration tests (node:test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm test --workspace backend
+
+  web-tests:
+    name: Web QA (Playwright — functional/visual/accessibility)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      # GitHub-hosted runners have full internet access (unlike this
+      # repo's own sandboxed development session — see Phase 10/12
+      # EXECUTION.md) so a real Chromium download here is expected to
+      # succeed.
+      - run: npx playwright install --with-deps chromium
+        working-directory: QA-DEMO-SYSTEM/web-tests
+      - run: npm test --workspace web-tests
+
+  api-schema-validation:
+    name: API schema validation (Newman + AJV)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      # api-tests' scripts assume a live server at localhost:3000 (see
+      # postman/environments/local.postman_environment.json) — they don't
+      # start one themselves, so CI must, same as every local run in this
+      # campaign's evidence files.
+      - name: Start backend server
+        run: |
+          rm -f data/qa-demo.db
+          nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 0.5
+          done
+          echo "Backend did not become healthy in time"; cat /tmp/ci-backend.log; exit 1
+      - run: npm run api:test:postman --workspace api-tests
