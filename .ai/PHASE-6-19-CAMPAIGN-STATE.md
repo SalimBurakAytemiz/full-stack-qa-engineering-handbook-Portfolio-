@@ -66,8 +66,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 12 | CI/CD & Environment | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | ace6371 | 7796f0f |
 | 13 | Logging / Observability / Production QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 7796f0f | d6848a1 |
 | 14 | Modern QA Learning Labs | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | d6848a1 | 90a4b04 |
-| 15 | Case Studies (7) | IN PROGRESS | 90a4b04 | — |
-| 16 | Interview Preparation | NOT STARTED | — | — |
+| 15 | Case Studies (7) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 90a4b04 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 16 | Interview Preparation | IN PROGRESS | *(Phase 15 head)* | — |
 | 17 | Final Integration | NOT STARTED | — | — |
 | 18 | Independent Review (Claude self-audit) | NOT STARTED | — | — |
 | 19 | Clean | NOT STARTED | — | — |
@@ -236,38 +236,41 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
   dokunmadı). Açık blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/`
 
+## Phase 15 — Kapanış Özeti (tamamlandı)
+
+- 7 case-study dosyası yazıldı — 4/7 GERÇEK sentez (Authentication,
+  E-Commerce Order Flow, Payment Flow, Real-Time WebSocket/Event Flow
+  — hepsi Phase 5/6/7/8/11/14'ün ZATEN çalıştırılmış gerçek kanıtına
+  dayanıyor), 2/7 dürüstçe LEARNING (Multi-Country/Localization —
+  `grep` ile NOT IMPLEMENTED doğrulandı; Mobile Migration — Phase 8/10
+  altyapı eksikliği), 1/7 kısmen ikisi de (Production Incident —
+  Phase 13'ün correlation-ID altyapısı gerçek, senaryo kurgusal).
+- Bu faz yeni kod/test YAZMADI (bilinçli, test-ekonomisi) — 128
+  testlik tam backend regresyonu, case study'lerde referans verilen
+  TÜM test dosyalarının hâlâ PASS olduğunu doğruladı.
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-15-CASE-STUDIES/`
+
 ## NEXT EXACT ACTION
 
-Phase 15 (Case Studies) implementasyonuna başla — ROADMAP kapsamı:
-repo'daki TÜM QA bilgisini gerçekçi feature'lar üzerinde birleştiren
-7 örnek proje/case study:
+Phase 16 (Interview Preparation) implementasyonuna başla — ROADMAP
+kapsamı: repo'nun aynı zamanda bir teknik mülakat hazırlık kaynağı
+olması. 14 kategori: Manual QA, Test Design, API, SQL, Mobile,
+Automation, Selenium, Appium, Performance, Security, CI/CD, Senior QA,
+QA Lead, Scenario Questions. Her soru formatı: Short Answer / Detailed
+Answer / Example / Real QA Risk / Related Lab.
 
-1. Authentication
-2. E-Commerce Order Flow
-3. Payment Flow
-4. Multi-Country / Localization
-5. Real-Time WebSocket / Event Flow
-6. Production Incident Investigation
-7. Mobile Migration / Feature Parity
+**Kritik tasarım kararı:** "Related Lab" alanı GERÇEK repo yollarına
+(örn. `backend/tests/security.test.js`, `evidence/PHASE-10-.../
+EXECUTION.md`) işaret edecek — jenerik ders kitabı cevapları DEĞİL, bu
+campaign'in GERÇEKTEN yaptığı işe dayalı, doğrulanabilir cevaplar.
+Kapsam-orantılı: her kategori için ~2-4 soru (tükenmez bir mülakat
+bankası değil, ama her kategoriyi genuinely temsil eden, repo'ya
+gerçekten bağlı sorular).
 
-**Bu bir SENTEZ fazıdır** — yeni kod/test YAZILMAYACAK (gerekmedikçe);
-her case study, bu campaign boyunca ZATEN üretilmiş gerçek evidence'a
-(Phase 5 Authentication/Orders/Payment, Phase 6 WebSocket, Phase 13
-Production/Incident pattern'leri) referans vererek gerçek bir QA
-case-study anlatısı (senaryo, risk analizi, test stratejisi, GERÇEK
-sonuçlar, öğrenilenler) olarak yazılacak.
-
-**Kaynak kodda doğrulanacak (önce):** Multi-Country/Localization bu
-uygulamada UYGULANMIŞ MI (tek-locale mı, Türkçe-sabit mi)? Mobile
-Migration için Phase 8 Mobile LEARNING bulgusu zaten referans
-noktası. Production Incident Investigation için Phase 13'ün
-correlation-ID/root-cause-isolation çalışması zaten referans noktası.
-Case Study 01/02/03/05 (Authentication/Order/Payment/WebSocket) gerçek,
-kapsamlı test kanıtına sahip (Phase 5/6) — bunlar gerçek sentezle
-yazılacak; 04/06/07 kısmen/tamamen LEARNING ile.
-
-1. Kaynak kod + mevcut evidence dosyalarını hızlıca tara (Multi-
-   Country/Localization gerçekten var mı doğrula).
-2. 7 case-study dosyası yaz: `QA-DEMO-SYSTEM/evidence/PHASE-15-CASE-STUDIES/case-study-0{1-7}-*.md`.
-3. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-15-CASE-STUDIES/EXECUTION.md`
-   (özet + her case study'nin durumu).
+1. Tek bir konsolide `QA-DEMO-SYSTEM/evidence/PHASE-16-INTERVIEW-PREPARATION/INTERVIEW-PREP.md`
+   dosyası yaz (14 kategori, her biri kendi bölümünde).
+2. Mobile/Selenium/Appium/Security/Performance/CI-CD sorularının
+   "Related Lab" alanları Phase 8/10/11/12/14'ün GERÇEK (veya dürüstçe
+   LEARNING-only) bulgularına doğru referans versin.
+3. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-16-INTERVIEW-PREPARATION/EXECUTION.md`
