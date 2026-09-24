@@ -11,25 +11,30 @@ base→head commit aralığında durmaktadır.
 **Base commit (Phase 5 CLEAN kapanış noktası):** `837ff2ff1c0c1ada0435d793cfb09479fa954e2f`
 **İlk Codex audit'inin denetlediği HEAD (Phase 6-19 ilk tur kapanışı):** `a359b39` (`a359b391a02cfae20166f61a96a259a4f2601e0d`)
 **1. fix round'un final HEAD'i (Codex'in fix-delta re-review'unun denetlediği):** `2b1966d` (`2b1966d2d921acb50619cc15b896f64b8e3cedee`)
-**2. fix round'un (bu round — B5 fail gate + N4/N5/N7 reopened + N6 manifest sync) final HEAD'i:** bu commit'in kendisi — bkz. `git rev-parse HEAD` üzerindeki dal ucu. **[N6 kök-neden düzeltmesi]** Bir commit kendi SHA'sını YAZISAL olarak İÇEREMEZ (içerik hash'i belirler, hash içeriği belirleyemez) — bu satırın önceki turlarda hep bir ÖNCEKİ commit'in SHA'sını "final" diye yazıp sonra STALE kalmasının (N6) kök nedeniydi. Bundan böyle bu alan literal bir hex değer YERİNE "bu commit" ifadesini kullanır — asla stale olamaz.
+**2. fix round'un final HEAD'i (Codex'in 2. re-review'unun denetlediği):** `3555b53` (`3555b5336ea4486d161f2da861efd019b24238b0`)
+**3. fix round'un (bu round — N4 malformed-query regresyonu + N6 manifest sync) final HEAD'i:** bu commit'in kendisi — bkz. `git rev-parse HEAD` üzerindeki dal ucu. **[N6 kök-neden düzeltmesi, artık İKİNCİ kez uygulanıyor]** Bir commit kendi SHA'sını YAZISAL olarak İÇEREMEZ (içerik hash'i belirler, hash içeriği belirleyemez) — bu ilke önceki round'da (FIX-8) tanıtıldı ve bu round'da da AYNEN korunuyor.
 **Dal:** `feat/phase-6-19-full-completion-campaign`
-**Toplam campaign commit sayısı (base'den bu commit'e, `git log --oneline 837ff2f..HEAD | wc -l` ile GERÇEKTEN sayıldı, BU COMMIT DAHİL):** 40
-**Fix-campaign'in KENDİ commit sayısı (`a359b39..HEAD`, İKİ round toplam, BU COMMIT DAHİL):** 10 (FIX-1 → FIX-6a, +1 CI-doğrulama takip commit'i, FIX-6b, FIX-7, bu manifest-sync commit'i)
-**Toplam değişen dosya (`git diff --stat 837ff2f..HEAD`, BU COMMIT DAHİL):** 96 dosya
-**Fix-campaign'in KENDİ değişen dosya sayısı (`git diff --stat a359b39..HEAD`, BU COMMIT DAHİL):** 45 dosya
+**Toplam campaign commit sayısı (base'den bu commit'e, `git log --oneline 837ff2f..HEAD | wc -l` ile GERÇEKTEN sayıldı, BU COMMIT DAHİL):** 42
+**Fix-campaign'in KENDİ commit sayısı (`a359b39..HEAD`, ÜÇ round toplam, BU COMMIT DAHİL):** 12
+**Toplam değişen dosya (`git diff --stat 837ff2f..HEAD`, BU COMMIT DAHİL):** 97 dosya
+**Fix-campaign'in KENDİ değişen dosya sayısı (`git diff --stat a359b39..HEAD`, BU COMMIT DAHİL):** 46 dosya
 
-> **Bu campaign ÜÇ aşamadan oluşur:** (1) Phase 6-19 ilk implementasyon
-> turu (Bölüm 1 tablosu, base `837ff2f` → head `a359b39`), Codex'in
-> BAĞIMSIZ ilk audit'i tarafından incelendi ve **FAIL / CHANGES
-> REQUIRED** (9 blocker: B1-B9) sonucunu aldı; (2) 1. fix campaign turu
-> (Bölüm 1b tablosu, `a359b39` → `2b1966d`), B1-B9'un TAMAMINI ve N1-N7
-> non-blocking notlarını ele aldı — Codex'in fix-delta re-review'u bunu
-> **FAIL** buldu (B5'in fail-gate parçası eksik + N6 manifest sayıları
-> stale + N4/N5/N7 yeniden açıldı); (3) 2. fix campaign turu (bu commit
-> dahil, `2b1966d` → bu commit — FIX-7 + bu manifest-sync commit'i),
-> Codex'in ikinci turda bulduğu TÜM kalan bulguları kapatır. **CODEX'İN
-> BU ÜÇÜNCÜ TURU YALNIZCA `2b1966d`..HEAD FIX-DELTA'SI OLARAK
-> incelemesi yeterlidir** — bkz.
+> **Bu campaign DÖRT aşamadan oluşur (her aralığın SEMANTİĞİ ayrı ayrı
+> belirtilir — Codex'in 2. re-review'unun N6 talimatı gereği):**
+>
+> | Aralık adı | Range | Commit | Dosya | Durum |
+> |---|---|---|---|---|
+> | **Original audit range** | `837ff2f..a359b39` | (Bölüm 1 tablosu) | — | Codex'in BAĞIMSIZ ilk audit'i: **FAIL** (9 blocker: B1-B9) |
+> | **First consolidated fix range** | `a359b39..2b1966d` | 8 | 35 | Codex'in 1. fix-delta re-review'u: **FAIL** (B5 fail-gate eksik, N6 stale, N4/N5/N7 reopened) |
+> | **Remaining-fix range** | `2b1966d..3555b53` | 2 | 20 | Codex'in 2. fix-delta re-review'u: **FAIL** (N4'ün KENDİ FIX-7 kodunda malformed-query regresyonu + N6 yine stale) |
+> | **Bu round (3. re-review'un kalanı)** | `3555b53..HEAD` | 2 | 6 | N4 GERÇEK regresyon düzeltmesi (FIX-9) + N6 manifest sync (bu commit, FIX-10) |
+> | **Final campaign range** | `837ff2f..HEAD` | 42 | 97 | (yukarı bkz.) |
+>
+> Bu tablodaki `a359b39..2b1966d` ve `2b1966d..3555b53` satırları
+> TARİHSEL/DONMUŞ aralıklardır — bu round'un kendi commit'leri bu
+> aralıkların DIŞINDadır, bu yüzden sayıları BİR DAHA değişmez.
+> **CODEX'İN BU DÖRDÜNCÜ TURU YALNIZCA `3555b53`..HEAD FIX-DELTA'SI
+> OLARAK incelemesi yeterlidir** — bkz.
 > `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`.
 
 ---
@@ -78,7 +83,18 @@ base→head commit aralığında durmaktadır.
 | FIX-7 | B5 (P2, kalan parça — fail gate), N4 (reopened), N5, N7 (reopened) | `81b77b4` | `automation-labs/jmeter/scripts/{run-jmeter.js,run-jmeter.test.js,fixtures/*}` (yeni), `automation-labs/package.json`, `backend/src/middleware/requestContext.js`, `backend/tests/observability.test.js`, `evidence/PHASE-16-.../{EXECUTION,INTERVIEW-PREP}.md`, 7 dosyada hedefli Türkçe WHY yorumu | Backend 149/149, JMeter fail-gate unit 7/7 | `evidence/PHASE-6-19-FIX-CAMPAIGN/FIX-7-B5-N4-N5-N7.md` |
 | FIX-8 (bu commit) | N6 (manifest/Git consistency, GERÇEK düzeltme — bu commit'in kendi etkisini de sayıma dahil eder) | bu commit | `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, `.ai/PHASE-6-19-CAMPAIGN-STATE.md` | (manifest-only, kod değişmedi; final regresyon FIX-7'de zaten doğrulandı, bu commit'te TEKRAR ÇALIŞTIRILMADI — bkz. Bölüm 18 talimatı) | (bu dosyaların kendisi) |
 
-**2. fix round sonu — B5 TAM RESOLVED (implementation + controlled fail/pass gate + correlation + threshold, native JMeter runtime hâlâ ENVIRONMENT BLOCKED — dürüstçe ayrı belirtilmiştir). N4/N5/N7 RESOLVED. N6 RESOLVED — bu manifest artık kendi commit'inin etkisini sayıma dahil eder (bkz. üstteki "bu commit" self-reference notu).**
+**2. fix round sonu — B5 TAM RESOLVED (implementation + controlled fail/pass gate + correlation + threshold, native JMeter runtime hâlâ ENVIRONMENT BLOCKED — dürüstçe ayrı belirtilmiştir). N4/N5/N7 RESOLVED (denildi). N6 RESOLVED (denildi). Codex'in 2. re-review'u bunu YİNE FAIL buldu: N4'ün KENDİ FIX-7 kodunda (`decodeURIComponent(key)` unguarded) gerçek bir regresyon vardı, ve N6 manifesti (FIX-DELTA-MANIFEST.md'nin `a359b39..2b1966d` satırı) yine stale kalmıştı (34/7 yazılıyordu, gerçek 35/8'di — bu aralığın kendi SON commit'i `2b1966d` listeden atlanmıştı).**
+
+---
+
+## 1d. Üçüncü Fix Round Checkpoint Tablosu (`3555b53` → bu commit, Codex'in 2. fix-delta RE-REVIEW'unun kalan 2 bulgusunun düzeltmesi)
+
+| Checkpoint | Bulgu(lar) | Head SHA | Ana Değişen Dosyalar | Test | Evidence |
+|---|---|---|---|---|---|
+| FIX-9 | N4 (GERÇEK regresyon — `redactSensitiveQuery`'nin kendi kodunda malformed-query URIError) | `2d6620d` | `backend/src/middleware/requestContext.js` (`safeDecodeURIComponent` yeni), `backend/tests/observability.test.js` (8 yeni test) | Backend 157/157 | `evidence/PHASE-6-19-FIX-CAMPAIGN/FIX-9-N4-malformed-query-regression.md` |
+| FIX-10 (bu commit) | N6 (manifest/Git consistency, 3. deneme — `a359b39..2b1966d` satırının kendisi stale'di) | bu commit | `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, `.ai/PHASE-6-19-CAMPAIGN-STATE.md` | (manifest-only, kod değişmedi) | (bu dosyaların kendisi) |
+
+**3. fix round sonu — N4 GERÇEKTEN RESOLVED (malformed query artık throw etmiyor, route 500'e düşmüyor, sensitive değerler hâlâ redakte ediliyor). N6 GERÇEKTEN RESOLVED — bu kez HEM "bu commit" self-reference ilkesi HEM DE tüm tarihsel aralıkların (`a359b39..2b1966d`, `2b1966d..3555b53`) kendi son commit'lerini İÇERECEK şekilde yeniden doğrulanmasıyla.**
 
 ---
 
@@ -86,7 +102,7 @@ base→head commit aralığında durmaktadır.
 
 | Katman | Sayı | Komut |
 |---|---|---|
-| Backend (`node:test`) | 149/149 pass (144 önceki + 5 yeni N4 redaksiyon testi) | `node --test tests/**/*.test.js` |
+| Backend (`node:test`) | 157/157 pass (144 önceki + 5 N4-redaksiyon + 8 N4-malformed-query, 3. round) | `node --test tests/**/*.test.js` |
 | JMeter fail-gate unit (`node:test`, JMeter runtime'ından bağımsız) | 7/7 pass — **[2. fix round, B5]** | `node --test automation-labs/jmeter/scripts/run-jmeter.test.js` |
 | Web-tests (Playwright) | 26/26 pass (bu round değişmedi) | `npx playwright test` |
 | API-tests — Public schema | 11 req / 26 assertion, 0 fail | `npm run api:test:postman` |
@@ -173,7 +189,7 @@ cd .. && npm run db:seed && cd api-tests && npm run api:test:db
 
 ---
 
-## 6. Açık Blocker Sayısı (Campaign Genelinde, ÜÇ TUR SONRASI): **0**
+## 6. Açık Blocker Sayısı (Campaign Genelinde, DÖRT TUR SONRASI): **0**
 
 **İlk tur** (Bölüm 1) kendi içinde bulduğu her gerçek bug'ı (Phase 7
 null-prototype row, Phase 8 CDP race condition, Phase 9 false-negative
@@ -197,12 +213,13 @@ PASS ediyor, GitHub Actions'ta).
 ## 7. Codex Audit için Öneri (Fix-Delta Re-Review)
 
 Bu manifest + Bölüm 1'deki her fazın kendi `EXECUTION.md`'si + Bölüm
-1b/1c'deki fix checkpoint'lerinin kendi evidence dosyaları +
-`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, Codex'in bu ÜÇÜNCÜ
-turdaki (2. fix-delta) incelemesi için yeterli bağlamı sağlamalıdır.
+1b/1c/1d'deki fix checkpoint'lerinin kendi evidence dosyaları +
+`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, Codex'in bu DÖRDÜNCÜ
+turdaki (3. fix-delta) incelemesi için yeterli bağlamı sağlamalıdır.
 Codex'in TÜM Phase 6-19'u baştan taramasına GEREK YOKTUR — yalnızca
-`2b1966d..HEAD` aralığındaki değişiklikleri (FIX-7'nin 17 dosyası +
-bu manifest-sync commit'inin 3 dosyası) gözden geçirmesi yeterlidir.
+`3555b53..HEAD` aralığındaki değişiklikleri (FIX-9'un 3 dosyası +
+bu manifest-sync commit'inin 3 dosyası, toplam 6) gözden geçirmesi
+yeterlidir.
 
 Codex'in en yüksek değeri, Claude'un KENDİ fix'lerini incelerken
 doğal olarak sahip olduğu körlüğün dışından bakabilmesinde olacaktır

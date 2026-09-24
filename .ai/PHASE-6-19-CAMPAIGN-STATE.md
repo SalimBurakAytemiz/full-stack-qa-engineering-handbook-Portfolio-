@@ -400,14 +400,46 @@ RESOLVED), N4/N5/N6/N7 hepsi RESOLVED. Açık blocker: 0. Açık
 non-blocking not: 0. Backend regresyonu: 149/149. JMeter fail-gate
 unit testleri: 7/7.**
 
-## Campaign Statüsü: CLAUDE 2. FIX ROUND COMPLETE — CODEX'İN BİR SONRAKİ (3.) TURU İÇİN BEKLEMEDE
+## [GÜNCELLEME 3] Codex'in 2. Fix-Delta Re-Review'u ve 3. FIX ROUND
 
-Phase 6'dan Phase 19'a kadar TÜM fazlar VE Codex'in İKİ ayrı bağımsız
+Codex'in 2. fix campaign turu (`2b1966d` → `3555b53`) üzerindeki
+BAĞIMSIZ 2. fix-delta re-review'u da **FAIL / CHANGES REQUIRED**
+sonucu verdi — ama bu kez yalnızca 2 açık blocker kaldı: B1-B9 hepsi
+gerçekten RESOLVED'dı, N5/N7 gerçekten RESOLVED'dı.
+
+1. **N4 — 2. round'un KENDİ kodunda gerçek bir regresyon:**
+   `redactSensitiveQuery()`'nin `decodeURIComponent(key)` çağrısı
+   unguarded'dı; malformed percent-encoding (`?x%ZZ=1`) bir `URIError`
+   fırlatıyor, bu da SADECE loglama amaçlı bir middleware'in route'un
+   gerçek cevabını 500'e çevirmesine yol açıyordu.
+2. **N6 — yine stale, ama farklı bir yerde:** bu kez "bu commit"
+   self-reference ilkesi doğru çalışıyordu, ama TARİHSEL
+   `a359b39..2b1966d` aralığı hiç yeniden hesaplanmamıştı (hâlâ eski
+   "34 dosya/7 commit" yazıyordu) — gerçek sayı 35/8'di (aralığın
+   kendi son commit'i, `2b1966d`, sayıma dahil edilmemişti).
+
+3. bir fix round (`3555b53` → bu commit, FIX-9 + FIX-10) yürütüldü:
+   N4, `safeDecodeURIComponent()` (try/catch, ASLA throw etmez) ve
+   fail-closed bir placeholder ile GERÇEKTEN kapatıldı — 8 yeni test
+   (Codex'in istediği A/B/C/D senaryolarının hepsi, gerçek HTTP
+   isteğiyle doğrulandı). N6 bu kez hem self-reference ilkesini
+   KORUYARAK hem de TÜM tarihsel aralıkları (`a359b39..2b1966d`,
+   `2b1966d..3555b53`) gerçek `git log`/`git diff --stat` ile yeniden
+   doğrulayarak, net bir range-semantiği tablosuyla kapatıldı.
+   Detaylar: `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md` (Bölüm 1d) ve
+   `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`.
+
+**3. round sonrası final durum: B1-B9, N4, N5, N6, N7 hepsi
+GERÇEKTEN RESOLVED. Açık blocker: 0. Backend regresyonu: 157/157.**
+
+## Campaign Statüsü: CLAUDE 3. FIX ROUND COMPLETE — CODEX'İN BİR SONRAKİ (4.) TURU İÇİN BEKLEMEDE
+
+Phase 6'dan Phase 19'a kadar TÜM fazlar VE Codex'in ÜÇ ayrı bağımsız
 turda bulduğu TÜM blocker'lar/non-blocking notlar ele alınmıştır.
 Main'e merge YAPILMADI, PR AÇILMADI, branch SİLİNMEDİ, history
 SIKIŞTIRILMADI — campaign kendi kurallarına göre burada durur. Bu
 görevin kendi talimatı gereği, Codex BU TURDA ÇAĞRILMADI — bir sonraki
 adım (varsa) bu campaign'in dışında, ayrı bir görev olarak yapılacak
-Codex'in ÜÇÜNCÜ turudur (`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`)
+Codex'in DÖRDÜNCÜ turudur (`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`)
 — Codex'in Phase 6-19'un TAMAMINI yeniden taramasına GEREK YOKTUR,
-yalnızca `2b1966d..HEAD` delta'sını incelemesi yeterlidir.
+yalnızca `3555b53..HEAD` delta'sını incelemesi yeterlidir.

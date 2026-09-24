@@ -8,24 +8,48 @@ Codex'in Phase 6-19'un TAMAMINI baştan taramasına gerek KALMADAN,
 yalnızca bu delta'yı re-review etmesi için tasarlanmıştır.
 
 **Original audited HEAD:** `a359b391a02cfae20166f61a96a259a4f2601e0d`
-**1. fix round final HEAD (Codex'in fix-delta re-review'unun denetlediği):** `2b1966d`
-**2. fix round final HEAD (bu round — Codex'in re-review'unun kalan bulgularının düzeltmesi):** bu commit'in kendisi — `git rev-parse HEAD` ile doğrulayın (bkz. `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md` başındaki N6 self-reference notu — bu dosya da AYNI ilkeyi izler, literal bir hex değer stale kalabileceği için buraya yazılmaz)
+**1. fix round final HEAD (Codex'in 1. fix-delta re-review'unun denetlediği):** `2b1966d`
+**2. fix round final HEAD (Codex'in 2. fix-delta re-review'unun denetlediği):** `3555b53` (`3555b5336ea4486d161f2da861efd019b24238b0`)
+**3. fix round final HEAD (bu round — Codex'in 2. re-review'unun kalan 2 bulgusunun düzeltmesi):** bu commit'in kendisi — `git rev-parse HEAD` ile doğrulayın (bkz. `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md` başındaki N6 self-reference notu — bu dosya da AYNI ilkeyi izler, literal bir hex değer stale kalabileceği için buraya yazılmaz)
 **Dal:** `feat/phase-6-19-full-completion-campaign` (değişmedi)
-**1. round delta:** `git diff a359b39..2b1966d` — 34 dosya, +1933 / -88 satır (7 commit)
-**2. round delta (bu round):** `git diff 2b1966d..HEAD` — 20 dosya (FIX-7'nin 17 + bu manifest-sync commit'inin 3), 2 commit
-**Toplam delta (`a359b39..HEAD`, BU COMMIT DAHİL):** 45 dosya, 10 commit — `git log --oneline a359b39..HEAD | wc -l` ve `git diff --stat a359b39..HEAD` ile GERÇEKTEN sayıldı
+
+### Range semantiği (Codex'in N6 talimatı gereği — her aralık ne temsil ediyor, birbirine karıştırılmaz)
+
+| Aralık adı | Range | Commit | Dosya | Durum |
+|---|---|---|---|---|
+| Original audit range | `837ff2f..a359b39` | (Bölüm 1 tablosu, audit manifest'te) | — | Codex 1. audit: FAIL (B1-B9) |
+| First consolidated fix range | `a359b39..2b1966d` | **8** | **35** | Codex 1. re-review: FAIL (B5 fail-gate eksik, N6 stale, N4/N5/N7 reopened) — [önceki tur "7/34" yazmıştı, aralığın kendi son commit'i (`2b1966d`) listeden atlanmıştı, bu round'da GERÇEK `git log`/`git diff --stat` ile düzeltildi] |
+| Remaining-fix range | `2b1966d..3555b53` | 2 | 20 | Codex 2. re-review: FAIL (N4'ün KENDİ FIX-7 kodunda malformed-query regresyonu, N6 yine stale) |
+| Bu round (2. re-review'un kalanı) | `3555b53..HEAD` | 2 | 6 | N4 GERÇEK regresyon fix'i (FIX-9) + N6 manifest sync (bu commit, FIX-10) |
+| Final campaign range | `837ff2f..HEAD` | 42 | 97 | (audit manifest, Bölüm 0) |
+| Fix-campaign'in kendi toplamı | `a359b39..HEAD` | 12 | 46 | Üç round toplamı, BU COMMIT DAHİL |
+
+Yukarıdaki `a359b39..2b1966d` ve `2b1966d..3555b53` satırları
+TARİHSEL/DONMUŞ'tur — bu round'un commit'leri bunların DIŞINDA, bu
+yüzden bir daha değişmezler.
 
 ---
 
-## Codex'in 2. Turdaki Re-Review Bulguları ve Bu Round'daki Düzeltmeleri
+## Codex'in 2. Turdaki (2. fix-delta) Re-Review Bulguları ve Bu Round'daki Düzeltmeleri
 
-Codex'in `2b1966d` üzerindeki fix-delta re-review'u **FAIL / CHANGES
-REQUIRED** verdi: B5'in fail-gate parçası eksikti (P2), N6 (manifest/
-Git consistency) kendisi de stale sayılar içeriyordu (bir blocker
-olarak ele alındı), ve N4/N5/N7 yeniden açıldı. Bu round'un (FIX-7 +
-bu manifest-sync commit'i) her birini nasıl kapattığı aşağıda, ilgili
-B/N maddesinin ALTINA eklenmiştir (tarihçe SİLİNMEDİ, yalnızca
-GÜNCEL durum en altta).
+Codex'in `3555b53` üzerindeki 2. fix-delta re-review'u **FAIL / CHANGES
+REQUIRED** verdi — yalnızca 2 açık blocker kaldı:
+
+1. **N4 — GERÇEK regresyon:** FIX-7'de eklenen `redactSensitiveQuery()`,
+   `decodeURIComponent(key)`'i unguarded çağırıyordu; malformed
+   percent-encoding (`x%ZZ`) bir `URIError` fırlatıyor, bu da
+   `requestContext()` içinde `next()`'ten ÖNCE senkron olarak
+   çalıştığı için Express'in generic error handler'ına düşüp
+   route'un gerçek cevabını 500'e çeviriyordu — "logging application
+   behavior'ını bozmamalı" ilkesinin ihlali.
+2. **N6 — yine stale:** `a359b39..2b1966d` satırı bu dosyada hâlâ
+   "34 dosya / 7 commit" yazıyordu; Codex'in bağımsız `git`
+   doğrulaması gerçek sayının 35/8 olduğunu gösterdi (aralığın kendi
+   son commit'i, `2b1966d`, listeden atlanmıştı).
+
+Bu round (FIX-9 + bu manifest-sync commit'i, FIX-10) her ikisini de
+kapatır — detaylar aşağıda ilgili B/N maddesinin ALTINA eklenmiştir
+(tarihçe SİLİNMEDİ, yalnızca GÜNCEL durum en altta).
 
 ---
 
@@ -120,10 +144,10 @@ runtime ENVIRONMENT BLOCKED (doğrulanmış). RESOLVED.**
 | N1 | WS "tek mesaj" testi sabit 150ms window | RESOLVED — "mesaj geldi mi" artık event-driven | `8fab168` |
 | N2 | Mobile/multi-browser scope doc | VERIFIED — zaten doğru, değişiklik gerekmedi | — |
 | N3 | CI/Jenkins DB cleanup path uyuşmazlığı | RESOLVED — 3 yerde `backend/data/qa-demo.db`'ye düzeltildi | `8fab168` |
-| N4 | Access log query leakage | 1. round: "gerçek risk yok" (ampirik) — Codex 2. turda REOPEN etti, defense-in-depth redaksiyon istedi. **2. round: RESOLVED — GERÇEK KOD** — `redactSensitiveQuery()` (key-name bazlı, değer bazlı DEĞİL), 5 yeni test | `56f99ee` (1. round) → `81b77b4` (2. round, GERÇEK kapanış) |
-| N5 | Phase 16 evidence 26 vs gerçek 30 soru | 1. round: soru SAYISI (30) düzeltildi — Codex 2. turda "her kategoride 2-3 soru" ifadesinin YANLIŞ olduğunu buldu (Appium=1). **2. round: RESOLVED** — gerçek kategori dağılımı tablo olarak eklendi, yeni soru İCAT EDİLMEDİ | `8fab168` (1. round) → `81b77b4` (2. round, GERÇEK kapanış) |
-| N6 | Manifest commit count Git ile uyuşmuyordu | 1. round: "RESOLVED" denildi ama YİNE stale kaldı (FIX-6b/`2b1966d` kendi etkisini sayıma katmadı — Codex 2. turda GERÇEK Git durumunu bağımsız doğrulayıp yakaladı: 37/87 yazılmıştı, gerçek 38/88'di). **2. round: GERÇEKTEN RESOLVED** — bu manifest artık "bu commit" self-reference ilkesini kullanıyor (yukarı bkz.), asla stale olamaz; sayılar bu commit DAHİL edilerek hesaplandı | (bu dosya + manifest, bu commit) |
-| N7 | WHY comment'leri ağırlıkla English | 1. round: DOCUMENTED (bilinçli kapsam kararı, kod değiştirilmedi) — Codex 2. turda, spesifik/hedefli bir kapsamla (7 dosya, Phase 6-19'un GERÇEKTEN önemli logic'i) YENİDEN AÇTI. **2. round: RESOLVED** — 7 dosyada hedefli Türkçe WHY paragrafı eklendi (İngilizce'nin ÜZERİNE, churn yok, davranış değişmedi) | `8fab168` (1. round, DOCUMENTED) → `81b77b4` (2. round, GERÇEK kapanış) |
+| N4 | Access log query leakage | 1. round: "gerçek risk yok" (ampirik) — reopened, defense-in-depth redaksiyon istendi. 2. round: "RESOLVED" denildi (`redactSensitiveQuery`) — Codex 2. re-review'u bu KODUN KENDİSİNDE gerçek bir regresyon buldu: `decodeURIComponent(key)` unguarded, malformed `%ZZ` → `URIError` → route 500'e düşüyordu. **3. round: GERÇEKTEN RESOLVED** — `safeDecodeURIComponent()` (try/catch, throw etmez) + fail-closed `<invalid-encoding>=<redacted>` placeholder, 8 yeni test (A/B/C/D senaryolarının hepsi, gerçek HTTP isteğiyle) | `56f99ee` (1.) → `81b77b4` (2., regresyonlu) → `2d6620d` (3., GERÇEK kapanış) |
+| N5 | Phase 16 evidence 26 vs gerçek 30 soru | 1. round: soru SAYISI (30) düzeltildi — 2. turda "her kategoride 2-3 soru" ifadesinin YANLIŞ olduğu bulundu (Appium=1). **2. round: RESOLVED** — gerçek kategori dağılımı tablo olarak eklendi, yeni soru İCAT EDİLMEDİ. 3. round'da dokunulmadı (Codex'in bu round'daki talimatı gereği kapsam dışı) | `8fab168` (1.) → `81b77b4` (2., GERÇEK kapanış) |
+| N6 | Manifest commit count Git ile uyuşmuyordu | 1. round: "RESOLVED" denildi ama YİNE stale kaldı (37/87 yazılmıştı, gerçek 38/88'di). 2. round: "bu commit" self-reference ilkesiyle "GERÇEKTEN RESOLVED" denildi — ANCAK `a359b39..2b1966d`'nin TARİHSEL satırı (34/7) hiç yeniden hesaplanmamıştı, Codex'in 2. re-review'u bunu bağımsız `git` ile yakaladı (gerçek: 35/8). **3. round: GERÇEKTEN RESOLVED** — hem self-reference ilkesi KORUNUYOR hem de TÜM tarihsel aralıklar (`a359b39..2b1966d`, `2b1966d..3555b53`) kendi gerçek `git log`/`git diff --stat` sayılarıyla yeniden doğrulandı ve tablo halinde (yukarı bkz.) net range semantiğiyle sunuldu | (bu dosya + manifest, bu commit — FIX-10) |
+| N7 | WHY comment'leri ağırlıkla English | 1. round: DOCUMENTED (kod değiştirilmedi) — 2. turda hedefli kapsamla (7 dosya) YENİDEN AÇTI. **2. round: RESOLVED** — 7 dosyada hedefli Türkçe WHY paragrafı eklendi, churn yok. 3. round'da dokunulmadı (kapsam dışı) | `8fab168` (1., DOCUMENTED) → `81b77b4` (2., GERÇEK kapanış) |
 
 ---
 
@@ -143,7 +167,7 @@ Secret scan:                0 gerçek secret
 Broken markdown links:      0 (1 false-positive incelendi, elendi)
 ```
 
-## 2. Round Regresyon (FIX-7 sonrası, bu manifest-sync commit'inde TEKRAR ÇALIŞTIRILMADI)
+## 2. Round Regresyon (FIX-7+FIX-8 sonrası, `3555b53` itibarıyla)
 
 ```
 Backend (node:test):              149/149 pass (144 + 5 yeni N4 redaksiyon testi)
@@ -151,10 +175,22 @@ JMeter fail-gate unit (node:test): 7/7 pass — JMeter runtime'ından bağımsı
 node --check (9 değiştirilen .js): 9/9 sözdizimsel doğru
 Secret scan (a359b39..HEAD diff):  0 gerçek secret
 Stray runtime artifact:            0 (git status clean, .log taraması temiz)
-GitHub Actions CI (bu commit'in bir önceki FIX-7 push'u, 81b77b4):
-                                    bu manifest yazıldığı anda IN_PROGRESS —
-                                    final sonuç bu round'un Türkçe raporunda
-                                    ayrıca belirtilecek, PASS olarak VARSAYILMADI
+GitHub Actions CI:                 FIX-A (81b77b4) → SUCCESS (4/4 job)
+```
+
+## 3. Round Regresyon (FIX-9 sonrası, bu manifest-sync commit'inde TEKRAR ÇALIŞTIRILMADI)
+
+```
+Backend (node:test):              157/157 pass (149 + 8 yeni N4 malformed-query testi)
+node --check (requestContext.js): sözdizimsel doğru
+decodeURIComponent('x%ZZ')        THROWS (kök neden ampirik doğrulandı)
+safeDecodeURIComponent('x%ZZ')    undefined (throw ETMEZ — fix doğrulandı)
+Secret scan (a359b39..HEAD diff): 0 gerçek secret
+Stray runtime artifact:           0 (git status clean)
+GitHub Actions CI (FIX-9 push'u, 2d6620d):
+                                   bu round'un Türkçe raporunda ayrıca
+                                   belirtilecek, rapor anında IN_PROGRESS
+                                   ise PASS olarak VARSAYILMAYACAK
 ```
 
 ---
@@ -170,12 +206,12 @@ GitHub Actions CI (bu commit'in bir önceki FIX-7 push'u, 81b77b4):
 - B7 RESOLVED
 - B8 RESOLVED
 - B9 RESOLVED
-- N4 RESOLVED (2. round, gerçek redaksiyon kodu)
+- N4 RESOLVED (3. round — 2. round'daki kodun KENDİSİNDE bulunan gerçek regresyon düzeltildi)
 - N5 RESOLVED (2. round, gerçek kategori dağılımı)
-- N6 RESOLVED (2. round, self-reference ilkesiyle kalıcı düzeltme)
+- N6 RESOLVED (3. round — self-reference ilkesi KORUNUYOR + tüm tarihsel aralıklar gerçek Git sayılarıyla yeniden doğrulandı)
 - N7 RESOLVED (2. round, hedefli Türkçe WHY yorumları)
 
 **Open blocker: 0. Open non-blocking note: 0.**
 
 **CODEX FIX-DELTA RE-REVIEW READY: EVET** (Codex bir sonraki turda
-isterse yalnızca `2b1966d..HEAD` delta'sını inceleyebilir).
+isterse yalnızca `3555b53..HEAD` delta'sını inceleyebilir).
