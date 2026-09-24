@@ -66,8 +66,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 12 | CI/CD & Environment | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | ace6371 | 7796f0f |
 | 13 | Logging / Observability / Production QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 7796f0f | d6848a1 |
 | 14 | Modern QA Learning Labs | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | d6848a1 | 90a4b04 |
-| 15 | Case Studies (7) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 90a4b04 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
-| 16 | Interview Preparation | IN PROGRESS | *(Phase 15 head)* | — |
+| 15 | Case Studies (7) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 90a4b04 | 27ea9d8 |
+| 16 | Interview Preparation | IN PROGRESS | 27ea9d8 | — |
 | 17 | Final Integration | NOT STARTED | — | — |
 | 18 | Independent Review (Claude self-audit) | NOT STARTED | — | — |
 | 19 | Clean | NOT STARTED | — | — |
