@@ -6,11 +6,13 @@ const { createOrdersRouter } = require('./routes/orders.routes');
 const { createNotificationsRouter } = require('./routes/notifications.routes');
 const { createGraphQLHandler } = require('./graphql');
 const { jsonParseErrorHandler, notFoundHandler, errorHandler } = require('./middleware/errorHandler');
+const { requestContext } = require('./middleware/requestContext');
 
 function createApp(db, { pushNotificationToUser } = {}) {
   const app = express();
   app.use(express.json());
   app.use(jsonParseErrorHandler);
+  app.use(requestContext);
 
   app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
   app.use('/api/auth', createAuthRouter(db));

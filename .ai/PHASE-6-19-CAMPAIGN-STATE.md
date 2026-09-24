@@ -64,8 +64,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 10 | Automation Learning Labs (Selenium/Appium/JMeter) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 5b94cea | 9d4d6a6 |
 | 11 | Security-Aware QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9d4d6a6 | ace6371 |
 | 12 | CI/CD & Environment | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | ace6371 | 7796f0f |
-| 13 | Logging / Observability / Production QA | IN PROGRESS | 7796f0f | — |
-| 14 | Modern QA Learning Labs | NOT STARTED | — | — |
+| 13 | Logging / Observability / Production QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 7796f0f | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 14 | Modern QA Learning Labs | IN PROGRESS | *(Phase 13 head)* | — |
 | 15 | Case Studies (7) | NOT STARTED | — | — |
 | 16 | Interview Preparation | NOT STARTED | — | — |
 | 17 | Final Integration | NOT STARTED | — | — |
@@ -192,46 +192,58 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Tam backend regresyonu: 123/123. Açık blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-12-CICD-ENVIRONMENT/`
 
+## Phase 13 — Kapanış Özeti (tamamlandı)
+
+- Yeni `backend/src/middleware/requestContext.js` — her isteğe
+  `crypto.randomUUID()` korelasyon ID'si, `X-Request-Id` response
+  header'ı, yapısal tek-satırlık access-log.
+- **Gerçek bulgu + düzeltme:** İlk yazımda `req.path` `finish` event'i
+  içinde LAZY okunduğu için Express'in router-mount path-stripping
+  davranışı nedeniyle YANLIŞ logluyordu (`/api/products` için `/`) —
+  kök neden izole edildi, `req.originalUrl`'i senkron yakalayarak
+  düzeltildi, regresyon testiyle kilitlendi.
+- 5 yeni test (`observability.test.js`). Tam backend regresyonu:
+  128/128 (123 mevcut + 5 yeni). Global middleware olduğu için Phase
+  5'in protected Postman koleksiyonuna karşı da ayrıca doğrulandı
+  (19/19, 42/42).
+- Smoke/Production/Release/Stability/Hotfix Testing → Phase 12'nin
+  GERÇEK CI pipeline'ı ve bu campaign'in kendi pratiği referans
+  verilerek karşılandı (tekrar test yazılmadı).
+- Elastic/OpenTelemetry/Jaeger → dürüstçe LEARNING-only.
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY/`
+
 ## NEXT EXACT ACTION
 
-Phase 13 (Logging / Observability / Production QA) implementasyonuna
-başla — ROADMAP kapsamı:
+Phase 14 (Modern QA Learning Labs) implementasyonuna başla — ROADMAP
+kapsamı (kendi başlığı zaten "LEARNING LABS"): Pact, Kafka, RabbitMQ,
+Docker for QA, Code Coverage, SonarQube, Allure, Feature Flags,
+Canary Deployment, Blue-Green Deployment, Cloud QA, k6, Gatling,
+Locust.
 
-**EXPERIENCE:** Elastic, Backend Logs, Application Logs, Correlation
-ID, Request ID, Root Cause Isolation, Production Validation, Smoke
-Testing, Stability Verification, Hotfix Testing, Release Validation.
-**LEARNING:** Distributed Tracing, OpenTelemetry, Jaeger, Logs/
-Metrics/Traces model.
+**Bu oturumda doğrulanan gerçek fırsatlar:**
+- **Code Coverage:** Node'un yerleşik `--experimental-test-coverage`
+  bayrağı ile GERÇEK coverage raporu alınabilir (ek dependency yok).
+- **k6/Gatling/Locust:** `pip3 install --dry-run locust` bu oturumda
+  DENENDİ ve tüm bağımlılıklarıyla kurulabilir olduğu doğrulandı
+  (pypi.org allowlist'te, JMeter'ın aksine — Locust saf Python'dur,
+  JVM/XStream bağımlılığı YOK). GERÇEK bir `locustfile.py` yazılıp
+  gerçek backend'e karşı headless modda çalıştırılacak.
+- **Docker for QA:** `docker` CLI KURULU (`29.3.1`) ama `docker info`
+  ile DAEMON'a erişilemediği doğrulandı (`docker.sock` yok) — gerçek,
+  syntax-correct bir `Dockerfile` + `docker-compose.yml` yazılacak,
+  Selenium/JMeter ile AYNI "CODE COMPLETE — EXECUTION BLOCKED
+  (doğrulanmış)" sınıflandırması kullanılacak.
+- **Diğer tüm maddeler** (Pact, Kafka, RabbitMQ, SonarQube, Allure,
+  Feature Flags, Canary, Blue-Green, Cloud QA) — gerçek sunucu/hesap
+  gerektirir, LEARNING-only.
 
-**Gerçekten yapılabilir olan:** Backend'e gerçek bir correlation-ID/
-request-ID middleware'i eklenecek (her isteğe `crypto.randomUUID()`
-ile bir ID atanacak, `X-Request-Id` response header'ında geri
-dönecek, mevcut `console.log` satırlarına — order/event/notification
-servislerindeki mevcut loglama pattern'ine — bu ID eklenecek). Bu,
-Root Cause Isolation'ı GERÇEK kılar: bir isteğin tüm log satırları
-tek bir ID ile filtrelenebilir hale gelir. Gerçek bir test bunu
-kanıtlayacak (iki eşzamanlı isteğin ID'lerinin çakışmadığı,
-response header'da göründüğü).
-
-Smoke Testing/Production Validation/Release Validation zaten Phase
-12'nin GERÇEK CI pipeline'ında somutlaşmıştır (her push'ta health-
-check + tam suite) — burada TEKRAR test yazılmayacak, yalnızca bu
-kavramların bu projede NASIL karşılandığı referans verilecek.
-Stability Verification/Hotfix Testing — bu campaign'in kendi
-"her fazda tam regresyon" disiplini zaten bunun canlı örneğidir.
-
-**Gerçekten yapılamayan:** Elastic/OpenTelemetry/Jaeger — Tooling
-tablosunda zaten doğrulanmış altyapı eksikliği, LEARNING-only.
-
-1. `backend/src/middleware/requestId.js` (veya benzeri) — yeni,
-   gerçek correlation-ID middleware'i.
-2. Mevcut servislerin `console.log` satırlarına (events.service.js,
-   notifications.service.js, websocketServer.js) request/correlation
-   ID eklenmesi — yalnızca genuinely faydalı olan yerlerde, aşırı
-   loglama eklenmeyecek.
-3. Gerçek test: `backend/tests/observability.test.js` — her yanıtta
-   `X-Request-Id` header'ı var mı, iki farklı istek farklı ID alıyor
-   mu, aynı isteğin log satırları aynı ID'yi taşıyor mu.
-4. Elastic/OpenTelemetry/Jaeger/Distributed Tracing → LEARNING
-   dokümantasyonu.
-5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY/EXECUTION.md`
+1. `node --test --experimental-test-coverage tests/**/*.test.js
+   tests/*.test.js` çalıştır, gerçek sayıları kaydet.
+2. `pip3 install locust`, gerçek `locustfile.py` yaz, gerçek backend'e
+   karşı headless kısa bir çalıştırma yap, gerçek istatistikleri
+   kaydet.
+3. `Dockerfile` + `docker-compose.yml` yaz (backend servisi için),
+   `docker info` çıktısıyla execution-blocked durumunu belgele.
+4. Kalan maddeler için LEARNING dokümantasyonu.
+5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md`
