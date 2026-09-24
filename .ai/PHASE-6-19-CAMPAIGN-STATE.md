@@ -69,8 +69,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 15 | Case Studies (7) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 90a4b04 | 27ea9d8 |
 | 16 | Interview Preparation | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 27ea9d8 | f8b4188 |
 | 17 | Final Integration | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | f8b4188 | fda6e61 |
-| 18 | Independent Review (Claude self-audit) | CLAUDE SELF-AUDIT COMPLETE — PENDING FINAL CODEX AUDIT | fda6e61 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
-| 19 | Clean | IN PROGRESS | *(Phase 18 head)* | — |
+| 18 | Independent Review (Claude self-audit) | CLAUDE SELF-AUDIT COMPLETE — PENDING FINAL CODEX AUDIT | fda6e61 | 43ed85a |
+| 19 | Clean | IN PROGRESS | 43ed85a | — |
 
 ---
 
