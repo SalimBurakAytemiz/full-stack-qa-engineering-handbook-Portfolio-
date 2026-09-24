@@ -2,7 +2,7 @@
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="QA Demo System - Load Test" enabled="true">
-      <stringProp name="TestPlan.comments">Phase 10 JMeter lab. Threads/ramp-up/loops are overridable via -Jthreads -JrampUp -Jloops -Jport so the SAME plan serves as Load/Stress/Spike/Soak by varying parameters, per EXECUTION.md.</stringProp>
+      <stringProp name="TestPlan.comments">Phase 10 JMeter lab. Threads/ramp-up/loops are overridable via -Jthreads -JrampUp -Jloops -Jport so the SAME plan serves as Load/Stress/Spike/Soak by varying parameters, per EXECUTION.md. Codex fix-campaign B5: the login sampler now extracts the real session token via a JSON Extractor (Correlation), reused by the Authorization header of the GET /api/notifications sampler that follows it (the CSV-provided email/password is Test Data Parameterization, a SEPARATE concern from this dynamic-value correlation). Every sampler also carries a Duration Assertion (response-time Threshold/fail-gate) distinct from thread/ramp/loop, which are the Load Model, not a threshold.</stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -66,6 +66,10 @@
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
           <hashTree/>
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Threshold: response time under 3000ms" enabled="true">
+            <stringProp name="DurationAssertion.duration">3000</stringProp>
+          </DurationAssertion>
+          <hashTree/>
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/products" enabled="true">
           <stringProp name="HTTPSampler.path">/api/products</stringProp>
@@ -89,6 +93,10 @@
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
+          <hashTree/>
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Threshold: response time under 3000ms" enabled="true">
+            <stringProp name="DurationAssertion.duration">3000</stringProp>
+          </DurationAssertion>
           <hashTree/>
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/auth/login" enabled="true">
@@ -123,6 +131,66 @@
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
+          <hashTree/>
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Threshold: response time under 3000ms" enabled="true">
+            <stringProp name="DurationAssertion.duration">3000</stringProp>
+          </DurationAssertion>
+          <hashTree/>
+          <!-- Codex fix-campaign B5 — Correlation: extracts the REAL, dynamic
+               session token this exact login response returned into the
+               ${authToken} variable, so the NEXT sampler can authenticate
+               as this specific virtual user. This is what distinguishes
+               correlation from the CSV Data Set above it (CSV supplies
+               static, pre-known input values; this extracts a value the
+               server only reveals at runtime). -->
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract session token (Correlation)" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">authToken</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.token</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/notifications (authenticated, correlated token)" enabled="true">
+          <stringProp name="HTTPSampler.path">/api/notifications</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <!-- Uses ${authToken}, extracted by the JSON Extractor on the
+               PREVIOUS (login) sampler — real correlation, not a
+               fixed/CSV value. Layered under the plan-level HeaderManager
+               (which only sets Content-Type); JMeter merges HeaderManagers
+               along the tree, so this adds Authorization without
+               duplicating Content-Type. -->
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Header Manager - Correlated Auth" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${authToken}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert 200 + real notifications payload" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert body contains notifications key" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="-1177334862">"notifications"</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Threshold: response time under 3000ms" enabled="true">
+            <stringProp name="DurationAssertion.duration">3000</stringProp>
+          </DurationAssertion>
           <hashTree/>
         </hashTree>
       </hashTree>

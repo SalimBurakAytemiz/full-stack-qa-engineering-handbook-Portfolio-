@@ -4,7 +4,8 @@
   "private": true,
   "description": "QA Demo System — Phase 10 Automation Learning Labs (Selenium WebDriver; JMeter plans live alongside as .jmx files, no npm runtime)",
   "scripts": {
-    "selenium:test": "node selenium/tests/login-flow.test.js"
+    "selenium:test": "node selenium/tests/login-flow.test.js",
+    "selenium:test:parallel": "node selenium/scripts/run-parallel.js"
   },
   "devDependencies": {
     "selenium-webdriver": "^4.49.0"
