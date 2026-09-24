@@ -7,6 +7,15 @@ const WS_PATH = '/ws';
 // to /ws?token=<sessionToken>; the token is validated against the same
 // `sessions` table requireAuth uses. An invalid/missing token closes the
 // connection immediately — no anonymous WebSocket access.
+//
+// YÖNLENDİRME/İZOLASYON NEDENİ (Codex final fix round N7): socket'ler
+// `userId` anahtarıyla eşlenir (bir bağlantı KİMLİĞİYLE değil) — bu, B1
+// fix'inin (GraphQL→WebSocket push) ve mevcut REST push yolunun İKİSİNİN
+// de "bu bildirim yalnızca SAHİBİ kullanıcıya gider" garantisinin temelidir.
+// Aynı kullanıcının birden fazla sekmesi/cihazı AYNI Set içinde tutulur
+// (hepsine push edilir), ama BAŞKA bir kullanıcının Set'i asla karışmaz —
+// bu, `websocket-events-advanced.test.js`'in "Duplicate Events" ve
+// "cross-user isolation" testlerinin doğrudan dayandığı mimari garantidir.
 function createRealtimeServer(httpServer, db) {
   const wss = new WebSocketServer({ noServer: true });
   const socketsByUserId = new Map();

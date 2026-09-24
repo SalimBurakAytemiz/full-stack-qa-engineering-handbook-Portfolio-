@@ -37,6 +37,16 @@ const firefox = require('selenium-webdriver/firefox');
 // continues to pass it — see README/EXECUTION.md); everywhere else,
 // standard Selenium Manager browser discovery is used, exactly as it
 // would be on Windows, macOS, or a normal Linux CI runner.
+//
+// TAŞINABİLİRLİK NEDENİ (Codex final fix round N7): hardcoded bir
+// sandbox-yolu, YALNIZCA bu sandbox'ta "çalışıyormuş gibi görünen" ama
+// başka HERHANGİ bir makinede (gerçek bir CI runner, bir geliştiricinin
+// Windows/macOS'u) SESSİZCE yanlış davranacak bir kod parçasıdır — bu,
+// B4'ün asıl bulduğu hataydı. `CHROME_BINARY_PATH` set EDİLMEDİĞİNDE
+// standart Selenium Manager keşfine bırakmak, bu dosyanın GERÇEKTEN
+// "farklı ortamlarda değişmeden çalışabilir" olmasını sağlayan TEK
+// karardır — GitHub Actions'taki gerçek 2/2 PASS (`selenium-lab` job'u)
+// bunun kanıtıdır.
 function applyGridServer(builder) {
   const gridUrl = process.env.SELENIUM_GRID_URL;
   if (gridUrl) {

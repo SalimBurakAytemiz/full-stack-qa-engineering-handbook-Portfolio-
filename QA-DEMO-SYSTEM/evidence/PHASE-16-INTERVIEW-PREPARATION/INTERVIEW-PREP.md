@@ -10,7 +10,10 @@ doğrulanmıştır).
 
 > Kapsam notu: her kategori için tükenmez bir soru bankası değil,
 > kategoriyi gerçekten temsil eden ve bu repo'nun gerçek çalışmasına
-> bağlı 2-4 soru sunulmuştur.
+> bağlı 1-3 soru sunulmuştur (gerçek dağılım kategoriye göre değişir —
+> örn. Appium'da 1, API/Security/Scenario Questions'ta 3; tam dağılım
+> için `evidence/PHASE-16-INTERVIEW-PREPARATION/EXECUTION.md`'ye
+> bakınız — Codex final fix round N5).
 
 ---
 

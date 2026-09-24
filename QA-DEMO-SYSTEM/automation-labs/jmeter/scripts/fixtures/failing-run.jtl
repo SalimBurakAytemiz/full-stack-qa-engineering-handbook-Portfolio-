@@ -1,0 +1,5 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,grpThreads,allThreads,Latency
+1732450000000,12,GET /api/health,200,OK,Thread Group 1-1,text,true,,150,5,5,10
+1732450000050,3542,GET /api/products,200,OK,Thread Group 1-1,text,false,"Response too slow: got 3542ms, expected at most 3000ms",842,5,5,3520
+1732450000100,40,POST /api/auth/login,500,Internal Server Error,Thread Group 1-1,text,false,"Test failed: text expected to contain /demo-session-/",210,5,5,32
+1732450000150,22,"GET /api/notifications (authenticated, correlated token)",200,OK,Thread Group 1-1,text,true,,364,5,5,18

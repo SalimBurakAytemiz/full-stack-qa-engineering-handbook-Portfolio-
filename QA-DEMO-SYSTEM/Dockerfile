@@ -29,6 +29,15 @@
 # failed to find its test-data files at runtime. shared/ must be copied
 # under /app, mirroring its real position as a sibling of QA-DEMO-SYSTEM/
 # one level up from the WORKDIR.
+#
+# RUNTIME-DAVRANIŞI NEDENİ (Codex final fix round N7): bu path hatası
+# "syntax hatası" DEĞİLDİ — image sessizce BUILD OLURDU, ama container
+# başlatıldığında seed.js `shared/test-data/*.json`'ı BULAMAZDIĞI için
+# runtime'da GERÇEK bir çökme/hatalı-seed üretirdi. Bu sınıf hata (build
+# başarılı ama runtime'da GERÇEK veriyle karşılaşınca bozulan) tam olarak
+# `docker compose config` gibi syntax-only kontrollerin YAKALAYAMADIĞI
+# türdendir — bu yüzden path aritmetiği `node -e` ile AYRICA, doğrudan
+# hesaplanarak doğrulandı (bkz. FIX-1 evidence).
 FROM node:22-slim
 WORKDIR /app
 

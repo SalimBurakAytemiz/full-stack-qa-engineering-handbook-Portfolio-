@@ -110,6 +110,18 @@ function createOrder(db, userId, items, paymentToken) {
   // run as a single SQLite transaction — any failure here rolls back the
   // whole write, leaving no partial state (Codex P4.2 review, non-blocking
   // #1; extended in P4.3 to also cover the order.paid event/notification).
+  //
+  // VERİ BÜTÜNLÜĞÜ NEDENİ (Codex final fix round N7 — B8'in eşzamanlılık
+  // kanıtının MİMARİ temeli): `node:sqlite`'ın SENKRON `DatabaseSync` API'si
+  // kullanıldığından, bu `BEGIN`'den `COMMIT`'e kadar HİÇBİR `await` YOKTUR
+  // — Node'un tek-threadli event loop'uyla birleşince, bu, bir transaction
+  // BAŞLADIĞINDA event loop'a GERİ DÖNMEDEN tamamlanacağı, dolayısıyla İKİ
+  // isteğin (örn. son 1 birim stok için yarışan iki sipariş) process İÇİNDE
+  // GERÇEKTEN kesişemeyeceği anlamına gelir. `backend/tests/
+  // order-concurrency.test.js`'in kanıtladığı "tam olarak 1 kazanan, stok
+  // asla negatife düşmez" davranışının GERÇEK nedeni budur — bir kilitleme
+  // mekanizması DEĞİL, bu mimarinin doğal bir sonucudur. Bu garanti TEK bir
+  // Node.js process'ine ÖZGÜDÜR (case-study-02'nin kendi notu).
   let orderId;
   let emittedEvent;
   let notification;

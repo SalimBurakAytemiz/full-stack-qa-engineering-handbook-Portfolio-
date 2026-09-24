@@ -2,6 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { startTestServer } = require('./helpers/test-server');
 const { loginAs } = require('./helpers/auth-helper');
+const { redactSensitiveQuery } = require('../src/middleware/requestContext');
 
 // Phase 13 — Logging / Observability. Proves the request-correlation
 // contract requestContext.js adds: every response carries a real,
@@ -149,4 +150,56 @@ test('a real request lifecycle (login) produces a distinct request id from the r
 
   assert.ok(loginRequestId && productsRequestId);
   assert.notEqual(loginRequestId, productsRequestId);
+});
+
+// --- N4 (Codex final fix round, non-blocking): access-log query redaction ---
+
+test('redactSensitiveQuery: a normal path with no query string is unchanged', () => {
+  assert.equal(redactSensitiveQuery('/api/products'), '/api/products');
+});
+
+test('redactSensitiveQuery: a non-sensitive query value is preserved verbatim (observability not destroyed)', () => {
+  assert.equal(redactSensitiveQuery('/api/products?category=keyboards&sort=price'), '/api/products?category=keyboards&sort=price');
+});
+
+test('redactSensitiveQuery: token/password/secret/api_key/auth-named query values are redacted, key names kept', () => {
+  assert.equal(redactSensitiveQuery('/ws?token=SUPER-SECRET-VALUE'), '/ws?token=<redacted>');
+  assert.equal(redactSensitiveQuery('/x?password=hunter2'), '/x?password=<redacted>');
+  assert.equal(redactSensitiveQuery('/x?client_secret=abc123'), '/x?client_secret=<redacted>');
+  assert.equal(redactSensitiveQuery('/x?api_key=abc123'), '/x?api_key=<redacted>');
+  assert.equal(redactSensitiveQuery('/x?Authorization=Bearer%20abc'), '/x?Authorization=<redacted>');
+});
+
+test('redactSensitiveQuery: a mix of sensitive and normal keys — only the sensitive one is redacted', () => {
+  assert.equal(
+    redactSensitiveQuery('/api/products?category=keyboards&token=SUPER-SECRET-VALUE&sort=price'),
+    '/api/products?category=keyboards&token=<redacted>&sort=price'
+  );
+});
+
+test('a real request with a sensitive-looking query value never appears raw in the access log', async (t) => {
+  const ctx = startTestServer();
+  t.after(() => ctx.close());
+
+  const logLines = [];
+  const originalLog = console.log;
+  console.log = (...args) => {
+    logLines.push(args.join(' '));
+    originalLog(...args);
+  };
+  try {
+    // No real route reads req.query, so this is functionally identical to
+    // a plain GET — the point here is ONLY what the access log records.
+    await fetch(`${ctx.baseUrl}/api/products?token=SUPER-SECRET-DO-NOT-LOG&category=keyboards`);
+  } finally {
+    console.log = originalLog;
+  }
+
+  const line = logLines.find((l) => l.includes('[http]') && l.includes('GET'));
+  assert.ok(line, 'expected an [http] access-log line');
+  assert.ok(!line.includes('SUPER-SECRET-DO-NOT-LOG'), `raw sensitive value must never appear in the log: ${line}`);
+  assert.match(line, /token=<redacted>/);
+  // Non-sensitive key is still fully visible — redaction didn't destroy
+  // observability value.
+  assert.match(line, /category=keyboards/);
 });

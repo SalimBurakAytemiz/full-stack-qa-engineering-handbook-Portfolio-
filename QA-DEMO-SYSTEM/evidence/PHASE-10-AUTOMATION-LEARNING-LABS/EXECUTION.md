@@ -22,7 +22,7 @@
 | Selenium — Cross Browser/Selenium Grid/Parallel Execution | **[Codex fix-campaign B4]** CODE COMPLETE — EXECUTION BLOCKED (bu sandbox'ta, aynı kısıt) | Bölüm 2.1 |
 | Selenium — CI/CD | **[Codex fix-campaign B4]** RESOLVED — GitHub Actions'ta (`ubuntu-latest`) GERÇEKTEN çalıştırıldı, 2/2 PASS (bkz. Bölüm 2.4) | Bölüm 2.4 |
 | Appium | LEARNING-only (gerçek cihaz yok) | `APPIUM-LEARNING.md` |
-| JMeter | CODE COMPLETE — EXECUTION BLOCKED (doğrulanmış paket kısıtı); **[Codex fix-campaign B5]** artık gerçek Correlation + Threshold/Fail Gate içeriyor | Bölüm 3 |
+| JMeter | CODE COMPLETE — EXECUTION BLOCKED (doğrulanmış paket kısıtı); gerçek Correlation + Threshold + **gerçek Fail Gate** içeriyor (`run-jmeter.js`, `[Codex final fix round B5]` — fixture'larla PASS/FAIL kanıtlandı, bkz. Bölüm 3.5) | Bölüm 3 |
 
 **Önemli:** Selenium ve JMeter'ın ikisi de kodun kendisi TAMAMEN
 gerçek, doğru ve (bu ortam dışında) çalıştırılabilir durumdadır — engel
@@ -205,7 +205,7 @@ GitHub Actions API'siyle doğrudan doğrulandı.**
 | Assertions | Her sampler için `ResponseAssertion` (status code + gövde içeriği, örn. `"products"`, `demo-session-` prefix, `"notifications"`) |
 | Workload Model / P90 / P95 / P99 / Reporting | `ResultCollector` (Aggregate Report — JMeter'ın kendi P90/95/99 sütunları) |
 | Load Model (Thread/Ramp-Up/Loop) / Load / Stress / Spike / Soak | Aynı `.jmx`, farklı `-Jthreads/-JrampUp/-Jloops` değerleriyle — bkz. Bölüm 3.3. **[Codex fix-campaign B5 netliği]** Bu, iş yükü BÜYÜKLÜĞÜNÜ kontrol eder — aşağıdaki Threshold/Fail Gate maddesiyle KARIŞTIRILMAMALIDIR, ayrı bir kapsam maddesidir. |
-| Threshold / Fail Gate | **[Codex fix-campaign B5 ile eklendi]** Her 4 sampler'ın hashTree'sinde bir `DurationAssertion` (yanıt süresi > 3000ms → sample FAIL) — mevcut `HTTPSampler.connect_timeout`/`response_timeout` (bunlar yalnızca asılı kalan bir isteği İPTAL eder, bir eşiği DEĞERLENDİRMEZ) ile KARIŞTIRILMAMALIDIR. JMeter CLI modunda bir `DurationAssertion` hatası bir sample FAIL'i olarak sayılır ve genel PASS/FAIL sonucunu etkiler — bu, yeni bir plugin bağımlılığı eklemeden (zaten kırılgan JMeter 2.13/XStream kurulumuna ek risk katmadan) stok JMeter elemanlarıyla gerçek bir fonksiyonel eşik/fail-gate sağlar. 3000ms değeri, Phase 14'ün Locust ile GERÇEKTEN ölçtüğü p95=5ms/p99=15ms'e göre son derece cömert bir fonksiyonel-doğruluk eşiğidir (sıkı bir performans SLA'sı değil — bu backend'in in-memory SQLite'ı zaten milisaniyeler mertebesinde yanıt veriyor). |
+| Threshold / Fail Gate | Her 4 sampler'ın hashTree'sinde bir `DurationAssertion` (yanıt süresi > 3000ms → sample FAIL) — mevcut `HTTPSampler.connect_timeout`/`response_timeout` (bunlar yalnızca asılı kalan bir isteği İPTAL eder, bir eşiği DEĞERLENDİRMEZ) ile KARIŞTIRILMAMALIDIR. 3000ms değeri, Phase 14'ün Locust ile GERÇEKTEN ölçtüğü p95=5ms/p99=15ms'e göre son derece cömert bir fonksiyonel-doğruluk eşiğidir. **[Codex final fix round B5 düzeltmesi]** Önceki tur burada "JMeter CLI modunda bir DurationAssertion hatası... genel PASS/FAIL sonucunu etkiler" diyordu — bu YANLIŞTI: `DurationAssertion` bir sample'ı JTL'de `success=false` yapar, ama stok JMeter'ın non-GUI process exit code'u BUNU GÜVENİLİR şekilde yansıtmaz (bu ayrım bu turda AMPİRİK olarak da doğrulandı — bkz. Bölüm 3.5: gerçek bir JMeter çöküşünde bile process exit code 0 idi). Gerçek fail gate artık `automation-labs/jmeter/scripts/run-jmeter.js` — bkz. Bölüm 3.5. |
 
 ### 3.2 Gerçek Çalıştırma Denemesi ve Doğrulanmış Kök Neden
 
@@ -276,6 +276,92 @@ dosyam hem JMeter'ın kendi stok şablonuyla çapraz doğrulanarak kesin
 olarak izole edildi (dosya sorunu DEĞİL, kurulum sorunu); düzeltmek
 için gereken (Apache'nin resmi self-contained tarball'ı) bu ortamın ağ
 politikası dışındadır.
+
+### 3.5 Fail Gate — Codex final fix round B5 ile GERÇEKTEN eklendi
+
+**Kök neden (bu turda AMPİRİK olarak doğrulandı):** stok JMeter'ın
+non-GUI process exit code'u, örneklerin/assertion'ların İÇERDE
+başarısız olup olmadığını GÜVENİLİR şekilde yansıtmaz. Bu, sadece
+teorik bir JMeter sınırlaması olarak değil, bu sandbox'ta GERÇEKTEN
+gözlemlendi:
+```
+$ jmeter -n -t qa-demo-system-load-test.jmx -Jport=3000 -l /tmp/wrapper-real-run.jtl
+Error in NonGUIDriver com.thoughtworks.xstream.security.ForbiddenClassException: org.apache.jmeter.save.ScriptWrapper
+$ echo $?
+0
+```
+**JMeter TAM OLARAK ÇÖKMESİNE RAĞMEN kendi process exit code'u 0'dı** —
+sarmalayıcı olmadan bunu kontrol eden bir CI adımı bunu YANLIŞLIKLA
+PASS sayardı. Bu, B5'in asıl bulduğu boşluğun somut kanıtıdır.
+
+**Düzeltme:** `automation-labs/jmeter/scripts/run-jmeter.js` — gerçek
+bir fail-gate sarmalayıcı:
+- JMeter'ı gerçekten çalıştırır (`spawnSync`, shell YOK — argüman
+  enjeksiyonuna kapalı).
+- JMeter'ın KENDİ exit code'unu bir TABAN olarak kontrol eder (0
+  değilse veya JTL dosyası hiç oluşmadıysa → FAIL) — yukarıdaki GERÇEK
+  çöküş senaryosu TAM OLARAK bu yolla yakalanır.
+- Ayrıca, JMeter exit code'u 0 OLSA BİLE, ürettiği JTL sonuç dosyasını
+  BAĞIMSIZ olarak ayrıştırır (`success` sütununu header'dan BULARAK,
+  sabit bir kolon sırası VARSAYMADAN) ve HERHANGİ bir `success=false`
+  satırı varsa (fonksiyonel assertion VEYA `DurationAssertion` eşik
+  ihlali — ikisi de JTL'de aynı şekilde `success=false` üretir, ayrı
+  bir özel-durum mantığı GEREKMEZ) süreci non-zero exit code ile
+  bitirir.
+
+**Fixture-tabanlı gate-mantığı doğrulaması (JMeter runtime'ından
+BAĞIMSIZ — `automation-labs/jmeter/scripts/run-jmeter.test.js`, 7
+test):**
+```
+$ node --test run-jmeter.test.js
+tests 7, pass 7, fail 0
+```
+Bu testler `parseJtl`/`determineExitCode` fonksiyonlarını, GERÇEK
+JMeter CSV JTL formatına yapısal olarak uyan (header + virgülle
+ayrılmış satırlar) SENTETİK ama GERÇEKÇİ fixture dosyalarına karşı
+çalıştırır — `fixtures/passing-run.jtl` (0 hata) ve
+`fixtures/failing-run.jtl` (1 fonksiyonel hata + 1 duration-threshold
+hatası). **Dürüst not:** bu fixture'ların İLK sürümünde bir alan
+(virgül İÇEREN bir `label` değeri) yanlışlıkla TIRNAKSIZ bırakılmıştı
+— testler bunu GERÇEKTEN yakaladı (kolon kayması nedeniyle
+`total`/`failed` sayıları yanlış çıktı), fixture düzeltildi. Bu, test
+altyapısının GERÇEKTEN iş yaptığının kanıtıdır, kozmetik değil.
+
+**Controlled PASS/FAIL kanıtı (gerçek process exit code'larıyla):**
+```
+=== CONTROLLED PASS scenario ===
+JTL_TOTAL_SAMPLES: 4
+JTL_FAILED_SAMPLES: 0
+GATE_RESULT: PASS
+REAL PROCESS EXIT CODE: 0
+
+=== CONTROLLED FAIL scenario ===
+JTL_TOTAL_SAMPLES: 4
+JTL_FAILED_SAMPLES: 2
+  FAILED: GET /api/products - Response too slow: got 3542ms, expected at most 3000ms
+  FAILED: POST /api/auth/login - Test failed: text expected to contain /demo-session-/
+GATE_RESULT: FAIL
+REAL PROCESS EXIT CODE: 1
+```
+
+**Gerçek JMeter runtime doğrulaması:** `npm run jmeter:test` ile tam
+sarmalayıcı, gerçek `jmeter` binary'sine karşı YENİDEN çalıştırıldı —
+aynı XStream kök nedenli çöküş oluştu, ama bu SEFER sarmalayıcı
+`JMETER_STATUS: LAUNCH_OR_RUNTIME_ERROR` yazıp **exit code 1**
+verdi (JMeter'ın KENDİ 0'lık exit code'una RAĞMEN) — sarmalayıcının
+gerçek JMeter runtime'ına karşı da doğru davrandığı GERÇEKTEN
+kanıtlandı.
+
+**B5 Evidence Özeti:**
+
+| Alan | Durum |
+|---|---|
+| IMPLEMENTATION | PASS |
+| CONTROLLED FAIL GATE | PASS (fixture ile, gerçek exit code 1) |
+| NORMAL PASS GATE | PASS (fixture ile, gerçek exit code 0) |
+| CORRELATION | PASS (Bölüm 3.1) |
+| THRESHOLD | PASS (Bölüm 3.1, `DurationAssertion`) |
+| JMeter native runtime (uçtan uca, gerçek `jmeter` binary'siyle) | ENVIRONMENT BLOCKED (doğrulanmış, sarmalayıcı bunu doğru şekilde FAIL olarak raporluyor) |
 
 ---
 

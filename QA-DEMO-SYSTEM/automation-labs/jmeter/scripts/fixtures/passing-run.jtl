@@ -1,0 +1,5 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,grpThreads,allThreads,Latency
+1732450000000,12,GET /api/health,200,OK,Thread Group 1-1,text,true,,150,5,5,10
+1732450000050,18,GET /api/products,200,OK,Thread Group 1-1,text,true,,842,5,5,14
+1732450000100,45,POST /api/auth/login,200,OK,Thread Group 1-1,text,true,,210,5,5,32
+1732450000150,22,"GET /api/notifications (authenticated, correlated token)",200,OK,Thread Group 1-1,text,true,,364,5,5,18

@@ -9,6 +9,15 @@ const { authenticate } = require('../services/auth.service');
 // REST layer's own error strings so both transports report the same
 // contract for the same underlying condition (Phase 6 "GraphQL Error
 // Handling" scope — proving parity, not inventing a second error model).
+//
+// GÜVENLİK/YETKİLENDİRME NEDENİ (Codex final fix round N7): bu fonksiyon,
+// `order`/`createOrder` gibi kullanıcıya-özel veri döndüren HER resolver'ın
+// GEÇTİĞİ TEK ortak kapı. GraphQL'de REST'in aksine tek bir endpoint
+// (`/graphql`) TÜM alanları sunduğundan, yetkilendirme kontrolünü resolver
+// başına AYRI AYRI unutmaya açık şekilde tekrarlamak yerine burada TEK
+// yerde zorunlu kılmak, bir resolver'ın bu kontrolü "unutması" riskini
+// ortadan kaldırır — B1 fix'inin (GraphQL→WebSocket push) de üzerine
+// inşa ettiği aynı `context.userId` sözleşmesidir.
 function requireUserId(context) {
   if (!context.userId) {
     throw new GraphQLError('Yetkilendirme gerekli', { extensions: { code: 'UNAUTHENTICATED' } });

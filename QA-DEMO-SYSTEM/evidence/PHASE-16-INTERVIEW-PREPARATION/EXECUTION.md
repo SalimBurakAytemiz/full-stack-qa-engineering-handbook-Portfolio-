@@ -8,17 +8,39 @@
 
 ## 1. Kapsam (ROADMAP.md Phase 16) ve Karşılık Gelen Kanıt
 
-`INTERVIEW-PREP.md` — 14 kategorinin (Manual QA, Test Design, API,
-SQL, Mobile, Automation, Selenium, Appium, Performance, Security,
-CI/CD, Senior QA, QA Lead, Scenario Questions) her biri için 2-3 soru,
-ROADMAP'ın istediği 5-bölümlü formatta (Short Answer / Detailed
-Answer / Example / Real QA Risk / Related Lab): toplam **30 soru**.
+`INTERVIEW-PREP.md` — ROADMAP'ın istediği 14 kategoriyi kapsıyor,
+5-bölümlü formatta (Short Answer / Detailed Answer / Example / Real
+QA Risk / Related Lab): toplam **30 soru**, kategori başına GERÇEK
+dağılım şöyle (`grep -c "^### S<n>\." INTERVIEW-PREP.md` ile kategori
+başına yeniden sayıldı — tahmin edilmedi):
 
-**[Codex fix-campaign N5 düzeltmesi]** Bu satır önceden "26 soru"
-diyordu — GERÇEK sayı `grep -c "^### " INTERVIEW-PREP.md` ile yeniden
-sayıldı: **30** (S1.1'den S14.3'e, hepsi gerçek, numaralı sorular,
-başlık formatı doğrulandı). Aşağıdaki Bölüm 2'deki dosya-varlığı
-sayıları da aynı şekilde yeniden sayılıp düzeltildi.
+| Kategori | Soru sayısı |
+|---|---|
+| Manual QA (S1) | 2 |
+| Test Design (S2) | 2 |
+| API (S3) | 3 |
+| SQL (S4) | 2 |
+| Mobile (S5) | 2 |
+| Automation (S6) | 2 |
+| Selenium (S7) | 2 |
+| Appium (S8) | **1** |
+| Performance (S9) | 2 |
+| Security (S10) | 3 |
+| CI/CD (S11) | 2 |
+| Senior QA (S12) | 2 |
+| QA Lead (S13) | 2 |
+| Scenario Questions (S14) | 3 |
+| **Toplam** | **30** |
+
+**[Codex final fix round N5 düzeltmesi]** Bu satır önce "26 soru"
+diyordu (düzeltildi: 30), SONRA "her kategoride 2-3 soru" diyordu —
+bu da YANLIŞTI, çünkü Appium kategorisinde (S8) yalnızca **1** soru
+var (`### S8.1`, ikinci bir `S8.2` YOK — dosyada doğrudan doğrulandı).
+Yukarıdaki tablo gerçek dağılımı gösteriyor; yeni soru sırf cümle
+"doğru" görünsün diye EKLENMEDİ — dağılım olduğu gibi, dürüstçe
+belgelendi. Aşağıdaki Bölüm 2'deki dosya-varlığı sayıları da aynı
+oturumda yeniden sayılıp doğrulanmıştı (27/27 benzersiz dosya, 0
+kırık referans).
 
 ## 2. Tasarım Kararı — "Related Lab" Alanlarının Gerçekliği
 
