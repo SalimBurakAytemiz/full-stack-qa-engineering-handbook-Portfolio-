@@ -70,7 +70,7 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 16 | Interview Preparation | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 27ea9d8 | f8b4188 |
 | 17 | Final Integration | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | f8b4188 | fda6e61 |
 | 18 | Independent Review (Claude self-audit) | CLAUDE SELF-AUDIT COMPLETE — PENDING FINAL CODEX AUDIT | fda6e61 | 43ed85a |
-| 19 | Clean | IN PROGRESS | 43ed85a | — |
+| 19 | Clean | CLAUDE BUILD CAMPAIGN COMPLETE — CODEX AUDIT PENDING | 43ed85a | (bkz. Phase 19 Kapanış Özeti) |
 
 ---
 
@@ -310,37 +310,46 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
   (`CLAUDE-SELF-AUDIT.md` + `EXECUTION.md`) — AÇIKÇA "bağımsız
   inceleme DEĞİLDİR" olarak etiketlendi.
 
-## NEXT EXACT ACTION
+## Phase 19 — Kapanış Özeti (tamamlandı)
 
-Phase 19 (Clean) — campaign'in SON fazı. ROADMAP'ın Phase 19 kriteri:
-Testler başarılı, kritik bulgu yok, evidence doğrulanmış, Learning/
-Experience statüleri doğru, documentation tamam, Case Studies çalışır,
-review sonucu CLEAN.
+- Yeni kod YAZILMADI — bu faz, Phase 6-18'in TAMAMINI tek bir final
+  regresyonda birlikte doğrulayan kapanış fazıdır.
+- Backend tam regresyonu: **135/135**. Web-tests tam regresyonu:
+  **23/23**.
+- API-tests: 6 suite'in TAMAMI, her birinden ÖNCE `npm run db:seed`
+  ile doğru sırayla çalıştırıldı — Public (11 req/26 assertion),
+  Protected (19 req/42 assertion), Orders&Payment AJV (64 req/118
+  assertion), Notifications AJV (20 req/48 assertion), Schema
+  negative-proof (19/19), API→DB (17 scenario/97 assertion) — **hepsi
+  0 fail**.
+- **Gerçek operasyonel bulgu (dürüstçe kaydedildi):** Final
+  regresyonun ilk turunda `api:test:orders-payment`, ARADA
+  `db:seed` çalıştırılmadan üç suite art arda koşulduğu için stock-
+  decrement assertion'ında başarısız oldu. Bu bir Phase 6-19 kod
+  regresyonu DEĞİLDİ — projenin kendi (Phase 5'ten kalma,
+  `api-tests/README.md`'de belgelenen) reset protokolüne uyulmaması
+  sonucuydu. Doğru sırayla (`db:seed` → suite) yeniden çalıştırılarak
+  ampirik olarak doğrulandı (64/64, 118/118 PASS) — detay:
+  `evidence/PHASE-19-CLEAN/EXECUTION.md` Bölüm 4.
+- GitHub Actions CI: dal üzerindeki 8/8 run SUCCESS (GitHub API ile
+  gerçekten sorgulandı, en son run HEAD üzerinde).
+- Evidence dizinindeki TÜM göreli markdown linkleri programatik
+  taranarak doğrulandı: 0 kırık link.
+- Secret taraması: 0 gerçek secret (yalnızca "secret loglanmıyor"
+  diyen kod yorumları eşleşti).
+- Runtime artifact temizliği: final regresyon için başlatılan arka
+  plan sunucusu durduruldu, ürettiği `data/qa-demo.db` silindi,
+  `git status` working tree clean.
+- Konsolide Codex Audit Manifest yazıldı:
+  `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`.
+- Açık blocker: **0**.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-19-CLEAN/EXECUTION.md`
 
-**Kritik hatırlatma (campaign'in kendi kuralı):** Phase 19'un sonu
-"CLAUDE BUILD CAMPAIGN: COMPLETE / CODEX AUDIT: PENDING" ile
-bitmelidir — ASLA "Codex certified" değil. Main'e merge YOK, PR YOK,
-branch silme YOK, history squash YOK.
+## Campaign Statüsü: CLAUDE BUILD CAMPAIGN COMPLETE — CODEX AUDIT PENDING
 
-1. TEK bir FULL CAMPAIGN REGRESSION: Phase 0-5 uyumluluğu (backend
-   testleri zaten Phase 0-5'in üzerine inşa edildi, aynı suite içinde)
-   + Phase 6-18'in tamamı (backend `node --test`, `web-tests`
-   Playwright, varsa `api-tests` Newman) tek seferde çalıştırılıp
-   nihai sayılar kaydedilecek.
-2. Açık blocker sayısının GERÇEKTEN 0 olduğu son kez teyit edilecek.
-3. Konsolide Codex Audit Manifest'i yazılacak (önerilen yol:
-   `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`) — Phase 6-18 tablosu
-   (Phase, Ad, Base SHA, Head SHA, Değişen dosyalar, Testler,
-   Regresyon, Evidence, Bilinen sınırlamalar, Açık blocker, Claude
-   self-review) + cross-cutting audit kategorileri.
-4. Mandated 31-madde Türkçe final campaign raporu hazırlanacak (branch;
-   her fazın (6-19) statüsü+base/head — 14 ayrı satır; toplam değişen
-   dosya; toplam test sonucu; final regresyon sonucu; güvenlik
-   taraması; secret taraması; dependency/lisans sonucu; generated
-   artifact sonucu; açık blocker sayısı; bilinen sınırlamalar; gelecek
-   sertleştirme; ROADMAP Phase 6-19 implementasyon statüsü; Codex audit
-   manifest yolu; Codex için kesin phase commit aralıkları; working
-   tree temiz mi; remote campaign branch güncel mi; CODEX FULL AUDIT
-   READY?).
-5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-19-CLEAN/EXECUTION.md`
-6. Son commit + push — SONRA DUR (PR yok, merge yok).
+Phase 6'dan Phase 19'a kadar TÜM fazlar Claude tarafından otonom
+olarak tamamlanmıştır. Main'e merge YAPILMADI, PR AÇILMADI, branch
+SİLİNMEDİ, history SIKIŞTIRILMADI — campaign kendi kurallarına göre
+burada durur. Bir sonraki adım, bu campaign'in dışında, ayrı bir
+görev olarak yapılacak GERÇEK Codex audit'idir
+(`.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, Bölüm 7).
