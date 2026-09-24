@@ -27,8 +27,8 @@ referans verildi), (b) bu paket için YENİ yazılan
 | JOIN | `database-testing.test.js` — order_items⋈products, orders⋈users | Yeni |
 | Filtering | Yukarıdaki WHERE testleri | Yeni |
 | Sorting | `database-testing.test.js` — ORDER BY price ASC/DESC, ORDER BY id DESC | Yeni |
-| API → DB Validation | P5.7 (`P5.7-API-DB-VALIDATION/EXECUTION.md`) — kapsamlı, tekrar edilmedi | Mevcut (Phase 5) |
-| UI → DB Validation | `database-testing.test.js` — login→products→createOrder uçtan uca akışı, DB satırları bağımsız sorgulanarak doğrulandı | Yeni |
+| API → DB Validation | P5.7 (`P5.7-API-DB-VALIDATION/EXECUTION.md`) — kapsamlı, tekrar edilmedi; `database-testing.test.js`'in login→products→createOrder testi de (Codex fix-campaign B2 ile "API → DB Validation" olarak yeniden adlandırıldı — bkz. Bölüm 6) bu satıra dahildir | Mevcut (Phase 5) + Yeni |
+| UI → DB Validation | **Codex fix-campaign B2 düzeltmesi:** `web-tests/tests/ui-to-db-validation.spec.js` — GERÇEK Playwright tarayıcı aksiyonları (login formu, ürün listesi DOM'u) + DB'nin yalnızca test oracle olarak doğrudan sorgulanması. Bu uygulamanın frontend'inde sipariş oluşturma/checkout UI'ı HİÇ olmadığından (bkz. Phase 8 `realtime-notification.spec.js` başlık yorumu), yalnızca gerçekten UI'ı OLAN iki akış (login oturumu, ürün gezinme) kanıtlanmıştır — sipariş oluşturma için UI→DB iddiası YOKTUR. | Yeni (fix-campaign) |
 | CRUD State Validation | `database-testing.test.js` — INSERT→SELECT→UPDATE→DELETE tam yaşam döngüsü (yeni eklenen, seeded olmayan bir product satırında) | Yeni |
 | Data Integrity (CHECK/FK) | `seed.test.js` — negatif stok CHECK, sıfır/negatif quantity CHECK, FK ihlali | Mevcut (Phase 4), referans verildi |
 | Duplicate Validation | `seed.test.js`/`events.test.js`/`notifications.test.js` — UNIQUE(order_id,event_type)/UNIQUE(order_id,type); `database-testing.test.js` — YENİ: UNIQUE(users.email) | Karışık |
@@ -114,13 +114,20 @@ $ git status --short
 ## 6. Bilinen Sınırlamalar (Known Limitations, Blocker DEĞİL)
 
 1. Audit/History — Bölüm 4'te açıklandığı gibi NOT IMPLEMENTED.
-2. "UI → DB Validation" testi gerçek bir tarayıcı/DOM sürücüsü
-   (Playwright/Selenium) KULLANMAZ — API çağrılarıyla aynı sırayı
-   simüle eder (login → products listeleme → order oluşturma) ve
-   sonucu DB'den bağımsız sorgular. Gerçek bir DOM-tabanlı UI
-   otomasyonu Phase 8/9'un kapsamındadır (Playwright/Selenium bu
-   fazlarda devreye girecek); bu paket kasıtlı olarak yalnızca
-   "UI'ın tetikleyeceği veri akışı" seviyesinde kalmıştır.
+2. **[Codex fix-campaign B2 ile düzeltildi]** Bu paketin ORİJİNAL
+   `database-testing.test.js` testi "UI → DB Validation" olarak
+   ADLANDIRILMIŞTI ama gerçek bir tarayıcı/DOM sürücüsü KULLANMIYORDU
+   — yalnızca API çağrılarıyla aynı sırayı simüle ediyordu (login →
+   products listeleme → order oluşturma). Bu, Codex'in Phase 6-19
+   audit'inde bulduğu gerçek bir bulguydu (B2, P2): isim testin
+   gerçekte kanıtladığından daha güçlü bir iddiada bulunuyordu. Fix
+   olarak: (a) bu test `"API → DB Validation"` olarak yeniden
+   adlandırıldı (kod ve bu evidence'ta), (b) GERÇEK bir tarayıcı-
+   sürücülü UI→DB testi `web-tests/tests/ui-to-db-validation.spec.js`
+   olarak EKLENDİ — bu uygulamanın frontend'inde sipariş oluşturma
+   UI'ı hiç olmadığı için, yalnızca login ve ürün gezinme akışları
+   için (bu ikisi gerçekten UI'a sahip), gerçek Playwright aksiyonları
+   + DB'nin yalnızca test oracle olarak kullanılmasıyla.
 3. Timestamp monotonluk testi SQLite'ın saniye-seviyesi
    `CURRENT_TIMESTAMP` çözünürlüğü nedeniyle "non-decreasing" (`>=`)
    olarak doğrulanır, kesinlikle artan (`>`) DEĞİL — bu gerçek bir

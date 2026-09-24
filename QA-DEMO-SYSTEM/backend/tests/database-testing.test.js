@@ -10,7 +10,8 @@ const { loginAs } = require('./helpers/auth-helper');
 // Phase 7 — Database Testing. Demonstrates the database itself used as a QA
 // Test Oracle / Data Validation source: real SQL (SELECT/WHERE/JOIN/
 // filtering/sorting), CRUD state, data integrity (NULL/UNIQUE), financial
-// and timestamp validation, and one UI→DB end-to-end trace.
+// and timestamp validation, and one API→DB end-to-end trace (see the
+// Codex fix-campaign B2 note directly above that test, below).
 //
 // This file does NOT re-test what tests/seed.test.js and tests/events.test.js
 // already cover at the raw-SQL level (CHECK/FOREIGN KEY constraints,
@@ -292,14 +293,26 @@ test('Timestamp Validation: sequential order inserts have non-decreasing id and 
   assert.ok(rows[1].created_at >= rows[0].created_at);
 });
 
-// --- UI -> DB Validation ---
+// --- API -> DB Validation ---
 
-test('UI -> DB Validation: a full login+order user flow produces DB rows exactly matching what the UI would render', async (t) => {
+// Codex fix-campaign B2 (P2, Phase 7): this test was originally named
+// "UI -> DB Validation", but it only ever drove the flow with raw
+// fetch() HTTP calls — no browser, no DOM, no real UI action anywhere in
+// it. That is an API->DB test, not a UI->DB one, and labeling it
+// otherwise overstated what was actually proven (Codex's exact finding).
+// Renamed/reclassified here to what it genuinely is. The REAL browser-
+// driven UI->DB proof now lives in
+// web-tests/tests/ui-to-db-validation.spec.js, for the two flows this
+// app's frontend actually has a UI for (login, product browsing) — this
+// app has no order-creation/checkout UI at all (see that file's header
+// comment), so a browser-driven order->DB flow is not claimed anywhere.
+test('API -> DB Validation: a full login+order request flow produces DB rows exactly matching the API response', async (t) => {
   const ctx = startTestServer();
   t.after(() => ctx.close());
 
-  // Simulates the real sequence a browser UI drives: log in, view products
-  // (only in-stock ones would be purchasable in the UI), place an order.
+  // Drives the same request sequence a UI WOULD trigger (login, view
+  // products, place an order) directly over HTTP — this is an API-level
+  // trace, not a browser-driven one; see the reclassification note above.
   const token = await loginAs(ctx.baseUrl, 'test.active01@example.com', 'ValidPass123!');
 
   const productsBody = await fetch(`${ctx.baseUrl}/api/products`).then((r) => r.json());
@@ -314,9 +327,9 @@ test('UI -> DB Validation: a full login+order user flow produces DB rows exactly
   const orderBody = await orderRes.json();
   assert.equal(orderRes.status, 201);
 
-  // What the UI's "order confirmation" screen would show comes from the
-  // API response; the database is queried independently (test oracle) to
-  // prove that response is not fabricated/inconsistent with real storage.
+  // The API response is what any client (UI or otherwise) would receive;
+  // the database is queried independently (test oracle) to prove that
+  // response is not fabricated/inconsistent with real storage.
   const dbOrder = ctx.db.prepare('SELECT status, total FROM orders WHERE id = ?').get(orderBody.order.id);
   const dbItems = ctx.db
     .prepare('SELECT product_id, quantity, unit_price FROM order_items WHERE order_id = ?')
