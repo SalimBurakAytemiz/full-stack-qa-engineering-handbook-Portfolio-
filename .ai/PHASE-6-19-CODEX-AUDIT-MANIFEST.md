@@ -9,10 +9,10 @@ SIKIŞTIRILMADI (squash) — her faz kendi gerçek, doğrulanabilir
 base→head commit aralığında durmaktadır.
 
 **Base commit (Phase 5 CLEAN kapanış noktası):** `837ff2ff1c0c1ada0435d793cfb09479fa954e2f`
-**Final commit (bu manifestin yazıldığı an, Phase 19 öncesi):** `95ef1f1a3b32c255849bcf93f89a2adfb92f58f`
+**Final campaign commit (Phase 19 CLEAN, bu campaign'in son commit'i):** `83ca997`
 **Dal:** `feat/phase-6-19-full-completion-campaign`
-**Toplam campaign commit sayısı (base hariç):** 27
-**Toplam değişen dosya (`git diff --stat 837ff2f..95ef1f1`):** 75 dosya, +7930 / -16 satır
+**Toplam campaign commit sayısı (base hariç, Phase 19 dahil):** 28
+**Toplam değişen dosya (`git diff --stat 837ff2f..83ca997`):** 77 dosya, +8271 / -16 satır (Phase 19'un kendisi kaynak kodu değiştirmedi, yalnızca evidence/manifest/state dosyaları eklendi)
 
 ---
 
@@ -33,7 +33,7 @@ base→head commit aralığında durmaktadır.
 | 16 | Interview Preparation | `27ea9d8` | `f8b4188` | `385eb42` | `evidence/PHASE-16-INTERVIEW-PREPARATION/INTERVIEW-PREP.md` | N/A (dokümantasyon) | Backend tam | `evidence/PHASE-16-INTERVIEW-PREPARATION/EXECUTION.md` |
 | 17 | Final Integration | `f8b4188` | `fda6e61` | `53dd61b` | (link düzeltmesi) `case-study-05-*.md` | N/A (tutarlılık taraması) | Backend + Web tam | `evidence/PHASE-17-FINAL-INTEGRATION/EXECUTION.md` |
 | 18 | Independent Review (Claude self-audit) | `fda6e61` | `43ed85a` | `95ef1f1` | `backend/src/graphql/index.js` (`maskUnexpectedErrors`), `backend/tests/graphql-error-masking.test.js` | 7 yeni | Backend tam (135/135) | `evidence/PHASE-18-INDEPENDENT-REVIEW/{EXECUTION,CLAUDE-SELF-AUDIT}.md` |
-| 19 | CLEAN | `43ed85a`/`95ef1f1` | (bkz. state dosyası — bu manifestten sonraki commit) | (bkz. state dosyası) | Kod değişikliği yok — final tam regresyon | N/A (regresyon-only) | Backend 135/135, Web 23/23, API-tests 6 suite / 0 fail | `evidence/PHASE-19-CLEAN/EXECUTION.md` |
+| 19 | CLEAN | `43ed85a`/`95ef1f1` | `83ca997` | `83ca997` | Kod değişikliği yok — final tam regresyon | N/A (regresyon-only) | Backend 135/135, Web 23/23, API-tests 6 suite / 0 fail | `evidence/PHASE-19-CLEAN/EXECUTION.md` |
 
 ---
 
