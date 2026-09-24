@@ -1,0 +1,12 @@
+# Phase 14 (QA-DEMO-SYSTEM/Dockerfile) — build context is the repo root,
+# see that file for why. Only what the image actually needs is excluded
+# here; unrelated top-level handbook directories are small markdown/docs
+# content and are harmless to leave in the build context.
+QA-DEMO-SYSTEM/**/node_modules
+QA-DEMO-SYSTEM/backend/data
+QA-DEMO-SYSTEM/api-tests/reports
+QA-DEMO-SYSTEM/web-tests/playwright-report
+QA-DEMO-SYSTEM/web-tests/test-results
+QA-DEMO-SYSTEM/automation-labs/jmeter/results
+QA-DEMO-SYSTEM/automation-labs/locust/results
+**/*.log

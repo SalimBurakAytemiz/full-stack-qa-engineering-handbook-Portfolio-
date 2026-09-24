@@ -1,0 +1,24 @@
+# Phase 14 — Modern QA Learning Labs: "Docker for QA". Same status as
+# ../Dockerfile: syntax-correct, real, NEVER RUN (no daemon in this
+# sandbox — verified, see EXECUTION.md section 4). Run from the repo
+# root: `docker compose -f QA-DEMO-SYSTEM/docker-compose.yml up`.
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: QA-DEMO-SYSTEM/Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      PORT: '3000'
+      DB_PATH: /app/QA-DEMO-SYSTEM/backend/data/qa-demo.db
+    volumes:
+      - backend-data:/app/QA-DEMO-SYSTEM/backend/data
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://localhost:3000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  backend-data:

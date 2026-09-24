@@ -65,8 +65,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 11 | Security-Aware QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9d4d6a6 | ace6371 |
 | 12 | CI/CD & Environment | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | ace6371 | 7796f0f |
 | 13 | Logging / Observability / Production QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 7796f0f | d6848a1 |
-| 14 | Modern QA Learning Labs | IN PROGRESS | d6848a1 | — |
-| 15 | Case Studies (7) | NOT STARTED | — | — |
+| 14 | Modern QA Learning Labs | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | d6848a1 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 15 | Case Studies (7) | IN PROGRESS | *(Phase 14 head)* | — |
 | 16 | Interview Preparation | NOT STARTED | — | — |
 | 17 | Final Integration | NOT STARTED | — | — |
 | 18 | Independent Review (Claude self-audit) | NOT STARTED | — | — |
@@ -213,37 +213,61 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Açık blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY/`
 
+## Phase 14 — Kapanış Özeti (tamamlandı)
+
+- **Code Coverage (GERÇEK):** `node --test --experimental-test-coverage`
+  — 128/128 test, `all files: line 99.11% / branch 96.63% / funcs
+  97.77%`. Yeni dependency yok, `backend/package.json`'a `test:coverage`
+  script'i eklendi. Çıktı `code-coverage-output.txt`'e kaydedildi.
+- **k6/Gatling/Locust (GERÇEK — Locust ile):** `pip3 install locust`
+  başarılı (saf Python, JMeter'ın JVM/XStream sorunundan bağımsız).
+  Gerçek `locustfile.py` gerçek backend'e karşı çalıştırıldı: 526
+  istek, **0 hata**, p95=5ms p99=15ms.
+- **Docker for QA (CODE COMPLETE — EXECUTION BLOCKED, doğrulanmış):**
+  `docker` CLI var, daemon YOK (`docker info` ile doğrulandı). Gerçek
+  `Dockerfile` + `docker-compose.yml` + `.dockerignore` yazıldı;
+  `docker compose config` (daemon gerektirmez) ile syntax GERÇEKTEN
+  doğrulandı. İki gerçek tasarım hatası (npm workspace lockfile
+  uyuşmazlığı, `shared/`'ın yanlış konumlandırılması) yapım
+  denemesinden ÖNCE bulunup düzeltildi.
+- Kalan 9 madde (Pact/Kafka/RabbitMQ/SonarQube/Allure/Feature Flags/
+  Canary/Blue-Green/Cloud QA) → dürüstçe LEARNING-only.
+- Tam backend regresyonu: 128/128 (bu faz backend kaynak koduna
+  dokunmadı). Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/`
+
 ## NEXT EXACT ACTION
 
-Phase 14 (Modern QA Learning Labs) implementasyonuna başla — ROADMAP
-kapsamı (kendi başlığı zaten "LEARNING LABS"): Pact, Kafka, RabbitMQ,
-Docker for QA, Code Coverage, SonarQube, Allure, Feature Flags,
-Canary Deployment, Blue-Green Deployment, Cloud QA, k6, Gatling,
-Locust.
+Phase 15 (Case Studies) implementasyonuna başla — ROADMAP kapsamı:
+repo'daki TÜM QA bilgisini gerçekçi feature'lar üzerinde birleştiren
+7 örnek proje/case study:
 
-**Bu oturumda doğrulanan gerçek fırsatlar:**
-- **Code Coverage:** Node'un yerleşik `--experimental-test-coverage`
-  bayrağı ile GERÇEK coverage raporu alınabilir (ek dependency yok).
-- **k6/Gatling/Locust:** `pip3 install --dry-run locust` bu oturumda
-  DENENDİ ve tüm bağımlılıklarıyla kurulabilir olduğu doğrulandı
-  (pypi.org allowlist'te, JMeter'ın aksine — Locust saf Python'dur,
-  JVM/XStream bağımlılığı YOK). GERÇEK bir `locustfile.py` yazılıp
-  gerçek backend'e karşı headless modda çalıştırılacak.
-- **Docker for QA:** `docker` CLI KURULU (`29.3.1`) ama `docker info`
-  ile DAEMON'a erişilemediği doğrulandı (`docker.sock` yok) — gerçek,
-  syntax-correct bir `Dockerfile` + `docker-compose.yml` yazılacak,
-  Selenium/JMeter ile AYNI "CODE COMPLETE — EXECUTION BLOCKED
-  (doğrulanmış)" sınıflandırması kullanılacak.
-- **Diğer tüm maddeler** (Pact, Kafka, RabbitMQ, SonarQube, Allure,
-  Feature Flags, Canary, Blue-Green, Cloud QA) — gerçek sunucu/hesap
-  gerektirir, LEARNING-only.
+1. Authentication
+2. E-Commerce Order Flow
+3. Payment Flow
+4. Multi-Country / Localization
+5. Real-Time WebSocket / Event Flow
+6. Production Incident Investigation
+7. Mobile Migration / Feature Parity
 
-1. `node --test --experimental-test-coverage tests/**/*.test.js
-   tests/*.test.js` çalıştır, gerçek sayıları kaydet.
-2. `pip3 install locust`, gerçek `locustfile.py` yaz, gerçek backend'e
-   karşı headless kısa bir çalıştırma yap, gerçek istatistikleri
-   kaydet.
-3. `Dockerfile` + `docker-compose.yml` yaz (backend servisi için),
-   `docker info` çıktısıyla execution-blocked durumunu belgele.
-4. Kalan maddeler için LEARNING dokümantasyonu.
-5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md`
+**Bu bir SENTEZ fazıdır** — yeni kod/test YAZILMAYACAK (gerekmedikçe);
+her case study, bu campaign boyunca ZATEN üretilmiş gerçek evidence'a
+(Phase 5 Authentication/Orders/Payment, Phase 6 WebSocket, Phase 13
+Production/Incident pattern'leri) referans vererek gerçek bir QA
+case-study anlatısı (senaryo, risk analizi, test stratejisi, GERÇEK
+sonuçlar, öğrenilenler) olarak yazılacak.
+
+**Kaynak kodda doğrulanacak (önce):** Multi-Country/Localization bu
+uygulamada UYGULANMIŞ MI (tek-locale mı, Türkçe-sabit mi)? Mobile
+Migration için Phase 8 Mobile LEARNING bulgusu zaten referans
+noktası. Production Incident Investigation için Phase 13'ün
+correlation-ID/root-cause-isolation çalışması zaten referans noktası.
+Case Study 01/02/03/05 (Authentication/Order/Payment/WebSocket) gerçek,
+kapsamlı test kanıtına sahip (Phase 5/6) — bunlar gerçek sentezle
+yazılacak; 04/06/07 kısmen/tamamen LEARNING ile.
+
+1. Kaynak kod + mevcut evidence dosyalarını hızlıca tara (Multi-
+   Country/Localization gerçekten var mı doğrula).
+2. 7 case-study dosyası yaz: `QA-DEMO-SYSTEM/evidence/PHASE-15-CASE-STUDIES/case-study-0{1-7}-*.md`.
+3. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-15-CASE-STUDIES/EXECUTION.md`
+   (özet + her case study'nin durumu).
