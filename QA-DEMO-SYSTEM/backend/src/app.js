@@ -4,6 +4,7 @@ const { createAuthRouter } = require('./routes/auth.routes');
 const { createProductsRouter } = require('./routes/products.routes');
 const { createOrdersRouter } = require('./routes/orders.routes');
 const { createNotificationsRouter } = require('./routes/notifications.routes');
+const { createGraphQLHandler } = require('./graphql');
 const { jsonParseErrorHandler, notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 function createApp(db, { pushNotificationToUser } = {}) {
@@ -16,6 +17,7 @@ function createApp(db, { pushNotificationToUser } = {}) {
   app.use('/api/products', createProductsRouter(db));
   app.use('/api/orders', createOrdersRouter(db, pushNotificationToUser));
   app.use('/api/notifications', createNotificationsRouter(db));
+  app.post('/graphql', createGraphQLHandler(db));
 
   const frontendDir = path.join(__dirname, '..', '..', 'frontend');
   app.use(express.static(frontendDir));

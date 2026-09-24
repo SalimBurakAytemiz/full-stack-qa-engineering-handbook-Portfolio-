@@ -57,8 +57,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 
 | Phase | Adı | Durum | Base SHA | Head SHA |
 |---|---|---|---|---|
-| 6 | GraphQL / WebSocket / Event Testing | IN PROGRESS | 837ff2f | — |
-| 7 | Database Testing | NOT STARTED | — | — |
+| 6 | GraphQL / WebSocket / Event Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 837ff2f | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 7 | Database Testing | IN PROGRESS | *(Phase 6 head)* | — |
 | 8 | Web & Mobile QA | NOT STARTED | — | — |
 | 9 | Visual & Accessibility | NOT STARTED | — | — |
 | 10 | Automation Learning Labs (Selenium/Appium/JMeter) | NOT STARTED | — | — |
@@ -74,12 +74,44 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 
 ---
 
+## Phase 6 — Kapanış Özeti (tamamlandı)
+
+- 24 yeni test (19 GraphQL + 5 WS-advanced), tam backend regresyonu 96/96.
+- Phase 5 bağımlılığı (`requireAuth.js` → `resolveSession` refactor)
+  gerçek Postman koleksiyonuna karşı ayrıca doğrulandı (19/19 request,
+  42/42 assertion).
+- Firebase Events → dürüstçe LEARNING-only (gerçek bulut hesabı yok).
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-6-GRAPHQL-WEBSOCKET-EVENT/EXECUTION.md`
+- Detaylar için evidence dosyasına bakınız — bu state dosyası onun
+  yerine geçmez.
+
 ## NEXT EXACT ACTION
 
-Phase 6 implementasyonuna başla:
-1. GraphQL katmanı için scope/AC belirle (Query/Mutation/Error Handling/Data Mapping)
-2. `graphql` npm dependency ekle (backend'e, dev değil runtime dependency olarak)
-3. Gerçek bir GraphQL endpoint kur (mevcut REST kaynaklarını wrap eden, örn. products query, createOrder mutation)
-4. WebSocket test genişletmesi (connection/disconnect/reconnect/payload/duplicate/delayed/ordering) — mevcut `ws` altyapısına (P4.3) karşı gerçek Node-tabanlı test harness
-5. "Firebase Events" — gerçek Firebase hesabı olmadığı için LEARNING/dokümantasyon olarak ele alınacak (repository dışı yetki gerektirir)
-6. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-6-GRAPHQL-WEBSOCKET-EVENT/EXECUTION.md`
+Phase 7 (Database Testing) implementasyonuna başla — ROADMAP kapsamı:
+SQL/SELECT/WHERE/JOIN/Filtering/Sorting, API→DB Validation, UI→DB
+Validation, CRUD State Validation, Data Integrity, Duplicate
+Validation, Null Validation, Financial Data Validation, Timestamp
+Validation, Audit/History, Test Data Preparation.
+
+1. Mevcut DB şemasını (`backend/src/database/schema.js`) ve P5.7'nin
+   zaten kapsadığı API→DB validasyonunu (tekrar etmemek için) gözden
+   geçir.
+2. Gerçek, çalıştırılabilir bir SQL test paketi kur: SELECT/WHERE/JOIN/
+   filtering/sorting'i doğrudan `node:sqlite` `DatabaseSync` üzerinden
+   çalıştıran testler (backend test yardımcılarını kullanarak, in-memory DB).
+3. CRUD State Validation + Data Integrity + Duplicate/Null Validation:
+   gerçek insert/update/delete akışları + constraint (FK, CHECK, UNIQUE)
+   ihlali denemeleri ile.
+4. Financial Data Validation: `orders.total`/`order_items.unit_price`
+   hesaplamalarının DB seviyesinde tutarlılığı (zaten P5.7'de kısmen
+   kanıtlandı — burada SQL-native JOIN/aggregate sorgularla genişletilecek).
+5. Timestamp Validation + Audit/History: `created_at` alanlarının
+   gerçek formatı/monotonluğu; sistemde ayrı bir audit-log tablosu
+   YOKSA bu dürüstçe NOT IMPLEMENTED olarak belgelenecek (icat edilmeyecek).
+6. UI→DB Validation: frontend'in gerçek bir kullanıcı akışını tetikleyip
+   (mevcut vanilla frontend + fetch tabanlı akış, veya minimal bir
+   Playwright kullanımı) DB'deki sonucu doğrudan sorgulayarak doğrulama.
+7. Test Data Preparation: mevcut `seed.js`'in QA-perspektifinden
+   (deterministik, tekrarlanabilir test verisi) belgelenmesi.
+8. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md`
