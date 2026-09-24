@@ -54,7 +54,18 @@ function maskUnexpectedErrors(result) {
 // GraphQL execution requires the `graphql` package itself, there is no
 // zero-dependency way to parse/validate/execute GraphQL; is a bigger
 // framework needed on top of it? no).
-function createGraphQLHandler(db) {
+//
+// Codex fix-campaign B1: pushNotificationToUser is injected exactly the
+// same way orders.routes.js already receives it (see app.js) — the REST
+// route calls it inline after a successful createOrder with a
+// result.notification, and the createOrder resolver in resolvers.js now
+// does the identical thing via context.pushNotificationToUser. No new
+// business logic was added here or in the resolver: this file only wires
+// the SAME already-existing, canonical websocketServer.js function into
+// the GraphQL transport, which previously never received it at all — that
+// was the root cause of GraphQL-created PAID orders never reaching the
+// live WebSocket push (REST orders were never affected).
+function createGraphQLHandler(db, pushNotificationToUser = () => false) {
   return async (req, res) => {
     const { query, variables, operationName } = req.body || {};
 
@@ -75,7 +86,7 @@ function createGraphQLHandler(db) {
       schema,
       source: query,
       rootValue: resolvers,
-      contextValue: { db, userId: session.ok ? session.userId : undefined },
+      contextValue: { db, userId: session.ok ? session.userId : undefined, pushNotificationToUser },
       variableValues: variables,
       operationName,
     });

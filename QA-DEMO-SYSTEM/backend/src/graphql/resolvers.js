@@ -74,6 +74,16 @@ const resolvers = {
     if (!result.ok) {
       throw new GraphQLError(result.message, { extensions: { code: 'BAD_REQUEST', status: result.status } });
     }
+    // Codex fix-campaign B1: mirrors orders.routes.js's REST handler
+    // exactly — the order service already persists the notification, this
+    // just delivers it over the live WebSocket to the owning user, the same
+    // canonical pushNotificationToUser injected via context (see
+    // graphql/index.js). Before this fix, a GraphQL-created PAID order was
+    // durably persisted (visible on the next GET /api/notifications) but
+    // never reached a connected client in realtime — only REST orders did.
+    if (result.notification) {
+      context.pushNotificationToUser(result.notification.user_id, result.notification);
+    }
     return { id: result.orderId, status: result.orderStatus, total: result.total };
   },
 };

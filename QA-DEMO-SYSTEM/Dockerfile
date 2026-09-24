@@ -19,11 +19,21 @@
 # only backend/package.json would make `npm ci` fail against a lockfile
 # that also references api-tests/web-tests/automation-labs) and a
 # .dockerignore excludes node_modules/data/generated artifacts.
+#
+# Codex fix-campaign B7: seed.js resolves the shared test-data directory
+# as `path.join(__dirname, '..', '..', '..', '..', 'shared', 'test-data')`
+# — with the backend source living at /app/QA-DEMO-SYSTEM/backend/src/
+# database inside this image, that resolves to /app/shared/test-data.
+# The previous `COPY shared /shared` placed it at the container's
+# filesystem root instead (outside /app entirely), so seed.js would have
+# failed to find its test-data files at runtime. shared/ must be copied
+# under /app, mirroring its real position as a sibling of QA-DEMO-SYSTEM/
+# one level up from the WORKDIR.
 FROM node:22-slim
 WORKDIR /app
 
 COPY QA-DEMO-SYSTEM QA-DEMO-SYSTEM
-COPY shared /shared
+COPY shared /app/shared
 
 WORKDIR /app/QA-DEMO-SYSTEM
 RUN npm ci --workspace backend --omit=dev

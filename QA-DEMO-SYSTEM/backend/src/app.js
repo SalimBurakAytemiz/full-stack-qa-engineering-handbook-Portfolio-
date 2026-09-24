@@ -19,7 +19,7 @@ function createApp(db, { pushNotificationToUser } = {}) {
   app.use('/api/products', createProductsRouter(db));
   app.use('/api/orders', createOrdersRouter(db, pushNotificationToUser));
   app.use('/api/notifications', createNotificationsRouter(db));
-  app.post('/graphql', createGraphQLHandler(db));
+  app.post('/graphql', createGraphQLHandler(db, pushNotificationToUser));
 
   const frontendDir = path.join(__dirname, '..', '..', 'frontend');
   app.use(express.static(frontendDir));
