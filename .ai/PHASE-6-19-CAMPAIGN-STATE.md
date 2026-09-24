@@ -62,8 +62,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 8 | Web & Mobile QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 8a31c62 | 026623c |
 | 9 | Visual & Accessibility | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 026623c | 5b94cea |
 | 10 | Automation Learning Labs (Selenium/Appium/JMeter) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 5b94cea | 9d4d6a6 |
-| 11 | Security-Aware QA | IN PROGRESS | 9d4d6a6 | — |
-| 12 | CI/CD & Environment | NOT STARTED | — | — |
+| 11 | Security-Aware QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9d4d6a6 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 12 | CI/CD & Environment | IN PROGRESS | *(Phase 11 head)* | — |
 | 13 | Logging / Observability / Production QA | NOT STARTED | — | — |
 | 14 | Modern QA Learning Labs | NOT STARTED | — | — |
 | 15 | Case Studies (7) | NOT STARTED | — | — |
@@ -153,43 +153,63 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Tam backend regresyonu: 111/111. Açık blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/`
 
+## Phase 11 — Kapanış Özeti (tamamlandı)
+
+- Yeni `backend/tests/security.test.js` (12 test): IDOR/BOLA (3),
+  XSS-oriented (2 — biri GERÇEK bir bulgu içeriyor, aşağıda), SQLi-
+  oriented (3), Mass Assignment (2), Sensitive Data (2).
+- **Gerçek bulgu:** `payment_token` bilinmeyen değer hatası, ham
+  istemci girdisini JSON mesajına yansıtıyor (`payment.service.js`).
+  Üç bağımsız kontrol noktasıyla (content-type JSON, frontend
+  `textContent` kullanımı, bu hatanın hiçbir UI'da gösterilmemesi)
+  uçtan uca istismar edilemez olduğu KANITLANDI — non-blocking
+  hardening notu olarak kaydedildi, küçümsenmedi.
+- RBAC/OTP/Rate Limiting/File Upload → `grep` ile doğrulanıp NOT
+  IMPLEMENTED (icat edilmedi).
+- OWASP API Security Top 10 → gerçek eşleştirme
+  (`OWASP-API-TOP-10-MAPPING.md`). Burp Suite/OWASP ZAP → LEARNING-only.
+- Tam backend regresyonu: 123/123 (111 mevcut + 12 yeni).
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/`
+
 ## NEXT EXACT ACTION
 
-Phase 11 (Security-Aware QA) implementasyonuna başla — ROADMAP kapsamı:
+Phase 12 (CI/CD & Environment) implementasyonuna başla — ROADMAP
+kapsamı:
 
-**EXPERIENCE:** Authentication, Authorization, RBAC, Session, Token,
-OTP, Rate Limiting, IDOR/BOLA-style checks, Sensitive Data, Input
-Validation, XSS-oriented validation, SQL Injection-oriented
-validation, Mass Assignment, File Upload, Security Defects.
+**EXPERIENCE:** Jenkins Job Execution, Jenkins Test Execution, Console
+Output, Test Failure Analysis, QA CI/CD, DEV/QA/UAT/Stage/Production,
+Environment Validation, Server/Application Recycle, Production
+Incident Investigation, QA → DevOps Collaboration.
+**LEARNING:** Jenkinsfile, Pipeline Development, Quality Gate Automation.
 
-**Kaynak kod ÖNCEDEN doğrulandı (bu oturumda):** `grep` ile
-`rate.limit|role|RBAC|multer|upload` aranıp sıfır sonuç bulundu —
-sistemde RBAC/roller, rate limiting ve file upload YOKTUR. Bunlar
-İCAT EDİLMEYECEK, dürüstçe NOT IMPLEMENTED olarak belgelenecek. OTP de
-yoktur (tek-faktörlü authentication, `auth.service.js`). Authentication/
-Authorization/Session/Token zaten Phase 5 (P5.3) tarafından kapsamlı
-test edilmiştir — burada TEKRAR edilmeyecek, güvenlik-spesifik YENİ
-açılardan (IDOR/BOLA, XSS-oriented, SQLi-oriented, Mass Assignment,
-Sensitive Data exposure) genişletilecek.
+**Önemli fırsat:** Bu repo'da GERÇEK bir CI/CD pipeline (`.github/
+workflows/`) henüz YOK (yalnızca boş `.gitkeep`). GitHub Actions,
+GitHub'ın kendi sunucularında çalışır — bu sandbox'ın ağ kısıtlarına
+TABİ DEĞİLDİR. Bu nedenle: gerçek, çalışan bir `.github/workflows/
+ci.yml` yazılacak (backend `node --test` + web-tests Playwright,
+gerçek browser install `npx playwright install --with-deps chromium`
+ile — GH Actions runner'ının tam internet erişimi olduğu için bu
+ÇALIŞIR), campaign branch'e push edilecek, ve GitHub MCP tool'larıyla
+(`mcp__github__actions_list`/`get_check_run`) GERÇEK çalıştırma sonucu
+doğrulanacak — Selenium/JMeter'ın aksine, bu GERÇEKTEN
+doğrulanabilir bir CI/CD kanıtı olacak.
 
-1. Gerçek bir security-focused test dosyası (`backend/tests/
-   security.test.js` veya `automation-labs`/`api-tests` altında) —
-   IDOR/BOLA: başka kullanıcının order'ına erişim denemesi (P5.3'te
-   kısmen var, burada explicit güvenlik çerçevesinde referans
-   verilecek), XSS-oriented: ürün/sipariş response'larında HTML
-   injection payload'larının ham döndüğü (React/framework olmadığı
-   için server-side encoding sorumluluğu netleştirilecek — vanilla
-   frontend `textContent`/`innerHTML` kullanımı P8'de zaten incelendi),
-   SQLi-oriented: parametreli sorgular (`db.prepare(...).run(?)`)
-   nedeniyle SQL injection'a karşı yapısal dayanıklılık kanıtı,
-   Mass Assignment: `createOrder`'ın yalnızca beklenen alanları kabul
-   ettiği (fazladan `user_id` gibi alan gönderilse bile override
-   edilemediği) kanıtı, Sensitive Data: response'larda password/token
-   hash'lerinin sızmadığı kanıtı.
-2. OWASP API Security Top 10 → gerçek bulgularla eşleştirilmiş bir
-   dokümantasyon (hangi madde bu sistemde test edildi, hangisi N/A).
-3. Burp Suite / OWASP ZAP → LEARNING-only (GUI/lisanslı araçlar,
-   Tooling tablosunda zaten doğrulanmış altyapı eksikliği).
-4. RBAC / Rate Limiting / OTP / File Upload → NOT IMPLEMENTED, dürüstçe
-   belgelenecek (icat edilmeyecek).
-5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md`
+Jenkins'in kendisi bu ortamda kurulu DEĞİL (Tooling tablosunda zaten
+doğrulandı) — gerçek, syntax-valid bir `Jenkinsfile` yazılacak ama
+ÇALIŞTIRILAMAYACAK, dürüstçe NOT EXECUTED/LEARNING olarak
+işaretlenecek (Jenkins Job Execution/Console Output/Test Failure
+Analysis'in Jenkins-spesifik kısımları LEARNING-only).
+
+1. `.github/workflows/ci.yml` yaz, campaign branch'e push et.
+2. GitHub Actions API ile gerçek run sonucunu doğrula (PASS/FAIL, süre,
+   log).
+3. `Jenkinsfile` yaz (syntax-valid, NOT EXECUTED olarak belgelenecek).
+4. DEV/QA/UAT/Stage/Production ortam konsepti — bu demo projenin
+   gerçekte yalnızca "local dev" ortamına sahip olduğu dürüstçe
+   belirtilerek, gerçek bir organizasyonda bunun nasıl işleyeceği
+   LEARNING içeriği olarak yazılacak. Environment Validation (mevcut
+   `/api/health` deseni) ve Server/Application Recycle (bu campaign
+   boyunca zaten kullanılan deterministik restart deseni) GERÇEK
+   pratik olarak referans verilecek.
+5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-12-CICD-ENVIRONMENT/EXECUTION.md`
