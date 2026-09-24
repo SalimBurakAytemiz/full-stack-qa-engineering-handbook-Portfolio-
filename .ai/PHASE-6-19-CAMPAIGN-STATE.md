@@ -60,8 +60,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 6 | GraphQL / WebSocket / Event Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 837ff2f | 9e83721 |
 | 7 | Database Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9e83721 | 8a31c62 |
 | 8 | Web & Mobile QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 8a31c62 | 026623c |
-| 9 | Visual & Accessibility | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 026623c | *(bu checkpoint commit'i — bkz. `git log -1`)* |
-| 10 | Automation Learning Labs (Selenium/Appium/JMeter) | IN PROGRESS | *(Phase 9 head)* | — |
+| 9 | Visual & Accessibility | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 026623c | 5b94cea |
+| 10 | Automation Learning Labs (Selenium/Appium/JMeter) | IN PROGRESS | 5b94cea | — |
 | 11 | Security-Aware QA | NOT STARTED | — | — |
 | 12 | CI/CD & Environment | NOT STARTED | — | — |
 | 13 | Logging / Observability / Production QA | NOT STARTED | — | — |
