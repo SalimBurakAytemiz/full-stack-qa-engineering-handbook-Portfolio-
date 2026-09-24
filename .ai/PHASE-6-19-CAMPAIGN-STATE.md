@@ -58,8 +58,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | Phase | Adı | Durum | Base SHA | Head SHA |
 |---|---|---|---|---|
 | 6 | GraphQL / WebSocket / Event Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 837ff2f | 9e83721 |
-| 7 | Database Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9e83721 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
-| 8 | Web & Mobile QA | IN PROGRESS | *(Phase 7 head)* | — |
+| 7 | Database Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9e83721 | 8a31c62 |
+| 8 | Web & Mobile QA | IN PROGRESS | 8a31c62 | — |
 | 9 | Visual & Accessibility | NOT STARTED | — | — |
 | 10 | Automation Learning Labs (Selenium/Appium/JMeter) | NOT STARTED | — | — |
 | 11 | Security-Aware QA | NOT STARTED | — | — |
