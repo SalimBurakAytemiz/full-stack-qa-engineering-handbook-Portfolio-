@@ -63,8 +63,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 9 | Visual & Accessibility | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 026623c | 5b94cea |
 | 10 | Automation Learning Labs (Selenium/Appium/JMeter) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 5b94cea | 9d4d6a6 |
 | 11 | Security-Aware QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9d4d6a6 | ace6371 |
-| 12 | CI/CD & Environment | IN PROGRESS | ace6371 | — |
-| 13 | Logging / Observability / Production QA | NOT STARTED | — | — |
+| 12 | CI/CD & Environment | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | ace6371 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 13 | Logging / Observability / Production QA | IN PROGRESS | *(Phase 12 head)* | — |
 | 14 | Modern QA Learning Labs | NOT STARTED | — | — |
 | 15 | Case Studies (7) | NOT STARTED | — | — |
 | 16 | Interview Preparation | NOT STARTED | — | — |
@@ -172,44 +172,66 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Açık blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/`
 
+## Phase 12 — Kapanış Özeti (tamamlandı)
+
+- **GERÇEK, bu oturumdan BAĞIMSIZ doğrulanmış CI/CD kanıtı:**
+  `.github/workflows/ci.yml` push edildi (commit `6ac36bc`), GitHub
+  Actions Run #1 (`id: 35950797840`) GitHub'ın kendi API'siyle
+  sorgulandı — **3/3 job SUCCESS** (backend node:test, web-tests
+  Playwright gerçek `playwright install` ile, api-tests Newman/AJV).
+  Bu, Phase 10'un Selenium/JMeter altyapı-kısıtlarıyla doğrudan
+  tezat oluşturuyor: GH Actions runner'ları bu sandbox'ın ağ
+  kısıtlarına TABİ DEĞİL, dolayısıyla GERÇEK bir PASS elde edildi.
+- `web-tests/playwright.config.js` taşınabilir hale getirildi
+  (sabit sandbox yolu yerine opsiyonel `PLAYWRIGHT_CHROMIUM_PATH`
+  env var) — yerel 23/23 PASS ile yeniden doğrulandı.
+- `Jenkinsfile` (syntax-valid, `ci.yml` ile aynı 3 aşama) yazıldı,
+  dürüstçe NOT EXECUTED (gerçek Jenkins server yok).
+- DEV/QA/UAT/Stage/Production, Environment Validation, Server/
+  Application Recycle — `ENVIRONMENT-CONCEPTS.md`.
+- Tam backend regresyonu: 123/123. Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-12-CICD-ENVIRONMENT/`
+
 ## NEXT EXACT ACTION
 
-Phase 12 (CI/CD & Environment) implementasyonuna başla — ROADMAP
-kapsamı:
+Phase 13 (Logging / Observability / Production QA) implementasyonuna
+başla — ROADMAP kapsamı:
 
-**EXPERIENCE:** Jenkins Job Execution, Jenkins Test Execution, Console
-Output, Test Failure Analysis, QA CI/CD, DEV/QA/UAT/Stage/Production,
-Environment Validation, Server/Application Recycle, Production
-Incident Investigation, QA → DevOps Collaboration.
-**LEARNING:** Jenkinsfile, Pipeline Development, Quality Gate Automation.
+**EXPERIENCE:** Elastic, Backend Logs, Application Logs, Correlation
+ID, Request ID, Root Cause Isolation, Production Validation, Smoke
+Testing, Stability Verification, Hotfix Testing, Release Validation.
+**LEARNING:** Distributed Tracing, OpenTelemetry, Jaeger, Logs/
+Metrics/Traces model.
 
-**Önemli fırsat:** Bu repo'da GERÇEK bir CI/CD pipeline (`.github/
-workflows/`) henüz YOK (yalnızca boş `.gitkeep`). GitHub Actions,
-GitHub'ın kendi sunucularında çalışır — bu sandbox'ın ağ kısıtlarına
-TABİ DEĞİLDİR. Bu nedenle: gerçek, çalışan bir `.github/workflows/
-ci.yml` yazılacak (backend `node --test` + web-tests Playwright,
-gerçek browser install `npx playwright install --with-deps chromium`
-ile — GH Actions runner'ının tam internet erişimi olduğu için bu
-ÇALIŞIR), campaign branch'e push edilecek, ve GitHub MCP tool'larıyla
-(`mcp__github__actions_list`/`get_check_run`) GERÇEK çalıştırma sonucu
-doğrulanacak — Selenium/JMeter'ın aksine, bu GERÇEKTEN
-doğrulanabilir bir CI/CD kanıtı olacak.
+**Gerçekten yapılabilir olan:** Backend'e gerçek bir correlation-ID/
+request-ID middleware'i eklenecek (her isteğe `crypto.randomUUID()`
+ile bir ID atanacak, `X-Request-Id` response header'ında geri
+dönecek, mevcut `console.log` satırlarına — order/event/notification
+servislerindeki mevcut loglama pattern'ine — bu ID eklenecek). Bu,
+Root Cause Isolation'ı GERÇEK kılar: bir isteğin tüm log satırları
+tek bir ID ile filtrelenebilir hale gelir. Gerçek bir test bunu
+kanıtlayacak (iki eşzamanlı isteğin ID'lerinin çakışmadığı,
+response header'da göründüğü).
 
-Jenkins'in kendisi bu ortamda kurulu DEĞİL (Tooling tablosunda zaten
-doğrulandı) — gerçek, syntax-valid bir `Jenkinsfile` yazılacak ama
-ÇALIŞTIRILAMAYACAK, dürüstçe NOT EXECUTED/LEARNING olarak
-işaretlenecek (Jenkins Job Execution/Console Output/Test Failure
-Analysis'in Jenkins-spesifik kısımları LEARNING-only).
+Smoke Testing/Production Validation/Release Validation zaten Phase
+12'nin GERÇEK CI pipeline'ında somutlaşmıştır (her push'ta health-
+check + tam suite) — burada TEKRAR test yazılmayacak, yalnızca bu
+kavramların bu projede NASIL karşılandığı referans verilecek.
+Stability Verification/Hotfix Testing — bu campaign'in kendi
+"her fazda tam regresyon" disiplini zaten bunun canlı örneğidir.
 
-1. `.github/workflows/ci.yml` yaz, campaign branch'e push et.
-2. GitHub Actions API ile gerçek run sonucunu doğrula (PASS/FAIL, süre,
-   log).
-3. `Jenkinsfile` yaz (syntax-valid, NOT EXECUTED olarak belgelenecek).
-4. DEV/QA/UAT/Stage/Production ortam konsepti — bu demo projenin
-   gerçekte yalnızca "local dev" ortamına sahip olduğu dürüstçe
-   belirtilerek, gerçek bir organizasyonda bunun nasıl işleyeceği
-   LEARNING içeriği olarak yazılacak. Environment Validation (mevcut
-   `/api/health` deseni) ve Server/Application Recycle (bu campaign
-   boyunca zaten kullanılan deterministik restart deseni) GERÇEK
-   pratik olarak referans verilecek.
-5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-12-CICD-ENVIRONMENT/EXECUTION.md`
+**Gerçekten yapılamayan:** Elastic/OpenTelemetry/Jaeger — Tooling
+tablosunda zaten doğrulanmış altyapı eksikliği, LEARNING-only.
+
+1. `backend/src/middleware/requestId.js` (veya benzeri) — yeni,
+   gerçek correlation-ID middleware'i.
+2. Mevcut servislerin `console.log` satırlarına (events.service.js,
+   notifications.service.js, websocketServer.js) request/correlation
+   ID eklenmesi — yalnızca genuinely faydalı olan yerlerde, aşırı
+   loglama eklenmeyecek.
+3. Gerçek test: `backend/tests/observability.test.js` — her yanıtta
+   `X-Request-Id` header'ı var mı, iki farklı istek farklı ID alıyor
+   mu, aynı isteğin log satırları aynı ID'yi taşıyor mu.
+4. Elastic/OpenTelemetry/Jaeger/Distributed Tracing → LEARNING
+   dokümantasyonu.
+5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY/EXECUTION.md`
