@@ -60,8 +60,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 6 | GraphQL / WebSocket / Event Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 837ff2f | 9e83721 |
 | 7 | Database Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9e83721 | 8a31c62 |
 | 8 | Web & Mobile QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 8a31c62 | 026623c |
-| 9 | Visual & Accessibility | IN PROGRESS | 026623c | — |
-| 10 | Automation Learning Labs (Selenium/Appium/JMeter) | NOT STARTED | — | — |
+| 9 | Visual & Accessibility | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 026623c | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 10 | Automation Learning Labs (Selenium/Appium/JMeter) | IN PROGRESS | *(Phase 9 head)* | — |
 | 11 | Security-Aware QA | NOT STARTED | — | — |
 | 12 | CI/CD & Environment | NOT STARTED | — | — |
 | 13 | Logging / Observability / Production QA | NOT STARTED | — | — |
@@ -115,40 +115,65 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Açık blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-8-WEB-MOBILE-QA/EXECUTION.md` + `MOBILE-LEARNING.md`
 
+## Phase 9 — Kapanış Özeti (tamamlandı)
+
+- `@axe-core/playwright` (devDependency, MPL-2.0) eklendi. 6 yeni
+  accessibility testi: WCAG (wcag2a+wcag2aa, login+products), Contrast
+  (color-contrast kuralı), Accessibility Labels
+  (`toHaveAccessibleName()`), Keyboard Navigation + Focus (Tab sırası +
+  klavye-yalnızca form submit) — **axe-core GERÇEKTEN 0 violation
+  buldu, bastırılmadı**.
+- 3 yeni visual-regression testi (login/products baseline + negatif
+  kontrol) — negatif kontrol testinde ilk denemede yanlış
+  `maxDiffPixelRatio` nedeniyle false-negative riski BULUNDU ve
+  düzeltildi (bkz. evidence Bölüm 5) — "Difference Visualization
+  gerçekten fark yakalıyor mu?" sorusu ciddiye alındı.
+- Tam web-tests suite 3 ardışık çalıştırmada 23/23 (flaky değil). Tam
+  backend regresyonu 111/111.
+- Figma Comparison + gerçek ekran-okuyucu yazılımı → dürüstçe
+  LEARNING-only.
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-9-VISUAL-ACCESSIBILITY/EXECUTION.md`
+
 ## NEXT EXACT ACTION
 
-Phase 9 (Visual & Accessibility) implementasyonuna başla — ROADMAP
-kapsamı iki alt-bölüm:
+Phase 10 (Automation Learning Labs) implementasyonuna başla — ROADMAP
+kapsamı üç alt-bölüm, hepsi "LEARNING → PRACTICED" statüsünde:
 
-**Visual:** Pixel Perfect, Figma Comparison, Screenshot Comparison,
-Difference Visualization, Threshold/Tolerance, Visual Regression.
-Playwright'ın yerleşik `expect(page).toHaveScreenshot()` API'si
-(pixelmatch tabanlı, gerçek piksel-fark/threshold desteği) ile GERÇEK
-olarak test edilebilir — **Figma Comparison HARİÇ** (gerçek bir Figma
-dosyası/hesabı yok, bu tek madde LEARNING-only olacak).
+**Selenium** — GERÇEK bir engel DOĞRULANDI (varsayım değil, bu
+oturumda test edildi): Bu ortamda yalnızca `chromedriver 147.x` var
+(`/opt/node22/bin/chromedriver`), yalnızca Chromium `141.x` var
+(`/opt/pw-browsers/chromium-1194`) — chromedriver bunu reddediyor
+("This version of ChromeDriver only supports Chrome version 147").
+Selenium Manager'ın kendisi de eşleşen bir driver İNDİREMİYOR:
+`googlechromelabs.github.io` proxy allowlist'inde YOK (`403: request
+blocked: no rule or allowlist entry allows host`), `npm install
+chromedriver@141` postinstall'ı da AYNI nedenle başarısız oldu (ikisi
+de bu oturumda gerçekten denendi). Bu nedenle: GERÇEK, doğru Selenium
+WebDriver + Page Object Model kodu yazılacak (Setup/WebDriver/
+Locators/Waits/Assertions/POM/Test Data), çalıştırma denenecek,
+DOĞRULANMIŞ hata belgelenecek — "CODE COMPLETE — EXECUTION BLOCKED
+(infrastructure, doğrulandı)" olarak sınıflandırılacak, asla sahte
+PASS üretilmeyecek. Parallel Execution/Cross Browser/Selenium
+Grid/CI-CD → temel execution zaten blocked olduğundan LEARNING-only.
 
-**Accessibility:** Keyboard Navigation, Focus, Accessibility Labels,
-Screen Reader controls, Contrast, WCAG concepts. `@axe-core/playwright`
-(devDependency olarak değerlendirilip eklenecek — MIT lisanslı,
-endüstri standardı, gerekçe kısaca yazılacak) ile WCAG/contrast/label
-kontrolleri gerçek olarak otomatize edilebilir; Keyboard Navigation/
-Focus Playwright'ın kendi `page.keyboard`/`page.locator().focus()`
-API'leriyle test edilecek. Gerçek ekran okuyucu (NVDA/VoiceOver)
-otomasyonu bu headless container'da mümkün DEĞİL — yalnızca "Screen
-Reader controls" alt-maddesinin gerçek ekran-okuyucu-yazılımı kısmı
-LEARNING-only olacak (ARIA/accessible-name doğrulaması gerçek testle
-yapılacak, bu ekran okuyucuların temel dayanağıdır).
+**Appium** — Phase 8 Mobile ile AYNI gerekçe: gerçek cihaz/emulator
+yok → LEARNING-only.
 
-1. `web-tests` içine (mevcut Playwright kurulumunu paylaşarak)
-   screenshot-based visual regression testleri ekle: login sayfası ve
-   ürün listesi sayfası için baseline screenshot + fark toleransı.
-2. `@axe-core/playwright` ekle, dependency-policy kısaca değerlendir
-   (lisans/bakım/güvenlik), products.html ve index.html üzerinde
-   gerçek WCAG taraması çalıştır.
-3. Keyboard Navigation + Focus: login formunda Tab sırası ve focus
-   ring'in gerçek DOM `document.activeElement` ile doğrulanması.
-4. Contrast: axe-core'un `color-contrast` kuralı (gerçek CSS renkleri
-   üzerinden).
-5. Figma Comparison + gerçek ekran-okuyucu otomasyonu → LEARNING-only,
-   dürüstçe belgelenecek.
-6. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-9-VISUAL-ACCESSIBILITY/EXECUTION.md`
+**JMeter** — GERÇEKTEN ÇALIŞIYOR (`jmeter --version` bu oturumda
+doğrulandı, v2.13/2015, eski ama fonksiyonel). Gerçek bir `.jmx` test
+planı (Thread Group, HTTP Sampler'lar → `/api/health`,
+`/api/products`, `/api/auth/login`, Header Manager, CSV Data Config,
+Response Assertion, Aggregate Report P90/P95/P99) yazılacak ve gerçek
+backend'e karşı GERÇEKTEN çalıştırılacak (küçük, container-güvenli
+thread sayısı/süre). Load/Stress/Spike/Soak → aynı planın farklı
+parametrelerle en az 2 gerçek çalıştırması (temel Load + hızlı bir
+Spike varyantı).
+
+1. `QA-DEMO-SYSTEM/automation-labs/selenium/` — POM + test dosyaları,
+   gerçek çalıştırma denemesi, doğrulanmış hata evidence'a kaydedilecek.
+2. `QA-DEMO-SYSTEM/automation-labs/jmeter/` — `.jmx` planı + gerçek
+   çalıştırma çıktısı (özet istatistikler, ham JTL değil — küçük,
+   commit edilebilir).
+3. Appium → `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/APPIUM-LEARNING.md`.
+4. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md`
