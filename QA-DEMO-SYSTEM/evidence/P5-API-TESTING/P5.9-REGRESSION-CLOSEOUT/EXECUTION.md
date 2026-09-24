@@ -427,7 +427,7 @@ hiç kullanılmamış, bu pakette de icat edilmedi.
 | # | Bulgu | Kaynak | Severity | Durum |
 |---|---|---|---|---|
 | 1 | `POST /api/orders` idempotent değil | Phase 4 devralınan | Low | KNOWN LIMITATION / FUTURE HARDENING |
-| 2 | `CREATE TABLE IF NOT EXISTS` yalnızca dosya hiç yokken gerçekten yeni şemayı (güncel constraint tanımlarıyla) oluşturur; daha önceden var olan, hiç yeniden oluşturulmamış bir SQLite tablosu bu constraint güncellemelerini OTOMATİK olarak almaz (migrate/backfill edilmez) — existing-DB migration/backfill ayrı bir future-hardening konusudur | Phase 4 devralınan (P4.6), P5.7'de teyit | Medium | KNOWN LIMITATION / FUTURE HARDENING |
+| 2 | **DB dosyasının mevcut olması tek başına problem değildir.** Asıl belirleyici, TABLO'nun (dosya değil) o an var olup olmadığıdır: ilgili tablo henüz mevcut değilse `CREATE TABLE IF NOT EXISTS` onu güncel schema tanımıyla (güncel CHECK/FK/NOT NULL constraint'leriyle) gerçekten oluşturur; ama tablo ZATEN mevcutsa, `CREATE TABLE IF NOT EXISTS` mevcut tabloyu DEĞİŞTİRMEZ/ALTER etmez — hiçbir şey yapmadan sessizce atlar. Bu nedenle **existing table'lar yeni eklenen CHECK/FOREIGN KEY/NOT NULL vb. constraint'lerle otomatik olarak migrate/backfill edilmez.** Ana limitation: **EXISTING TABLES ARE NOT AUTOMATICALLY MIGRATED.** Existing-table migration/backfill ayrı bir future-hardening konusudur. | Phase 4 devralınan (P4.6), P5.7'de teyit | Medium | KNOWN LIMITATION / FUTURE HARDENING |
 | 3 | CORS/güvenlik header'ları yok | P5.0 | Low | KNOWN LIMITATION |
 | 4 | Event/notification log commit-öncesi yazılıyor | Phase 4 (P4.3) devralınan | Medium | KNOWN LIMITATION / FUTURE HARDENING |
 | 5 | Frontend GET/WS race → olası çift GÖRÜNÜM (DB duplicate yok) | Phase 4 devralınan | Low | KNOWN LIMITATION |

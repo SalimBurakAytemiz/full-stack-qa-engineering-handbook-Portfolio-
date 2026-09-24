@@ -238,7 +238,7 @@ Frontend
 
 ## Status
 
-IN PROGRESS
+CLEAN
 
 ## Amaç
 
@@ -751,4 +751,4 @@ CLEAN
 
 PHASE 5 — API TESTING
 
-IN PROGRESS
+CLEAN
