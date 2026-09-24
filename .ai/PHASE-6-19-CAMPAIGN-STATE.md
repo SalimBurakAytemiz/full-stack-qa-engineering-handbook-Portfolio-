@@ -370,13 +370,44 @@ DOCUMENTED. Açık blocker: 0. Final regresyon: Backend 144/144, Web-tests
 Actions 4/4 job SUCCESS (yeni selenium-lab job'u dahil, GERÇEKTEN
 PASS).**
 
-## Campaign Statüsü: CLAUDE FIX CAMPAIGN COMPLETE — CODEX FIX-DELTA RE-REVIEW PENDING
+## [GÜNCELLEME 2] Codex'in FIX-DELTA Re-Review'u ve 2. FIX ROUND
 
-Phase 6'dan Phase 19'a kadar TÜM fazlar VE Codex'in bulduğu TÜM
-blocker'lar/non-blocking notlar ele alınmıştır. Main'e merge
-YAPILMADI, PR AÇILMADI, branch SİLİNMEDİ, history SIKIŞTIRILMADI —
-campaign kendi kurallarına göre burada durur. Bir sonraki adım, bu
-campaign'in dışında, ayrı bir görev olarak yapılacak Codex'in
-FIX-DELTA re-review'udur (`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`)
+Codex'in yukarıdaki 1. fix campaign turu (`a359b39` → `2b1966d`)
+üzerindeki BAĞIMSIZ fix-delta re-review'u da **FAIL / CHANGES
+REQUIRED** sonucu verdi: B1-B4/B6-B9 gerçekten RESOLVED'dı, ama
+**B5'in fail-gate parçası eksikti** (correlation + threshold gerçekti,
+ama başarısız bir JMeter örneğini process exit code'a bağlayan bir
+runner yoktu) ve **N6'nın kendisi de stale kalmıştı** (`2b1966d`
+manifest'i, kendi commit'inin etkisini sayıma katmadan "37 commit / 87
+dosya" yazmıştı; Codex'in bağımsız `git log`/`git diff --stat` kontrolü
+gerçek sayının 38/88 olduğunu buldu). N4/N5/N7 de spesifik, bounded
+kapsamlarla yeniden açıldı.
+
+Bunun üzerine 2. bir fix round (aynı dal üzerinde, `2b1966d` → bu
+commit, FIX-7 + bu manifest-sync commit'i) yürütüldü: B5'in fail-gate
+parçası GERÇEK kodla tamamlandı (`automation-labs/jmeter/scripts/run-jmeter.js`,
+fixture-tabanlı 7/7 unit test + controlled PASS/FAIL kanıtı), N4 gerçek
+bir redaksiyon koduyla kapatıldı, N5'in kategori dağılımı gerçek
+sayımla düzeltildi, N7 hedefli 7 dosyada Türkçe WHY yorumu ile
+kapatıldı, ve N6 bu kez **yapısal olarak** (bir commit kendi SHA'sını
+literal yazamayacağı için "bu commit" self-reference ilkesiyle, asla
+stale olamayacak şekilde) düzeltildi. Detaylar:
+`.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md` (Bölüm 1c) ve
+`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`.
+
+**2. round sonrası final durum: B1-B9 hepsi RESOLVED (B5 dahil TAM
+RESOLVED), N4/N5/N6/N7 hepsi RESOLVED. Açık blocker: 0. Açık
+non-blocking not: 0. Backend regresyonu: 149/149. JMeter fail-gate
+unit testleri: 7/7.**
+
+## Campaign Statüsü: CLAUDE 2. FIX ROUND COMPLETE — CODEX'İN BİR SONRAKİ (3.) TURU İÇİN BEKLEMEDE
+
+Phase 6'dan Phase 19'a kadar TÜM fazlar VE Codex'in İKİ ayrı bağımsız
+turda bulduğu TÜM blocker'lar/non-blocking notlar ele alınmıştır.
+Main'e merge YAPILMADI, PR AÇILMADI, branch SİLİNMEDİ, history
+SIKIŞTIRILMADI — campaign kendi kurallarına göre burada durur. Bu
+görevin kendi talimatı gereği, Codex BU TURDA ÇAĞRILMADI — bir sonraki
+adım (varsa) bu campaign'in dışında, ayrı bir görev olarak yapılacak
+Codex'in ÜÇÜNCÜ turudur (`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`)
 — Codex'in Phase 6-19'un TAMAMINI yeniden taramasına GEREK YOKTUR,
-yalnızca `a359b39..8fab168` delta'sını incelemesi yeterlidir.
+yalnızca `2b1966d..HEAD` delta'sını incelemesi yeterlidir.

@@ -10,20 +10,25 @@ base→head commit aralığında durmaktadır.
 
 **Base commit (Phase 5 CLEAN kapanış noktası):** `837ff2ff1c0c1ada0435d793cfb09479fa954e2f`
 **İlk Codex audit'inin denetlediği HEAD (Phase 6-19 ilk tur kapanışı):** `a359b39` (`a359b391a02cfae20166f61a96a259a4f2601e0d`)
-**Final commit (bu fix campaign'in son commit'i, Codex'in re-review'u için hazır):** `8fab168`
+**1. fix round'un final HEAD'i (Codex'in fix-delta re-review'unun denetlediği):** `2b1966d` (`2b1966d2d921acb50619cc15b896f64b8e3cedee`)
+**2. fix round'un (bu round — B5 fail gate + N4/N5/N7 reopened + N6 manifest sync) final HEAD'i:** bu commit'in kendisi — bkz. `git rev-parse HEAD` üzerindeki dal ucu. **[N6 kök-neden düzeltmesi]** Bir commit kendi SHA'sını YAZISAL olarak İÇEREMEZ (içerik hash'i belirler, hash içeriği belirleyemez) — bu satırın önceki turlarda hep bir ÖNCEKİ commit'in SHA'sını "final" diye yazıp sonra STALE kalmasının (N6) kök nedeniydi. Bundan böyle bu alan literal bir hex değer YERİNE "bu commit" ifadesini kullanır — asla stale olamaz.
 **Dal:** `feat/phase-6-19-full-completion-campaign`
-**Toplam campaign commit sayısı (base'den güncel HEAD'e, `git log --oneline 837ff2f..HEAD | wc -l` ile GERÇEKTEN sayıldı — [Codex fix-campaign N6 düzeltmesi]):** 37
-**Fix-campaign'in KENDİ commit sayısı (`a359b39..HEAD`):** 7 (FIX-1 → FIX-6a + 1 CI-doğrulama takip commit'i)
-**Toplam değişen dosya (`git diff --stat 837ff2f..HEAD`):** 87 dosya, +10116 / -16 satır
-**Fix-campaign'in KENDİ değişen dosya sayısı (`git diff --stat a359b39..HEAD`):** 34 dosya, +1933 / -88 satır
+**Toplam campaign commit sayısı (base'den bu commit'e, `git log --oneline 837ff2f..HEAD | wc -l` ile GERÇEKTEN sayıldı, BU COMMIT DAHİL):** 40
+**Fix-campaign'in KENDİ commit sayısı (`a359b39..HEAD`, İKİ round toplam, BU COMMIT DAHİL):** 10 (FIX-1 → FIX-6a, +1 CI-doğrulama takip commit'i, FIX-6b, FIX-7, bu manifest-sync commit'i)
+**Toplam değişen dosya (`git diff --stat 837ff2f..HEAD`, BU COMMIT DAHİL):** 96 dosya
+**Fix-campaign'in KENDİ değişen dosya sayısı (`git diff --stat a359b39..HEAD`, BU COMMIT DAHİL):** 45 dosya
 
-> **Bu campaign iki turdan oluşur:** (1) Phase 6-19 ilk implementasyon
+> **Bu campaign ÜÇ aşamadan oluşur:** (1) Phase 6-19 ilk implementasyon
 > turu (Bölüm 1 tablosu, base `837ff2f` → head `a359b39`), Codex'in
 > BAĞIMSIZ ilk audit'i tarafından incelendi ve **FAIL / CHANGES
-> REQUIRED** (9 blocker: B1-B9) sonucunu aldı; (2) bu TEK TOPLU FIX
-> CAMPAIGN turu (Bölüm 1b tablosu, `a359b39` → `8fab168`), Codex'in
-> bulduğu TÜM blocker'ları ve mümkün olan non-blocking notları
-> düzeltir. **CODEX'İN BU İKİNCİ TURU YALNIZCA FIX-DELTA OLARAK
+> REQUIRED** (9 blocker: B1-B9) sonucunu aldı; (2) 1. fix campaign turu
+> (Bölüm 1b tablosu, `a359b39` → `2b1966d`), B1-B9'un TAMAMINI ve N1-N7
+> non-blocking notlarını ele aldı — Codex'in fix-delta re-review'u bunu
+> **FAIL** buldu (B5'in fail-gate parçası eksik + N6 manifest sayıları
+> stale + N4/N5/N7 yeniden açıldı); (3) 2. fix campaign turu (bu commit
+> dahil, `2b1966d` → bu commit — FIX-7 + bu manifest-sync commit'i),
+> Codex'in ikinci turda bulduğu TÜM kalan bulguları kapatır. **CODEX'İN
+> BU ÜÇÜNCÜ TURU YALNIZCA `2b1966d`..HEAD FIX-DELTA'SI OLARAK
 > incelemesi yeterlidir** — bkz.
 > `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`.
 
@@ -60,17 +65,30 @@ base→head commit aralığında durmaktadır.
 | FIX-4 | B4 (P2), B5 (P2) | `3ee709a` (+ `ce5b98c` CI-doğrulama takibi) | `automation-labs/selenium/driver-factory.js`, `automation-labs/selenium/scripts/run-parallel.js` (yeni), `automation-labs/jmeter/qa-demo-system-load-test.jmx`, `.github/workflows/ci.yml` (+selenium-lab job) | Backend 142/142 (etkilenmedi); **GH Actions selenium-lab: GERÇEK 2/2 PASS** | `evidence/PHASE-6-19-FIX-CAMPAIGN/FIX-4-B4-B5.md` |
 | FIX-5 | B8 (P2), B9 (P2), Phase 17-19 consistency | `e737c95` | `backend/tests/order-concurrency.test.js` (yeni, 2 test), `automation-labs/locust/locustfile.py` (+place_order), `evidence/PHASE-15-CASE-STUDIES/case-study-02-*.md`, `PHASE-19-CLEAN/EXECUTION.md`, `PHASE-18-.../CLAUDE-SELF-AUDIT.md`, `PHASE-17-.../EXECUTION.md` (amendment notları) | Backend 144/144 | `evidence/PHASE-6-19-FIX-CAMPAIGN/FIX-5-B8-B9-consistency.md` |
 | FIX-6a | N1, N3, N5 (non-blocking) + final regresyon | `8fab168` | `backend/tests/websocket-events-advanced.test.js`, `.github/workflows/ci.yml` + `Jenkinsfile` (DB path), `PHASE-16-.../EXECUTION.md` (soru sayısı) | Backend 144/144, Web 26/26, API-tests 6 suite / 0 fail | `evidence/PHASE-6-19-FIX-CAMPAIGN/FIX-6-non-blocking-and-final-regression.md` |
+| FIX-6b | N6 (manifest/Git consistency, 1. deneme) | `2b1966d` | `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, `.ai/PHASE-6-19-CAMPAIGN-STATE.md` | (manifest-only, kod değişmedi) | — |
 
-**Tüm 9 blocker (B1-B9): RESOLVED. Tüm 7 non-blocking not (N1-N7): RESOLVED/VERIFIED/DOCUMENTED (bkz. FIX-6 evidence).**
+**1. fix round sonu — Tüm 9 blocker (B1-B9): RESOLVED. Tüm 7 non-blocking not (N1-N7): RESOLVED/VERIFIED/DOCUMENTED (bkz. FIX-6 evidence). Codex'in fix-delta re-review'u bunu FAIL buldu: B5'in fail-gate parçası eksikti, N6'nın kendi sayıları stale'di (37/87 yazılmıştı, gerçek 38/88'di), N4/N5/N7 yeniden açıldı.**
 
 ---
 
-## 2. Test Sayıları (Toplam, GÜNCEL HEAD `8fab168` itibarıyla)
+## 1c. İkinci Fix Round Checkpoint Tablosu (`2b1966d` → bu commit, Codex'in fix-delta RE-REVIEW'unun kalan bulgularının düzeltmesi)
+
+| Checkpoint | Bulgu(lar) | Head SHA | Ana Değişen Dosyalar | Test | Evidence |
+|---|---|---|---|---|---|
+| FIX-7 | B5 (P2, kalan parça — fail gate), N4 (reopened), N5, N7 (reopened) | `81b77b4` | `automation-labs/jmeter/scripts/{run-jmeter.js,run-jmeter.test.js,fixtures/*}` (yeni), `automation-labs/package.json`, `backend/src/middleware/requestContext.js`, `backend/tests/observability.test.js`, `evidence/PHASE-16-.../{EXECUTION,INTERVIEW-PREP}.md`, 7 dosyada hedefli Türkçe WHY yorumu | Backend 149/149, JMeter fail-gate unit 7/7 | `evidence/PHASE-6-19-FIX-CAMPAIGN/FIX-7-B5-N4-N5-N7.md` |
+| FIX-8 (bu commit) | N6 (manifest/Git consistency, GERÇEK düzeltme — bu commit'in kendi etkisini de sayıma dahil eder) | bu commit | `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, `.ai/PHASE-6-19-CAMPAIGN-STATE.md` | (manifest-only, kod değişmedi; final regresyon FIX-7'de zaten doğrulandı, bu commit'te TEKRAR ÇALIŞTIRILMADI — bkz. Bölüm 18 talimatı) | (bu dosyaların kendisi) |
+
+**2. fix round sonu — B5 TAM RESOLVED (implementation + controlled fail/pass gate + correlation + threshold, native JMeter runtime hâlâ ENVIRONMENT BLOCKED — dürüstçe ayrı belirtilmiştir). N4/N5/N7 RESOLVED. N6 RESOLVED — bu manifest artık kendi commit'inin etkisini sayıma dahil eder (bkz. üstteki "bu commit" self-reference notu).**
+
+---
+
+## 2. Test Sayıları (Toplam, GÜNCEL HEAD — bu commit itibarıyla)
 
 | Katman | Sayı | Komut |
 |---|---|---|
-| Backend (`node:test`) | 144/144 pass | `node --test tests/**/*.test.js` |
-| Web-tests (Playwright) | 26/26 pass | `npx playwright test` |
+| Backend (`node:test`) | 149/149 pass (144 önceki + 5 yeni N4 redaksiyon testi) | `node --test tests/**/*.test.js` |
+| JMeter fail-gate unit (`node:test`, JMeter runtime'ından bağımsız) | 7/7 pass — **[2. fix round, B5]** | `node --test automation-labs/jmeter/scripts/run-jmeter.test.js` |
+| Web-tests (Playwright) | 26/26 pass (bu round değişmedi) | `npx playwright test` |
 | API-tests — Public schema | 11 req / 26 assertion, 0 fail | `npm run api:test:postman` |
 | API-tests — Protected schema | 19 req / 42 assertion, 0 fail | `npm run api:test:auth` |
 | API-tests — Orders & Payment (AJV) | 64 req / 118 assertion, 0 fail | `npm run api:test:orders-payment` |
@@ -96,7 +114,7 @@ içermez (grep ile doğrulandı), `db:seed`/canlı sunucu GEREKTİRMEZ.
 | Selenium — Setup/WebDriver/Locators/Waits/Assertions/POM/Test Data/Reporting (Phase 10) | CODE COMPLETE — EXECUTION BLOCKED (bu sandbox'ta, verified) | chromedriver 147.x / Chromium 141.x sürüm uyuşmazlığı + `googlechromelabs.github.io`'ya proxy erişimi yok (3 bağımsız yöntemle doğrulandı) |
 | Selenium — Cross Browser/Grid/Parallel Execution (Phase 10) | **[fix-campaign B4]** CODE COMPLETE — EXECUTION BLOCKED (bu sandbox'ta, verified) | Aynı chromedriver/Chromium kısıtı; Firefox/geckodriver de kurulu değil (cross-verified) |
 | Selenium — CI/CD (Phase 10) | **[fix-campaign B4] RESOLVED — GERÇEKTEN PASS** | GitHub Actions `ubuntu-latest`'te gerçek Chrome+chromedriver+ağ erişimi var; `selenium-lab` job'u 2/2 PASS (job log ile doğrulandı) |
-| JMeter (Phase 10) | CODE COMPLETE — EXECUTION BLOCKED (verified); **[fix-campaign B5]** artık gerçek Correlation + Threshold/Fail Gate içeriyor, aynı kök nedenle yeniden doğrulandı | apt `jmeter 2.13` + sistem `libxstream-java 1.4.20` arasında `ForbiddenClassException` — hem orijinal hem B5-sonrası planla çapraz doğrulandı (dosyaya özgü bir hata değil) |
+| JMeter (Phase 10) | CODE COMPLETE — EXECUTION BLOCKED (verified); **[fix-campaign B5, 2. round]** artık gerçek Correlation + Threshold + BAĞIMSIZ FAIL GATE (`run-jmeter.js`, JTL içeriğine göre exit code üretir, JMeter'ın kendi exit code'una GÜVENMEZ) içeriyor — fail gate implementasyonu fixture-tabanlı unit testlerle (7/7) ve controlled PASS/FAIL kanıtıyla doğrulandı; native JMeter runtime aynı kök nedenle (aşağıda) hâlâ ENVIRONMENT BLOCKED | apt `jmeter 2.13` + sistem `libxstream-java 1.4.20` arasında `ForbiddenClassException` — orijinal, B5-1.round ve B5-2.round planlarıyla çapraz doğrulandı (dosyaya özgü bir hata değil); JMeter'ın KENDİ process exit code'unun bu çökme sırasında bile 0 olduğu ampirik olarak AYRICA doğrulandı |
 | Appium (Phase 10) | LEARNING-only | Gerçek bir mobil/emulator altyapısı sandbox'ta mevcut değil |
 | Mobile QA (Phase 8) | LEARNING-only | Aynı altyapı kısıtı |
 | Jenkinsfile (Phase 12) | Sözdizimi-geçerli, hiçbir zaman ÇALIŞTIRILMADI; **[fix-campaign N3]** DB cleanup path bug'ı düzeltildi | Sandbox'ta bir Jenkins sunucusu yok — GitHub Actions (gerçekten çalıştırılan) ile karıştırılmamalı |
@@ -155,7 +173,7 @@ cd .. && npm run db:seed && cd api-tests && npm run api:test:db
 
 ---
 
-## 6. Açık Blocker Sayısı (Campaign Genelinde, İKİ TUR SONRASI): **0**
+## 6. Açık Blocker Sayısı (Campaign Genelinde, ÜÇ TUR SONRASI): **0**
 
 **İlk tur** (Bölüm 1) kendi içinde bulduğu her gerçek bug'ı (Phase 7
 null-prototype row, Phase 8 CDP race condition, Phase 9 false-negative
@@ -179,12 +197,12 @@ PASS ediyor, GitHub Actions'ta).
 ## 7. Codex Audit için Öneri (Fix-Delta Re-Review)
 
 Bu manifest + Bölüm 1'deki her fazın kendi `EXECUTION.md`'si + Bölüm
-1b'deki fix checkpoint'lerinin kendi evidence dosyaları +
-`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, Codex'in bu İKİNCİ
-turdaki (fix-delta) incelemesi için yeterli bağlamı sağlamalıdır.
+1b/1c'deki fix checkpoint'lerinin kendi evidence dosyaları +
+`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, Codex'in bu ÜÇÜNCÜ
+turdaki (2. fix-delta) incelemesi için yeterli bağlamı sağlamalıdır.
 Codex'in TÜM Phase 6-19'u baştan taramasına GEREK YOKTUR — yalnızca
-`a359b39..8fab168` aralığındaki değişiklikleri (34 dosya) gözden
-geçirmesi yeterlidir.
+`2b1966d..HEAD` aralığındaki değişiklikleri (FIX-7'nin 17 dosyası +
+bu manifest-sync commit'inin 3 dosyası) gözden geçirmesi yeterlidir.
 
 Codex'in en yüksek değeri, Claude'un KENDİ fix'lerini incelerken
 doğal olarak sahip olduğu körlüğün dışından bakabilmesinde olacaktır
