@@ -20,7 +20,7 @@
 |---|---|---|
 | Selenium — Setup/WebDriver/Locators/Waits/Assertions/POM/Test Data/Reporting | CODE COMPLETE — EXECUTION BLOCKED (bu sandbox'ta, doğrulanmış altyapı kısıtı) | Bölüm 2.1-2.2 |
 | Selenium — Cross Browser/Selenium Grid/Parallel Execution | **[Codex fix-campaign B4]** CODE COMPLETE — EXECUTION BLOCKED (bu sandbox'ta, aynı kısıt) | Bölüm 2.1 |
-| Selenium — CI/CD | **[Codex fix-campaign B4]** bkz. Bölüm 2.4 (GitHub Actions'ta GERÇEKTEN çalıştırıldı) | Bölüm 2.4 |
+| Selenium — CI/CD | **[Codex fix-campaign B4]** RESOLVED — GitHub Actions'ta (`ubuntu-latest`) GERÇEKTEN çalıştırıldı, 2/2 PASS (bkz. Bölüm 2.4) | Bölüm 2.4 |
 | Appium | LEARNING-only (gerçek cihaz yok) | `APPIUM-LEARNING.md` |
 | JMeter | CODE COMPLETE — EXECUTION BLOCKED (doğrulanmış paket kısıtı); **[Codex fix-campaign B5]** artık gerçek Correlation + Threshold/Fail Gate içeriyor | Bölüm 3 |
 
@@ -161,11 +161,33 @@ bölümüne bakınız).
 
 #### CI Doğrulama Sonucu (push sonrası, GitHub API ile GERÇEKTEN sorgulandı)
 
-**PENDING** — bu bölüm, FIX-4 checkpoint commit'i push edildikten hemen
-sonra, `mcp__github__actions_list`/`actions_get` ile gerçek workflow
-run sonucu sorgulanarak, AYRI bir küçük takip commit'inde
-doldurulacaktır (Evidence Integrity — henüz çalıştırılmamış bir CI
-job'unun sonucu burada TAHMİN EDİLMEZ).
+FIX-4 checkpoint commit'i (`3ee709a`) push edildikten sonra tetiklenen
+GitHub Actions run'ı (`id: 35970894096`), hem run-seviyesinde hem
+job-seviyesinde `mcp__github__actions_get`/`list_workflow_jobs` ile
+sorgulandı, ve job'un GERÇEK log çıktısı `mcp__github__get_job_logs`
+ile doğrudan okundu (tahmin edilmedi):
+
+```
+Job: "Selenium lab (real browser automation, CI-only real pass)"
+conclusion: success
+
+$ npm run selenium:test --workspace automation-labs
+SELENIUM_LAB_STATUS: EXECUTED
+  [PASS] valid credentials log in and reach the products page (1201ms)
+  [PASS] invalid credentials show the real backend error message (336ms)
+SELENIUM_LAB_SUMMARY: 2/2 passed
+```
+
+**Bu, bu campaign'in TAMAMI boyunca Selenium lab'ının aldığı İLK
+GERÇEK, tarayıcı-sürücülü PASS'tir** — sandbox'ta hep EXECUTION_BLOCKED
+kalan aynı kod, gerçek Chrome + eşleşen chromedriver + ağ erişimine
+sahip bir ortamda (GitHub Actions `ubuntu-latest`) sorunsuz çalıştı.
+Bu, hem `driver-factory.js`'in artık taşınabilir (hardcoded olmayan)
+davranışını hem de bu labın "sandbox kısıtı DIŞINDA gerçekten
+çalışabilir" iddiasını somut olarak doğruluyor.
+
+**Sınıflandırma (CI/CD alt-maddesi): RESOLVED — GERÇEKTEN PASS,
+GitHub Actions API'siyle doğrudan doğrulandı.**
 
 ---
 

@@ -61,18 +61,29 @@ aynı iki senaryoyla test edildi (3/3 oturum, tutarlı sonuç).
 `node --check` ile her iki dosya da (driver-factory.js,
 run-parallel.js) sözdizimsel olarak doğrulandı.
 
-### CI Doğrulama Sonucu
+### CI Doğrulama Sonucu — GERÇEK, POZİTİF SONUÇ
 
 `selenium-lab` job'u push edildikten SONRA GitHub Actions API'siyle
-GERÇEKTEN sorgulandı — sonuç bu dosyanın SONUNDA (bu checkpoint'in
-push'ından hemen sonraki adımda) kaydedilmiştir; ayrıca
-`evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md` Bölüm 2.4'e
-de işlenmiştir.
+(`mcp__github__actions_get`/`list_workflow_jobs`/`get_job_logs`)
+GERÇEKTEN sorgulandı (run id `35970894096`, job "Selenium lab (real
+browser automation, CI-only real pass)"):
+
+```
+conclusion: success
+SELENIUM_LAB_STATUS: EXECUTED
+  [PASS] valid credentials log in and reach the products page (1201ms)
+  [PASS] invalid credentials show the real backend error message (336ms)
+SELENIUM_LAB_SUMMARY: 2/2 passed
+```
+
+Bu campaign'in TAMAMI boyunca Selenium lab'ının aldığı İLK gerçek,
+tarayıcı-sürücülü PASS — detay:
+`evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md` Bölüm 2.4.
 
 **Sınıflandırma: Portability bug DÜZELTİLDİ (repository sorunuydu,
 "environment issue" olarak saklanmadı). Cross-Browser/Grid/Parallel:
 CODE COMPLETE — EXECUTION BLOCKED (bu sandbox'ta, doğrulanmış). CI/CD:
-bkz. CI Doğrulama Sonucu.**
+RESOLVED — GitHub Actions'ta GERÇEKTEN çalıştırıldı, 2/2 PASS.**
 
 ---
 
