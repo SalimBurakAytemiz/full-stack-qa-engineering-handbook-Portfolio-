@@ -69,8 +69,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 15 | Case Studies (7) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 90a4b04 | 27ea9d8 |
 | 16 | Interview Preparation | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 27ea9d8 | f8b4188 |
 | 17 | Final Integration | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | f8b4188 | fda6e61 |
-| 18 | Independent Review (Claude self-audit) | IN PROGRESS | fda6e61 | — |
-| 19 | Clean | NOT STARTED | — | — |
+| 18 | Independent Review (Claude self-audit) | CLAUDE SELF-AUDIT COMPLETE — PENDING FINAL CODEX AUDIT | fda6e61 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 19 | Clean | IN PROGRESS | *(Phase 18 head)* | — |
 
 ---
 
@@ -288,31 +288,59 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Açık blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-17-FINAL-INTEGRATION/`
 
+## Phase 18 — Kapanış Özeti (tamamlandı)
+
+- Risk-odaklı, eleştirel bir kendi-kendini-inceleme yapıldı (mekanik
+  kontroller değil, "bu gerçekten doğru mu" sorusu).
+- **1 GERÇEK bulgu bulundu ve düzeltildi:** GraphQL katmanının,
+  REST'in `errorHandler.js` disiplininin aksine, beklenmeyen dahili
+  hataları maskelemediği (ham mesaj sızıntısı riski) — ampirik olarak
+  doğrulandı (`node -e` ile gerçek bir crash senaryosu), düzeltildi
+  (`maskUnexpectedErrors()`, yalnızca execution-fazı + bilinmeyen-kod
+  hatalarını maskeler, validation hatalarını ASLA maskelemez — bu
+  ayrım da ampirik doğrulandı), 7 yeni testle kilitlendi
+  (`tests/graphql-error-masking.test.js`).
+- **1 kapsam-dışı gözlem** (session expiry mesajı yanıltıcı, Phase
+  4'ten kalma, bu campaign'in kapsamı dışında) sessizce atlanmadan
+  kaydedildi, düzeltilmedi.
+- Tam backend regresyonu: 135/135 (128 önceki + 7 yeni). Tam
+  web-tests regresyonu: 23/23.
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-18-INDEPENDENT-REVIEW/`
+  (`CLAUDE-SELF-AUDIT.md` + `EXECUTION.md`) — AÇIKÇA "bağımsız
+  inceleme DEĞİLDİR" olarak etiketlendi.
+
 ## NEXT EXACT ACTION
 
-Phase 18 (Independent Review) implementasyonuna başla. ROADMAP'ın
-kendi Phase 18'i "Repository bağımsız reviewer tarafından
-incelenecektir" der — ancak bu campaign'in başında zaten netleştirildi
-(bkz. yukarıdaki "Phase 18 — Independent Review netliği" bölümü):
-Codex Phase 6-19 boyunca KULLANILMIYOR, bu nedenle campaign İÇİNDEKİ
-"Phase 18", Claude'un KENDİ yapılandırılmış self-audit'idir —
-GERÇEK, bağımsız üçüncü-taraf inceleme YERİNE GEÇMEZ ve evidence'ta
-ASLA öyle sunulmaz. Gerçek "Independent Review", campaign'in sonunda
-yapılacak asıl Codex audit'i ile sağlanacaktır.
+Phase 19 (Clean) — campaign'in SON fazı. ROADMAP'ın Phase 19 kriteri:
+Testler başarılı, kritik bulgu yok, evidence doğrulanmış, Learning/
+Experience statüleri doğru, documentation tamam, Case Studies çalışır,
+review sonucu CLEAN.
 
-ROADMAP'ın Phase 18 review kapsamı: Technical correctness, QA
-correctness, Architecture, Test quality, Documentation, Security,
-Maintainability, **False evidence**, **Unsupported experience claims**.
+**Kritik hatırlatma (campaign'in kendi kuralı):** Phase 19'un sonu
+"CLAUDE BUILD CAMPAIGN: COMPLETE / CODEX AUDIT: PENDING" ile
+bitmelidir — ASLA "Codex certified" değil. Main'e merge YOK, PR YOK,
+branch silme YOK, history squash YOK.
 
-1. Claude, TÜM Phase 6-17 evidence dosyalarını (11+1=12 phase dizini)
-   KENDİ bakış açısından, bir "dış gözlemci gibi" yeniden gözden
-   geçirecek — her "GERÇEK" iddiasının GERÇEKTEN bir komut
-   çalıştırmasına/dosya varlığına dayandığını, her "LEARNING-only"
-   iddiasının GERÇEKTEN doğrulanmış bir altyapı eksikliğine dayandığını
-   yeniden teyit edecek.
-2. Özellikle "False evidence" ve "Unsupported experience claims"
-   maddelerine odaklanılacak — abartılı/belirsiz ifade var mı?
-3. Bulunan herhangi bir sorun (varsa) DÜZELTİLECEK.
-4. Evidence, dosyanın adında ve içeriğinde AÇIKÇA "CLAUDE SELF-AUDIT —
-   NOT AN INDEPENDENT THIRD-PARTY REVIEW" olarak etiketlenecek.
-5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-18-INDEPENDENT-REVIEW/CLAUDE-SELF-AUDIT.md`
+1. TEK bir FULL CAMPAIGN REGRESSION: Phase 0-5 uyumluluğu (backend
+   testleri zaten Phase 0-5'in üzerine inşa edildi, aynı suite içinde)
+   + Phase 6-18'in tamamı (backend `node --test`, `web-tests`
+   Playwright, varsa `api-tests` Newman) tek seferde çalıştırılıp
+   nihai sayılar kaydedilecek.
+2. Açık blocker sayısının GERÇEKTEN 0 olduğu son kez teyit edilecek.
+3. Konsolide Codex Audit Manifest'i yazılacak (önerilen yol:
+   `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`) — Phase 6-18 tablosu
+   (Phase, Ad, Base SHA, Head SHA, Değişen dosyalar, Testler,
+   Regresyon, Evidence, Bilinen sınırlamalar, Açık blocker, Claude
+   self-review) + cross-cutting audit kategorileri.
+4. Mandated 31-madde Türkçe final campaign raporu hazırlanacak (branch;
+   her fazın (6-19) statüsü+base/head — 14 ayrı satır; toplam değişen
+   dosya; toplam test sonucu; final regresyon sonucu; güvenlik
+   taraması; secret taraması; dependency/lisans sonucu; generated
+   artifact sonucu; açık blocker sayısı; bilinen sınırlamalar; gelecek
+   sertleştirme; ROADMAP Phase 6-19 implementasyon statüsü; Codex audit
+   manifest yolu; Codex için kesin phase commit aralıkları; working
+   tree temiz mi; remote campaign branch güncel mi; CODEX FULL AUDIT
+   READY?).
+5. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-19-CLEAN/EXECUTION.md`
+6. Son commit + push — SONRA DUR (PR yok, merge yok).

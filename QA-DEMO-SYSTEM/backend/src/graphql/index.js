@@ -1,7 +1,50 @@
-const { graphql } = require('graphql');
+const { graphql, GraphQLError } = require('graphql');
 const { schema } = require('./schema');
 const { resolvers } = require('./resolvers');
 const { resolveSession } = require('../middleware/requireAuth');
+
+// Phase 18 self-audit hardening: every deliberately-thrown business/auth
+// error in resolvers.js sets a recognized extensions.code (UNAUTHENTICATED/
+// BAD_REQUEST). An error WITHOUT one, THAT ALSO has a `path` (i.e. it
+// happened during resolver execution, not during parse/validation — see
+// below), is therefore an unexpected internal exception (e.g. a raw DB
+// driver error) — its raw message must never reach the client, mirroring
+// the generic-message discipline errorHandler.js already applies on the
+// REST side (`{error: 'Sunucu hatası'}`, no internal detail).
+//
+// Query-validation errors (e.g. "Cannot query field X" for an unknown
+// field) are NEVER masked: they have no `path` (they happen before
+// execution starts, not tied to a resolved field — verified directly
+// against this graphql version) and are standard, safe GraphQL protocol
+// messages the Phase 6 test suite asserts on (`graphql.test.js` —
+// "returns a validation error"). Masking those would break that real,
+// already-passing test.
+//
+// Exported separately (not inlined in the handler) so it can be unit
+// tested directly with fabricated GraphQLError instances — there is no
+// currently-reachable production resolver path that throws a plain,
+// non-GraphQLError exception (schema-level Int!/String! coercion and
+// service-layer validation already reject malformed input before it
+// reaches a resolver), so this cannot be exercised end-to-end through a
+// live request without inventing a fake crashing resolver in production
+// code, which was deliberately avoided.
+const KNOWN_ERROR_CODES = new Set(['UNAUTHENTICATED', 'BAD_REQUEST']);
+
+function maskUnexpectedErrors(result) {
+  if (!result.errors) {
+    return result;
+  }
+  return {
+    ...result,
+    errors: result.errors.map((err) => {
+      if (!err.path || KNOWN_ERROR_CODES.has(err.extensions?.code)) {
+        return err;
+      }
+      console.error('[graphql] unexpected resolver error:', err.originalError || err);
+      return new GraphQLError('Sunucu hatası', { extensions: { code: 'INTERNAL_SERVER_ERROR' }, path: err.path });
+    }),
+  };
+}
 
 // A minimal GraphQL-over-HTTP handler using the `graphql` package's own
 // execute function directly — no graphql-http/express-graphql/apollo-server
@@ -37,14 +80,16 @@ function createGraphQLHandler(db) {
       operationName,
     });
 
+    const safeResult = maskUnexpectedErrors(result);
+
     // Per the GraphQL-over-HTTP convention: a request that executes (even
     // if individual fields/resolvers produced errors) returns HTTP 200,
     // with those errors reported in the `errors` array. Newman/AJV-style
     // "status code == 200" assertions and "errors[] contains X" assertions
     // are therefore two DIFFERENT checks in the Phase 6 test suite — never
     // conflated (this is the core "GraphQL Error Handling" scope point).
-    res.status(200).json(result);
+    res.status(200).json(safeResult);
   };
 }
 
-module.exports = { createGraphQLHandler };
+module.exports = { createGraphQLHandler, maskUnexpectedErrors };
