@@ -64,8 +64,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 10 | Automation Learning Labs (Selenium/Appium/JMeter) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 5b94cea | 9d4d6a6 |
 | 11 | Security-Aware QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9d4d6a6 | ace6371 |
 | 12 | CI/CD & Environment | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | ace6371 | 7796f0f |
-| 13 | Logging / Observability / Production QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 7796f0f | *(bu checkpoint commit'i — bkz. `git log -1`)* |
-| 14 | Modern QA Learning Labs | IN PROGRESS | *(Phase 13 head)* | — |
+| 13 | Logging / Observability / Production QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 7796f0f | d6848a1 |
+| 14 | Modern QA Learning Labs | IN PROGRESS | d6848a1 | — |
 | 15 | Case Studies (7) | NOT STARTED | — | — |
 | 16 | Interview Preparation | NOT STARTED | — | — |
 | 17 | Final Integration | NOT STARTED | — | — |
