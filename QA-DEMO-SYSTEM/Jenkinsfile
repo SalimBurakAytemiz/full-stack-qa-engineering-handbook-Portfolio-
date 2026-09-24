@@ -60,8 +60,19 @@ pipeline {
         stage('API Schema Validation') {
             steps {
                 dir('QA-DEMO-SYSTEM') {
+                    // Codex fix-campaign N3 (non-blocking): the real default
+                    // DB path (backend/src/config/index.js, when DB_PATH is
+                    // unset) is backend/data/qa-demo.db. This previously
+                    // targeted data/qa-demo.db (one level too shallow),
+                    // which never matched a real file — on a Jenkins agent
+                    // with a REUSED, persistent workspace (unlike GitHub
+                    // Actions' always-fresh runners), that would have
+                    // silently failed to clean stale state between builds.
+                    // Never actually run (no Jenkins server in this
+                    // sandbox), but a real latent bug in code presented as
+                    // ready-to-run — fixed to the correct path.
                     sh '''
-                        rm -f data/qa-demo.db
+                        rm -f backend/data/qa-demo.db
                         nohup node backend/src/server.js > /tmp/jenkins-backend.log 2>&1 &
                         for i in $(seq 1 20); do
                           curl -sf http://localhost:3000/api/health && break

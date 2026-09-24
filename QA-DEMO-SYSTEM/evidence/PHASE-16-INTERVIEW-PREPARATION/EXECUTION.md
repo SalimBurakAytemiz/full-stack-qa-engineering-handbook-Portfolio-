@@ -12,7 +12,13 @@
 SQL, Mobile, Automation, Selenium, Appium, Performance, Security,
 CI/CD, Senior QA, QA Lead, Scenario Questions) her biri için 2-3 soru,
 ROADMAP'ın istediği 5-bölümlü formatta (Short Answer / Detailed
-Answer / Example / Real QA Risk / Related Lab): toplam 26 soru.
+Answer / Example / Real QA Risk / Related Lab): toplam **30 soru**.
+
+**[Codex fix-campaign N5 düzeltmesi]** Bu satır önceden "26 soru"
+diyordu — GERÇEK sayı `grep -c "^### " INTERVIEW-PREP.md` ile yeniden
+sayıldı: **30** (S1.1'den S14.3'e, hepsi gerçek, numaralı sorular,
+başlık formatı doğrulandı). Aşağıdaki Bölüm 2'deki dosya-varlığı
+sayıları da aynı şekilde yeniden sayılıp düzeltildi.
 
 ## 2. Tasarım Kararı — "Related Lab" Alanlarının Gerçekliği
 
@@ -21,13 +27,14 @@ Lab" alanı, bu campaign'in GERÇEKTEN ürettiği bir dosyaya işaret
 eder. Bu iddia bu oturumda GERÇEKTEN doğrulandı:
 
 ```
-$ for f in <26 sorudaki tüm Related Lab yolları>; do
+$ for f in <30 sorudaki tüm Related Lab yolları>; do
     [ -e "$f" ] && echo OK || echo MISSING
   done
 ```
-**Sonuç: 24/24 benzersiz dosya yolu MEVCUT** (bazı yollar birden fazla
-soruda tekrar kullanıldı, toplam 26 referans → 24 benzersiz dosya).
-Sıfır kırık referans.
+**Sonuç: 27/27 benzersiz dosya yolu MEVCUT** (bazı yollar birden fazla
+soruda tekrar kullanıldı, toplam 39 referans [30 sorunun bazıları
+birden fazla dosyaya atıf yapıyor] → 27 benzersiz dosya). Sıfır kırık
+referans.
 
 ## 3. İçerik Kalitesi Notları
 
@@ -63,9 +70,10 @@ Yeni kod/dependency yok. Secret/token/credential literal YOK.
 ## 7. Sonuç
 
 Phase 16, ROADMAP'ın istediği 14 kategoriyi, GERÇEK ve
-DOĞRULANABİLİR repo referanslarıyla desteklenen 26 soruyla kapsadı —
+DOĞRULANABİLİR repo referanslarıyla desteklenen 30 soruyla kapsadı —
 tüm "Related Lab" referansları bu oturumda dosya-varlığı kontrolüyle
-doğrulandı (24/24 mevcut). Tam backend regresyonu 128/128. Açık
-blocker: 0.
+doğrulandı (27/27 benzersiz dosya mevcut). Tam backend regresyonu
+128/128 (o zamanki sayı — bu fix-campaign sonrası güncel sayı 144/144,
+bkz. `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`). Açık blocker: 0.
 
 **Statü: CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT.**

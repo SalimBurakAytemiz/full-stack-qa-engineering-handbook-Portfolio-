@@ -62,9 +62,18 @@ jobs:
       # postman/environments/local.postman_environment.json) — they don't
       # start one themselves, so CI must, same as every local run in this
       # campaign's evidence files.
+      #
+      # Codex fix-campaign N3 (non-blocking): the real default DB path
+      # (backend/src/config/index.js, when DB_PATH is unset) is
+      # backend/data/qa-demo.db — this cleanup previously targeted
+      # data/qa-demo.db (one level too shallow), which never matched a
+      # real file. Harmless on GitHub's always-fresh, ephemeral runners
+      # (rm -f on a nonexistent path is a silent no-op, and the server
+      # auto-seeds an empty DB either way), but still a real latent bug —
+      # fixed to the correct path.
       - name: Start backend server
         run: |
-          rm -f data/qa-demo.db
+          rm -f backend/data/qa-demo.db
           nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
           for i in $(seq 1 20); do
             curl -sf http://localhost:3000/api/health && exit 0
@@ -95,7 +104,7 @@ jobs:
       - run: npm ci
       - name: Start backend server
         run: |
-          rm -f data/qa-demo.db
+          rm -f backend/data/qa-demo.db
           nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
           for i in $(seq 1 20); do
             curl -sf http://localhost:3000/api/health && exit 0

@@ -133,12 +133,23 @@ test('WS Duplicate Events: a single order-paid event delivers exactly one messag
   wsA.on('message', (data) => receivedA.push(JSON.parse(data.toString())));
   wsB.on('message', (data) => receivedB.push(JSON.parse(data.toString())));
 
-  await createOrder(ctx.baseUrl, token);
-  await sleep(150);
+  // Codex fix-campaign N1 (non-blocking): the "did each socket receive its
+  // one message" half of this assertion is now event-driven (waits on the
+  // actual message events, not a fixed sleep) — only the "and never a
+  // SECOND one" half is inherently a bounded wait, since a negative
+  // ("nothing more arrives") cannot be awaited directly. That remaining
+  // wait is kept short and is proving absence, not presence — presence is
+  // now deterministic.
+  const [firstA, firstB] = await Promise.all([
+    waitForMessage(wsA),
+    waitForMessage(wsB),
+    createOrder(ctx.baseUrl, token),
+  ]);
+  await sleep(100);
 
-  assert.equal(receivedA.length, 1, 'socket A must receive exactly one copy, not zero or duplicated');
-  assert.equal(receivedB.length, 1, 'socket B must receive exactly one copy, not zero or duplicated');
-  assert.equal(receivedA[0].notification.order_id, receivedB[0].notification.order_id);
+  assert.equal(receivedA.length, 1, 'socket A must receive exactly one copy, not duplicated');
+  assert.equal(receivedB.length, 1, 'socket B must receive exactly one copy, not duplicated');
+  assert.equal(firstA.notification.order_id, firstB.notification.order_id);
 });
 
 // --- Event Ordering ---
