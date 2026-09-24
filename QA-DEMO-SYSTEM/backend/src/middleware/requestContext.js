@@ -25,6 +25,24 @@ const crypto = require('node:crypto');
 // birbirini iptal etmez, aynı anda sağlanır.
 const SENSITIVE_QUERY_KEY_PATTERN = /token|password|secret|api[_-]?key|auth/i;
 
+// Codex final fix round N4 (2. re-review — GERÇEK regresyon): decodeURIComponent
+// bir key'de malformed percent-encoding (örn. "x%ZZ") gördüğünde URIError
+// FIRLATIR. Bu fonksiyon requestContext() içinde next() ÇAĞRILMADAN ÖNCE,
+// senkron olarak çalışıyordu (bkz. aşağı) — bir throw burada next(err)'e
+// DEĞİL, Express'in senkron-middleware try/catch'i üzerinden generic
+// errorHandler'a (her zaman 500) düşerdi. Yani SADECE LOGLAMA amaçlı bir
+// yardımcı, route'un kendi gerçek response'unu (örn. normal bir /api/products
+// isteğinde 200) MASKELEYİP 500'e çevirebiliyordu — bu, "logging asla
+// application behavior'ını bozmamalı" ilkesinin doğrudan ihlaliydi.
+// safeDecodeURIComponent bu throw'u ASLA dışarı sızdırmaz.
+function safeDecodeURIComponent(value) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return undefined;
+  }
+}
+
 function redactSensitiveQuery(originalUrl) {
   const queryStart = originalUrl.indexOf('?');
   if (queryStart === -1) {
@@ -41,11 +59,25 @@ function redactSensitiveQuery(originalUrl) {
     .split('&')
     .map((pair) => {
       const eq = pair.indexOf('=');
-      const key = eq === -1 ? pair : pair.slice(0, eq);
-      if (!SENSITIVE_QUERY_KEY_PATTERN.test(decodeURIComponent(key))) {
+      const rawKey = eq === -1 ? pair : pair.slice(0, eq);
+      const decodedKey = safeDecodeURIComponent(rawKey);
+
+      // FAIL-CLOSED (Codex N4 2. re-review): key'in kendisi decode
+      // EDİLEMİYORSA, bunun gerçekten hassas bir isim mi yoksa rastgele
+      // bozuk bir istek mi olduğunu GÜVENİLİR şekilde bilemeyiz — riskli
+      // varsayımda bulunmak (örn. "muhtemelen zararsız" deyip ham haliyle
+      // loglamak) yerine, hem key hem value'yu placeholder ile değiştiririz.
+      // Bu, tek bir malformed pair'in observability değerini bir miktar
+      // azaltır ama hiçbir zaman raw/olası-hassas bir değeri LOGLAMAZ ve
+      // hiçbir zaman THROW ETMEZ.
+      if (decodedKey === undefined) {
+        return eq === -1 ? '<invalid-encoding>' : '<invalid-encoding>=<redacted>';
+      }
+
+      if (!SENSITIVE_QUERY_KEY_PATTERN.test(decodedKey)) {
         return pair;
       }
-      return eq === -1 ? key : `${key}=<redacted>`;
+      return eq === -1 ? rawKey : `${rawKey}=<redacted>`;
     })
     .join('&');
 
@@ -92,4 +124,4 @@ function requestContext(req, res, next) {
   next();
 }
 
-module.exports = { requestContext, redactSensitiveQuery };
+module.exports = { requestContext, redactSensitiveQuery, safeDecodeURIComponent };

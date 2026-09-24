@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { startTestServer } = require('./helpers/test-server');
 const { loginAs } = require('./helpers/auth-helper');
-const { redactSensitiveQuery } = require('../src/middleware/requestContext');
+const { redactSensitiveQuery, safeDecodeURIComponent } = require('../src/middleware/requestContext');
 
 // Phase 13 — Logging / Observability. Proves the request-correlation
 // contract requestContext.js adds: every response carries a real,
@@ -202,4 +202,103 @@ test('a real request with a sensitive-looking query value never appears raw in t
   // Non-sensitive key is still fully visible — redaction didn't destroy
   // observability value.
   assert.match(line, /category=keyboards/);
+});
+
+// --- N4 (Codex final fix round, 2. re-review — GERÇEK regresyon): malformed
+// percent-encoding in a query key must never crash the redaction helper or
+// change the route's own response. ---
+
+test('safeDecodeURIComponent: valid percent-encoding decodes normally', () => {
+  assert.equal(safeDecodeURIComponent('hello%20world'), 'hello world');
+  assert.equal(safeDecodeURIComponent('token'), 'token');
+});
+
+test('safeDecodeURIComponent: malformed percent-encoding returns undefined instead of throwing', () => {
+  assert.doesNotThrow(() => safeDecodeURIComponent('x%ZZ'));
+  assert.equal(safeDecodeURIComponent('x%ZZ'), undefined);
+  assert.equal(safeDecodeURIComponent('%'), undefined);
+});
+
+test('redactSensitiveQuery: a malformed percent-encoded key never throws and fails closed (redacted placeholder)', () => {
+  assert.doesNotThrow(() => redactSensitiveQuery('/api/products?x%ZZ=1'));
+  assert.equal(redactSensitiveQuery('/api/products?x%ZZ=1'), '/api/products?<invalid-encoding>=<redacted>');
+});
+
+test('redactSensitiveQuery: a malformed key mixed with normal keys only fails closed on the bad pair', () => {
+  assert.equal(
+    redactSensitiveQuery('/api/products?category=keyboards&x%ZZ=1&sort=price'),
+    '/api/products?category=keyboards&<invalid-encoding>=<redacted>&sort=price'
+  );
+});
+
+test('a real request with malformed query percent-encoding does not 500 — route behavior is preserved (regression lock)', async (t) => {
+  const ctx = startTestServer();
+  t.after(() => ctx.close());
+
+  // Before the fix, decodeURIComponent(key) threw a URIError synchronously
+  // inside requestContext (before next() was called), which Express routed
+  // to the generic errorHandler (always 500) — masking whatever /api/products
+  // would actually have returned. A plain GET /api/products returns 200; if
+  // this request also returns 200, the logging middleware did not alter the
+  // route's real behavior.
+  const baselineRes = await fetch(`${ctx.baseUrl}/api/products`);
+  const malformedRes = await fetch(`${ctx.baseUrl}/api/products?x%ZZ=1`);
+
+  assert.equal(baselineRes.status, 200);
+  assert.equal(malformedRes.status, baselineRes.status, 'a malformed query string must not change the route\'s own status code');
+  assert.ok(malformedRes.headers.get('x-request-id'), 'the request must still be correlated normally, not diverted to the generic error handler');
+});
+
+test('a real request with malformed query percent-encoding produces a safe, non-crashing access-log line', async (t) => {
+  const ctx = startTestServer();
+  t.after(() => ctx.close());
+
+  const logLines = [];
+  const originalLog = console.log;
+  console.log = (...args) => {
+    logLines.push(args.join(' '));
+    originalLog(...args);
+  };
+  let res;
+  try {
+    res = await fetch(`${ctx.baseUrl}/api/products?x%ZZ=1`);
+  } finally {
+    console.log = originalLog;
+  }
+
+  assert.equal(res.status, 200);
+  const line = logLines.find((l) => l.includes('[http]') && l.includes('GET'));
+  assert.ok(line, 'expected an [http] access-log line even for a malformed query string');
+  assert.match(line, /<invalid-encoding>=<redacted>/);
+  assert.match(line, /status=200/);
+});
+
+test('a real request with a normal query string is unaffected by the malformed-key fail-closed path', async (t) => {
+  const ctx = startTestServer();
+  t.after(() => ctx.close());
+
+  const res = await fetch(`${ctx.baseUrl}/api/products?page=1`);
+  assert.equal(res.status, 200);
+});
+
+test('a real request with a sensitive api_key query value never appears raw in the access log', async (t) => {
+  const ctx = startTestServer();
+  t.after(() => ctx.close());
+
+  const logLines = [];
+  const originalLog = console.log;
+  console.log = (...args) => {
+    logLines.push(args.join(' '));
+    originalLog(...args);
+  };
+  try {
+    await fetch(`${ctx.baseUrl}/api/products?api_key=abc123`);
+  } finally {
+    console.log = originalLog;
+  }
+
+  const line = logLines.find((l) => l.includes('[http]') && l.includes('GET'));
+  assert.ok(line, 'expected an [http] access-log line');
+  assert.ok(!line.includes('abc123'), `raw api_key value must never appear in the log: ${line}`);
+  assert.match(line, /api_key=<redacted>/);
 });
