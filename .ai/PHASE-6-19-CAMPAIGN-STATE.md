@@ -67,8 +67,8 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 | 13 | Logging / Observability / Production QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 7796f0f | d6848a1 |
 | 14 | Modern QA Learning Labs | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | d6848a1 | 90a4b04 |
 | 15 | Case Studies (7) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 90a4b04 | 27ea9d8 |
-| 16 | Interview Preparation | IN PROGRESS | 27ea9d8 | — |
-| 17 | Final Integration | NOT STARTED | — | — |
+| 16 | Interview Preparation | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 27ea9d8 | *(bu checkpoint commit'i — bkz. `git log -1`)* |
+| 17 | Final Integration | IN PROGRESS | *(Phase 16 head)* | — |
 | 18 | Independent Review (Claude self-audit) | NOT STARTED | — | — |
 | 19 | Clean | NOT STARTED | — | — |
 
@@ -251,26 +251,53 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
 - Açık blocker: 0.
 - Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-15-CASE-STUDIES/`
 
+## Phase 16 — Kapanış Özeti (tamamlandı)
+
+- `INTERVIEW-PREP.md` — 14 kategori, 26 soru, 5-bölümlü format (Short/
+  Detailed/Example/Real QA Risk/Related Lab).
+- TÜM "Related Lab" referansları (24 benzersiz dosya yolu) bu oturumda
+  GERÇEKTEN dosya-varlığı kontrolüyle doğrulandı — sıfır kırık
+  referans.
+- Sorular gerçek campaign bulgularına atıf yapıyor (chromedriver/
+  Chromium uyuşmazlığı, payment_token reflection, req.path bug'ı,
+  GraphQL nullable field davranışı, retries:0 kararı, gerçek CI
+  çalıştırması, gerçek p95/p99 sayıları) — icat edilmedi.
+- Tam backend regresyonu: 128/128 (bu faz kod değiştirmedi). Açık
+  blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-16-INTERVIEW-PREPARATION/`
+
 ## NEXT EXACT ACTION
 
-Phase 16 (Interview Preparation) implementasyonuna başla — ROADMAP
-kapsamı: repo'nun aynı zamanda bir teknik mülakat hazırlık kaynağı
-olması. 14 kategori: Manual QA, Test Design, API, SQL, Mobile,
-Automation, Selenium, Appium, Performance, Security, CI/CD, Senior QA,
-QA Lead, Scenario Questions. Her soru formatı: Short Answer / Detailed
-Answer / Example / Real QA Risk / Related Lab.
+Phase 17 (Final Integration) implementasyonuna başla — ROADMAP amacı:
+"Bütün repository'nin TEK kalite sistemi olarak çalışmasını sağlamak."
+Kontroller: Documentation consistency, Broken links, Terminology,
+Knowledge Status correctness, Tests, Automation, Reports, Evidence,
+CI, Security, Secrets, Repository navigation, Case Study traceability.
 
-**Kritik tasarım kararı:** "Related Lab" alanı GERÇEK repo yollarına
-(örn. `backend/tests/security.test.js`, `evidence/PHASE-10-.../
-EXECUTION.md`) işaret edecek — jenerik ders kitabı cevapları DEĞİL, bu
-campaign'in GERÇEKTEN yaptığı işe dayalı, doğrulanabilir cevaplar.
-Kapsam-orantılı: her kategori için ~2-4 soru (tükenmez bir mülakat
-bankası değil, ama her kategoriyi genuinely temsil eden, repo'ya
-gerçekten bağlı sorular).
+Bu, Phase 6-16'nın TÜMÜNÜ kapsayan bir REPOSITORY-GENELİ tutarlılık
+denetimidir — yeni özellik kodu YAZILMAYACAK, yalnızca:
 
-1. Tek bir konsolide `QA-DEMO-SYSTEM/evidence/PHASE-16-INTERVIEW-PREPARATION/INTERVIEW-PREP.md`
-   dosyası yaz (14 kategori, her biri kendi bölümünde).
-2. Mobile/Selenium/Appium/Security/Performance/CI-CD sorularının
-   "Related Lab" alanları Phase 8/10/11/12/14'ün GERÇEK (veya dürüstçe
-   LEARNING-only) bulgularına doğru referans versin.
-3. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-16-INTERVIEW-PREPARATION/EXECUTION.md`
+1. **Broken links / Repository navigation:** Her evidence dosyasındaki
+   dosya-yolu referanslarının (Phase 16'da yapılan doğrulamaya benzer
+   şekilde, ama TÜM Phase 6-16 evidence dosyaları için) gerçekten var
+   olduğunu doğrula.
+2. **Tests/Automation/Reports/Evidence:** TEK bir son, tam backend
+   regresyonu (`node --test`) + `web-tests` suite'i + varsa diğer
+   gerçek çalıştırılabilir suite'ler ÇALIŞTIRILIP genel bir "hepsi
+   yeşil mi" tablosu üretilecek.
+3. **CI:** `.github/workflows/ci.yml`'in hâlâ güncel/doğru olduğu
+   (Phase 12'den beri backend/web-tests'e eklenen yeni testlerin CI'da
+   da GERÇEKTEN çalıştığı) — gerekirse GERÇEK bir CI run daha
+   tetiklenip GitHub API ile doğrulanacak.
+4. **Security/Secrets:** Tüm campaign boyunca oluşturulan dosyalarda
+   (Phase 6-16) kapsamlı bir secret-scan.
+5. **Terminology/Knowledge Status correctness:** "CLAUDE IMPLEMENTATION
+   COMPLETE — PENDING FINAL CODEX AUDIT" ifadesinin HER phase evidence
+   dosyasında tutarlı kullanıldığının doğrulanması (asla "CODEX
+   CERTIFIED" gibi yanlış bir ifade sızmadığının kontrolü).
+6. **Case Study traceability:** Phase 15'in 7 case study'sinin
+   referans verdiği test dosyalarının hâlâ gerçek ve PASS olduğunun
+   (Phase 15'te zaten yapıldı, burada TEKRAR doğrulanacak) teyidi.
+7. Bulunan herhangi bir tutarsızlık/kırık referans DÜZELTİLECEK
+   (fix-then-lock-in deseni, bu campaign boyunca defalarca uygulandı).
+8. Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-17-FINAL-INTEGRATION/EXECUTION.md`
