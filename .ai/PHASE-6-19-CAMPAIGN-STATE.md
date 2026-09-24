@@ -316,12 +316,14 @@ uyguladığı Evidence Integrity kuralının doğal devamıdır.
   regresyonda birlikte doğrulayan kapanış fazıdır.
 - Backend tam regresyonu: **135/135**. Web-tests tam regresyonu:
   **23/23**.
-- API-tests: 6 suite'in TAMAMI, her birinden ÖNCE `npm run db:seed`
-  ile doğru sırayla çalıştırıldı — Public (11 req/26 assertion),
-  Protected (19 req/42 assertion), Orders&Payment AJV (64 req/118
-  assertion), Notifications AJV (20 req/48 assertion), Schema
-  negative-proof (19/19), API→DB (17 scenario/97 assertion) — **hepsi
-  0 fail**.
+- API-tests: 6 suite'in TAMAMI 0 fail ile PASS etti — 5'i LIVE (her
+  birinden ÖNCE `npm run db:seed` ile, gerçek canlı sunucuya karşı):
+  Public (11 req/26 assertion), Protected (19 req/42 assertion),
+  Orders&Payment AJV (64 req/118 assertion), Notifications AJV (20
+  req/48 assertion), API→DB (17 scenario/97 assertion); 1'i LOCAL/
+  STATIC (`db:seed`/canlı sunucu GEREKTİRMEZ, hiç HTTP isteği atmaz —
+  bkz. Codex fix-campaign B9): Schema negative-proof (19/19 proof
+  case).
 - **Gerçek operasyonel bulgu (dürüstçe kaydedildi):** Final
   regresyonun ilk turunda `api:test:orders-payment`, ARADA
   `db:seed` çalıştırılmadan üç suite art arda koşulduğu için stock-

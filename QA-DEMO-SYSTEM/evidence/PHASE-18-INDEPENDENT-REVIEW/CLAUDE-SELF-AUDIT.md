@@ -19,6 +19,23 @@ QA correctness, Architecture, Test quality, Documentation, Security,
 Maintainability, **False evidence**, **Unsupported experience claims**
 — Phase 6-17'nin tüm çıktısına uygulandı.
 
+> **[SONRADAN EKLENEN NOT — Codex fix-campaign, "Phase 18 self-audit
+> gerçekten açık blockerları yakalıyor mu" sorusuna dürüst cevap]**
+> HAYIR — bu self-audit, Codex'in bulduğu 9 blocker'dan (B1-B9)
+> HİÇBİRİNİ yakalamadı: GraphQL→WebSocket push eksikliği (B1),
+> Docker path uyuşmazlığı (B7), yanlış-adlandırılmış UI→DB testi (B2),
+> gevşek visual tolerance (B3), Selenium/JMeter'ın overclaim'li
+> statüsü (B4/B5), malformed-JSON request-id boşluğu (B6), case-study
+> overclaim'leri (B8), live/static karışıklığı (B9) — bunların HİÇBİRİ
+> bu self-audit'in Bölüm 2-4'ünde tespit EDİLMEDİ. Bu, sonucun
+> KENDİSİNİN (yukarıdaki paragrafta zaten AÇIKÇA itiraf edildiği gibi)
+> "bağımsız inceleme YERİNE GEÇMEZ" ifadesinin somut, ölçülmüş
+> kanıtıdır — kör noktalar GERÇEKTİ ve yalnızca gerçek bir dış
+> bakış açısıyla (Codex) bulunabildi. Bu dosyanın aşağıdaki içeriği
+> tarihsel kayıt olarak KORUNMUŞTUR; "Açık blocker: 0" sonucu bu not
+> ile birlikte okunmalıdır — o an self-audit'in KENDİ GÖREBİLDİĞİ
+> kapsamda doğruydu, ama kapsamın kendisi eksikti.
+
 ---
 
 ## 1. Yöntem

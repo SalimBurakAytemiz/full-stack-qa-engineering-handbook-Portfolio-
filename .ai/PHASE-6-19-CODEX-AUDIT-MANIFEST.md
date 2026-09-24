@@ -47,12 +47,17 @@ base→head commit aralığında durmaktadır.
 | API-tests — Protected schema | 19 req / 42 assertion, 0 fail | `npm run api:test:auth` |
 | API-tests — Orders & Payment (AJV) | 64 req / 118 assertion, 0 fail | `npm run api:test:orders-payment` |
 | API-tests — Notifications (AJV) | 20 req / 48 assertion, 0 fail | `npm run api:test:notifications` |
-| API-tests — Schema negative/positive proof | 19/19 proof case | `npm run api:test:schema:negative-proof` |
+| API-tests — Schema negative/positive proof | 19/19 proof case | `npm run api:test:schema:negative-proof` — **LOCAL/STATIC, canlı sunucuya İSTEK ATMAZ** |
 | API-tests — API→DB validation | 17 scenario / 97 assertion, 0 fail | `npm run api:test:db` |
 
-**Not:** API-tests suite'lerinin HER BİRİ, çalıştırılmadan ÖNCE
-`npm run db:seed` ile sıfırlanmış temiz bir DB'ye karşı ayrı ayrı
-çalıştırılmıştır (proje kuralı — bkz. `api-tests/README.md`).
+**Not [Codex fix-campaign B9 ile netleştirildi]:** Yukarıdaki 6
+API-tests satırından **5'i LIVE**'dır — çalıştırılmadan ÖNCE `npm run
+db:seed` ile sıfırlanmış temiz bir DB'ye karşı, gerçek bir sunucuya
+HTTP isteği atarak çalıştırılmıştır (proje kuralı — bkz.
+`api-tests/README.md`). **Schema negative/positive proof HARİÇ** —
+bu suite (`api-tests/scripts/schema-negative-proof.js`) sabit/kurgusal
+JSON payload'larını doğrudan AJV'ye karşı test eder, `fetch`/`http://`
+içermez (grep ile doğrulandı), `db:seed`/canlı sunucu GEREKTİRMEZ.
 
 ---
 

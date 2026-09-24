@@ -92,6 +92,35 @@ verisi üretti. `requirements.txt` (`locust==2.46.6`) eklendi —
 sistem-seviyesi bir prerequisite olarak (JMeter/Java gibi), repo'ya
 commit edilen bir npm/pip lockfile değil.
 
+**[Codex fix-campaign B8 düzeltmesi]** Bu ilk çalıştırmada bir
+tutarsızlık vardı: dosyanın kendi docstring'i "occasionally... place
+an order" diyordu, ama YUKARIDAKİ istek listesinde `POST /api/orders`
+hiç YOKTU — kod, iddia ettiğini gerçekte YAPMIYORDU (Codex'in
+`case-study-02`'de bulduğu "order load test kanıtlanmadı" bulgusunun
+kök nedeni buydu). Gerçek bir `place_order` task'ı (düşük ağırlık —
+bu app'ta sipariş, gezinmeden gerçekten daha seyrek, çünkü checkout
+UI'ı yok) eklendi ve AYNI komutla YENİDEN çalıştırıldı:
+```
+$ locust -f locustfile.py --headless -u 10 -r 5 --run-time 15s --host http://127.0.0.1:4600
+Type     Name                    # reqs  # fails |  Avg  Min  Max  Med | req/s failures/s
+POST     /api/auth/login             79    0(0%) |    3    2   18    3 |  5.29       0.00
+GET      /api/health                134    0(0%) |    1    0   19    1 |  8.97       0.00
+GET      /api/notifications          57    0(0%) |    1    1    5    1 |  3.81       0.00
+POST     /api/orders                 22    0(0%) |    3    2    6    3 |  1.47       0.00
+GET      /api/products              257    0(0%) |    1    1   21    2 | 17.20       0.00
+Aggregated                          549    0(0%) |    2    0   21    2 | 36.73       0.00
+
+Response time percentiles (POST /api/orders): 50%=3ms 95%=5ms 99%=6ms 100%=6ms
+```
+**549 istek, 0 hata, 22 GERÇEK `POST /api/orders`** (sipariş p99=6ms)
+— artık dosyanın kendi docstring iddiasıyla gerçekten çalıştırılan kod
+eşleşiyor. Seeded product 1 (25 birim stok) kullanıldı — 22 sipariş
+bunun altında kaldığı için hiçbir sipariş 409 (yetersiz stok) ile
+başarısız olmadı (bu, bir stok tükenmesi test senaryosu DEĞİL, bir
+performans/hacim testidir — stok tükenmesi davranışı zaten
+`orders.test.js`/`database-testing.test.js`'de ayrı ayrı test
+edilmiştir).
+
 ---
 
 ## 4. Docker for QA — CODE COMPLETE, EXECUTION BLOCKED (Doğrulanmış)

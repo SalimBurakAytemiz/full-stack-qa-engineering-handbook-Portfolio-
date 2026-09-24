@@ -55,3 +55,37 @@ class QADemoUser(HttpUser):
             headers={"Authorization": f"Bearer {token}"},
             name="/api/notifications",
         )
+
+    # Codex fix-campaign B8 (P2, Phase 15): this module's own docstring
+    # claimed simulated users "occasionally... place an order", but no
+    # task here ever called POST /api/orders — case-study-02's "order
+    # load test" citation of this file was therefore unsupported by the
+    # code actually run. Fixed with a real, low-weight task (orders are
+    # genuinely rarer than browsing in this app's real traffic shape,
+    # and this app's frontend has no checkout UI at all — see Phase 8
+    # EXECUTION.md), always ordering the highest-stock seeded product
+    # (id 1, 25 units) at quantity 1 with the deterministic approved
+    # test token, so a short run's real order volume never exhausts it.
+    @task(1)
+    def place_order(self):
+        email = random.choice(
+            ["test.active01@example.com", "test.active02@example.com"]
+        )
+        with self.client.post(
+            "/api/auth/login",
+            json={"email": email, "password": "ValidPass123!"},
+            name="/api/auth/login",
+            catch_response=True,
+        ) as res:
+            if res.status_code != 200:
+                res.failure(f"login failed with status {res.status_code}")
+                return
+            token = res.json().get("token")
+            res.success()
+
+        self.client.post(
+            "/api/orders",
+            json={"items": [{"product_id": 1, "quantity": 1}], "payment_token": "TEST-CARD-APPROVED"},
+            headers={"Authorization": f"Bearer {token}"},
+            name="/api/orders",
+        )

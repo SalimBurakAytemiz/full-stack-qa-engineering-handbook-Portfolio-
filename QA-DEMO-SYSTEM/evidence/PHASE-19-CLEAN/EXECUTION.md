@@ -13,6 +13,21 @@ documentation tamam, Case Studies çalışır, review sonucu CLEAN.
 > Gerçek bağımsız (Codex) audit, bu campaign'in tamamı bittikten
 > sonra, ayrı bir adım olarak yapılacaktır — bu dosya "Codex
 > reviewed" olarak sunulmaz.
+>
+> **[SONRADAN EKLENEN NOT — Codex fix-campaign]** Bu dosyanın
+> yazıldığı anda "Açık blocker: 0" iddia edilmişti. Codex'in gerçek
+> bağımsız audit'i, TAM OLARAK bu iddianın YANLIŞ olduğunu kanıtladı:
+> 9 açık blocker buldu (2×P1, 7×P2) — Phase 6, 7, 9, 10, 13, 14, 15
+> ve BU fazın (19) kendisindeki gerçek bulgular (B1-B9,
+> `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`'de tam liste). Bu, Claude'un
+> KENDİ tam-kapsamlı denetiminin (yukarıdaki paragrafın da AÇIKÇA
+> kabul ettiği gibi) gerçek bağımsız incelemenin YERİNE GEÇMEDİĞİNİN
+> somut kanıtıdır. Bu dosyanın aşağıdaki içeriği TARİHSEL kayıt olarak
+> KORUNMUŞTUR (o anda GERÇEKTEN çalıştırılan komutların gerçek
+> çıktısıdır, silinmedi/değiştirilmedi) — ama "0 blocker" ve "CLEAN"
+> sonuç iddiaları artık GEÇERSİZDİR. Gerçek, güncel durum:
+> `QA-DEMO-SYSTEM/evidence/PHASE-6-19-FIX-CAMPAIGN/` (B1-B9 fix
+> checkpoint'leri) ve campaign'in bu ikinci turunun FINAL raporu.
 
 ---
 
@@ -81,18 +96,36 @@ seferde sorunsuz geçti" gibi yanlış bir izlenim verilmemiştir.
 
 ### Doğru sıralamayla (her suite'ten önce `npm run db:seed`) final sonuçlar:
 
+**LIVE (gerçek, canlı backend sunucusuna karşı, `npm run db:seed`
+sonrası) — 5 suite:**
+
 | Suite | Komut | Sonuç |
 |---|---|---|
 | Public schema validation | `api:test:postman` | 11 requests / 26 assertions / 0 failed — PASS |
 | Protected schema validation | `api:test:auth` | 19 requests / 42 assertions / 0 failed — PASS |
 | Orders & Payment (AJV) | `api:test:orders-payment` | 64 requests / 118 assertions / 0 failed — PASS |
 | Notifications (AJV) | `api:test:notifications` | 20 requests / 48 assertions / 0 failed — PASS |
-| Schema negative/positive proof | `api:test:schema:negative-proof` | 19/19 proof case — PASS |
 | API → DB validation | `api:test:db` | 17 scenarios / 97 assertions / 0 failed — PASS |
 
-Tüm suite'ler `npm run db:seed` sonrası, gerçek, canlı bir backend
-sunucusuna karşı (`localhost:3000`, default `data/qa-demo.db`)
-çalıştırıldı — hiçbiri mock/stub değildir.
+**LOCAL / STATIC (canlı sunucuya HİÇ HTTP isteği ATMAZ) — 1 suite:**
+
+| Suite | Komut | Sonuç |
+|---|---|---|
+| Schema negative/positive proof | `api:test:schema:negative-proof` | 19/19 proof case — PASS |
+
+**[Codex fix-campaign B9 düzeltmesi]** `api:test:schema:negative-proof`
+(`api-tests/scripts/schema-negative-proof.js`) sabit/kurgusal JSON
+payload'larını doğrudan AJV validator'a karşı test eder — dosyada
+`fetch`/`http://`/`localhost` içeren TEK BİR satır YOKTUR (grep ile
+doğrulandı), yani `localhost:3000`'e HİÇBİR istek atmaz. Önceki tur
+bu satırı, gerçekten 5 canlı suite'i çalıştıran AYNI tabloya ekleyip
+"Tüm suite'ler ... gerçek, canlı bir backend sunucusuna karşı
+çalıştırıldı — hiçbiri mock/stub değildir" cümlesiyle kapatmıştı —
+bu, bu ALTI satırdan BİRİ için YANLIŞTI. Bu ayrım, Phase 5.9'da BİR
+KEZ zaten düzeltilmişti (`api-tests/README.md`) — bu Phase 19
+evidence'ı aynı karışıklığı yeniden İÇERİ almıştı, şimdi tekrar
+düzeltildi. Doğru sayım: **5 live API flow + 1 local/static AJV
+proof**, tahmin edilmedi — kod okunarak (`grep`) doğrulandı.
 
 ---
 

@@ -9,6 +9,17 @@
 > repository-geneli tutarlılık denetimidir. Yeni özellik kodu
 > YAZILMADI — yalnızca doğrulama yapıldı, 1 gerçek tutarsızlık
 > bulunup düzeltildi.
+>
+> **[SONRADAN EKLENEN NOT — Codex fix-campaign]** Bu fazın kontrol
+> listesi (Bölüm 1) MEKANİK tutarlılık kontrolleriydi (kırık link,
+> terminoloji, CI durumu, secret taraması) — İDDİA EDİLEN teknik
+> DOĞRULUĞU (örn. "Selenium CODE COMPLETE", "UI→DB testi gerçek bir
+> tarayıcı kullanıyor") DEĞERLENDİRMEDİ, bu Phase 18'in kapsamıydı.
+> Codex'in bağımsız audit'i, Phase 18'in KENDİSİNİN de kaçırdığı 9
+> gerçek blocker buldu (B1-B9, bkz.
+> `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`) — bu fazın "Açık blocker:
+> 0" sonucu (Bölüm son satırı), yalnızca BU FAZIN KENDİ dar kapsamı
+> (mekanik tutarlılık) için doğruydu, genel campaign için değil.
 
 ---
 
