@@ -208,15 +208,34 @@ Bu, P5.4'ün kendi final baseline'ıyla (11/11 request, 26/26 assertion, 11/11 A
 
 ---
 
-## 8. Negative/Positive Schema Proof Regression (P5.2/P5.4)
+## 8. Negative/Positive Schema Proof Regression (P5.2/P5.4) — LOCAL/STATIC VALIDATION
 
 ```bash
 npm run api:test:schema:negative-proof
 ```
 
+**Sınıflandırma: LOCAL / STATIC SCHEMA PROOF — canlı sistem execution'ı DEĞİL.**
+`api-tests/scripts/schema-negative-proof.js`'in kendi kaynak kodu (dosyanın
+en başındaki yorum, satır 9) şunu açıkça belirtiyor: *"This does not call
+the running QA Demo System and does not modify application code or
+production responses — it only feeds literal, intentionally-crafted
+fixtures to the compiled validators."* Script, `shared/schemas/` altındaki
+gerçek/pinned AJV validator'larını gerçekten compile edip çalıştırıyor
+(bu kısmı gerçek) — ama girdi olarak `CASES` dizisindeki HARDCODED,
+elle yazılmış literal JSON payload'ları veriyor (satır 40-67); hiçbir HTTP
+isteği QA Demo System backend'ine gönderilmiyor. `ERROR` kategorisindeki
+"real 400/401/404 body" case'leri bile önceden gözlemlenmiş gerçek
+response body'lerinin bu script içine literal olarak KOPYALANMIŞ
+kopyalarıdır — bu script'in KENDİ çalıştırıldığı anda backend'e istek
+atılarak elde edilmiyor.
+
 **Sonuç: PASS** — Total cases: 19, PROOF-OK: 19, PROOF-BROKEN: 0. Exit code 0.
 
-P5.4'ün kendi final baseline'ıyla (19/19) **birebir tutarlı**.
+P5.4'ün kendi final baseline'ıyla (19/19) **birebir tutarlı**. Bu, gerçek bir
+komutun gerçekten çalıştırıldığını (ve gerçek AJV validator'ların gerçekten
+beklenen davranışı gösterdiğini) kanıtlar — ama bu, çalışan QA Demo System
+sunucusuna karşı bir "live regression" DEĞİLDİR (bkz. bölüm 25'teki command
+classification).
 
 ---
 
@@ -367,7 +386,7 @@ Bkz. `evidence/P5-API-TESTING/P5.9-REGRESSION-CLOSEOUT/` — aşağıdaki tablo 
 | WebSocket delivery consistency | — | — | P5.6 | KNOWN LIMITATION | Future dedicated coverage |
 | **AJV / SCHEMA** |
 | Tüm response schema compile+validate | AJV Node wrapper | `api:test:postman`, `:orders-payment`, `:notifications` | P5.2/4/5/6 | PASS | GUI'de çalışmaz (bilinçli) |
-| Negative/positive proof | `schema-negative-proof.js` | `api:test:schema:negative-proof` | P5.2/P5.4 | PASS | — |
+| Negative/positive proof | `schema-negative-proof.js` | `api:test:schema:negative-proof` | P5.2/P5.4 | PASS | LOCAL/STATIC — canlı sunucuya istek atmaz, hardcoded fixture'larla AJV proof (bkz. bölüm 8/25) |
 | **API → DB** |
 | API↔DB stok tutarlılığı | S2 | `api:test:db` | P5.7 | PASS | — |
 | Zero-write content-level proof | S1,S3,S4,S5,S6 | `api:test:db` | P5.7 | PASS | "Observed atomicity" — ACID iddiası değil |
@@ -504,9 +523,23 @@ Bu final regression'da **hiçbir FAIL çıkmadı** — bölüm 28'deki failure-h
 
 ## 25. Regression Verdict
 
-**PASS.** Tüm 7 regresyon adımı (Public+Schema, Negative-Proof, Auth, Orders&Payment, Notifications, API→DB, HTML Reporting) gerçek sisteme karşı, canonical reset akışıyla, exit code 0 ile çalıştı; tüm sayılar ilgili paketin kendi FINAL baseline'ıyla birebir tutarlı; hiçbir application/test/schema/documentation bug bulunmadı (yalnız 1 dokümantasyon drift'i tespit edildi ve düzeltildi); secret scan temiz; generated artifact policy'ye uyum tam; working tree CLEAN.
+**PASS.** Bölüm 7–13'te dökümante edilen 7 komutun tamamı bu oturumda gerçekten çalıştırıldı, exit code 0; tüm sayılar ilgili paketin kendi FINAL baseline'ıyla birebir tutarlı; hiçbir application/test/schema/documentation bug bulunmadı (yalnız 1 dokümantasyon drift'i tespit edildi ve düzeltildi); secret scan temiz; generated artifact policy'ye uyum tam; working tree CLEAN.
 
-**Kapsam netliği (gerçekten neyin yeniden çalıştırıldığı vs merged evidence'a çapraz-referans):** Bu P5.9 paketinde, bölüm 7–13'te dökümante edilen 7 komutun (`api:test:postman`, `api:test:schema:negative-proof`, `api:test:auth`, `api:test:orders-payment`, `api:test:notifications`, `api:test:db`, `api:report:all`) **her biri bu oturumda gerçekten, canlı sunucuya karşı, gerçekten çalıştırıldı** — bunlar P5.1–P5.8'in kendi runner'larının BİREBİR AYNISI, tahmin/simülasyon değil. Bölüm 2'deki (Cross-Reference Matrix) "Son execution sonucu (historical)" satırları ise P5.1–P5.8'in KENDİ önceki (bu P5.9'dan önceki, merged) EXECUTION.md'lerinden alınan geçmiş kayıtlardır — P5.9 bu paketlerin geçmiş fix-round anlatılarını (ör. Codex bulgu tabloları, RUN#1/RUN#2 repeatability detayları) yeniden üretmedi, yalnızca onların FINAL sayılarını bu oturumdaki taze execution'ın sayılarıyla karşılaştırdı ve birebir eşleştiğini doğruladı. "Tam suite'in P5.9'da yeniden execute edildiği" iddiası yalnızca bölüm 7–13'teki 7 komut için geçerlidir; P5.1'in kendi orijinal `api:test:postman:basic` (raw, AJV'siz) run'ı veya P5.2'nin ilk (P5.4-öncesi) izole run'ı gibi tarihsel ara-adımlar bu P5.9 execution'ında AYRICA tekrarlanmadı — onların sonuçları yalnızca merged evidence'tan aktarılmıştır (bölüm 2).
+**Command classification (LIVE vs LOCAL/STATIC vs CROSS-REFERENCE) — kaynak koddan doğrulandı, tahmin edilmedi:**
+
+| # | Command | Sınıf | Gerekçe (kaynak koddan doğrulandı) |
+|---|---|---|---|
+| 1 | `api:test:postman` | **LIVE** | `run-schema-validation.js` → `newman.run()`, gerçek collection + `local.postman_environment.json` (`baseUrl=http://localhost:3000`) ile çalışan backend'e gerçek HTTP istekleri gönderir |
+| 2 | `api:test:schema:negative-proof` | **LOCAL / STATIC** | `schema-negative-proof.js` — kendi kaynak kodunun başındaki yorum: "does not call the running QA Demo System"; yalnız hardcoded literal fixture'ları compile edilmiş AJV validator'lara besler (bkz. bölüm 8) |
+| 3 | `api:test:auth` | **LIVE** | Raw `newman run`, gerçek collection + environment, çalışan backend'e gerçek HTTP istekleri |
+| 4 | `api:test:orders-payment` | **LIVE** | `run-orders-schema-validation.js` → `newman.run()`, gerçek backend'e istek |
+| 5 | `api:test:notifications` | **LIVE** | `run-notifications-schema-validation.js` → `newman.run()`, gerçek backend'e istek |
+| 6 | `api:test:db` | **LIVE** | `run-api-db-validation.js` — gerçek `fetch()` (API) + gerçek read-only `DatabaseSync` (DB), ikisi de çalışan backend/DB'ye karşı |
+| 7 | `api:report:all` | **LIVE** | `generate-html-report.js` → her suite için `newman.run()`, gerçek backend'e istek |
+
+**Toplam: 7 command — 6 LIVE (çalışan QA Demo System'e karşı gerçek execution) + 1 LOCAL/STATIC (`api:test:schema:negative-proof`, AJV/schema proof, sunucuya hiç istek atmıyor).**
+
+**CROSS-REFERENCE (bölüm 2):** Bölüm 2'deki (Cross-Reference Matrix) "Son execution sonucu (historical)" satırları P5.1–P5.8'in KENDİ önceki (bu P5.9'dan önceki, merged) EXECUTION.md'lerinden alınan geçmiş kayıtlardır — bu turda yeniden çalıştırılmadı, yalnızca bu oturumdaki 6 LIVE execution'ın (+ 1 LOCAL proof'un) sayılarıyla karşılaştırıldı ve birebir eşleştiği doğrulandı. P5.1'in kendi orijinal `api:test:postman:basic` (raw, AJV'siz) run'ı veya P5.2'nin ilk (P5.4-öncesi) izole run'ı gibi tarihsel ara-adımlar bu P5.9 execution'ında AYRICA tekrarlanmadı — onların sonuçları yalnızca merged evidence'tan aktarılmıştır.
 
 ---
 
