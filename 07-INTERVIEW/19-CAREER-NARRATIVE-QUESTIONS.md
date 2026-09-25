@@ -17,12 +17,16 @@ and UAT.
 
 ## "Why QA instead of development?"
 
-This is a `USER_CONFIRMATION_REQUIRED` narrative area — the transformation's
-source data covers competencies, professional cases, and domain
-exposure in detail, but not a first-person "why I chose this path"
-story. Per the claim-integrity rule "no claim without source," this file
-does not fabricate a motivational narrative; the real answer belongs to
-Salim directly, not to a generated placeholder.
+Formally tracked as `fact.career-motivation.why-qa` in
+`01-SALIM-BURAK-DIGITAL-TWIN/registry/source-provenance.yaml#unresolved_personal_facts`,
+status `USER_CONFIRMATION_REQUIRED`. This is not an unfinished
+engineering task — it is an intentionally unresolved *personal fact*:
+both canonical sources (the master transformation prompt and the
+Phase 0-19 repository evidence) were checked and neither contains
+first-person motivational/narrative content to draw from. Per the
+claim-integrity rule "no claim without source," no story is fabricated
+here; the registry entry records exactly what was checked and why
+nothing was found, so this state is never mistaken for missing work.
 
 ## "What's the throughline across your different professional contexts (E-commerce, FinTech-like, mobile-like, streaming)?"
 

@@ -52,3 +52,25 @@ conflict_log: []
 # TR: Bu increment'te kaynaklar arasında çözülemeyen bir çelişki
 # BULUNMADI — bulunursa buraya CONFLICTING_SOURCE olarak kaydedilecek,
 # sessizce daha etkileyici versiyon seçilmeyecek.
+
+unresolved_personal_facts:
+  # TR: Bu liste, "mühendislik olarak eksik" ile "kişisel bir gerçek
+  # olarak henüz teyit edilmemiş" arasındaki farkı somutlaştırır. Buraya
+  # giren her madde: (a) iki kaynakta da (satır 25 ve 40) YOKTUR, (b)
+  # icat EDİLMEZ, (c) mühendislik/registry tamamlanmışlığını ENGELLEMEZ
+  # — çünkü repository'nin görevi, bu belirsizliği DOĞRU temsil etmektir,
+  # kendiliğinden bir hikaye üretmek değildir.
+  - id: fact.career-motivation.why-qa
+    status: USER_CONFIRMATION_REQUIRED
+    question: "Why QA instead of software development, and what draws Salim to the field?"
+    checked_sources:
+      - src.master-transformation-prompt.2026-09-25
+      - src.repository-campaign-evidence.phase-0-19
+    finding: >
+      Neither source contains first-person motivational/narrative
+      content — both are structured competency, professional-case, and
+      domain-exposure data, not a career-story narrative. There is
+      nothing to extract or paraphrase without inventing it.
+    referenced_by:
+      - "07-INTERVIEW/19-CAREER-NARRATIVE-QUESTIONS.md"
+    resolution: "Awaits a direct answer from Salim; not treated as blocking, since accurately representing 'not yet confirmed' is itself the correct, complete state for this fact — see Section 66 (Learning/Gap Transparency) and Section 71 (self-check) of the master transformation spec."
