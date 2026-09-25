@@ -27,7 +27,7 @@ jobs:
     # registry's own package.json and node_modules live — a completely
     # separate npm workspace from QA-DEMO-SYSTEM. No `needs:` — this is a
     # pure docs/registry check with no dependency on a running server.
-    name: Registry integrity (schema, relationships, generated-output)
+    name: Registry integrity (schema, relationships, generated-output, claim provenance)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -39,6 +39,15 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm run registry:validate
+      # Post-Codex fix (section 14/15): the regression suite proves the
+      # validator's negative/positive behavior against real files (claim
+      # provenance, domain FK, CI_VERIFIED evidence, EOL-normalized drift,
+      # relationship semantics) — one of its 9 cases spawns the GraphQL
+      # contract-drift test, which needs QA-DEMO-SYSTEM/backend's own
+      # separate npm workspace installed (see .ai/DECISIONS.md D1).
+      - run: npm ci
+        working-directory: QA-DEMO-SYSTEM
+      - run: node --test scripts/registry/validate-registry.regression.test.mjs
 
   backend-tests:
     name: Backend unit/integration tests (node:test)
@@ -102,6 +111,111 @@ jobs:
           done
           echo "Backend did not become healthy in time"; cat /tmp/ci-backend.log; exit 1
       - run: npm run api:test:postman --workspace api-tests
+
+  api-auth-tests:
+    # Post-Codex fix (P1-03): this package (protected/auth collection,
+    # 19 requests / 42 assertions locally proven — see
+    # api-tests/README.md section on P5.3) existed and passed locally
+    # since P5.3 but was never wired into CI, so the CI-facing maturity
+    # claim did not match reality. Stateless (no seed-order dependency,
+    # unlike orders-payment/notifications/db below), so it runs exactly
+    # like api-schema-validation above.
+    name: API auth/authorization tests (Newman)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Start backend server
+        run: |
+          rm -f backend/data/qa-demo.db
+          nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 0.5
+          done
+          echo "Backend did not become healthy in time"; cat /tmp/ci-backend.log; exit 1
+      - run: npm run api:test:auth --workspace api-tests
+
+  api-orders-payment-tests:
+    # Post-Codex fix (P1-03): stock mutations make this suite
+    # order-sensitive, so a fresh db:seed immediately before starting
+    # the server (same sequence api-tests/README.md documents for local
+    # runs) is required for reproducibility — this is why this package
+    # was not simply added to api-schema-validation above.
+    name: API orders/payment business tests (Newman + AJV)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Seed and start backend server
+        run: |
+          rm -f backend/data/qa-demo.db
+          npm run db:seed
+          nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 0.5
+          done
+          echo "Backend did not become healthy in time"; cat /tmp/ci-backend.log; exit 1
+      - run: npm run api:test:orders-payment --workspace api-tests
+
+  api-notifications-tests:
+    # Post-Codex fix (P1-03): same seed-before-server requirement as
+    # orders-payment above (order/notification state mutations).
+    name: API notifications tests (Newman + AJV)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Seed and start backend server
+        run: |
+          rm -f backend/data/qa-demo.db
+          npm run db:seed
+          nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 0.5
+          done
+          echo "Backend did not become healthy in time"; cat /tmp/ci-backend.log; exit 1
+      - run: npm run api:test:notifications --workspace api-tests
+
+  api-db-validation:
+    # Post-Codex fix (P1-03): API<->DB validation (scripts/run-api-db-validation.js)
+    # reads SQLite directly (node:sqlite, read-only) alongside real API
+    # calls, so it needs the exact same fresh-seed sequence as
+    # api-tests/README.md's local instructions.
+    name: API-to-DB validation (node:sqlite + fetch)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Seed and start backend server
+        run: |
+          rm -f backend/data/qa-demo.db
+          npm run db:seed
+          nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 0.5
+          done
+          echo "Backend did not become healthy in time"; cat /tmp/ci-backend.log; exit 1
+      - run: npm run api:test:db --workspace api-tests
 
   selenium-lab:
     # Codex fix-campaign B4 (P2, Phase 10): the CI/CD scope item for the

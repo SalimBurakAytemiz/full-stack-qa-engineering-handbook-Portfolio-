@@ -6,7 +6,7 @@ fails the suite (`npm test --workspace backend`) on drift.
 
 | Contract | Canonical definition | Drift check |
 |---|---|---|
-| REST response shapes | `shared/schemas/{auth,common,health,notifications,orders,products}/*.schema.json` | AJV, wired into `QA-DEMO-SYSTEM/api-tests` (see `evidence.api-tests.newman-ajv-suite`) |
+| REST response shapes | `shared/schemas/{auth,common,health,notifications,orders,products}/*.schema.json` | AJV, wired into `QA-DEMO-SYSTEM/api-tests` (5 packages, each with its own CI job — see `evidence.api-tests.public-schema-suite`, `.protected-auth-suite`, `.orders-payment-suite`, `.notifications-suite`, `.api-db-validation-suite` in `06-EVIDENCE/evidence.yaml`) |
 | GraphQL schema | `graphql/schema.graphql` (generated snapshot of `QA-DEMO-SYSTEM/backend/src/graphql/schema.js`) | `QA-DEMO-SYSTEM/backend/tests/graphql-contract-drift.test.js` |
 | WebSocket notification push message | `websocket/notification-push-message.schema.json` | `QA-DEMO-SYSTEM/backend/tests/realtime-contract-drift.test.js` |
 | `order.paid` domain event payload | `events/order-paid.schema.json` | `QA-DEMO-SYSTEM/backend/tests/realtime-contract-drift.test.js` |
