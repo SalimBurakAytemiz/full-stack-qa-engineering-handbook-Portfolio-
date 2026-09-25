@@ -11,9 +11,13 @@ D3 CASE_DESIGNED → D4 EXECUTABLE → D5 EVIDENCE_VERIFIED.
 |---|---|---|
 | E-Commerce / Retail | D4 EXECUTABLE | [`02-COMMERCE-RETAIL/E-COMMERCE/`](02-COMMERCE-RETAIL/E-COMMERCE/) |
 | FinTech | D3 CASE_DESIGNED | [`01-FINANCIAL-SERVICES/FINTECH/`](01-FINANCIAL-SERVICES/FINTECH/) |
-| Media / Streaming | D1 DOCUMENTED | [`03-MEDIA-STREAMING/`](03-MEDIA-STREAMING/) |
-| Multi-Country Mobile / Localization | D1 DOCUMENTED | [`04-MOBILE-DIGITAL-PLATFORMS/`](04-MOBILE-DIGITAL-PLATFORMS/) |
-| Insurance | D0 INDEXED | [`01-FINANCIAL-SERVICES/INSURANCE/`](01-FINANCIAL-SERVICES/INSURANCE/) |
+| Media / Streaming | D2 QA_MAPPED | [`03-MEDIA-STREAMING/`](03-MEDIA-STREAMING/) |
+| Multi-Country Mobile / Localization | D2 QA_MAPPED | [`04-MOBILE-DIGITAL-PLATFORMS/`](04-MOBILE-DIGITAL-PLATFORMS/) |
+| Insurance | D2 QA_MAPPED | [`01-FINANCIAL-SERVICES/INSURANCE/`](01-FINANCIAL-SERVICES/INSURANCE/) |
+
+Canonical source for this table: `shared/registry/catalog/domains.yaml`
+(registry-validated; this table is a human-readable mirror of it, kept
+in sync by review rather than generation).
 
 ## Indexed only (not yet documented — real gaps, not hidden)
 
@@ -25,10 +29,14 @@ Security, Logistics/Supply Chain, Travel/Ticketing, Healthcare,
 Telecom, SaaS/Enterprise, EdTech, Gaming, AdTech/MarTech, Public
 Sector, IoT/Connected Systems.
 
-## Why Insurance is D0, not higher
+## Why Insurance's maturity reflects documentation depth, not experience
 
 Per the transformation spec's explicit rule (Section 19): Insurance is
 not a professional-experience claim for anyone documented in this
-repository. It exists in the taxonomy as a placeholder for future
-domain-learning content, not populated with invented depth just to
-look complete.
+repository. Its D2 QA_MAPPED maturity reflects real, deep learning/
+transferable-methodology domain-QA content (actor models, business
+rules, risk catalog, test strategy) — not populated with invented
+professional depth just to look complete. See
+[`01-FINANCIAL-SERVICES/INSURANCE/README.md`](01-FINANCIAL-SERVICES/INSURANCE/README.md)
+for the explicit distinction it draws between documentation maturity
+and practiced experience.

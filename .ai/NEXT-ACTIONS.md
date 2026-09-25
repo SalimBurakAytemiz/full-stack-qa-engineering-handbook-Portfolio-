@@ -1,8 +1,8 @@
 # Next Actions
 
 This file reflects the real, current state of the
-`feat/qa-digital-twin-full-stack-transformation` branch at the master
-transformation completion gate (commit `791c040` and this commit).
+`feat/qa-digital-twin-full-stack-transformation` branch after the
+post-Codex consolidated fix campaign (base `a8f0cd2`, this commit).
 
 ## Master transformation status
 
@@ -11,6 +11,14 @@ Every implementable repository requirement is COMPLETE — see
 classification (COMPLETE / NOT_APPLICABLE / EXTERNALLY_BLOCKED /
 USER_CONFIRMATION_REQUIRED, zero PARTIAL rows remaining). There is no
 unfinished master-scope engineering work to list here.
+
+## Post-Codex fix campaign status
+
+All 13 findings (P1-01 through P1-05, P2-01 through P2-06, P3-01,
+P3-02) are FIXED — see `.ai/CODEX-POST-FIX-CLOSURE-MATRIX.md` for the
+per-finding disposition, files changed, and validation. Ready for
+Codex's final independent verification pass — see
+`.ai/CODEX-FULL-AUDIT-HANDOFF.md`.
 
 ## What is genuinely still open (not engineering work — see `.ai/KNOWN-ISSUES.md`)
 

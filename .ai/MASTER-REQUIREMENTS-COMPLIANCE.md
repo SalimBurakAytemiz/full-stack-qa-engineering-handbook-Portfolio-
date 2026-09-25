@@ -69,8 +69,8 @@ has been finished.
 | Universal catalog (competencies, domains, tools, patterns, labs, evidence) | COMPLETE | `shared/registry/catalog/`, `06-EVIDENCE/evidence.yaml` |
 | JSON Schemas for every catalog type | COMPLETE | `shared/registry/schemas/` — 8 schemas |
 | Real, runnable validator | COMPLETE | `scripts/registry/validate-registry.mjs` — schema, duplicate-id, dangling-reference, orphan (all entity types), claim-integrity, and generated-output-drift checks, each verified to genuinely fail on real defects found during this session's own development |
-| Relationship model with controlled vocabulary | COMPLETE | `shared/registry/relationships/relationships.yaml`, 224 edges, 17-predicate controlled vocabulary |
-| Relationship graph exhaustiveness across every canonical entity | COMPLETE | 0 orphans across 121 competency/domain/tool/pattern/gap/professional-case entries plus 11 evidence and 10 lab entries — verified by an automated check, not a manual scan |
+| Relationship model with controlled vocabulary | COMPLETE | `shared/registry/relationships/relationships.yaml`, 235 edges (post-Codex fix campaign: +11 net — 5 new API-package evidence edges, 3 new tool RELATED_TO edges, 3 new JMeter-split edges, minus 2 removed false-execution edges), 17-predicate controlled vocabulary |
+| Relationship graph exhaustiveness across every canonical entity | COMPLETE | 0 orphans across 125 competency/domain/tool/pattern/gap/professional-case entries plus 17 evidence and 10 lab entries — verified by an automated check, not a manual scan |
 | Mandated + requested traceability paths walkable | COMPLETE | COMPETENCY→DOMAIN, DOMAIN→PATTERN, DOMAIN→LAB, COMPETENCY→LAB, LAB→EVIDENCE, PROFESSIONAL EXPERIENCE→DOMAIN, PROFESSIONAL EXPERIENCE→TOOL/TECHNOLOGY, GAP→TARGET all verified by programmatic graph traversal |
 | Generated indexes/matrices | COMPLETE | `shared/registry/generated/REGISTRY-INDEX.md`, drift-checked against source on every validation run |
 | CI-wired validation (local proof) | COMPLETE | `.github/workflows/ci.yml` job `registry-integrity`, locally reproduced with a clean `npm ci` |

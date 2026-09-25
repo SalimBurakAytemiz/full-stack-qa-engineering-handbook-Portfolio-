@@ -71,13 +71,27 @@ implemented.
 
 `events.service.js`'s `order.paid` event (persisted to an `events`
 table with a `UNIQUE(order_id, event_type)` constraint) is a minimal,
-in-process analog of a message queue's core QA concern: **exactly-once
-delivery**. The unique constraint is the deduplication guarantee a real
-queue (Kafka, RabbitMQ — both tracked as knowledge gaps in
-`gaps.yaml`) would need a consumer-side idempotency key for. Testing
-this pattern (`ASYNC-EVENTS.md`) generalizes directly to a real
-message-queue system, even though this repository's implementation is
-simpler than one.
+in-process analog of a message queue's core QA concern: **persisted-event
+uniqueness / deduplication at the storage layer**. Codex post-audit
+correction (P2-06): this constraint does NOT, by itself, guarantee
+**exactly-once delivery** to a consumer — that would require the
+delivery/transport layer itself (WebSocket push here) to also be
+exactly-once, which this repository's implementation is not (the push
+is a single best-effort send, no consumer ack/retry/redelivery
+protocol — closer to at-least-once-or-none than a guaranteed delivery
+semantic). What the unique constraint *does* give a real message-queue
+architecture is the same deduplication guarantee a consumer-side
+idempotency key provides against **at-least-once delivery with
+possible redelivery** (the far more common real-world queue guarantee,
+e.g. Kafka, RabbitMQ, SQS — both queue names tracked as knowledge gaps
+in `gaps.yaml`): the storage layer suppresses a duplicate *processing*
+attempt even if the message itself is delivered more than once.
+**Processing idempotency** (this repository's real, tested property —
+see `IDEMPOTENCY.md`) and **delivery exactly-once-ness** (a property of
+the transport/consumer protocol, not tested or claimed here) are two
+different guarantees at two different layers; testing this pattern
+(`ASYNC-EVENTS.md`) generalizes the deduplication half directly to a
+real message-queue system, not the delivery-semantics half.
 
 ## Why this matters for test strategy, not just trivia
 

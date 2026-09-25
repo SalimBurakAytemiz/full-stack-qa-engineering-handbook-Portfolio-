@@ -15,7 +15,7 @@ Section 6), as of commit `791c040` on
 | `07-INTERVIEW/` | BUILT | 14 general categories (indexed, real location) + 5 profile-specific files; the career-narrative gap is a formal registry state, not an open TODO |
 | `shared/` | BUILT | `registry/` fully built with CI-wired validation, generalized orphan checking across every entity type; `contracts/` has real GraphQL + WebSocket/event contract-drift checks; `schemas/`, `test-data/` pre-existing from Phase 5; `evidence/`, `helpers/`, `templates/` removed (were pre-existing empty placeholders) |
 | `docs/` | BUILT | `DOCUMENTATION-STANDARD.md`, `TERMINOLOGY-GLOSSARY.md` moved here via `git mv` |
-| `scripts/` | BUILT | `registry/validate-registry.mjs` (schema/duplicate-id/dangling-ref/orphan-all-types/claim-integrity/generated-output-drift), `registry/build-indexes.mjs`, `registry/lib/build-index-markdown.mjs` |
+| `scripts/` | BUILT | `registry/validate-registry.mjs` (schema/duplicate-id/dangling-ref/orphan-all-types/claim-level-provenance/domain-foreign-key/relationship-semantics/CI-linkage/EOL-normalized-generated-output-drift), `registry/validate-registry.regression.test.mjs` (9 negative+positive proofs), `registry/build-indexes.mjs`, `registry/lib/build-index-markdown.mjs` |
 | `.ai/` | BUILT | This file and its siblings, including `MASTER-REQUIREMENTS-COMPLIANCE.md` with zero PARTIAL rows |
 | `.github/` | MODIFIED THIS SESSION | `ci.yml` gained a `registry-integrity` job; the 4 pre-existing Phase 6-19 jobs unmodified |
 

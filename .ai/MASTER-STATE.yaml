@@ -6,6 +6,18 @@ repository:
   transformation_branch: "feat/qa-digital-twin-full-stack-transformation"
   transformation_base_sha: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
 
+post_codex_fix_campaign:
+  status: "COMPLETE — all 13 findings (P1-01..P1-05, P2-01..P2-06, P3-01..P3-02) FIXED, 0 FALSE_POSITIVE, 0 EXTERNALLY_BLOCKED"
+  base_sha: "a8f0cd2fcc5ed24deb4c7ec2e5fa652f981c33fd"
+  closure_matrix: ".ai/CODEX-POST-FIX-CLOSURE-MATRIX.md"
+  prior_handoff_status: "FIX_REQUIRED (P0:0 P1:5 P2:6 P3:2) — historical record, not rewritten; see .ai/CODEX-FULL-AUDIT-HANDOFF.md's own preserved history section"
+  key_new_mechanisms:
+    - "01-SALIM-BURAK-DIGITAL-TWIN/registry/claims.yaml — claim-level provenance (P1-05), 56 entries, 1:1 with every professional bullet"
+    - "shared/registry/schemas/domain-catalog.schema.json — universal domain catalog no longer carries personal-exposure vocabulary (P2-01)"
+    - "scripts/registry/validate-registry.mjs — claim-level provenance check, domain foreign-key check, relationship-semantic (PRACTICED_IN vs NOT_PRACTICED) check, EOL-normalized drift comparison"
+    - "scripts/registry/validate-registry.regression.test.mjs — 9 regression tests proving both negative (real defect -> FAIL) and positive (real harmless variance -> PASS) validator behavior against real files"
+    - ".github/workflows/ci.yml — 4 new API CI jobs (auth/orders-payment/notifications/db), wired and locally proven"
+
 phase_0_19_campaign:
   status: "MERGED_TO_MAIN"
   codex_audit: "COMPLETE — final verdict PASS, multiple fix-delta re-review rounds"
@@ -41,15 +53,16 @@ master_transformation_campaign:
     compliance_map: ".ai/MASTER-REQUIREMENTS-COMPLIANCE.md"
 
 test_status:
-  backend: "160/160 PASS (157 existing + 3 new contract-drift tests)"
-  api_contract_suites: "331/331 assertions PASS across 5 suites, re-run against a live server"
-  playwright: "26/26 PASS (PLAYWRIGHT_CHROMIUM_PATH env note in KNOWN-ISSUES.md)"
+  backend: "160/160 PASS"
+  api_contract_suites: "public 26/26 assert, auth 42/42 assert, orders-payment 118/118 assert (1 confirmed flake re-run — see TEST-STATUS.md), notifications 48/48 assert, api-db 97/97 assert — all re-run this session against a live server"
+  playwright: "26/26 PASS (PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium required this session — env build-version mismatch, not a repository defect)"
   selenium: "NOT_EXECUTED — EXECUTION_BLOCKED (sandbox network, re-confirmed by a real attempt this session)"
   jmeter_real_binary: "NOT_EXECUTED — LAUNCH_OR_RUNTIME_ERROR (environment-specific XStream issue, re-confirmed this session, see DECISIONS.md D9)"
   jmeter_gate_unit_tests: "7/7 PASS"
-  locust: "PASS — real run, 280 requests, 0 failures"
-  registry_validator: "0 errors — 224 relationships, 0 orphans across every entity type (121 competency/domain/tool/pattern/gap/professional-case + 11 evidence + 10 lab), verified to genuinely fail on real defects found during this session's own development (DECISIONS.md D3, D6-D9)"
-  last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign) — the new registry-integrity job proven locally, not yet observed on a live run (EXTERNALLY_BLOCKED)"
+  locust: "not re-run this session (no locust-related finding); last real run 280 requests, 0 failures"
+  registry_validator: "0 errors — 235 relationships, 0 orphans across every entity type (125 competency/domain/tool/pattern/gap/professional-case + 17 evidence + 10 lab), plus 3 NEW structural checks this session (claim-level provenance, domain foreign-key, relationship-semantic PRACTICED_IN) — see post_codex_fix_campaign above"
+  registry_regression_suite: "9/9 PASS — scripts/registry/validate-registry.regression.test.mjs, proves negative+positive validator behavior against real files"
+  last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign, historical) — the registry-integrity job and 4 new API CI jobs are proven locally this session, not yet observed on a live run (EXTERNALLY_BLOCKED)"
   detail: ".ai/TEST-STATUS.md"
 
 branch_note:
@@ -60,6 +73,7 @@ branch_note:
 pointers:
   digital_twin: "01-SALIM-BURAK-DIGITAL-TWIN/"
   codex_handoff: ".ai/CODEX-FULL-AUDIT-HANDOFF.md"
+  post_codex_closure_matrix: ".ai/CODEX-POST-FIX-CLOSURE-MATRIX.md"
   next_actions: ".ai/NEXT-ACTIONS.md"
   decisions: ".ai/DECISIONS.md"
   known_issues: ".ai/KNOWN-ISSUES.md"

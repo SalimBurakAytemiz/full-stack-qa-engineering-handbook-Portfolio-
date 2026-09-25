@@ -175,3 +175,51 @@ traceability directions are walkable by real graph traversal, not just
 visually plausible. 224 edges is the number that resulted from doing
 this correctly for every real entity, not a target hit by adding
 generic edges.
+
+## D13 — Post-Codex fix campaign: claim-level provenance scoped to WHAT_I_DID and OTHER_PROFESSIONAL_PROJECT_EXPOSURE, not professional_domain_tool_knowledge
+
+`claims.yaml` (P1-05) covers the two "action-level" claim categories in
+`professional-experience.yaml` — the specific attack surface Codex
+demonstrated (an invented `what_i_did` bullet passing validation).
+`professional_domain_tool_knowledge.domains` (a flat list of WORKING/
+AWARE-level conceptual knowledge, explicitly the weaker category per
+that file's own TR comment) was deliberately left out of claim-level
+provenance: it is already covered by the file-level source check, and
+extending exact-text claim-matching to a ~38-item single-word list
+would add validator brittleness disproportionate to its lower stakes.
+This is a scoping decision, not an oversight — documented here so a
+future session does not assume it was missed.
+
+## D14 — Post-Codex fix campaign: real regressions found and fixed while fixing other findings
+
+Two defects were found during this campaign that were not named in the
+consolidated fix prompt's finding list, and were fixed on discovery
+rather than left for a future round:
+
+1. `pattern.retry VALIDATES_FLOW lab.cicd.github-actions` — the same
+   false-repository-execution defect as P1-04's named examples, found
+   while auditing Retry for P2-05. Removed.
+2. `build-index-markdown.mjs`'s Domain Maturity table still read the
+   old `exposure` field after `domains.yaml` was migrated to `maturity`
+   (P2-01) — every row silently printed "undefined." The generated-
+   output-drift check did NOT catch this, because both the committed
+   file and the fresh regeneration used the same broken logic (a
+   concrete demonstration that "diff matches" is necessary but not
+   sufficient — the generated CONTENT itself must also be inspected).
+   Found by reading the regenerated file's actual content, not by any
+   automated check. Fixed; the generator's own TR comment now names
+   this exact failure mode as the reason the two callers share one
+   function (see D3's "verify it actually fails" discipline, applied
+   here as "verify the regenerated content is actually right").
+
+## D15 — Post-Codex fix campaign: one confirmed API test flake, not silently absorbed
+
+The orders-payment API suite failed once (1/118 assertions, a
+concurrency-flavored stock-aggregation check) on a genuinely fresh,
+isolated seed+server — verified fresh by checking the process table
+(single server PID) and the seed timestamp before the run. Re-run once
+with an identical fresh setup and passed cleanly. No file this campaign
+touched relates to orders/payment/stock logic. Disclosed in
+`.ai/TEST-STATUS.md` rather than silently re-run until green and
+reported as a clean first pass — matching this repository's own
+established discipline (re-run only to confirm a suspected flake).

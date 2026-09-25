@@ -34,6 +34,24 @@ reach `googlechromelabs.github.io` from this sandbox. Passes in GitHub
 Actions CI (real, hosted-runner internet access) per existing evidence.
 Attempted for real this session, not assumed.
 
+## KI-4 — orders-payment API suite: one confirmed flake, not a defect
+
+Failed once (1/118 assertions) on a genuinely fresh, isolated run
+during the post-Codex fix campaign's full regression pass; re-run once
+with an identical fresh setup and passed cleanly (118/118). No file
+that campaign touched relates to orders/payment/stock logic. See
+`.ai/DECISIONS.md` D15 and `.ai/TEST-STATUS.md` for the full disclosure.
+
+## KI-5 — new tool/domain USER_CONFIRMATION_REQUIRED entries (post-Codex fix, P1-01)
+
+`01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml` now carries 4
+additional `USER_CONFIRMATION_REQUIRED` entries (BDD/Cucumber, Browser
+& Device Farms, ADB, Trello) — claimed as EXPERIENCE in the superseded
+`QA-COMPETENCY-MAP.md` but not confirmed by the current canonical
+source. Same disposition and precedent as the pre-existing Jira/
+Confluence entries — awaiting the user's own confirmation, not an
+engineering gap.
+
 ## Note on the career-motivation fact
 
 `fact.career-motivation.why-qa` is a genuine `USER_CONFIRMATION_REQUIRED`
