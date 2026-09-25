@@ -85,7 +85,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | GitHub Actions CI pipeline (4 real jobs) | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — reproduced defect with root cause | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (133 edges)
+## Relationships (191 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -222,4 +222,62 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.performance.locust | LEARNING | gap.performance.k6 |
 | competency.performance.locust | LEARNING | gap.performance.gatling |
 | competency.web.accessibility | LEARNING | gap.accessibility.professional-exposure |
+| domain.commerce.ecommerce | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |
+| domain.commerce.ecommerce | IMPLEMENTED_BY | lab.api-contract.postman-newman-ajv |
+| domain.commerce.ecommerce | IMPLEMENTED_BY | lab.database.sql-validation |
+| domain.financial.fintech | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |
+| domain.media.streaming | USES_PATTERN | pattern.authentication |
+| domain.media.streaming | USES_PATTERN | pattern.authorization |
+| domain.media.streaming | USES_PATTERN | pattern.async-events |
+| domain.media.streaming | USES_PATTERN | pattern.notification |
+| domain.mobile.multi-country | USES_PATTERN | pattern.authentication |
+| domain.mobile.multi-country | USES_PATTERN | pattern.authorization |
+| domain.mobile.multi-country | USES_PATTERN | pattern.payment |
+| domain.insurance | USES_PATTERN | pattern.idempotency |
+| domain.insurance | USES_PATTERN | pattern.payment |
+| domain.insurance | USES_PATTERN | pattern.authorization |
+| pro.ecommerce.skechers-turkey | USES_TECHNOLOGY | protocol.graphql |
+| pro.ecommerce.skechers-turkey | USES_TECHNOLOGY | protocol.rest |
+| pro.ecommerce.skechers-turkey | USES_TOOL | tool.ajv |
+| pro.ecommerce.skechers-turkey | USES_TOOL | tool.newman |
+| pro.ecommerce.skechers-turkey | USES_TECHNOLOGY | tech.json-schema |
+| pro.fintech.stablex-like | USES_TOOL | tool.postman |
+| pro.fintech.stablex-like | USES_TECHNOLOGY | protocol.websocket |
+| pro.fintech.stablex-like | USES_TOOL | tool.appium |
+| pro.fintech.stablex-like | USES_TOOL | tool.jenkins |
+| pro.fintech.stablex-like | USES_TOOL | tool.elastic |
+| pro.fintech.stablex-like | USES_TOOL | tool.azure-devops |
+| pro.fintech.stablex-like | USES_TECHNOLOGY | tech.sql |
+| pro.mobile.defacto-like | USES_TOOL | tool.figma |
+| pro.mobile.defacto-like | USES_TOOL | tool.python-visual-comparison |
+| pro.streaming.sdk-context | USES_TECHNOLOGY | protocol.rest |
+| pro.streaming.sdk-context | USES_TECHNOLOGY | protocol.websocket |
+| lab.cicd.github-actions | REQUIRES | tool.git |
+| lab.cicd.github-actions | USES_TOOL | platform.github |
+| lab.backend-api.rest-graphql-websocket | USES_TECHNOLOGY | platform.node |
+| tool.k6 | LEARNING | gap.performance.k6 |
+| tool.gatling | LEARNING | gap.performance.gatling |
+| tool.jira | RELATED_TO | tool.azure-devops |
+| tool.confluence | RELATED_TO | tool.azure-devops |
+| competency.web.selenium | LEARNING | gap.selenium.professional-exposure |
+| competency.web.playwright | LEARNING | gap.playwright.professional-exposure |
+| competency.observability.opentelemetry-jaeger | LEARNING | gap.observability.distributed-tracing |
+| competency.security.security-aware-qa | LEARNING | gap.security.owasp-api-top10-depth |
+| competency.api.contract-automation | LEARNING | gap.contract-testing.pact |
+| competency.api.contract-automation | LEARNING | gap.service-virtualization |
+| competency.api.contract-automation | LEARNING | gap.reporting.allure-from-scratch |
+| competency.cicd.jenkins | LEARNING | gap.static-analysis.sonarqube-depth |
+| competency.integration.websocket | LEARNING | gap.messaging.kafka |
+| competency.integration.websocket | LEARNING | gap.messaging.rabbitmq |
+| competency.environment.docker | LEARNING | gap.cloud-qa.depth |
+| competency.cicd.jenkins | LEARNING | gap.release.feature-flags |
+| competency.cicd.jenkins | LEARNING | gap.release.canary |
+| competency.cicd.jenkins | LEARNING | gap.release.blue-green |
+| domain.insurance | LEARNING | gap.domain.insurance-professional |
+| domain.healthcare | LEARNING | gap.domain.healthcare-professional |
+| domain.telecom | LEARNING | gap.domain.telecom-professional |
+| profile.salim-burak-aytemiz | LEARNING | gap.certification.istqb |
+| pro.ecommerce.skechers-turkey | PROFESSIONAL_EXPERIENCE_IN | domain.commerce.oms |
+| domain.financial.crypto | RELATED_TO | domain.financial.fintech |
+| domain.financial.trading-precious-metals | RELATED_TO | domain.financial.fintech |
 

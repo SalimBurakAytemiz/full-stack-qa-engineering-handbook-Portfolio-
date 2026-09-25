@@ -480,6 +480,217 @@ relationships:
     predicate: LEARNING
     to: gap.accessibility.professional-exposure
 
+  # ============================================================
+  # Graph-completeness pass — every previously-orphaned canonical
+  # entity closed with a real, specific edge (not RELATED_TO padding).
+  # See .ai/DECISIONS.md for the method: each edge below traces to a
+  # real fact (a source-data technology list, an actual CI dependency,
+  # or a genuine conceptual adjacency), not invented to raise the count.
+  # ============================================================
+
+  # DOMAIN -> LAB where implemented (was previously only expressed via
+  # competency -> lab; adding the direct domain -> lab edge the
+  # completeness audit explicitly asked for).
+  - from: domain.commerce.ecommerce
+    predicate: IMPLEMENTED_BY
+    to: lab.backend-api.rest-graphql-websocket
+  - from: domain.commerce.ecommerce
+    predicate: IMPLEMENTED_BY
+    to: lab.api-contract.postman-newman-ajv
+  - from: domain.commerce.ecommerce
+    predicate: IMPLEMENTED_BY
+    to: lab.database.sql-validation
+  - from: domain.financial.fintech
+    predicate: IMPLEMENTED_BY
+    to: lab.backend-api.rest-graphql-websocket
+    note: "Synthetic reuse of the Commerce order/payment flow, not a dedicated FinTech lab — see 05-EXECUTABLE-LABS/README.md D1."
+
+  # DOMAIN -> SYSTEM PATTERN for the three newly deep-dived domains
+  # (Streaming, Mobile/Multi-Country, Insurance), matching the patterns
+  # each domain page's own "Related System Patterns" section names.
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.authentication
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.authorization
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.async-events
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.notification
+  - from: domain.mobile.multi-country
+    predicate: USES_PATTERN
+    to: pattern.authentication
+  - from: domain.mobile.multi-country
+    predicate: USES_PATTERN
+    to: pattern.authorization
+  - from: domain.mobile.multi-country
+    predicate: USES_PATTERN
+    to: pattern.payment
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.idempotency
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.payment
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.authorization
+
+  # PROFESSIONAL EXPERIENCE -> TOOL/TECHNOLOGY, drawn directly from each
+  # professional case's own `technologies:` list in
+  # professional-experience.yaml (only entries that map to a real
+  # registered tool/tech/protocol id — items with no matching id, e.g.
+  # "react-native", "swagger", are not force-mapped to an unrelated id).
+  - from: pro.ecommerce.skechers-turkey
+    predicate: USES_TECHNOLOGY
+    to: protocol.graphql
+  - from: pro.ecommerce.skechers-turkey
+    predicate: USES_TECHNOLOGY
+    to: protocol.rest
+  - from: pro.ecommerce.skechers-turkey
+    predicate: USES_TOOL
+    to: tool.ajv
+  - from: pro.ecommerce.skechers-turkey
+    predicate: USES_TOOL
+    to: tool.newman
+  - from: pro.ecommerce.skechers-turkey
+    predicate: USES_TECHNOLOGY
+    to: tech.json-schema
+  - from: pro.fintech.stablex-like
+    predicate: USES_TOOL
+    to: tool.postman
+  - from: pro.fintech.stablex-like
+    predicate: USES_TECHNOLOGY
+    to: protocol.websocket
+  - from: pro.fintech.stablex-like
+    predicate: USES_TOOL
+    to: tool.appium
+  - from: pro.fintech.stablex-like
+    predicate: USES_TOOL
+    to: tool.jenkins
+  - from: pro.fintech.stablex-like
+    predicate: USES_TOOL
+    to: tool.elastic
+  - from: pro.fintech.stablex-like
+    predicate: USES_TOOL
+    to: tool.azure-devops
+  - from: pro.fintech.stablex-like
+    predicate: USES_TECHNOLOGY
+    to: tech.sql
+  - from: pro.mobile.defacto-like
+    predicate: USES_TOOL
+    to: tool.figma
+  - from: pro.mobile.defacto-like
+    predicate: USES_TOOL
+    to: tool.python-visual-comparison
+  - from: pro.streaming.sdk-context
+    predicate: USES_TECHNOLOGY
+    to: protocol.rest
+  - from: pro.streaming.sdk-context
+    predicate: USES_TECHNOLOGY
+    to: protocol.websocket
+
+  # Orphaned tool closure
+  - from: lab.cicd.github-actions
+    predicate: REQUIRES
+    to: tool.git
+  - from: lab.cicd.github-actions
+    predicate: USES_TOOL
+    to: platform.github
+  - from: lab.backend-api.rest-graphql-websocket
+    predicate: USES_TECHNOLOGY
+    to: platform.node
+  - from: tool.k6
+    predicate: LEARNING
+    to: gap.performance.k6
+  - from: tool.gatling
+    predicate: LEARNING
+    to: gap.performance.gatling
+  - from: tool.jira
+    predicate: RELATED_TO
+    to: tool.azure-devops
+    note: "Both project/QA-management tooling in the same catalog category (04-TOOLS-AND-TECH/11-PROJECT-QA-MANAGEMENT/); Jira's own professional use is USER_CONFIRMATION_REQUIRED (tool-state.yaml), so no stronger predicate applies."
+  - from: tool.confluence
+    predicate: RELATED_TO
+    to: tool.azure-devops
+    note: "Same reasoning as tool.jira above — USER_CONFIRMATION_REQUIRED, no confirmed practice to link to."
+
+  # Orphaned gap closure — GAP -> TARGET COMPETENCY/DOMAIN/PROFILE
+  - from: competency.web.selenium
+    predicate: LEARNING
+    to: gap.selenium.professional-exposure
+  - from: competency.web.playwright
+    predicate: LEARNING
+    to: gap.playwright.professional-exposure
+  - from: competency.observability.opentelemetry-jaeger
+    predicate: LEARNING
+    to: gap.observability.distributed-tracing
+  - from: competency.security.security-aware-qa
+    predicate: LEARNING
+    to: gap.security.owasp-api-top10-depth
+  - from: competency.api.contract-automation
+    predicate: LEARNING
+    to: gap.contract-testing.pact
+  - from: competency.api.contract-automation
+    predicate: LEARNING
+    to: gap.service-virtualization
+  - from: competency.api.contract-automation
+    predicate: LEARNING
+    to: gap.reporting.allure-from-scratch
+    note: "Newman/HTML reporting is this repository's real reporting tool; Allure is a learning-level alternative, not practiced."
+  - from: competency.cicd.jenkins
+    predicate: LEARNING
+    to: gap.static-analysis.sonarqube-depth
+  - from: competency.integration.websocket
+    predicate: LEARNING
+    to: gap.messaging.kafka
+  - from: competency.integration.websocket
+    predicate: LEARNING
+    to: gap.messaging.rabbitmq
+  - from: competency.environment.docker
+    predicate: LEARNING
+    to: gap.cloud-qa.depth
+  - from: competency.cicd.jenkins
+    predicate: LEARNING
+    to: gap.release.feature-flags
+  - from: competency.cicd.jenkins
+    predicate: LEARNING
+    to: gap.release.canary
+  - from: competency.cicd.jenkins
+    predicate: LEARNING
+    to: gap.release.blue-green
+  - from: domain.insurance
+    predicate: LEARNING
+    to: gap.domain.insurance-professional
+  - from: domain.healthcare
+    predicate: LEARNING
+    to: gap.domain.healthcare-professional
+  - from: domain.telecom
+    predicate: LEARNING
+    to: gap.domain.telecom-professional
+  - from: profile.salim-burak-aytemiz
+    predicate: LEARNING
+    to: gap.certification.istqb
+
+  # Personal-exposure-only domains (present in domain-state.yaml, not in
+  # the universal catalog since no dedicated repository/domain page
+  # exists for them) — closed with the most specific real edge available.
+  - from: pro.ecommerce.skechers-turkey
+    predicate: PROFESSIONAL_EXPERIENCE_IN
+    to: domain.commerce.oms
+    note: "'OMS issue investigation' is explicitly listed in this case's what_i_did — a real sub-area of the same professional context, not a separate case."
+  - from: domain.financial.crypto
+    predicate: RELATED_TO
+    to: domain.financial.fintech
+    note: "LEARNING-level exposure only (domain-state.yaml), no dedicated gap or competency tracks it specifically — the closest real, specific fact is its conceptual adjacency to the FinTech domain it was mentioned alongside in the source data."
+  - from: domain.financial.trading-precious-metals
+    predicate: RELATED_TO
+    to: domain.financial.fintech
+    note: "Same reasoning as domain.financial.crypto above — 'FX / Precious Metals FinTech' in the source data's own phrasing."
+
 related:
   schema: "../schemas/relationship.schema.json"
   narrative_docs:

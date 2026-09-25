@@ -254,6 +254,7 @@ const allKnownIdsForRelationships = new Set([
   ...allPatternIds,
   ...allProfessionalCaseIds,
   ...realGapIds,
+  ...(profile ? [profile.id] : []),
 ]);
 const referencedEvidenceIds = new Set();
 const referencedLabIds = new Set();
@@ -283,6 +284,41 @@ if (relationships && Array.isArray(relationships.relationships)) {
     if (allLabIds.has(rel.from)) referencedLabIds.add(rel.from);
   }
   ok(`relationships.yaml: ${validCount}/${relationships.relationships.length} relationships valid (schema + both endpoints resolve)`);
+}
+
+// --- Orphan check, generalized across every canonical entity type ---
+// TR: Sadece evidence/lab için değil, HER canonical entity tipi için
+// (competency, domain, tool, pattern, gap, professional-experience)
+// hiçbir relationship edge'i tarafından dokunulmamış bir id gerçekten
+// "unintentionally orphaned" mi diye kontrol eder — bu, grafiğin
+// büyümesiyle birlikte YENİ bir orphan eklenirse (bir kayıt eklenip
+// ilişki eklenmeyi unutulursa) otomatik olarak yakalanmasını sağlar.
+{
+  const touchedIds = new Set();
+  if (relationships && Array.isArray(relationships.relationships)) {
+    for (const rel of relationships.relationships) {
+      touchedIds.add(rel.from);
+      touchedIds.add(rel.to);
+    }
+  }
+  const entityGroups = [
+    { label: 'competency', file: `${dtRoot}/competency-state.yaml`, ids: [...allCompetencyEntries.keys()] },
+    { label: 'domain', file: `${catalogDir}/domains.yaml`, ids: [...allDomainIds] },
+    { label: 'tool', file: `${dtRoot}/tool-state.yaml`, ids: [...allToolIds] },
+    { label: 'pattern', file: `${catalogDir}/patterns.yaml`, ids: [...allPatternIds] },
+    { label: 'gap', file: `${dtRoot}/gaps.yaml`, ids: [...realGapIds] },
+    { label: 'professional case', file: proFile, ids: [...allProfessionalCaseIds] },
+  ];
+  let totalChecked = 0;
+  for (const { label, file, ids } of entityGroups) {
+    totalChecked += ids.length;
+    for (const id of ids) {
+      if (!touchedIds.has(id)) {
+        fail(file, `${label} '${id}' is orphaned — not referenced by any relationship edge (from or to)`);
+      }
+    }
+  }
+  ok(`generalized orphan check: ${totalChecked} competency/domain/tool/pattern/gap/professional-case entries checked for relationship-graph orphaning`);
 }
 
 // --- Orphan checks ---
