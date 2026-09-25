@@ -12,10 +12,11 @@ base→head commit aralığında durmaktadır.
 **İlk Codex audit'inin denetlediği HEAD (Phase 6-19 ilk tur kapanışı):** `a359b39` (`a359b391a02cfae20166f61a96a259a4f2601e0d`)
 **1. fix round'un final HEAD'i (Codex'in fix-delta re-review'unun denetlediği):** `2b1966d` (`2b1966d2d921acb50619cc15b896f64b8e3cedee`)
 **2. fix round'un final HEAD'i (Codex'in 2. re-review'unun denetlediği):** `3555b53` (`3555b5336ea4486d161f2da861efd019b24238b0`)
-**3. fix round'un (bu round — N4 malformed-query regresyonu + N6 manifest sync) final HEAD'i:** bu commit'in kendisi — bkz. `git rev-parse HEAD` üzerindeki dal ucu. **[N6 kök-neden düzeltmesi, artık İKİNCİ kez uygulanıyor]** Bir commit kendi SHA'sını YAZISAL olarak İÇEREMEZ (içerik hash'i belirler, hash içeriği belirleyemez) — bu ilke önceki round'da (FIX-8) tanıtıldı ve bu round'da da AYNEN korunuyor.
+**3. fix round'un final HEAD'i (Codex'in 3. re-review'unun denetlediği):** `0a52cb6` (`0a52cb661e7e7bb5363ef78f39238b5e96df12f2`) — **[N6, 4. tur]** bu satır ÖNCEDEN "bu commit'in kendisi" self-reference'ı kullanıyordu; FIX-11 (bu commit) geldiği anda bu round HİSTORİK hale geldi, bu yüzden ARTIK literal exact SHA olarak DONDURULDU (bkz. Bölüm 3 talimatı: self-reference yalnızca GÜNCEL/final round için geçerlidir, geçmiş round'lar için asla).
+**4. fix round'un (bu round — N6 historical checkpoint self-reference düzeltmesi, docs-only) final HEAD'i:** bu commit'in kendisi — bkz. `git rev-parse HEAD` üzerindeki dal ucu. **[N6 kök-neden düzeltmesi, artık ÜÇÜNCÜ kez uygulanıyor]** Bir commit kendi SHA'sını YAZISAL olarak İÇEREMEZ (içerik hash'i belirler, hash içeriği belirleyemez) — bu ilke FIX-8'de tanıtıldı; asıl hata bu ilkenin KENDİSİ değil, bir ÖNCEKİ round'un self-reference'ının bir SONRAKİ round geldiğinde literal SHA'ya DONDURULMEMİŞ olmasıydı (Codex'in bu turda bulduğu tam olarak budur — FIX-8 satırı hâlâ "bu commit" yazıyordu).
 **Dal:** `feat/phase-6-19-full-completion-campaign`
-**Toplam campaign commit sayısı (base'den bu commit'e, `git log --oneline 837ff2f..HEAD | wc -l` ile GERÇEKTEN sayıldı, BU COMMIT DAHİL):** 42
-**Fix-campaign'in KENDİ commit sayısı (`a359b39..HEAD`, ÜÇ round toplam, BU COMMIT DAHİL):** 12
+**Toplam campaign commit sayısı (base'den bu commit'e, `git log --oneline 837ff2f..HEAD | wc -l` ile GERÇEKTEN sayıldı, BU COMMIT DAHİL):** 43
+**Fix-campaign'in KENDİ commit sayısı (`a359b39..HEAD`, DÖRT round toplam, BU COMMIT DAHİL):** 13
 **Toplam değişen dosya (`git diff --stat 837ff2f..HEAD`, BU COMMIT DAHİL):** 97 dosya
 **Fix-campaign'in KENDİ değişen dosya sayısı (`git diff --stat a359b39..HEAD`, BU COMMIT DAHİL):** 46 dosya
 
@@ -27,13 +28,18 @@ base→head commit aralığında durmaktadır.
 > | **Original audit range** | `837ff2f..a359b39` | (Bölüm 1 tablosu) | — | Codex'in BAĞIMSIZ ilk audit'i: **FAIL** (9 blocker: B1-B9) |
 > | **First consolidated fix range** | `a359b39..2b1966d` | 8 | 35 | Codex'in 1. fix-delta re-review'u: **FAIL** (B5 fail-gate eksik, N6 stale, N4/N5/N7 reopened) |
 > | **Remaining-fix range** | `2b1966d..3555b53` | 2 | 20 | Codex'in 2. fix-delta re-review'u: **FAIL** (N4'ün KENDİ FIX-7 kodunda malformed-query regresyonu + N6 yine stale) |
-> | **Bu round (3. re-review'un kalanı)** | `3555b53..HEAD` | 2 | 6 | N4 GERÇEK regresyon düzeltmesi (FIX-9) + N6 manifest sync (bu commit, FIX-10) |
-> | **Final campaign range** | `837ff2f..HEAD` | 42 | 97 | (yukarı bkz.) |
+> | **3. fix round range** | `3555b53..0a52cb6` | 2 | 6 | N4 GERÇEK regresyon düzeltmesi (FIX-9) + N6 manifest sync denemesi (FIX-10) — Codex'in 3. re-review'u: **FAIL** (FIX-8 checkpoint satırı hâlâ "bu commit" self-reference kullanıyordu, tarihsel bir checkpoint için literal SHA'ya DONDURULMAMIŞTI) |
+> | **Bu round (4. — N6 self-reference düzeltmesi)** | `0a52cb6..HEAD` | 1 | (aşağıda güncel hesaplanmış) | FIX-11: FIX-8 ve FIX-10 checkpoint satırları literal SHA'ya donduruldu, docs-only |
+> | **Final campaign range** | `837ff2f..HEAD` | 43 | 97 | (yukarı bkz.) |
 >
-> Bu tablodaki `a359b39..2b1966d` ve `2b1966d..3555b53` satırları
-> TARİHSEL/DONMUŞ aralıklardır — bu round'un kendi commit'leri bu
-> aralıkların DIŞINDadır, bu yüzden sayıları BİR DAHA değişmez.
-> **CODEX'İN BU DÖRDÜNCÜ TURU YALNIZCA `3555b53`..HEAD FIX-DELTA'SI
+> Bu tablodaki `a359b39..2b1966d`, `2b1966d..3555b53` ve `3555b53..0a52cb6`
+> satırları artık TARİHSEL/DONMUŞ aralıklardır — bu round'un kendi
+> commit'i bu aralıkların DIŞINDadır, bu yüzden sayıları BİR DAHA
+> değişmez. Yalnızca "Bu round" satırı, bu commit HEAD olduğu sürece
+> canlı kalır; bir sonraki round geldiğinde O DA dondurulmalıdır (N6'nın
+> bu turda bulduğu ders tam olarak budur — self-reference kalıcı
+> değildir, her yeni round bir öncekini dondurmayı UNUTMAMALIDIR).
+> **CODEX'İN BU BEŞİNCİ TURU YALNIZCA `0a52cb6`..HEAD FIX-DELTA'SI
 > OLARAK incelemesi yeterlidir** — bkz.
 > `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`.
 
@@ -76,25 +82,35 @@ base→head commit aralığında durmaktadır.
 
 ---
 
-## 1c. İkinci Fix Round Checkpoint Tablosu (`2b1966d` → bu commit, Codex'in fix-delta RE-REVIEW'unun kalan bulgularının düzeltmesi)
+## 1c. İkinci Fix Round Checkpoint Tablosu (`2b1966d` → `3555b53`, Codex'in fix-delta RE-REVIEW'unun kalan bulgularının düzeltmesi)
 
 | Checkpoint | Bulgu(lar) | Head SHA | Ana Değişen Dosyalar | Test | Evidence |
 |---|---|---|---|---|---|
 | FIX-7 | B5 (P2, kalan parça — fail gate), N4 (reopened), N5, N7 (reopened) | `81b77b4` | `automation-labs/jmeter/scripts/{run-jmeter.js,run-jmeter.test.js,fixtures/*}` (yeni), `automation-labs/package.json`, `backend/src/middleware/requestContext.js`, `backend/tests/observability.test.js`, `evidence/PHASE-16-.../{EXECUTION,INTERVIEW-PREP}.md`, 7 dosyada hedefli Türkçe WHY yorumu | Backend 149/149, JMeter fail-gate unit 7/7 | `evidence/PHASE-6-19-FIX-CAMPAIGN/FIX-7-B5-N4-N5-N7.md` |
-| FIX-8 (bu commit) | N6 (manifest/Git consistency, GERÇEK düzeltme — bu commit'in kendi etkisini de sayıma dahil eder) | bu commit | `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, `.ai/PHASE-6-19-CAMPAIGN-STATE.md` | (manifest-only, kod değişmedi; final regresyon FIX-7'de zaten doğrulandı, bu commit'te TEKRAR ÇALIŞTIRILMADI — bkz. Bölüm 18 talimatı) | (bu dosyaların kendisi) |
+| FIX-8 | N6 (manifest/Git consistency, GERÇEK düzeltme — kendi etkisini de sayıma dahil eder) | `3555b53` **[N6, 4. tur — Codex'in bulduğu tam olarak buydu: bu satır önceden "bu commit" yazıyordu, ama FIX-8 tamamlanıp sonraki commit'ler (FIX-9, FIX-10) geldiği anda TARİHSEL hale geldi ve literal SHA'ya donmalıydı; dondurulmamıştı, bu FIX-11'de düzeltildi]** | `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, `.ai/PHASE-6-19-CAMPAIGN-STATE.md` | (manifest-only, kod değişmedi; final regresyon FIX-7'de zaten doğrulandı, bu commit'te TEKRAR ÇALIŞTIRILMADI — bkz. Bölüm 18 talimatı) | (bu dosyaların kendisi) |
 
 **2. fix round sonu — B5 TAM RESOLVED (implementation + controlled fail/pass gate + correlation + threshold, native JMeter runtime hâlâ ENVIRONMENT BLOCKED — dürüstçe ayrı belirtilmiştir). N4/N5/N7 RESOLVED (denildi). N6 RESOLVED (denildi). Codex'in 2. re-review'u bunu YİNE FAIL buldu: N4'ün KENDİ FIX-7 kodunda (`decodeURIComponent(key)` unguarded) gerçek bir regresyon vardı, ve N6 manifesti (FIX-DELTA-MANIFEST.md'nin `a359b39..2b1966d` satırı) yine stale kalmıştı (34/7 yazılıyordu, gerçek 35/8'di — bu aralığın kendi SON commit'i `2b1966d` listeden atlanmıştı).**
 
 ---
 
-## 1d. Üçüncü Fix Round Checkpoint Tablosu (`3555b53` → bu commit, Codex'in 2. fix-delta RE-REVIEW'unun kalan 2 bulgusunun düzeltmesi)
+## 1d. Üçüncü Fix Round Checkpoint Tablosu (`3555b53` → `0a52cb6`, Codex'in 2. fix-delta RE-REVIEW'unun kalan 2 bulgusunun düzeltmesi)
 
 | Checkpoint | Bulgu(lar) | Head SHA | Ana Değişen Dosyalar | Test | Evidence |
 |---|---|---|---|---|---|
 | FIX-9 | N4 (GERÇEK regresyon — `redactSensitiveQuery`'nin kendi kodunda malformed-query URIError) | `2d6620d` | `backend/src/middleware/requestContext.js` (`safeDecodeURIComponent` yeni), `backend/tests/observability.test.js` (8 yeni test) | Backend 157/157 | `evidence/PHASE-6-19-FIX-CAMPAIGN/FIX-9-N4-malformed-query-regression.md` |
-| FIX-10 (bu commit) | N6 (manifest/Git consistency, 3. deneme — `a359b39..2b1966d` satırının kendisi stale'di) | bu commit | `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, `.ai/PHASE-6-19-CAMPAIGN-STATE.md` | (manifest-only, kod değişmedi) | (bu dosyaların kendisi) |
+| FIX-10 | N6 (manifest/Git consistency, 3. deneme — `a359b39..2b1966d` satırının kendisi stale'di) | `0a52cb6` **[N6, 4. tur — aynı desen: bu satır da "bu commit" yazıyordu, FIX-11 geldiği anda tarihsel hale geldi, bu FIX-11'de literal SHA'ya donduruldu]** | `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, `.ai/PHASE-6-19-CAMPAIGN-STATE.md` | (manifest-only, kod değişmedi) | (bu dosyaların kendisi) |
 
-**3. fix round sonu — N4 GERÇEKTEN RESOLVED (malformed query artık throw etmiyor, route 500'e düşmüyor, sensitive değerler hâlâ redakte ediliyor). N6 GERÇEKTEN RESOLVED — bu kez HEM "bu commit" self-reference ilkesi HEM DE tüm tarihsel aralıkların (`a359b39..2b1966d`, `2b1966d..3555b53`) kendi son commit'lerini İÇERECEK şekilde yeniden doğrulanmasıyla.**
+**3. fix round sonu — N4 GERÇEKTEN RESOLVED (malformed query artık throw etmiyor, route 500'e düşmüyor, sensitive değerler hâlâ redakte ediliyor). N6 "GERÇEKTEN RESOLVED" denildi — ANCAK Codex'in 3. re-review'u bunun da EKSİK olduğunu buldu: FIX-8 checkpoint satırı hâlâ "bu commit" self-reference kullanıyordu (kendisi tarihsel hale geldiği halde donmamıştı). 4. round (FIX-11) bunu düzeltir — bkz. aşağıdaki Bölüm 1e.**
+
+---
+
+## 1e. Dördüncü Fix Round Checkpoint Tablosu (`0a52cb6` → bu commit, Codex'in 3. fix-delta RE-REVIEW'unun tek kalan bulgusunun düzeltmesi)
+
+| Checkpoint | Bulgu(lar) | Head SHA | Ana Değişen Dosyalar | Test | Evidence |
+|---|---|---|---|---|---|
+| FIX-11 (bu commit) | N6 (manifest/Git consistency, 4. deneme — FIX-8 VE FIX-10 checkpoint satırları "bu commit" self-reference kullanıyordu, ama ikisi de artık TARİHSEL — literal SHA'ya donmamışlardı) | bu commit | `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`, `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md` (kapsam `.ai/PHASE-6-19-CAMPAIGN-STATE.md`'ye GENİŞLETİLMEDİ — talimat gereği minimum scope) | (docs-only, kod/test değişmedi, test suite ÇALIŞTIRILMADI — talimat gereği) | (bu dosyaların kendisi) |
+
+**4. fix round sonu — N6 GERÇEKTEN RESOLVED: hem FIX-8 hem FIX-10 checkpoint satırları artık literal, exact SHA gösteriyor (`3555b53`, `0a52cb6`); yalnızca GÜNCEL/final round alanı (bu commit, aşağıda "4. fix round'un final HEAD'i") self-reference kullanıyor. Bu desenin tekrar bozulmaması için Bölüm 1'in başına açık bir ilke notu eklendi (yukarı bkz.: "her yeni round bir öncekini dondurmayı UNUTMAMALIDIR").**
 
 ---
 
@@ -189,7 +205,7 @@ cd .. && npm run db:seed && cd api-tests && npm run api:test:db
 
 ---
 
-## 6. Açık Blocker Sayısı (Campaign Genelinde, DÖRT TUR SONRASI): **0**
+## 6. Açık Blocker Sayısı (Campaign Genelinde, BEŞ TUR SONRASI): **0**
 
 **İlk tur** (Bölüm 1) kendi içinde bulduğu her gerçek bug'ı (Phase 7
 null-prototype row, Phase 8 CDP race condition, Phase 9 false-negative
@@ -213,13 +229,12 @@ PASS ediyor, GitHub Actions'ta).
 ## 7. Codex Audit için Öneri (Fix-Delta Re-Review)
 
 Bu manifest + Bölüm 1'deki her fazın kendi `EXECUTION.md`'si + Bölüm
-1b/1c/1d'deki fix checkpoint'lerinin kendi evidence dosyaları +
-`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, Codex'in bu DÖRDÜNCÜ
-turdaki (3. fix-delta) incelemesi için yeterli bağlamı sağlamalıdır.
+1b/1c/1d/1e'deki fix checkpoint'lerinin kendi evidence dosyaları +
+`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`, Codex'in bu BEŞİNCİ
+turdaki (4. fix-delta) incelemesi için yeterli bağlamı sağlamalıdır.
 Codex'in TÜM Phase 6-19'u baştan taramasına GEREK YOKTUR — yalnızca
-`3555b53..HEAD` aralığındaki değişiklikleri (FIX-9'un 3 dosyası +
-bu manifest-sync commit'inin 3 dosyası, toplam 6) gözden geçirmesi
-yeterlidir.
+`0a52cb6..HEAD` aralığındaki değişiklikleri (bu commit'in 2 dosyası,
+docs-only) gözden geçirmesi yeterlidir.
 
 Codex'in en yüksek değeri, Claude'un KENDİ fix'lerini incelerken
 doğal olarak sahip olduğu körlüğün dışından bakabilmesinde olacaktır
