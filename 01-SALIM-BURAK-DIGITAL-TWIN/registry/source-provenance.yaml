@@ -1,0 +1,54 @@
+# TR: Bu dosya, Digital Twin içindeki HER iddianın nereden geldiğini izlenebilir kılar.
+# Bir iddianın kaynağı yoksa (source: null), o iddia YAZILAMAZ — Section 42 "NO CLAIM
+# WITHOUT SOURCE" kuralının doğrudan uygulamasıdır.
+
+schema_version: 1
+last_updated: "2026-09-25"
+
+precedence:
+  # TR: Çelişen veri geldiğinde bu sırayla çözülür — daha "etkileyici" olanı
+  # değil, hiyerarşide daha yüksek olanı seçmek zorunludur.
+  - rank: 1
+    source: latest_explicit_user_confirmation
+  - rank: 2
+    source: current_professional_cv_or_canonical_professional_data
+  - rank: 3
+    source: repository_evidence
+    scope: repository_practice_facts_only
+    note: "TR: Repository kanıtı yalnızca repository pratiğini kanıtlar, profesyonel istihdam deneyimini KANITLAMAZ."
+  - rank: 4
+    source: older_user_statement
+  - rank: 5
+    source: assistant_ai_inference
+
+sources:
+  - id: src.master-transformation-prompt.2026-09-25
+    type: latest_explicit_user_confirmation
+    description: >
+      Bu Digital Twin increment'inin tek canonical kaynağı: kullanıcının
+      "MASTER TRANSFORMATION PROMPT" mesajı (Section 3, 4, 5, 39, 66),
+      2026-09-25 tarihli. Profil, profesyonel deneyim, domain exposure,
+      araç/teknoloji ayrımları ve bilinen gap'ler doğrudan bu mesajdan
+      alınmıştır — icat edilmemiştir.
+    covers:
+      - profile
+      - professional-experience
+      - domain-state (professional dimension)
+      - tool-state (professional dimension)
+      - gaps
+      - certifications (negative confirmation: no certificate invented)
+  - id: src.repository-campaign-evidence.phase-0-19
+    type: repository_evidence
+    description: >
+      QA-DEMO-SYSTEM/evidence/ altındaki Phase 0-19 execution kanıtları
+      (backend test sonuçları, Playwright/Selenium/JMeter lab evidence,
+      GitHub Actions CI sonuçları) — yalnızca REPOSITORY PRACTICE
+      boyutunu besler, professional deneyim iddiası ÜRETMEZ.
+    covers:
+      - tool-state (repository dimension)
+      - competency-state (repository dimension)
+
+conflict_log: []
+# TR: Bu increment'te kaynaklar arasında çözülemeyen bir çelişki
+# BULUNMADI — bulunursa buraya CONFLICTING_SOURCE olarak kaydedilecek,
+# sessizce daha etkileyici versiyon seçilmeyecek.

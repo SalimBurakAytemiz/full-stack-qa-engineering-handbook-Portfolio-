@@ -1,0 +1,133 @@
+schema_version: 1
+last_updated: "2026-09-25"
+source: src.master-transformation-prompt.2026-09-25
+
+# TR: Section 38 gap tipleri: KNOWLEDGE, PROFESSIONAL_EXPOSURE, PRACTICE,
+# EVIDENCE, CERTIFICATION, DOMAIN, TOOL_DEPTH. Bir gap birden fazla
+# tipe ait olabilir. Bu liste GİZLENMEZ — Section 66 "Learning / Gap
+# Transparency" gereği görünür kalmalıdır.
+
+gaps:
+  - id: gap.appium.framework-from-scratch
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Appium — from-scratch framework development"
+    note: "TR: Profesyonel execution/analiz VAR, sıfırdan framework geliştirme profesyonel iddiası YOK."
+
+  - id: gap.appium.repo-device-evidence
+    types: [EVIDENCE]
+    label: "Appium — real device/emulator repository-executable evidence"
+    note: "TR: Bu repository'de gerçek cihaz/emulator altyapısı hiç mevcut olmadı; icat edilmedi."
+
+  - id: gap.selenium.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Selenium — professional project exposure"
+
+  - id: gap.playwright.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Playwright — professional project exposure"
+
+  - id: gap.jmeter.from-scratch-framework
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "JMeter — from-scratch professional framework claim"
+
+  - id: gap.docker.runtime-depth
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Docker — runtime execution depth (daemon unavailable in prior environments)"
+
+  - id: gap.observability.opentelemetry
+    types: [KNOWLEDGE, PRACTICE]
+    label: "OpenTelemetry"
+
+  - id: gap.observability.jaeger
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Jaeger"
+
+  - id: gap.observability.distributed-tracing
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Distributed tracing (deep practice)"
+
+  - id: gap.security.owasp-api-top10-depth
+    types: [PRACTICE]
+    label: "Systematic OWASP API Security Top 10 deep practice"
+
+  - id: gap.security.burp-suite
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Burp Suite"
+
+  - id: gap.security.owasp-zap
+    types: [KNOWLEDGE, PRACTICE]
+    label: "OWASP ZAP"
+
+  - id: gap.performance.k6
+    types: [KNOWLEDGE, PRACTICE]
+    label: "k6"
+
+  - id: gap.performance.gatling
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Gatling"
+
+  - id: gap.accessibility.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Accessibility testing — professional project exposure"
+
+  - id: gap.contract-testing.pact
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Pact / consumer-driven contract testing"
+
+  - id: gap.service-virtualization
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Mock / service virtualization — deeper practice"
+
+  - id: gap.reporting.allure-from-scratch
+    types: [PRACTICE]
+    label: "Allure — from-scratch setup"
+
+  - id: gap.static-analysis.sonarqube-depth
+    types: [PRACTICE]
+    label: "SonarQube — deeper use"
+
+  - id: gap.messaging.kafka
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Kafka"
+
+  - id: gap.messaging.rabbitmq
+    types: [KNOWLEDGE, PRACTICE]
+    label: "RabbitMQ"
+
+  - id: gap.cloud-qa.depth
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Cloud QA — depth"
+
+  - id: gap.release.feature-flags
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Feature Flags"
+
+  - id: gap.release.canary
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Canary deployment testing"
+
+  - id: gap.release.blue-green
+    types: [KNOWLEDGE, PRACTICE]
+    label: "Blue/Green deployment testing"
+
+  - id: gap.domain.insurance-professional
+    types: [DOMAIN, PROFESSIONAL_EXPOSURE]
+    label: "Insurance — professional exposure"
+    note: "TR: Section 19 gereği icat edilmedi — yalnızca domain-öğrenme örneği olarak kullanılabilir."
+
+  - id: gap.domain.healthcare-professional
+    types: [DOMAIN, PROFESSIONAL_EXPOSURE]
+    label: "Healthcare — professional exposure"
+
+  - id: gap.domain.telecom-professional
+    types: [DOMAIN, PROFESSIONAL_EXPOSURE]
+    label: "Telecom — professional exposure"
+
+  - id: gap.certification.istqb
+    types: [CERTIFICATION]
+    label: "ISTQB certification"
+    status: PLANNED
+    note: "TR: Section 39 gereği tamamlanmış hiçbir sertifika İCAT EDİLMEDİ — ISTQB gelecek hedef olarak kaydedilmiştir."
+
+related:
+  narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

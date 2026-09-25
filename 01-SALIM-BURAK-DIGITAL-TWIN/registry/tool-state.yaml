@@ -1,0 +1,69 @@
+schema_version: 1
+last_updated: "2026-09-25"
+source: src.master-transformation-prompt.2026-09-25
+
+# TR: Bu dosya bir kategorizasyon KATMANIDIR — gerçek knowledge/
+# professional/repository durumu competency-state.yaml'da YAŞAR (one
+# fact, one owner). Burada yalnızca Section 20'nin TOOL/TECHNOLOGY/
+# PLATFORM/PROTOCOL ayrımı ve kategori grubu tutulur.
+
+tool_categories:
+  api_and_contract:
+    - { id: tool.postman, label: "Postman", kind: TOOL, owner: "competency-state.yaml#competency.api.contract-automation" }
+    - { id: tool.newman, label: "Newman", kind: TOOL, owner: "competency-state.yaml#competency.api.contract-automation" }
+    - { id: tool.ajv, label: "AJV", kind: TOOL, owner: "competency-state.yaml#competency.api.contract-automation" }
+    - { id: tech.json-schema, label: "JSON Schema", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.api.contract-automation" }
+    - { id: protocol.graphql, label: "GraphQL", kind: PROTOCOL, owner: "competency-state.yaml#competency.api.graphql" }
+    - { id: protocol.rest, label: "REST", kind: PROTOCOL, owner: "competency-state.yaml#competency.api.rest" }
+    - { id: protocol.websocket, label: "WebSocket", kind: PROTOCOL, owner: "competency-state.yaml#competency.integration.websocket" }
+
+  web_automation:
+    - { id: tool.playwright, label: "Playwright", kind: TOOL, owner: "competency-state.yaml#competency.web.playwright" }
+    - { id: tool.selenium, label: "Selenium", kind: TOOL, owner: "competency-state.yaml#competency.web.selenium" }
+
+  mobile_automation:
+    - { id: tool.appium, label: "Appium", kind: TOOL, owner: "competency-state.yaml#competency.mobile.appium" }
+
+  performance:
+    - { id: tool.jmeter, label: "JMeter", kind: TOOL, owner: "competency-state.yaml#competency.performance.jmeter" }
+    - { id: tool.locust, label: "Locust", kind: TOOL, owner: "competency-state.yaml#competency.performance.locust" }
+    - { id: tool.k6, label: "k6", kind: TOOL, owner: "gaps.yaml#gap.performance.k6" }
+    - { id: tool.gatling, label: "Gatling", kind: TOOL, owner: "gaps.yaml#gap.performance.gatling" }
+
+  ci_cd:
+    - { id: tool.jenkins, label: "Jenkins", kind: TOOL, owner: "competency-state.yaml#competency.cicd.jenkins" }
+    - { id: platform.github-actions, label: "GitHub Actions", kind: PLATFORM, owner: "competency-state.yaml#competency.cicd.jenkins", note: "TR: Repository CI GERÇEKTEN GitHub Actions üzerinde çalışır (4/4 PASS) — Jenkins yalnızca syntax-valid dosya olarak mevcuttur." }
+
+  data:
+    - { id: tech.sql, label: "SQL", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.database.sql-data-validation" }
+    - { id: tool.sqlite, label: "SQLite", kind: TOOL, owner: "competency-state.yaml#competency.database.sql-data-validation" }
+
+  observability:
+    - { id: tool.elastic, label: "Elastic", kind: TOOL, owner: "competency-state.yaml#competency.observability.elastic-log-analysis" }
+    - { id: tool.opentelemetry, label: "OpenTelemetry", kind: TOOL, owner: "competency-state.yaml#competency.observability.opentelemetry-jaeger" }
+    - { id: tool.jaeger, label: "Jaeger", kind: TOOL, owner: "competency-state.yaml#competency.observability.opentelemetry-jaeger" }
+
+  security:
+    - { id: tool.burp-suite, label: "Burp Suite", kind: TOOL, owner: "competency-state.yaml#competency.security.burp-suite" }
+    - { id: tool.owasp-zap, label: "OWASP ZAP", kind: TOOL, owner: "competency-state.yaml#competency.security.owasp-zap" }
+
+  dev_and_environment:
+    - { id: tool.git, label: "Git", kind: TOOL }
+    - { id: platform.github, label: "GitHub", kind: PLATFORM }
+    - { id: tool.docker, label: "Docker", kind: TOOL, owner: "competency-state.yaml#competency.environment.docker" }
+    - { id: platform.node, label: "Node.js", kind: PLATFORM }
+
+  visual_and_design:
+    - { id: tool.figma, label: "Figma", kind: TOOL, owner: "competency-state.yaml#competency.web.visual-testing" }
+    - { id: tool.python-visual-comparison, label: "Python Visual Comparison (Pixel Perfect)", kind: TOOL, owner: "competency-state.yaml#competency.web.visual-testing" }
+    - { id: tool.axe-core, label: "axe-core", kind: TOOL, owner: "competency-state.yaml#competency.web.accessibility" }
+
+  project_qa_management:
+    - { id: tool.azure-devops, label: "Azure DevOps", kind: TOOL, owner: "professional-experience.yaml#pro.fintech.stablex-like" }
+    - { id: tool.jira, label: "Jira", kind: TOOL, note: "TR: Kaynak veride doğrudan doğrulanmadı — USER_CONFIRMATION_REQUIRED." }
+    - { id: tool.confluence, label: "Confluence", kind: TOOL, note: "TR: USER_CONFIRMATION_REQUIRED." }
+
+related:
+  fact_owner: "competency-state.yaml"
+  narrative_docs:
+    - "06-TOOLS-AND-TECHNOLOGY.md"

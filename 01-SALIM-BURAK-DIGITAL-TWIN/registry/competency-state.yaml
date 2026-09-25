@@ -1,0 +1,247 @@
+schema_version: 1
+last_updated: "2026-09-25"
+source: src.master-transformation-prompt.2026-09-25
+
+# TR: Bu dosya Section 9'un üç-boyutlu modelini uygular: knowledge,
+# professional ve repository BİRBİRİNDEN BAĞIMSIZDIR ve tek bir
+# "experience" alanına asla birleştirilmez (Section 9: "Do not collapse
+# them into one EXPERIENCE field"). repository.status değerleri, bu repo
+# içindeki Phase 6-19 campaign kanıtlarından (backend 157/157,
+# GitHub Actions 4/4) GERÇEKTEN doğrulanmış durumu yansıtır — icat
+# edilmemiştir.
+
+# knowledge:    AWARE | WORKING | INDEPENDENT | ADVANCED | UNKNOWN
+# professional.status: NONE | OBSERVED | PARTICIPATED | EXECUTED | OWNED
+# repository.status:   NOT_PRACTICED | DOCUMENTED | IMPLEMENTED | EXECUTED | CI_VERIFIED | AUDITED
+
+competencies:
+
+  - id: competency.mobile.appium
+    label: "Appium (Mobile Automation)"
+    knowledge: INDEPENDENT
+    professional:
+      execution: EXECUTED
+      planning: PARTICIPATED
+      framework_development: NONE
+    repository:
+      status: DOCUMENTED
+      note: "TR: Phase 10 Appium içeriği LEARNING-only kaldı — sandbox'ta gerçek cihaz/emulator altyapısı hiç mevcut olmadı, bu icat edilmedi."
+    gaps: [gap.appium.framework-from-scratch, gap.appium.repo-device-evidence]
+
+  - id: competency.web.selenium
+    label: "Selenium (Web Automation)"
+    knowledge: WORKING
+    professional:
+      status: NONE
+      note: "TR: Kaynak veri Selenium'u profesyonel proje deneyimi olarak DOĞRULAMIYOR — bu yüzden NONE, WORKING değil."
+    repository:
+      status: CI_VERIFIED
+      evidence: "driver-factory.js, Page Objects, run-parallel.js, login-flow.test.js — GitHub Actions selenium-lab job'unda gerçek Chrome ile 2/2 PASS"
+    gaps: [gap.selenium.professional-exposure]
+
+  - id: competency.web.playwright
+    label: "Playwright (Web Automation)"
+    knowledge: WORKING
+    professional:
+      status: NONE
+    repository:
+      status: CI_VERIFIED
+      evidence: "accessibility, auth-login, products-listing, realtime-notification, responsive, ui-to-db-validation, visual-regression specs — CI'da (Web QA job) çalışıyor"
+    gaps: [gap.playwright.professional-exposure]
+
+  - id: competency.performance.jmeter
+    label: "JMeter (Performance Testing)"
+    knowledge: WORKING
+    professional:
+      execution: EXECUTED
+      planning: PARTICIPATED
+      framework_development: NONE
+      note: "TR: Response-time validation profesyonel deneyimdir; sıfırdan JMeter framework geliştirme profesyonel iddiası YOKTUR."
+    repository:
+      status: IMPLEMENTED
+      evidence: ".jmx planı + JSONPostProcessor correlation + DurationAssertion threshold + run-jmeter.js fail-gate (7/7 unit test) — native JMeter runtime ENVIRONMENT_BLOCKED (apt jmeter 2.13 / libxstream uyuşmazlığı), CI_VERIFIED DEĞİL"
+    gaps: [gap.jmeter.from-scratch-framework]
+
+  - id: competency.cicd.jenkins
+    label: "Jenkins (CI/CD Execution)"
+    knowledge: WORKING
+    professional:
+      execution: EXECUTED
+      pipeline_development_from_scratch: NONE
+    repository:
+      status: DOCUMENTED
+      evidence: "Jenkinsfile syntax-valid, aynı 3 aşamalı pipeline'ı ci.yml ile yansıtır — gerçek Jenkins server hiç mevcut olmadı, ÇALIŞTIRILMADI"
+    gaps: []
+
+  - id: competency.environment.docker
+    label: "Docker (Containerization)"
+    knowledge: WORKING
+    professional:
+      status: NONE
+    repository:
+      status: IMPLEMENTED
+      evidence: "Dockerfile + docker-compose.yml + .dockerignore, `docker compose config` syntax PASS — daemon YOK, runtime doğrulanmadı"
+    gaps: [gap.docker.runtime-depth]
+
+  - id: competency.observability.elastic-log-analysis
+    label: "Elastic — QA Log Investigation / RCA"
+    knowledge: INDEPENDENT
+    professional:
+      status: EXECUTED
+      note: "TR: 'Elastic Engineer' değil — 'Elastic for QA Log Investigation / RCA' olarak temsil edilir (Section 4)."
+    repository:
+      status: NOT_PRACTICED
+      note: "TR: Repository yerine request/correlation-ID + structured logging (ayrı competency) kullanır — bkz. competency.observability.correlation-logging."
+    gaps: []
+
+  - id: competency.observability.correlation-logging
+    label: "Request Correlation ID / Structured Logging"
+    knowledge: INDEPENDENT
+    professional:
+      status: NONE
+    repository:
+      status: CI_VERIFIED
+      evidence: "requestContext.js — X-Request-Id, [http] access-log, malformed-query fail-safe redaction, 20 targeted test"
+    gaps: []
+
+  - id: competency.observability.opentelemetry-jaeger
+    label: "OpenTelemetry / Jaeger / Distributed Tracing"
+    knowledge: AWARE
+    professional:
+      status: NONE
+    repository:
+      status: NOT_PRACTICED
+    gaps: [gap.observability.opentelemetry, gap.observability.jaeger, gap.observability.distributed-tracing]
+
+  - id: competency.security.security-aware-qa
+    label: "Security-Aware QA (Auth/AuthZ/RBAC/IDOR/XSS-SQLi-oriented/Mass Assignment)"
+    knowledge: WORKING
+    professional:
+      status: PARTICIPATED
+      note: "TR: Kaynak veri bunu 'professional knowledge' listesi olarak veriyor — bir 'what_i_did' vaka fiili İLE değil. EXECUTED yerine bilinçli olarak PARTICIPATED seçildi (Section 71 self-check — daha etkileyici versiyonu sessizce seçmemek için). OWASP genel bilgi/deneyim geçerlidir; sistematik OWASP API Security Top 10 derin pratiği ABARTILMAZ."
+    repository:
+      status: CI_VERIFIED
+      evidence: "security.test.js — IDOR/BOLA, XSS-oriented, SQLi-oriented, mass assignment, sensitive-data testleri, backend regresyonun parçası"
+    gaps: [gap.security.owasp-api-top10-depth]
+
+  - id: competency.security.burp-suite
+    label: "Burp Suite"
+    knowledge: AWARE
+    professional: { status: NONE }
+    repository: { status: NOT_PRACTICED }
+    gaps: [gap.security.burp-suite]
+
+  - id: competency.security.owasp-zap
+    label: "OWASP ZAP"
+    knowledge: AWARE
+    professional: { status: NONE }
+    repository: { status: NOT_PRACTICED }
+    gaps: [gap.security.owasp-zap]
+
+  - id: competency.database.sql-data-validation
+    label: "SQL for QA / Data Validation"
+    knowledge: INDEPENDENT
+    professional:
+      status: EXECUTED
+      note: "TR: 'Database Developer' değil — 'SQL for QA / Data Validation' olarak temsil edilir (Section 4)."
+    repository:
+      status: CI_VERIFIED
+      evidence: "database-testing.test.js, order-concurrency.test.js — SELECT/WHERE/JOIN, CRUD lifecycle, financial aggregate cross-check, concurrency proof"
+    gaps: []
+
+  - id: competency.api.graphql
+    label: "GraphQL"
+    knowledge: INDEPENDENT
+    professional:
+      status: EXECUTED
+      evidence: "Skechers Turkey — GraphQL API -> Mobile frontend data mapping validation, GraphQL revisions"
+    repository:
+      status: CI_VERIFIED
+      evidence: "graphql.test.js, graphql-error-masking.test.js, graphql-websocket-notification.test.js"
+    gaps: []
+
+  - id: competency.integration.websocket
+    label: "WebSocket / Realtime Event Testing"
+    knowledge: INDEPENDENT
+    professional:
+      status: EXECUTED
+      evidence: "FinTech context — WebSocket / realtime flow QA, Firebase inbound events"
+    repository:
+      status: CI_VERIFIED
+      evidence: "websocket-events-advanced.test.js, graphql-websocket-notification.test.js"
+    gaps: []
+
+  - id: competency.api.rest
+    label: "REST API Testing"
+    knowledge: ADVANCED
+    professional: { status: EXECUTED }
+    repository: { status: CI_VERIFIED }
+    gaps: []
+
+  - id: competency.api.contract-automation
+    label: "Postman / Newman / AJV / JSON Schema"
+    knowledge: ADVANCED
+    professional:
+      status: EXECUTED
+      evidence: "Skechers Turkey — AJV API automation, Newman, JSON Schema, API response validation"
+    repository:
+      status: CI_VERIFIED
+      evidence: "api-tests/ suite — 6 suite (5 live + 1 local/static), CI job 'API schema validation'"
+    gaps: []
+
+  - id: competency.frontend-qa.react-react-native-flutter
+    label: "React / React Native / Flutter — QA System Exposure"
+    knowledge: WORKING
+    professional:
+      status: EXECUTED
+      note: "TR: Bu bir frontend developer deneyimi DEĞİL — QA sistem exposure'ıdır (Section 4)."
+      evidence: "React V1 stabilization, React Native V2 QA, Flutter -> React Native migration QA"
+    repository: { status: NOT_PRACTICED }
+    gaps: []
+
+  - id: competency.integration.provider-sdk-qa
+    label: "AWS / MUX / Agora — Integration/Provider QA Exposure"
+    knowledge: AWARE
+    professional:
+      status: PARTICIPATED
+      note: "TR: Bu bir Cloud/Provider Engineer deneyimi DEĞİL — QA/entegrasyon exposure'ıdır (Section 4)."
+    repository: { status: NOT_PRACTICED }
+    gaps: []
+
+  - id: competency.web.accessibility
+    label: "Accessibility Testing (axe-core / WCAG)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "accessibility.spec.js — WCAG2A/AA, contrast, accessible-name, keyboard navigation; 0 real violation found (not suppressed)"
+    gaps: [gap.accessibility.professional-exposure]
+
+  - id: competency.web.visual-testing
+    label: "Visual Regression / Pixel-Perfect Comparison"
+    knowledge: WORKING
+    professional:
+      status: EXECUTED
+      evidence: "Multi-country context — Figma comparison, Python Pixel Perfect, screenshot comparison, difference visualization"
+    repository:
+      status: CI_VERIFIED
+      evidence: "visual-regression.spec.js — maxDiffPixels tolerance, controlled-difference proof test"
+    gaps: []
+
+  - id: competency.performance.locust
+    label: "Locust (Load Testing)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "locustfile.py — gerçek çalıştırma, 549 istek / 0 hata / 22 gerçek order (place_order task)"
+      note: "TR: CI_VERIFIED DEĞİL — hiçbir GitHub Actions job'u Locust'u çalıştırmıyor, yalnızca sandbox'ta manuel çalıştırıldı."
+    gaps: [gap.performance.k6, gap.performance.gatling]
+
+related:
+  professional_source: "professional-experience.yaml"
+  gap_detail: "gaps.yaml"
+  narrative_docs:
+    - "02-COMPETENCY-MATRIX.md"
+    - "03-KNOWLEDGE-MAP.md"
+    - "09-GAP-AND-LEARNING-MAP.md"
