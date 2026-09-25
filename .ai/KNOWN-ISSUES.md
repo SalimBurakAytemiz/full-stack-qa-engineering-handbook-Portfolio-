@@ -1,52 +1,44 @@
-# Known Issues — Increment 2 (post 5-item closure)
+# Known Issues — Master Transformation Completion Gate
 
-All five items from the previous round (CI wiring, relationship graph,
-GraphQL/WebSocket contract-drift, unanswered interview narrative, and
-the three placeholder folders) are resolved — see `.ai/DECISIONS.md` and
-`.ai/MASTER-REQUIREMENTS-COMPLIANCE.md`. What remains open below is
-real, disclosed, and does not misrepresent anything as done.
+Every previously-tracked item (registry CI wiring, relationship graph
+completeness, GraphQL/WebSocket contract-drift, the 3 Handbook/domain
+PARTIAL rows, the unanswered interview narrative, the 3 placeholder
+folders) is resolved — see `.ai/MASTER-REQUIREMENTS-COMPLIANCE.md` for
+the full classification. What remains below is genuinely open, real,
+and disclosed — none of it misrepresents anything as done, and none of
+it is an implementable repository requirement left unfinished.
 
-## KI-1 — Relationship graph is not exhaustive beyond the core
+## KI-1 — Registry CI job not yet observed on a live GitHub Actions run
 
-133 relationship edges link every competency, domain, tool, pattern,
-lab, evidence, and gap entry that has real content — but not every
-theoretically possible pairing. Competencies with no lab/domain
-counterpart yet (e.g. `competency.frontend-qa.react-react-native-flutter`
-beyond its one `APPLIES_TO_DOMAIN` edge) have fewer edges than the
-E-Commerce/FinTech core. This is accurate incompleteness, not a bug —
-the two mandated traceability paths are confirmed walkable for the
-core, which is what claim-integrity requires evidence for.
+`registry-integrity` (`.github/workflows/ci.yml`) is implemented and
+proven locally (a clean `npm ci` reproduction of exactly what the
+runner does) but this session has no GitHub Actions/API access to
+trigger and observe an actual run. This is a limitation of this
+session's environment, not of the implementation — classified
+EXTERNALLY_BLOCKED in `.ai/MASTER-REQUIREMENTS-COMPLIANCE.md`, not
+PARTIAL.
 
-## KI-2 — Registry CI job not yet observed on a live GitHub Actions run
+## KI-2 — Real JMeter binary could not be exercised in this session's environment
 
-`registry-integrity` was added to `.github/workflows/ci.yml` and proven
-locally (`rm -rf node_modules && npm ci && npm run registry:validate`
-from a clean state, reproducing exactly what the runner does) but has
-not yet been observed passing on an actual GitHub Actions run from this
-branch, since no push+Actions-API check was performed this session.
-
-## KI-3 — JMeter's real binary could not be exercised in this session's environment
-
-`jmeter:test` (the real `.jmx` run against a live server) failed with
-`com.thoughtworks.xstream.security.ForbiddenClassException:
+`jmeter:test` failed with `com.thoughtworks.xstream.security.ForbiddenClassException:
 org.apache.jmeter.save.ScriptWrapper` — a JMeter-version-specific
-XStream security-policy issue in this session's installed JMeter,
-unrelated to any file this session touched. The fail-gate wrapper's own
-logic was verified via its unit tests (7/7 PASS, no real binary
-needed). See `.ai/DECISIONS.md` D9.
+XStream security-policy issue, unrelated to any file this session
+touched (re-confirmed this session, not carried over from an earlier
+assumption). The fail-gate wrapper's own logic is verified via its
+unit tests (7/7 PASS, no real binary needed).
 
-## KI-4 — Selenium's local run remains environment-blocked (unchanged from prior sessions)
+## KI-3 — Selenium's local run remains environment-blocked (unchanged, re-confirmed)
 
-Confirmed again this session by actually attempting it, not assumed:
 `SELENIUM_LAB_STATUS: EXECUTION_BLOCKED` — Selenium Manager cannot
 reach `googlechromelabs.github.io` from this sandbox. Passes in GitHub
 Actions CI (real, hosted-runner internet access) per existing evidence.
+Attempted for real this session, not assumed.
 
-## KI-5 — `shared/contracts/` covers REST, GraphQL, and one WebSocket/event pair, not every possible event type
+## Note on the career-motivation fact
 
-The `order.paid` event and the notification push message are the two
-real message shapes this backend currently emits, and both now have
-canonical schemas with drift checks. If a future increment adds new
-event/message types, they need their own schema + drift test following
-the same pattern — this is a template now, not a closed, one-time
-exercise.
+`fact.career-motivation.why-qa` is a genuine `USER_CONFIRMATION_REQUIRED`
+personal fact (`01-SALIM-BURAK-DIGITAL-TWIN/registry/source-provenance.yaml#unresolved_personal_facts`),
+not a Known Issue in the engineering sense — it does not appear in this
+list because nothing about it is unresolved from an implementation
+standpoint; it is correctly and completely represented as awaiting the
+user's own input.

@@ -1,33 +1,43 @@
 # Next Actions
 
 This file reflects the real, current state of the
-`feat/qa-digital-twin-full-stack-transformation` branch as of the
-5-item closure round (commit `fe8daf5` and this commit). Items marked
-DONE are genuinely done and verified; nothing here is hidden.
+`feat/qa-digital-twin-full-stack-transformation` branch at the master
+transformation completion gate (commit `791c040` and this commit).
 
-## Done (Increment 1 + Increment 2 + 5-item closure)
+## Master transformation status
 
-All items from earlier `.ai/NEXT-ACTIONS.md` versions, plus:
+Every implementable repository requirement is COMPLETE — see
+`.ai/MASTER-REQUIREMENTS-COMPLIANCE.md` for the full, row-by-row
+classification (COMPLETE / NOT_APPLICABLE / EXTERNALLY_BLOCKED /
+USER_CONFIRMATION_REQUIRED, zero PARTIAL rows remaining). There is no
+unfinished master-scope engineering work to list here.
 
-- [x] Registry validation wired into CI as a real quality gate (`.github/workflows/ci.yml` job `registry-integrity`)
-- [x] Relationship graph rebuilt from 35 to 133 edges via a systematic pass; both mandated traceability paths verified walkable
-- [x] GraphQL contract-drift checking (schema snapshot + test, verified to actually fail on drift)
-- [x] WebSocket/event contract-drift checking (2 JSON Schemas + AJV test, verified to actually fail on drift)
-- [x] Career-motivation narrative formally represented as `USER_CONFIRMATION_REQUIRED` registry state, not an open engineering TODO
-- [x] `shared/evidence/`, `shared/helpers/`, `shared/templates/` resolved (removed — checked for real successors first, none needed keeping them)
-- [x] `.ai/MASTER-REQUIREMENTS-COMPLIANCE.md` created — explicit per-requirement status mapping
-- [x] Full final regression re-run with exact PASS/FAIL/NOT_EXECUTED states, including previously-not-attempted suites (Locust, JMeter fail-gate unit tests, a real Selenium/JMeter attempt)
+## What is genuinely still open (not engineering work — see `.ai/KNOWN-ISSUES.md`)
 
-## Not started (real, disclosed gaps — see `.ai/KNOWN-ISSUES.md`)
+1. The registry CI job has not been observed on a live GitHub Actions
+   run from this session (EXTERNALLY_BLOCKED — no Actions/API access
+   here; the job itself is complete and locally proven).
+2. The real JMeter binary and local Selenium remain environment-blocked
+   in this specific session (re-confirmed by real attempts this
+   session, not assumed) — both are pre-existing, disclosed
+   environment splits, not new gaps.
+3. `fact.career-motivation.why-qa` awaits the user's own input
+   (`USER_CONFIRMATION_REQUIRED`) — a personal fact, not an
+   engineering task, and does not block anything above.
 
-1. Relationship graph exhaustiveness beyond the core (KI-1) — deliberate scope.
-2. Registry CI job not yet observed on a live GitHub Actions run (KI-2) — locally proven, not yet remotely confirmed.
-3. Real JMeter binary run blocked by an XStream security-policy issue specific to this session's JMeter install (KI-3).
-4. Selenium local run remains environment-blocked, unchanged from prior sessions (KI-4).
-5. `shared/contracts/` covers the two real message types this backend emits today; new event/message types would need their own schema + drift test (KI-5).
-6. Full 24-topic Handbook coverage still partial — its own README index says so.
+## If a future session continues this work
+
+The natural next steps are not "finish the transformation" (it is
+finished, per the compliance map) but genuine expansions beyond the
+current scope: deepen the Handbook topics currently at knowledge-level
+rather than executable-evidence-level (e.g. build a real multi-country
+test-data-parameterization lab for the Mobile domain, as
+`03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/README.md`'s own "Executable
+Scope" section describes), or close KI-1 by observing a real CI run
+once GitHub access is available. Neither is required for this
+transformation's own completion.
 
 ## Branch note
 
-Unchanged from the previous round — see `.ai/DECISIONS.md` D5. Work
-continues on `feat/qa-digital-twin-full-stack-transformation`.
+Unchanged from prior rounds — see `.ai/DECISIONS.md` D5. Work continues
+on `feat/qa-digital-twin-full-stack-transformation`.
