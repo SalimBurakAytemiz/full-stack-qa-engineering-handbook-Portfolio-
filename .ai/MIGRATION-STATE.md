@@ -29,6 +29,16 @@ mentions, not links, and were left as accurate historical text (see
 `.ai/DECISIONS.md` D4 for the same reasoning applied to
 `QA-COMPETENCY-MAP.md`).
 
+## Removal (not a migration — no successor path, see `shared/README.md`)
+
+`shared/evidence/`, `shared/helpers/`, `shared/templates/` — each was a
+`.gitkeep`-only placeholder from before this transformation with no
+code ever referencing it. Removed via `git rm`, not moved, because
+checking for a real successor first found: `evidence/` superseded by
+`06-EVIDENCE/evidence.yaml`; `helpers/` had no duplicated helper logic
+across the test suites to consolidate; `templates/` had no template
+file anywhere to migrate. See `.ai/DECISIONS.md`.
+
 ## What was explicitly NOT migrated (and why)
 
 - `QA-DEMO-SYSTEM/*` (all executable code, tests, CI config) — not

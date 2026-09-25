@@ -17,41 +17,44 @@ phase_0_19_campaign:
   merge_commit: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
 
 master_transformation_campaign:
-  status: "IN_PROGRESS — Increment 2 of N"
-  # TR: Bu alan asla "COMPLETE" yazmayacak şekilde bırakılmalı — 75
-  # bölümlük dönüşümün tamamı bu increment'te de bitmedi, bu dürüstçe
-  # kaydedilir (Section 75'in "genuinely external blocker" / gerçekçi
-  # kapsam sınırı istisnası). Increment 2, Increment 1'in temeli üzerine
-  # gerçek, doğrulanmış içerik ekledi — ama hâlâ bazı gerçek boşluklar
-  # var (bkz. .ai/KNOWN-ISSUES.md).
-  increment_2:
+  status: "IN_PROGRESS — Increment 2, 5-item closure round complete"
+  # TR: Bu alan asla "COMPLETE" yazmayacak şekilde bırakılmalı — hâlâ
+  # bazı gerçek, açıklanmış boşluklar var (bkz. .ai/KNOWN-ISSUES.md ve
+  # .ai/MASTER-REQUIREMENTS-COMPLIANCE.md), ama beş kapatılması istenen
+  # madde (CI wiring, relationship graph, GraphQL/WebSocket contract-drift,
+  # career-narrative state, placeholder klasörler) artık gerçekten
+  # ÇÖZÜLMÜŞ durumda — bu satırlar bunu YALANCI biçimde "tamamlandı" diye
+  # göstermek için değil, gerçek durumu izlemek için var.
+  closure_round:
     delivered:
-      - "02-FULL-STACK-QA-HANDBOOK/ (git mv migration + 22-SYSTEM-PATTERNS/)"
-      - "03-DOMAINS/ (FinTech + E-Commerce at real depth, 3 lighter domains)"
-      - "04-TOOLS-AND-TECH/ (all 11 categories)"
-      - "05-EXECUTABLE-LABS/ (QA-REFERENCE-PLATFORM mapping layer, see DECISIONS.md D1)"
-      - "06-EVIDENCE/evidence.yaml (11 entries, filesystem-verified artifact paths)"
-      - "07-INTERVIEW/ (14 general + 5 profile-specific)"
-      - "shared/registry/ (7 JSON Schemas, real AJV validator, 35 relationships, generated index)"
-      - "shared/contracts/ (contract index)"
-      - "docs/ (DOCUMENTATION-STANDARD.md, TERMINOLOGY-GLOSSARY.md)"
-      - "QA-COMPETENCY-MAP.md marked SUPERSEDED"
-      - "Full regression re-run: backend 157/157, API 331/331 assertions, Playwright 26/26, registry validator 0 errors"
-    not_started:
-      - "Registry validator not wired into CI (KI-1)"
-      - "relationships.yaml not exhaustive (KI-3)"
-      - "No GraphQL/WebSocket schema-drift tooling (KI-4)"
-      - "07-INTERVIEW career-narrative 'why QA' unanswered, USER_CONFIRMATION_REQUIRED (KI-5)"
-      - "shared/evidence/, shared/helpers/, shared/templates/ still .gitkeep-only (pre-existing, not addressed)"
-      - "Full 24-topic Handbook coverage still partial (see 02-FULL-STACK-QA-HANDBOOK/README.md index)"
+      - "CI quality gate: .github/workflows/ci.yml job registry-integrity, proven locally with a clean npm ci"
+      - "Relationship graph: 35 -> 133 edges, 17-predicate controlled vocabulary, both mandated traceability paths verified walkable"
+      - "GraphQL contract-drift: schema snapshot + test, verified to actually fail on injected drift"
+      - "WebSocket/event contract-drift: 2 JSON Schemas + AJV test, verified to actually fail on injected drift"
+      - "Career-motivation narrative: formal USER_CONFIRMATION_REQUIRED registry state (source-provenance.yaml#unresolved_personal_facts), not an open TODO"
+      - "shared/evidence/, shared/helpers/, shared/templates/ removed after checking for real successors"
+      - ".ai/MASTER-REQUIREMENTS-COMPLIANCE.md created"
+      - "Full final regression: backend 160/160, API 331/331, Playwright 26/26, Locust real run 0 failures, JMeter fail-gate unit tests 7/7, registry validator 0 errors"
+    still_open:
+      - "Relationship graph not exhaustive beyond the core (KI-1, deliberate)"
+      - "Registry CI job not yet observed on a live GitHub Actions run (KI-2)"
+      - "Real JMeter binary blocked by an environment-specific XStream issue (KI-3)"
+      - "Selenium local run environment-blocked, unchanged (KI-4)"
+      - "shared/contracts/ covers only the 2 real message types this backend emits today (KI-5)"
+      - "Full 24-topic Handbook coverage still partial"
     detail: ".ai/NEXT-ACTIONS.md"
+    compliance_map: ".ai/MASTER-REQUIREMENTS-COMPLIANCE.md"
 
 test_status:
-  last_known_backend_result: "157/157 PASS (re-run this increment, transformation branch HEAD)"
-  api_contract_suites: "331/331 assertions PASS across 5 suites, re-run this increment against a live server"
-  playwright: "26/26 PASS, re-run this increment (PLAYWRIGHT_CHROMIUM_PATH env note in KNOWN-ISSUES.md KI-2)"
-  registry_validator: "0 errors, verified to genuinely fail on injected bad input first (DECISIONS.md D3)"
-  last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign) — NOT re-triggered from this branch this session"
+  backend: "160/160 PASS (157 existing + 3 new contract-drift tests)"
+  api_contract_suites: "331/331 assertions PASS across 5 suites, re-run against a live server"
+  playwright: "26/26 PASS (PLAYWRIGHT_CHROMIUM_PATH env note in KNOWN-ISSUES.md)"
+  selenium: "NOT_EXECUTED — EXECUTION_BLOCKED (sandbox network, matches prior documented behavior)"
+  jmeter_real_binary: "NOT_EXECUTED — LAUNCH_OR_RUNTIME_ERROR (environment-specific XStream issue, see DECISIONS.md D9)"
+  jmeter_gate_unit_tests: "7/7 PASS"
+  locust: "PASS — real run, 280 requests, 0 failures"
+  registry_validator: "0 errors, verified to genuinely fail on real defects found during this session's own development (DECISIONS.md D3, D6-D9)"
+  last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign) — the new registry-integrity job not yet observed live"
   detail: ".ai/TEST-STATUS.md"
 
 branch_note:

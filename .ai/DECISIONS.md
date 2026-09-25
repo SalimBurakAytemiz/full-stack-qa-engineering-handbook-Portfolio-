@@ -78,3 +78,55 @@ more recent instruction than the generic harness branch default, and the
 only branch that actually contains the work being continued. This is
 disclosed here and in the FINAL IMPLEMENTATION REPORT rather than
 silently resolved either way.
+
+## D6 — APPLIES_TO_DOMAIN direction: competency -> domain, not domain -> competency
+
+The first draft of the relationship graph pointed `domain.commerce.ecommerce
+APPLIES_TO_DOMAIN competency.api.rest`. On review this reads backwards —
+"applies to domain" naturally means "A applies to domain B," so A should
+be the competency/pattern and B the domain. Every `APPLIES_TO_DOMAIN`
+edge was rebuilt in the corrected direction (`competency.* ->
+domain.*`) before the graph was considered done, not left inconsistent
+because the validator didn't complain about direction (it can't — both
+ids are valid registry entries either way, so this was a semantic
+review catch, not a tool-catchable one).
+
+## D7 — RELATED_TO used deliberately once, not as a shortcut
+
+`competency.cicd.jenkins RELATED_TO platform.github-actions` is the only
+`RELATED_TO` edge in the graph. It exists because the real relationship
+is neither `USES_TOOL` (this repository's CI does not actually run on
+Jenkins — the Jenkinsfile is syntax-valid but unexecuted) nor any other
+specific predicate in the vocabulary; forcing a more specific predicate
+here would misstate the fact. Every other edge in the graph uses a
+specific predicate — `RELATED_TO` was not used as a way to avoid
+thinking about direction or semantics elsewhere.
+
+## D8 — System Patterns promoted to first-class registry entries
+
+The 9 written System Patterns (`02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/`)
+existed only as markdown before this increment, with no stable id — so
+nothing in the graph could point at "the Idempotency pattern" as a
+typed entity. `shared/registry/catalog/patterns.yaml` gives each a
+`pattern.*` id (status taken directly from the existing README's own
+status table, not re-derived), enabling `USES_PATTERN` and
+`VALIDATES_FLOW` edges. `pattern.rate-limiting` (the one `NOT_IMPLEMENTED`
+pattern) is linked with `LEARNING`, not `VALIDATES_FLOW` — there is no
+real flow to validate for a pattern this repository doesn't implement.
+
+## D9 — JMeter's real-binary run and Selenium's local run are genuine environment blockers, not silently skipped
+
+During the final regression pass, both were actually attempted (not
+assumed blocked from prior documentation): Selenium failed with
+`SELENIUM_LAB_STATUS: EXECUTION_BLOCKED` (Selenium Manager cannot reach
+`googlechromelabs.github.io` from this sandbox — matches prior
+documented behavior exactly). JMeter's real binary run failed with a
+`ForbiddenClassException` from XStream's security policy
+(`org.apache.jmeter.save.ScriptWrapper`) — a JMeter-version-specific
+issue unrelated to any file touched this session. Both are recorded as
+`NOT_EXECUTED` in `.ai/TEST-STATUS.md`, not silently omitted or
+converted to PASS. The JMeter fail-gate's own unit tests (which test the
+gate logic without needing the real binary) were run for real and
+passed 7/7, and Locust — which had no environment blocker — was run for
+real (5 users, 15s, 280 requests, 0 failures) rather than assumed from
+prior sessions.
