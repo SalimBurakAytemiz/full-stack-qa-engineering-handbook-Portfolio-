@@ -98,7 +98,7 @@ bu bölümdeki tüm adımların uçtan uca uygulanmış hâlini bulabilirsiniz.
 ## İlgili Repository Dokümanları
 
 - [Root README](../../README.md)
-- [Documentation Standard](../../DOCUMENTATION-STANDARD.md)
+- [Documentation Standard](../../docs/DOCUMENTATION-STANDARD.md)
 - [QA Competency Map](../../QA-COMPETENCY-MAP.md)
-- [Terminology Glossary](../../TERMINOLOGY-GLOSSARY.md)
+- [Terminology Glossary](../../docs/TERMINOLOGY-GLOSSARY.md)
 - [00-QA-FOUNDATIONS](../00-QA-FOUNDATIONS/README.md)

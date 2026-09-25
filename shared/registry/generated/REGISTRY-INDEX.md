@@ -47,12 +47,12 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, evidence.yaml, re
 | Backend API — REST, GraphQL, WebSocket | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/backend` |
 | API Contract Testing — Postman/Newman/AJV | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/api-tests` |
 | Web Automation — Playwright | L3_AUTOMATED | `QA-DEMO-SYSTEM/web-tests` |
-| Web Automation — Selenium (portability-scoped) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/selenium-tests` |
-| Performance — JMeter with fail-gate wrapper | L3_AUTOMATED | `QA-DEMO-SYSTEM/performance-tests/jmeter` |
-| Performance — Locust load test | L2_TESTED | `QA-DEMO-SYSTEM/performance-tests/locust` |
-| Security — OWASP API Security Top 10 mapping | L1_IMPLEMENTED | `QA-DEMO-SYSTEM/security-tests` |
-| Database — SQL data validation suite | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/db-tests` |
-| Observability — access-log / RCA investigation | L2_TESTED | `QA-DEMO-SYSTEM/backend/logs` |
+| Web Automation — Selenium (portability-scoped) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/selenium` |
+| Performance — JMeter with fail-gate wrapper | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/jmeter` |
+| Performance — Locust load test | L2_TESTED | `QA-DEMO-SYSTEM/automation-labs/locust` |
+| Security — OWASP API Security Top 10 mapping | L1_IMPLEMENTED | `QA-DEMO-SYSTEM/backend/tests/security.test.js` |
+| Database — SQL data validation suite | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/backend/tests/database-testing.test.js` |
+| Observability — access-log / RCA investigation | L2_TESTED | `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY` |
 | CI/CD — GitHub Actions pipeline | L4_CI_VERIFIED | `.github/workflows` |
 
 ## Evidence

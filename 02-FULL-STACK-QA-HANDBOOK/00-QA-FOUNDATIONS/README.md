@@ -159,8 +159,8 @@ Sık yapılan hataların listesi için:
 ## İlgili Repository Dokümanları
 
 - [Root README](../../README.md)
-- [Documentation Standard](../../DOCUMENTATION-STANDARD.md)
+- [Documentation Standard](../../docs/DOCUMENTATION-STANDARD.md)
 - [QA Competency Map](../../QA-COMPETENCY-MAP.md)
 - [Roadmap](../../ROADMAP.md)
-- [Terminology Glossary](../../TERMINOLOGY-GLOSSARY.md)
+- [Terminology Glossary](../../docs/TERMINOLOGY-GLOSSARY.md)
 - [Contributing Guide](../../CONTRIBUTING.md)

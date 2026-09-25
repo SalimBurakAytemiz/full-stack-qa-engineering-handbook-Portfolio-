@@ -163,6 +163,9 @@ for (const [fileBase, { schema: schemaName, idField }] of Object.entries(catalog
     if (validateEntry(schemaName, item, file, `${schemaName} '${item[idField]}'`)) {
       if (registerId(item[idField], file)) validCount += 1;
     }
+    if (item.path && !existsSync(path.join(ROOT, item.path))) {
+      fail(file, `${schemaName} '${item[idField]}' path does not exist: ${item.path}`);
+    }
   }
   ok(`${fileBase}.yaml: ${validCount}/${items.length} ${schemaName} entries valid`);
 }
