@@ -1,73 +1,41 @@
 # Next Actions
 
 This file reflects the real, current state of the
-`feat/qa-digital-twin-full-stack-transformation` branch as of
-Increment 1. It is not a stale wishlist — items marked DONE are
-genuinely done and verified; items marked NOT_STARTED have zero
-content, not partial/placeholder content.
+`feat/qa-digital-twin-full-stack-transformation` branch as of Increment
+2 (commit `2a5c98b` and this commit). Items marked DONE are genuinely
+done and verified; items marked NOT_STARTED have zero content.
 
-## Done (Increment 1)
+## Done (Increment 1 + Increment 2)
 
-- [x] Baseline captured (BASE SHA `e63ca070103cd87b9e4e074b0fea4574c5448d38`), working branch created.
-- [x] `01-SALIM-BURAK-DIGITAL-TWIN/` — full 12-doc + 8-file registry, built from the explicit canonical personal-data source, all YAML validated with a real parser.
-- [x] Root `README.md` rewritten for recruiter/technical-review navigation.
-- [x] `ROADMAP.md` "Current Status" section updated with Phase 6-19 entries (was stale — only listed Phase 0-5).
-- [x] `.ai/` state files refreshed (this file, `MASTER-STATE.yaml`, `CODEX-FULL-AUDIT-HANDOFF.md`).
+- [x] `01-SALIM-BURAK-DIGITAL-TWIN/` — 12 docs + 8 registry YAMLs (Increment 1)
+- [x] Root `README.md`, `ROADMAP.md` status fix (Increment 1)
+- [x] `02-FULL-STACK-QA-HANDBOOK/` — existing content migrated via `git mv`; `22-SYSTEM-PATTERNS/` added (9 pattern docs)
+- [x] `03-DOMAINS/` — FinTech + E-Commerce at real depth (D3/D4), Streaming/Mobile/Insurance lighter and honestly scoped
+- [x] `04-TOOLS-AND-TECH/` — all 11 categories
+- [x] `05-EXECUTABLE-LABS/` — QA-REFERENCE-PLATFORM mapping layer (see `.ai/DECISIONS.md` D1)
+- [x] `06-EVIDENCE/evidence.yaml` — formal evidence registry, 11 entries, filesystem-verified artifact paths
+- [x] `07-INTERVIEW/` — restructured per Section 44 (14 general categories indexed + 5 new profile-specific files)
+- [x] `shared/registry/` — universal catalog, 7 JSON Schemas, real AJV validator, 35 relationship edges, generated index
+- [x] `shared/contracts/` — contract index (Section 27)
+- [x] `docs/` — DOCUMENTATION-STANDARD.md, TERMINOLOGY-GLOSSARY.md migrated
+- [x] `scripts/registry/*.mjs` — validation + index generation, both real and run
+- [x] `QA-COMPETENCY-MAP.md` — marked SUPERSEDED, kept in place
+- [x] Full regression re-run this session: backend 157/157, API contract suites 331/331 assertions, Playwright 26/26, registry validator 0 errors, 781/782 links (1 known false positive)
 
-## Not started (real scope, not yet touched)
+## Not started (real, disclosed gaps — see `.ai/KNOWN-ISSUES.md`)
 
-Per the transformation spec's own architecture (Section 6), in
-priority order a continuation would need:
+1. Registry validator not wired into `.github/workflows/ci.yml` (KI-1).
+2. `shared/registry/relationships/relationships.yaml` is not exhaustive — only entities with real content on both ends are linked (KI-3).
+3. No GraphQL/WebSocket schema-drift detector equivalent to the REST AJV layer (KI-4).
+4. `07-INTERVIEW/19-CAREER-NARRATIVE-QUESTIONS.md`'s "why QA" narrative is `USER_CONFIRMATION_REQUIRED`, not answered (KI-5).
+5. `shared/evidence/`, `shared/helpers/`, `shared/templates/` remain pre-existing `.gitkeep`-only placeholders, not addressed this increment (see `.ai/ARCHITECTURE-STATE.md`).
+6. Full Handbook topic coverage (24-topic taxonomy) is still partial — `02-FULL-STACK-QA-HANDBOOK/README.md`'s own index table marks each gap as NOT YET WRITTEN rather than silently implying completeness.
+7. GitHub Actions CI has not been re-triggered from this branch this session (no push occurred as of writing `.ai/TEST-STATUS.md`).
 
-1. **`02-FULL-STACK-QA-HANDBOOK/`** — migrate the existing `00-06`
-   numbered folders (real Phase 0-3-era content) plus the currently
-   `.gitkeep`-only `07-28` folders into the 24-topic handbook
-   structure. The existing content must be moved with `git mv`, not
-   duplicated.
-2. **`03-DOMAINS/`** — the domain taxonomy (Financial Services,
-   Commerce/Retail, Media/Streaming, Mobile/Digital Platforms, and the
-   rest). Commerce and FinTech are the priority-depth domains per the
-   spec, since they map directly to real professional context recorded
-   in the Digital Twin.
-3. **`04-TOOLS-AND-TECH/`** — full tool documentation (CONCEPTS/SETUP/
-   QA-USE-CASES/PATTERNS/TROUBLESHOOTING per tool), beyond the
-   Digital Twin's `tool-state.yaml` categorization layer that already
-   exists.
-4. **`05-EXECUTABLE-LABS/QA-REFERENCE-PLATFORM/`** — refactor
-   `QA-DEMO-SYSTEM` into `core/modules/adapters/database/events/
-   observability/test-data/runtime`, and add the FinTech/Commerce/
-   Streaming/Insurance domain modules with real state machines and
-   fault injection. This is the largest single remaining piece.
-5. **`06-EVIDENCE/`** — the formal evidence registry (`evidence.yaml`)
-   with stable IDs; today, evidence is indexed manually in
-   `01-SALIM-BURAK-DIGITAL-TWIN/08-EVIDENCE-MAP.md` pointing at the
-   existing `QA-DEMO-SYSTEM/evidence/` tree.
-6. **`07-INTERVIEW/`** — restructure the existing
-   `28-INTERVIEW-PREP` and `QA-DEMO-SYSTEM/evidence/PHASE-16-*` content
-   into the 17-topic interview system, split into general Full Stack QA
-   questions vs. Salim-specific profile questions consistent with the
-   Digital Twin.
-7. **`shared/registry/`** — the universal catalog (competencies,
-   domains, tools, technologies, system patterns, labs, evidence) with
-   JSON Schemas and a relationship model. The Digital Twin's own
-   registry (`01-SALIM-BURAK-DIGITAL-TWIN/registry/`) is a *personal
-   state* registry, not the universal catalog Section 34 describes —
-   these are deliberately different things and must not be merged.
-8. **`22-SYSTEM-PATTERNS/`** (as part of the Handbook) — Authentication,
-   Authorization, Payment, Idempotency, Retry, Concurrency, and the
-   other canonical patterns listed in Section 13.
-9. **Registry validation scripts** (`scripts/registry/*.mjs`) — schema
-   validation, duplicate-ID detection, broken-reference detection,
-   claim-integrity checks, CI gate.
-10. **`CASE-STUDIES/`** (root, currently `.gitkeep`-only) — either
-    populate with real content migrated/synthesized from
-    `QA-DEMO-SYSTEM/evidence/PHASE-15-CASE-STUDIES/`, or remove it as a
-    redundant placeholder per Section 47.
+## Branch note
 
-## Explicit scope decision for Increment 1
-
-Attempting a shallow pass across all ten items above in a single
-session would produce exactly the kind of filler and fake completeness
-the transformation spec itself forbids (Sections 47, 51, 62). Increment
-1 therefore delivers the highest-value, most precisely-specified piece
-in full (the Digital Twin) rather than a thin layer over everything.
+This session's harness designated `claude/stoic-pasteur-svbmxs` as the
+working branch, but all of this transformation's real history lives on
+`feat/qa-digital-twin-full-stack-transformation`. See `.ai/DECISIONS.md`
+D5 for why work continued on the latter, and the FINAL IMPLEMENTATION
+REPORT for how this is disclosed to the user.

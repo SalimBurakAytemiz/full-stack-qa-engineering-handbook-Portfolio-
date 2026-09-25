@@ -17,36 +17,54 @@ phase_0_19_campaign:
   merge_commit: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
 
 master_transformation_campaign:
-  status: "IN_PROGRESS — Increment 1 of N"
+  status: "IN_PROGRESS — Increment 2 of N"
   # TR: Bu alan asla "COMPLETE" yazmayacak şekilde bırakılmalı — 75
-  # bölümlük dönüşümün tamamı bu increment'te bitmedi, bu dürüstçe
+  # bölümlük dönüşümün tamamı bu increment'te de bitmedi, bu dürüstçe
   # kaydedilir (Section 75'in "genuinely external blocker" / gerçekçi
-  # kapsam sınırı istisnası).
-  increment_1:
+  # kapsam sınırı istisnası). Increment 2, Increment 1'in temeli üzerine
+  # gerçek, doğrulanmış içerik ekledi — ama hâlâ bazı gerçek boşluklar
+  # var (bkz. .ai/KNOWN-ISSUES.md).
+  increment_2:
     delivered:
-      - "01-SALIM-BURAK-DIGITAL-TWIN/ (21 files: README + 12 docs + 8 registry YAMLs)"
-      - "Root README.md rewritten for recruiter/technical-review navigation"
-      - "ROADMAP.md Current Status section fixed (Phase 6-19 entries added)"
-      - ".ai/ state files refreshed"
+      - "02-FULL-STACK-QA-HANDBOOK/ (git mv migration + 22-SYSTEM-PATTERNS/)"
+      - "03-DOMAINS/ (FinTech + E-Commerce at real depth, 3 lighter domains)"
+      - "04-TOOLS-AND-TECH/ (all 11 categories)"
+      - "05-EXECUTABLE-LABS/ (QA-REFERENCE-PLATFORM mapping layer, see DECISIONS.md D1)"
+      - "06-EVIDENCE/evidence.yaml (11 entries, filesystem-verified artifact paths)"
+      - "07-INTERVIEW/ (14 general + 5 profile-specific)"
+      - "shared/registry/ (7 JSON Schemas, real AJV validator, 35 relationships, generated index)"
+      - "shared/contracts/ (contract index)"
+      - "docs/ (DOCUMENTATION-STANDARD.md, TERMINOLOGY-GLOSSARY.md)"
+      - "QA-COMPETENCY-MAP.md marked SUPERSEDED"
+      - "Full regression re-run: backend 157/157, API 331/331 assertions, Playwright 26/26, registry validator 0 errors"
     not_started:
-      - "02-FULL-STACK-QA-HANDBOOK/ (migration from 00-28 numbered folders)"
-      - "03-DOMAINS/ (domain taxonomy)"
-      - "04-TOOLS-AND-TECH/ (tool documentation)"
-      - "05-EXECUTABLE-LABS/QA-REFERENCE-PLATFORM/ (QA-DEMO-SYSTEM refactor + domain modules)"
-      - "06-EVIDENCE/ (formal evidence registry)"
-      - "07-INTERVIEW/ (interview system restructure)"
-      - "shared/registry/ (universal catalog + schemas + relationship model)"
-      - "22-SYSTEM-PATTERNS/ (canonical pattern docs)"
-      - "scripts/registry/ (validation scripts + CI gate)"
-      - "CASE-STUDIES/ (currently .gitkeep-only — populate or remove)"
+      - "Registry validator not wired into CI (KI-1)"
+      - "relationships.yaml not exhaustive (KI-3)"
+      - "No GraphQL/WebSocket schema-drift tooling (KI-4)"
+      - "07-INTERVIEW career-narrative 'why QA' unanswered, USER_CONFIRMATION_REQUIRED (KI-5)"
+      - "shared/evidence/, shared/helpers/, shared/templates/ still .gitkeep-only (pre-existing, not addressed)"
+      - "Full 24-topic Handbook coverage still partial (see 02-FULL-STACK-QA-HANDBOOK/README.md index)"
     detail: ".ai/NEXT-ACTIONS.md"
 
 test_status:
-  last_known_backend_result: "157/157 PASS (Phase 6-19 campaign, HEAD bf22b97/0a52cb6, pre-transformation)"
-  last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign)"
-  increment_1_regression: "no application code touched in Increment 1 — docs/registry only; backend regression re-run to confirm no incidental breakage, see FINAL IMPLEMENTATION REPORT"
+  last_known_backend_result: "157/157 PASS (re-run this increment, transformation branch HEAD)"
+  api_contract_suites: "331/331 assertions PASS across 5 suites, re-run this increment against a live server"
+  playwright: "26/26 PASS, re-run this increment (PLAYWRIGHT_CHROMIUM_PATH env note in KNOWN-ISSUES.md KI-2)"
+  registry_validator: "0 errors, verified to genuinely fail on injected bad input first (DECISIONS.md D3)"
+  last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign) — NOT re-triggered from this branch this session"
+  detail: ".ai/TEST-STATUS.md"
+
+branch_note:
+  harness_designated_branch: "claude/stoic-pasteur-svbmxs"
+  actual_work_branch: "feat/qa-digital-twin-full-stack-transformation"
+  reason: "see .ai/DECISIONS.md D5 — the designated branch has none of this transformation's history; work continued on the branch that actually contains it, per the user's explicit repeated instruction"
 
 pointers:
   digital_twin: "01-SALIM-BURAK-DIGITAL-TWIN/"
   codex_handoff: ".ai/CODEX-FULL-AUDIT-HANDOFF.md"
   next_actions: ".ai/NEXT-ACTIONS.md"
+  decisions: ".ai/DECISIONS.md"
+  known_issues: ".ai/KNOWN-ISSUES.md"
+  test_status: ".ai/TEST-STATUS.md"
+  architecture_state: ".ai/ARCHITECTURE-STATE.md"
+  migration_state: ".ai/MIGRATION-STATE.md"

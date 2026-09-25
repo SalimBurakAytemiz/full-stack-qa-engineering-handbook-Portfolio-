@@ -98,6 +98,11 @@ if (domainState && Array.isArray(domainState.personal_domain_exposure)) {
   // validates shape only and does not call registerId, matching the
   // "one fact, one owner" rule: personal exposure is a different fact
   // about the same domain_id, not a competing definition of it.
+  // TR: domain_id burada bir TANIM değil, REFERANS'tır — sahiplik
+  // domains.yaml'dadır. Bu yüzden registerId() çağrılmaz; aksi halde
+  // kişisel exposure kaydı ile evrensel domain tanımı arasında YANLIŞ bir
+  // "duplicate id" çakışması raporlanırdı (bu hata gerçekten yaşandı ve
+  // düzeltildi — bkz. .ai/DECISIONS.md).
   let validCount = 0;
   for (const d of domainState.personal_domain_exposure) {
     const file = `${dtRoot}/domain-state.yaml`;
