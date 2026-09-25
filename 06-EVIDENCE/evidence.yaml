@@ -1,0 +1,95 @@
+# Evidence registry (Section 33-35). This is the ONE owner of evidence
+# maturity facts — narrative docs (case studies, lab READMEs, the Digital
+# Twin's 08-EVIDENCE-MAP.md) reference these ids, they do not restate the
+# maturity level. E5_INDEPENDENTLY_AUDITED is never set here by Claude
+# itself (see shared/registry/schemas/evidence.schema.json).
+#
+# artifact paths are checked at repository HEAD — see
+# scripts/registry/validate-registry.mjs for the schema check; a stale
+# path here is a real defect, not a formatting issue.
+schema_version: 1
+last_updated: "2026-09-25"
+
+items:
+  - id: evidence.backend.unit-integration-suite
+    label: "Backend unit/integration test suite (node:test)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/backend/tests"
+    produced_by: "npm test --workspace backend (also runs in .github/workflows/ci.yml)"
+    related_lab: lab.backend-api.rest-graphql-websocket
+
+  - id: evidence.api-tests.newman-ajv-suite
+    label: "API contract testing — Postman/Newman/AJV"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/evidence/P5-API-TESTING"
+    produced_by: "npm run api:test:postman --workspace api-tests (also runs in .github/workflows/ci.yml)"
+    related_lab: lab.api-contract.postman-newman-ajv
+
+  - id: evidence.web.playwright-functional-visual-accessibility
+    label: "Web QA — Playwright functional/visual/accessibility"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-8-WEB-MOBILE-QA/EXECUTION.md"
+    produced_by: "npm test --workspace web-tests (also runs in .github/workflows/ci.yml)"
+    related_lab: lab.web-automation.playwright
+
+  - id: evidence.web.visual-accessibility
+    label: "Visual regression + accessibility (axe-core)"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-9-VISUAL-ACCESSIBILITY/EXECUTION.md"
+    produced_by: "npm test --workspace web-tests"
+    related_lab: lab.web-automation.playwright
+
+  - id: evidence.selenium.ci-verified-run
+    label: "Selenium lab — real browser automation, CI-only real pass"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md"
+    produced_by: "npm run selenium:test --workspace automation-labs (runs in .github/workflows/ci.yml — local runs are sandbox-blocked, documented as a known split)"
+    related_lab: lab.web-automation.selenium
+
+  - id: evidence.performance.jmeter-fail-gate-run
+    label: "JMeter load test with JTL-content fail-gate"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md"
+    produced_by: "node scripts/run-jmeter.js (local execution only — not wired into CI)"
+    related_lab: lab.performance.jmeter
+    note: "JMeter's own process exit code does not reliably reflect internal sample/assertion failures; the wrapper inspects the JTL file instead."
+
+  - id: evidence.performance.locust-load-run
+    label: "Locust load test"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md"
+    produced_by: "locust (local execution only)"
+    related_lab: lab.performance.locust
+
+  - id: evidence.database.sql-validation-suite
+    label: "Database — SQL/data validation suite"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md"
+    produced_by: "npm test --workspace backend (db-tests are part of the backend workspace)"
+    related_lab: lab.database.sql-validation
+
+  - id: evidence.security.owasp-mapping-review
+    label: "OWASP API Security Top 10 mapping review"
+    maturity: E2_IMPLEMENTED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md"
+    produced_by: "manual review, not an automated scan (Burp/ZAP are documented gaps, not run)"
+    related_lab: lab.security.owasp-mapping
+
+  - id: evidence.cicd.github-actions-pipeline
+    label: "GitHub Actions CI pipeline (4 real jobs)"
+    maturity: E4_CI_VERIFIED
+    artifact: ".github/workflows/ci.yml"
+    produced_by: "GitHub Actions, triggered on push/PR"
+    related_lab: lab.cicd.github-actions
+
+  - id: evidence.defect.bug-auth-edu-001
+    label: "BUG-AUTH-EDU-001 — reproduced defect with root cause"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md"
+    produced_by: "manual reproduction + automated regression test added"
+    related_lab: lab.backend-api.rest-graphql-websocket
+
+related:
+  narrative_docs:
+    - "01-SALIM-BURAK-DIGITAL-TWIN/08-EVIDENCE-MAP.md"
+  schema: "../shared/registry/schemas/evidence.schema.json"

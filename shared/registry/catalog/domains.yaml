@@ -1,0 +1,35 @@
+# Universal domain catalog — the domain's OWN maturity (D0-D5, Section 15),
+# independent of any one person's exposure. This is a different fact from
+# 01-SALIM-BURAK-DIGITAL-TWIN/registry/domain-state.yaml (Salim's personal
+# exposure level), which points back here by domain_id.
+#
+# NOT the tool schema — reuses domain.schema.json's shape but scoped to
+# "how mature is this domain's content in THIS repository", not exposure.
+schema_version: 1
+last_updated: "2026-09-25"
+
+items:
+  - domain_id: domain.commerce.ecommerce
+    label: "E-Commerce"
+    exposure: PROFESSIONAL_EXECUTED
+    note: "Repository maturity D4 EXECUTABLE — see 03-DOMAINS/02-COMMERCE-RETAIL/E-COMMERCE/README.md."
+
+  - domain_id: domain.financial.fintech
+    label: "FinTech"
+    exposure: PROFESSIONAL_EXECUTED
+    note: "Repository maturity D3 CASE_DESIGNED — see 03-DOMAINS/01-FINANCIAL-SERVICES/FINTECH/README.md."
+
+  - domain_id: domain.media.streaming
+    label: "Media / Live Streaming"
+    exposure: PROFESSIONAL_PARTICIPATED
+    note: "Repository maturity D1 DOCUMENTED — see 03-DOMAINS/03-MEDIA-STREAMING/README.md."
+
+  - domain_id: domain.mobile.multi-country
+    label: "Multi-Country Mobile / Localization"
+    exposure: PROFESSIONAL_EXECUTED
+    note: "Repository maturity D1 DOCUMENTED — see 03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/README.md."
+
+  - domain_id: domain.insurance
+    label: "Insurance"
+    exposure: NONE
+    note: "Repository maturity D0 INDEXED, learning-only per claim-integrity rules — see 03-DOMAINS/01-FINANCIAL-SERVICES/INSURANCE/README.md."

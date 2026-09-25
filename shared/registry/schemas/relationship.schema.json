@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/relationship.schema.json",
+  "title": "Relationship registry entry",
+  "description": "One edge in shared/registry/relationships/relationships.yaml, connecting two catalog entries by their stable IDs. Controlled vocabulary keeps the graph queryable instead of free-text cross-references (Section 41).",
+  "type": "object",
+  "required": ["from", "predicate", "to"],
+  "properties": {
+    "from": {
+      "type": "string",
+      "pattern": "^(competency|domain|tool|tech|platform|protocol|lab|evidence|gap|profile|pro)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "predicate": {
+      "enum": [
+        "REQUIRES",
+        "USES_TOOL",
+        "APPLIES_TO_DOMAIN",
+        "DEMONSTRATED_BY",
+        "PRODUCES_EVIDENCE",
+        "ADDRESSES_GAP",
+        "MAPS_TO_PATTERN",
+        "OWNED_BY"
+      ]
+    },
+    "to": {
+      "type": "string",
+      "pattern": "^(competency|domain|tool|tech|platform|protocol|lab|evidence|gap|profile|pro)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": false
+}
