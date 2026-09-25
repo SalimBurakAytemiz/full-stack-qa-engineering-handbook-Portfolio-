@@ -36,9 +36,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 |---|---|---|
 | E-Commerce | PROFESSIONAL_EXECUTED | Repository maturity D4 EXECUTABLE — see 03-DOMAINS/02-COMMERCE-RETAIL/E-COMMERCE/README.md. |
 | FinTech | PROFESSIONAL_EXECUTED | Repository maturity D3 CASE_DESIGNED — see 03-DOMAINS/01-FINANCIAL-SERVICES/FINTECH/README.md. |
-| Media / Live Streaming | PROFESSIONAL_PARTICIPATED | Repository maturity D1 DOCUMENTED — see 03-DOMAINS/03-MEDIA-STREAMING/README.md. |
-| Multi-Country Mobile / Localization | PROFESSIONAL_EXECUTED | Repository maturity D1 DOCUMENTED — see 03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/README.md. |
-| Insurance | NONE | Repository maturity D0 INDEXED, learning-only per claim-integrity rules — see 03-DOMAINS/01-FINANCIAL-SERVICES/INSURANCE/README.md. |
+| Media / Live Streaming | PROFESSIONAL_PARTICIPATED | Repository maturity D2 QA_MAPPED — deep domain-QA knowledge (actors, event/reconnect/token-expiry risk catalog, security/performance/observability, test strategy), no executable lab yet. See 03-DOMAINS/03-MEDIA-STREAMING/README.md. |
+| Multi-Country Mobile / Localization | PROFESSIONAL_EXECUTED | Repository maturity D2 QA_MAPPED — deep domain-QA knowledge (feature parity, country-specific behavior, visual/accessibility, release strategy), no dedicated multi-country lab yet. See 03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/README.md. |
+| Insurance | NONE | Repository maturity D2 QA_MAPPED — deep learning-only domain-QA knowledge (lifecycle, business rules, transferable test methodology), zero professional or repository-execution grounding, explicitly stated. See 03-DOMAINS/01-FINANCIAL-SERVICES/INSURANCE/README.md. |
 
 ## Executable Labs
 

@@ -22,14 +22,14 @@ items:
   - domain_id: domain.media.streaming
     label: "Media / Live Streaming"
     exposure: PROFESSIONAL_PARTICIPATED
-    note: "Repository maturity D1 DOCUMENTED — see 03-DOMAINS/03-MEDIA-STREAMING/README.md."
+    note: "Repository maturity D2 QA_MAPPED — deep domain-QA knowledge (actors, event/reconnect/token-expiry risk catalog, security/performance/observability, test strategy), no executable lab yet. See 03-DOMAINS/03-MEDIA-STREAMING/README.md."
 
   - domain_id: domain.mobile.multi-country
     label: "Multi-Country Mobile / Localization"
     exposure: PROFESSIONAL_EXECUTED
-    note: "Repository maturity D1 DOCUMENTED — see 03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/README.md."
+    note: "Repository maturity D2 QA_MAPPED — deep domain-QA knowledge (feature parity, country-specific behavior, visual/accessibility, release strategy), no dedicated multi-country lab yet. See 03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/README.md."
 
   - domain_id: domain.insurance
     label: "Insurance"
     exposure: NONE
-    note: "Repository maturity D0 INDEXED, learning-only per claim-integrity rules — see 03-DOMAINS/01-FINANCIAL-SERVICES/INSURANCE/README.md."
+    note: "Repository maturity D2 QA_MAPPED — deep learning-only domain-QA knowledge (lifecycle, business rules, transferable test methodology), zero professional or repository-execution grounding, explicitly stated. See 03-DOMAINS/01-FINANCIAL-SERVICES/INSURANCE/README.md."
