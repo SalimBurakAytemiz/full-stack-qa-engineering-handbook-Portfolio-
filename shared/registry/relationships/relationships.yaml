@@ -160,9 +160,6 @@ relationships:
   - from: pattern.authorization
     predicate: VALIDATES_FLOW
     to: lab.backend-api.rest-graphql-websocket
-  - from: pattern.retry
-    predicate: VALIDATES_FLOW
-    to: lab.cicd.github-actions
   - from: pattern.rate-limiting
     predicate: LEARNING
     to: gap.performance.k6
@@ -290,9 +287,6 @@ relationships:
   - from: lab.database.sql-validation
     predicate: USES_TOOL
     to: tool.sqlite
-  - from: lab.observability.elastic-log-analysis
-    predicate: USES_TOOL
-    to: tool.elastic
   - from: lab.cicd.github-actions
     predicate: USES_TOOL
     to: platform.github-actions
@@ -342,12 +336,9 @@ relationships:
     to: lab.backend-api.rest-graphql-websocket
     note: "observability.test.js is part of the backend workspace's test suite."
   - from: competency.observability.elastic-log-analysis
-    predicate: PRACTICED_IN
+    predicate: RELATED_TO
     to: lab.observability.elastic-log-analysis
-  - from: competency.cicd.jenkins
-    predicate: PRACTICED_IN
-    to: lab.cicd.github-actions
-    note: "Repository CI runs on GitHub Actions, not Jenkins — see the RELATED_TO edge above."
+    note: "Codex post-audit correction (P1-04): NOT PRACTICED_IN — competency-state.yaml's own repository.status for this competency is NOT_PRACTICED ('repository yerine correlation-ID + structured logging kullanır'; no real Elastic runtime exists anywhere in this repository, see the removed USES_TOOL edge above). The lab is real RCA/log-investigation work (see its DOCUMENTED_BY edge to evidence.defect.bug-auth-edu-001) that draws on the same analytical competency without the Elastic tool itself — RELATED_TO is deliberate here, matching the existing Jenkins/GitHub-Actions RELATED_TO precedent (see .ai/DECISIONS.md D7), not a shortcut."
   - from: competency.mobile.appium
     predicate: LEARNING
     to: gap.appium.repo-device-evidence
@@ -363,7 +354,19 @@ relationships:
     to: evidence.backend.unit-integration-suite
   - from: lab.api-contract.postman-newman-ajv
     predicate: TESTED_BY
-    to: evidence.api-tests.newman-ajv-suite
+    to: evidence.api-tests.public-schema-suite
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: TESTED_BY
+    to: evidence.api-tests.protected-auth-suite
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: TESTED_BY
+    to: evidence.api-tests.orders-payment-suite
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: TESTED_BY
+    to: evidence.api-tests.notifications-suite
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: TESTED_BY
+    to: evidence.api-tests.api-db-validation-suite
   - from: lab.web-automation.playwright
     predicate: TESTED_BY
     to: evidence.web.playwright-functional-visual-accessibility
@@ -375,7 +378,14 @@ relationships:
     to: evidence.selenium.ci-verified-run
   - from: lab.performance.jmeter
     predicate: TESTED_BY
-    to: evidence.performance.jmeter-fail-gate-run
+    to: evidence.performance.jmeter-workload-design
+  - from: lab.performance.jmeter
+    predicate: TESTED_BY
+    to: evidence.performance.jmeter-fail-gate-logic
+  - from: lab.performance.jmeter
+    predicate: DOCUMENTED_BY
+    to: evidence.performance.jmeter-real-execution-blocked
+    note: "Codex post-audit fix (P2-04): DOCUMENTED_BY, not TESTED_BY — this evidence records a real, diagnosed BLOCKER, not a passing test."
   - from: lab.performance.locust
     predicate: TESTED_BY
     to: evidence.performance.locust-load-run
@@ -416,7 +426,19 @@ relationships:
     to: evidence.backend.unit-integration-suite
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
-    to: evidence.api-tests.newman-ajv-suite
+    to: evidence.api-tests.public-schema-suite
+  - from: competency.api.contract-automation
+    predicate: EVIDENCED_BY
+    to: evidence.api-tests.protected-auth-suite
+  - from: competency.api.contract-automation
+    predicate: EVIDENCED_BY
+    to: evidence.api-tests.orders-payment-suite
+  - from: competency.api.contract-automation
+    predicate: EVIDENCED_BY
+    to: evidence.api-tests.notifications-suite
+  - from: competency.api.contract-automation
+    predicate: EVIDENCED_BY
+    to: evidence.api-tests.api-db-validation-suite
   - from: competency.web.playwright
     predicate: EVIDENCED_BY
     to: evidence.web.playwright-functional-visual-accessibility
@@ -617,6 +639,22 @@ relationships:
     predicate: RELATED_TO
     to: tool.azure-devops
     note: "Same reasoning as tool.jira above — USER_CONFIRMATION_REQUIRED, no confirmed practice to link to."
+  - from: tool.trello
+    predicate: RELATED_TO
+    to: tool.azure-devops
+    note: "Codex post-audit fix (P1-01): same reasoning as tool.jira/tool.confluence above — USER_CONFIRMATION_REQUIRED (superseded QA-COMPETENCY-MAP.md claimed EXPERIENCE, current canonical source does not confirm it), no confirmed practice to link to."
+  - from: tool.cucumber
+    predicate: RELATED_TO
+    to: tool.playwright
+    note: "Codex post-audit fix (P1-01): USER_CONFIRMATION_REQUIRED — same category (web/test automation) as Playwright, no confirmed practice to link to a stronger predicate."
+  - from: tool.device-farm
+    predicate: RELATED_TO
+    to: tool.appium
+    note: "Codex post-audit fix (P1-01): USER_CONFIRMATION_REQUIRED — same category (mobile automation) as Appium, no confirmed practice to link to a stronger predicate."
+  - from: tool.adb
+    predicate: RELATED_TO
+    to: tool.appium
+    note: "Codex post-audit fix (P1-01): USER_CONFIRMATION_REQUIRED — same category (mobile automation) as Appium, no confirmed practice to link to a stronger predicate."
 
   # Orphaned gap closure — GAP -> TARGET COMPETENCY/DOMAIN/PROFILE
   - from: competency.web.selenium

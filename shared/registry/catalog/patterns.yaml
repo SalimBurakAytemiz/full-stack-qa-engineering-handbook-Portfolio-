@@ -43,9 +43,9 @@ items:
 
   - id: pattern.retry
     label: "Retry"
-    status: IMPLEMENTED
+    status: DOCUMENTED_ONLY
     path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RETRY.md"
-    note: "Implemented at the CI/test-execution level (JMeter/Selenium retry policy), not as application-layer request retry logic."
+    note: "Codex post-audit correction (P2-05): no real retry mechanism exists anywhere in QA-DEMO-SYSTEM/backend/src or automation-labs (verified by grep — zero matches for retry/Retry/RETRY in either); the JMeter fail-gate wrapper explicitly does NOT auto-retry, by design (see RETRY.md's own 'Related labs' section). Previously marked IMPLEMENTED with a note claiming a 'CI/test-execution level (JMeter/Selenium retry policy)' — that claim was also false (same grep covers automation-labs/, zero matches). Not implementing fake retry logic solely to satisfy a status badge — accuracy over feature count."
 
   - id: pattern.rate-limiting
     label: "Rate Limiting"
