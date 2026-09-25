@@ -68,6 +68,20 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Async Events | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/ASYNC-EVENTS.md` |
 | Retry | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RETRY.md` |
 | Rate Limiting | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RATE-LIMITING.md` |
+| State Machine | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/STATE-MACHINE.md` |
+| Search | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SEARCH.md` |
+| Pagination | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/PAGINATION.md` |
+| File Upload | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FILE-UPLOAD.md` |
+| Import / Export | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/IMPORT-EXPORT.md` |
+| Timeout | NOT_APPLICABLE | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/TIMEOUT.md` |
+| Cache | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/CACHE.md` |
+| Audit Log | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/AUDIT-LOG.md` |
+| Webhook | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/WEBHOOK.md` |
+| Third-Party Integration | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/THIRD-PARTY-INTEGRATION.md` |
+| Scheduled Jobs | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SCHEDULED-JOBS.md` |
+| Feature Flags | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FEATURE-FLAGS.md` |
+| Localization | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/LOCALIZATION.md` |
+| Multi-Tenancy | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/MULTI-TENANCY.md` |
 
 ## Evidence
 
@@ -85,7 +99,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | GitHub Actions CI pipeline (4 real jobs) | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — reproduced defect with root cause | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (191 edges)
+## Relationships (224 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -280,4 +294,37 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | pro.ecommerce.skechers-turkey | PROFESSIONAL_EXPERIENCE_IN | domain.commerce.oms |
 | domain.financial.crypto | RELATED_TO | domain.financial.fintech |
 | domain.financial.trading-precious-metals | RELATED_TO | domain.financial.fintech |
+| pattern.state-machine | SUPPORTS_COMPETENCY | competency.database.sql-data-validation |
+| pattern.state-machine | VALIDATES_FLOW | lab.backend-api.rest-graphql-websocket |
+| domain.commerce.ecommerce | USES_PATTERN | pattern.state-machine |
+| domain.insurance | USES_PATTERN | pattern.state-machine |
+| pattern.search | SUPPORTS_COMPETENCY | competency.database.sql-data-validation |
+| domain.commerce.ecommerce | USES_PATTERN | pattern.search |
+| pattern.pagination | SUPPORTS_COMPETENCY | competency.database.sql-data-validation |
+| domain.commerce.ecommerce | USES_PATTERN | pattern.pagination |
+| pattern.file-upload | RELATED_TO | domain.insurance |
+| pattern.import-export | USES_PATTERN | pattern.file-upload |
+| pattern.import-export | USES_PATTERN | pattern.pagination |
+| pattern.import-export | USES_PATTERN | pattern.multi-tenancy |
+| pattern.timeout | USES_PATTERN | pattern.retry |
+| domain.media.streaming | USES_PATTERN | pattern.timeout |
+| domain.insurance | USES_PATTERN | pattern.timeout |
+| pattern.cache | SUPPORTS_COMPETENCY | competency.database.sql-data-validation |
+| domain.commerce.ecommerce | USES_PATTERN | pattern.cache |
+| pattern.audit-log | USES_PATTERN | pattern.async-events |
+| domain.insurance | USES_PATTERN | pattern.audit-log |
+| pattern.webhook | USES_PATTERN | pattern.idempotency |
+| pattern.webhook | USES_PATTERN | pattern.retry |
+| domain.media.streaming | USES_PATTERN | pattern.webhook |
+| domain.insurance | USES_PATTERN | pattern.webhook |
+| pattern.third-party-integration | VALIDATES_FLOW | lab.backend-api.rest-graphql-websocket |
+| pattern.third-party-integration | USES_PATTERN | pattern.payment |
+| domain.media.streaming | USES_PATTERN | pattern.third-party-integration |
+| domain.insurance | USES_PATTERN | pattern.third-party-integration |
+| pattern.scheduled-jobs | USES_PATTERN | pattern.idempotency |
+| domain.insurance | USES_PATTERN | pattern.scheduled-jobs |
+| pattern.feature-flags | LEARNING | gap.release.feature-flags |
+| domain.mobile.multi-country | USES_PATTERN | pattern.feature-flags |
+| pattern.localization | RELATED_TO | domain.mobile.multi-country |
+| pattern.multi-tenancy | USES_PATTERN | pattern.authorization |
 

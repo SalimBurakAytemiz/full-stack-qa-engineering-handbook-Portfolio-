@@ -691,6 +691,126 @@ relationships:
     to: domain.financial.fintech
     note: "Same reasoning as domain.financial.crypto above — 'FX / Precious Metals FinTech' in the source data's own phrasing."
 
+  # ============================================================
+  # The 14 newly-written System Patterns — each closed with the
+  # specific edge its own "Related System Patterns"/"Related Domains"
+  # section names, not a generic placeholder.
+  # ============================================================
+  - from: pattern.state-machine
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.database.sql-data-validation
+  - from: pattern.state-machine
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.state-machine
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.state-machine
+
+  - from: pattern.search
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.database.sql-data-validation
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.search
+
+  - from: pattern.pagination
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.database.sql-data-validation
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.pagination
+
+  - from: pattern.file-upload
+    predicate: RELATED_TO
+    to: domain.insurance
+    note: "Claim-document upload is Insurance's own named use case for this pattern, per that domain page — no dedicated competency or lab exists for either side, so RELATED_TO is the honest predicate here."
+
+  - from: pattern.import-export
+    predicate: USES_PATTERN
+    to: pattern.file-upload
+  - from: pattern.import-export
+    predicate: USES_PATTERN
+    to: pattern.pagination
+  - from: pattern.import-export
+    predicate: USES_PATTERN
+    to: pattern.multi-tenancy
+
+  - from: pattern.timeout
+    predicate: USES_PATTERN
+    to: pattern.retry
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.timeout
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.timeout
+
+  - from: pattern.cache
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.database.sql-data-validation
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.cache
+
+  - from: pattern.audit-log
+    predicate: USES_PATTERN
+    to: pattern.async-events
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.audit-log
+
+  - from: pattern.webhook
+    predicate: USES_PATTERN
+    to: pattern.idempotency
+  - from: pattern.webhook
+    predicate: USES_PATTERN
+    to: pattern.retry
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.webhook
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.webhook
+
+  - from: pattern.third-party-integration
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: pattern.third-party-integration
+    predicate: USES_PATTERN
+    to: pattern.payment
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.third-party-integration
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.third-party-integration
+
+  - from: pattern.scheduled-jobs
+    predicate: USES_PATTERN
+    to: pattern.idempotency
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.scheduled-jobs
+
+  - from: pattern.feature-flags
+    predicate: LEARNING
+    to: gap.release.feature-flags
+  - from: domain.mobile.multi-country
+    predicate: USES_PATTERN
+    to: pattern.feature-flags
+
+  - from: pattern.localization
+    predicate: RELATED_TO
+    to: domain.mobile.multi-country
+    note: "This pattern's own page explicitly defers its deep treatment to the domain page — the domain, not a competency or lab, is the real owner of this pattern's depth here."
+
+  - from: pattern.multi-tenancy
+    predicate: USES_PATTERN
+    to: pattern.authorization
+
 related:
   schema: "../schemas/relationship.schema.json"
   narrative_docs:

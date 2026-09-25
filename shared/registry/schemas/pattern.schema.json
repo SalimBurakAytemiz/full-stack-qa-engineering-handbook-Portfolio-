@@ -12,8 +12,8 @@
     },
     "label": { "type": "string", "minLength": 1 },
     "status": {
-      "enum": ["DOCUMENTED_ONLY", "IMPLEMENTED", "NOT_IMPLEMENTED"],
-      "description": "Whether QA-DEMO-SYSTEM actually implements the pattern, per the pattern doc's own stated scope."
+      "enum": ["DOCUMENTED_ONLY", "IMPLEMENTED", "NOT_IMPLEMENTED", "NOT_APPLICABLE"],
+      "description": "Whether QA-DEMO-SYSTEM actually implements the pattern, per the pattern doc's own stated scope. NOT_APPLICABLE is for a pattern with no real dependency/scenario to implement against in this repository (e.g. Timeout, with no outbound third-party call)."
     },
     "path": { "type": "string" },
     "note": { "type": "string" }

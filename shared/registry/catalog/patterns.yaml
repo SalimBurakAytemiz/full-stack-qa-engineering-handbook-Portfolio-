@@ -53,6 +53,82 @@ items:
     path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RATE-LIMITING.md"
     note: "Documented as a real, stated gap — QA-DEMO-SYSTEM's backend has no rate-limiting middleware."
 
+  - id: pattern.state-machine
+    label: "State Machine"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/STATE-MACHINE.md"
+    note: "The general technique behind Payment/Idempotency — orders.status transitions."
+
+  - id: pattern.search
+    label: "Search"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SEARCH.md"
+
+  - id: pattern.pagination
+    label: "Pagination"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/PAGINATION.md"
+
+  - id: pattern.file-upload
+    label: "File Upload"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FILE-UPLOAD.md"
+
+  - id: pattern.import-export
+    label: "Import / Export"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/IMPORT-EXPORT.md"
+
+  - id: pattern.timeout
+    label: "Timeout"
+    status: NOT_APPLICABLE
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/TIMEOUT.md"
+    note: "No outbound third-party dependency exists in this repository's executable scope to apply an explicit timeout against."
+
+  - id: pattern.cache
+    label: "Cache"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/CACHE.md"
+
+  - id: pattern.audit-log
+    label: "Audit Log"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/AUDIT-LOG.md"
+    note: "The events table is structurally similar but serves notifications, not compliance auditing — see the page's own honest distinction."
+
+  - id: pattern.webhook
+    label: "Webhook"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/WEBHOOK.md"
+
+  - id: pattern.third-party-integration
+    label: "Third-Party Integration"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/THIRD-PARTY-INTEGRATION.md"
+    note: "payment.service.js's deterministic fake-token design is a real, deliberate synthetic integration point."
+
+  - id: pattern.scheduled-jobs
+    label: "Scheduled Jobs"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SCHEDULED-JOBS.md"
+
+  - id: pattern.feature-flags
+    label: "Feature Flags"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FEATURE-FLAGS.md"
+
+  - id: pattern.localization
+    label: "Localization"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/LOCALIZATION.md"
+    note: "Not implemented at the application level; the real, professionally-grounded treatment lives in 03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/."
+
+  - id: pattern.multi-tenancy
+    label: "Multi-Tenancy"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/MULTI-TENANCY.md"
+    note: "Single-tenant by design — no tenant concept exists."
+
 related:
   narrative_docs:
     - "../../../02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/README.md"
