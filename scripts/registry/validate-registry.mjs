@@ -6,6 +6,12 @@
 // rules). Exits non-zero on any failure so this is usable as a real CI
 // gate, not just documentation. This is the exact script CI runs — see
 // .github/workflows/ci.yml's "Registry integrity" job.
+// TR: Bu, dokümantasyon amaçlı bir örnek DEĞİL — CI'da gerçekten
+// çalışan, sıfırdan farklı bir çıkış koduyla gerçekten FAIL edebilen
+// kapıdır (bkz. .github/workflows/ci.yml "registry-integrity" job'ı).
+// Her kontrol bloğu (şema, dangling-ref, orphan, claim-integrity, EOL
+// normalizasyonlu drift) kendi canonical veri sahipliğini ve neden
+// var olduğunu kendi bloğunda açıklar (P3-01 TR yorum standardı).
 
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -20,7 +26,7 @@ const SCHEMAS_DIR = path.join(ROOT, 'shared', 'registry', 'schemas');
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 const schemas = {};
-for (const name of ['competency', 'domain', 'tool', 'lab', 'evidence', 'relationship', 'profile-state', 'pattern']) {
+for (const name of ['competency', 'domain', 'domain-catalog', 'tool', 'lab', 'evidence', 'relationship', 'profile-state', 'pattern', 'claim']) {
   const file = path.join(SCHEMAS_DIR, `${name}.schema.json`);
   schemas[name] = ajv.compile(JSON.parse(readFileSync(file, 'utf8')));
 }
@@ -29,7 +35,8 @@ let errorCount = 0;
 const knownIds = new Map(); // id -> file it was first seen in
 const allGapIds = new Set();
 const allCompetencyEntries = new Map(); // id -> full entry
-const allDomainIds = new Set();
+const allDomainIds = new Set(); // universal catalog (shared/registry/catalog/domains.yaml) domain ids
+const personalDomainIds = new Set(); // domain_ids referenced by 01-SALIM-BURAK-DIGITAL-TWIN/registry/domain-state.yaml (must be a subset of allDomainIds — FK check below)
 const allToolIds = new Set();
 const allLabIds = new Set();
 const allEvidenceEntries = new Map(); // id -> full entry
@@ -115,7 +122,7 @@ if (domainState && Array.isArray(domainState.personal_domain_exposure)) {
     const file = `${dtRoot}/domain-state.yaml`;
     if (validateEntry('domain', d, file, `domain '${d.domain_id}'`)) {
       validCount += 1;
-      allDomainIds.add(d.domain_id);
+      personalDomainIds.add(d.domain_id);
     }
   }
   ok(`domain-state.yaml: ${validCount}/${domainState.personal_domain_exposure.length} domain exposures valid`);
@@ -185,11 +192,104 @@ if (sourceProvenance && Array.isArray(sourceProvenance.sources)) {
   }
 }
 
+// --- CLAIM-LEVEL provenance (P1-05 post-Codex fix — "the most important
+// integrity fix"). The file-level check above only proves *some* source
+// covers professional-experience.yaml as a whole; it cannot catch a single
+// invented what_i_did/other_professional_project_exposure bullet inserted
+// into that file, because nothing checked individual bullets. This block
+// closes that gap: every real bullet must have an exact-text-matching
+// claims.yaml entry, and every claims.yaml entry's source_id must resolve
+// to a real source-provenance.yaml source.
+// TR: Codex'in kanıtladığı gerçek açık — dosya seviyesinde "bir kaynak
+// var" kontrolü, professional-experience.yaml'a UYDURMA bir what_i_did
+// maddesi eklense bile PASS veriyordu, çünkü hiçbir kontrol MADDE
+// seviyesinde çalışmıyordu. Bu blok, her maddeyi claims.yaml'daki birebir
+// (text) eşleşen bir kayda zorunlu kılarak bunu kapatır.
+const claimsFile = `${dtRoot}/claims.yaml`;
+const claimsData = loadYaml(claimsFile);
+const realSourceIds = new Set((sourceProvenance && sourceProvenance.sources || []).map((s) => s.id));
+
+if (claimsData && Array.isArray(claimsData.claims)) {
+  let validClaimCount = 0;
+  const seenClaimIds = new Set();
+  for (const c of claimsData.claims) {
+    const label = `claim '${c.claim_id}'`;
+    if (!validateEntry('claim', c, claimsFile, label)) continue;
+    if (seenClaimIds.has(c.claim_id)) {
+      fail(claimsFile, `duplicate claim_id '${c.claim_id}' within claims.yaml`);
+      continue;
+    }
+    seenClaimIds.add(c.claim_id);
+    if (!realSourceIds.has(c.source_id)) {
+      fail(claimsFile, `${label} — source_id '${c.source_id}' does not resolve to any entry in source-provenance.yaml#sources`);
+      continue;
+    }
+    if (c.claim_type === 'WHAT_I_DID' && !c.professional_case_id) {
+      fail(claimsFile, `${label} — claim_type WHAT_I_DID requires a professional_case_id`);
+      continue;
+    }
+    if (c.claim_type === 'OTHER_PROFESSIONAL_PROJECT_EXPOSURE' && c.professional_case_id) {
+      fail(claimsFile, `${label} — claim_type OTHER_PROFESSIONAL_PROJECT_EXPOSURE must not carry a professional_case_id`);
+      continue;
+    }
+    validClaimCount += 1;
+  }
+  ok(`claims.yaml: ${validClaimCount}/${claimsData.claims.length} claim entries valid (schema + resolvable source_id)`);
+
+  // Negative-provenance check, both directions:
+  //   (a) every real bullet in professional-experience.yaml must have a
+  //       matching SOURCED claim (an inserted/fabricated bullet fails here);
+  //   (b) every SOURCED claim must still correspond to a real, live bullet
+  //       (a stale claim left behind after a bullet is removed is also a
+  //       drift the graph should not silently tolerate).
+  if (proData && Array.isArray(proData.professional_cases)) {
+    const whatIDidClaims = claimsData.claims.filter((c) => c.claim_type === 'WHAT_I_DID' && c.verification_state === 'SOURCED');
+    const otherExposureClaims = claimsData.claims.filter((c) => c.claim_type === 'OTHER_PROFESSIONAL_PROJECT_EXPOSURE' && c.verification_state === 'SOURCED');
+    const matchedClaimIds = new Set();
+    let uncoveredBullets = 0;
+
+    for (const p of proData.professional_cases) {
+      for (const bulletText of p.what_i_did || []) {
+        const match = whatIDidClaims.find((c) => c.professional_case_id === p.id && c.text === bulletText);
+        if (!match) {
+          uncoveredBullets += 1;
+          fail(proFile, `unsourced professional claim — professional case '${p.id}' what_i_did bullet "${bulletText}" has no matching claims.yaml entry (claim-level provenance: NO CLAIM WITHOUT SOURCE)`);
+        } else {
+          matchedClaimIds.add(match.claim_id);
+        }
+      }
+    }
+    for (const bulletText of proData.other_professional_project_exposure || []) {
+      const match = otherExposureClaims.find((c) => c.text === bulletText);
+      if (!match) {
+        uncoveredBullets += 1;
+        fail(proFile, `unsourced professional claim — other_professional_project_exposure item "${bulletText}" has no matching claims.yaml entry (claim-level provenance: NO CLAIM WITHOUT SOURCE)`);
+      } else {
+        matchedClaimIds.add(match.claim_id);
+      }
+    }
+
+    let staleClaims = 0;
+    for (const c of [...whatIDidClaims, ...otherExposureClaims]) {
+      if (!matchedClaimIds.has(c.claim_id)) {
+        staleClaims += 1;
+        fail(claimsFile, `claim '${c.claim_id}' does not match any live bullet in professional-experience.yaml — either the bullet was removed (stale claim, should be deleted) or the text has drifted (claim-level provenance must stay 1:1)`);
+      }
+    }
+
+    if (uncoveredBullets === 0 && staleClaims === 0) {
+      ok(`claim-level provenance: every what_i_did/other_professional_project_exposure bullet in professional-experience.yaml has an exact-matching, source-resolvable claims.yaml entry (${matchedClaimIds.size} claims verified 1:1)`);
+    }
+  }
+} else {
+  fail(claimsFile, 'claims.yaml is missing or has no claims array — claim-level provenance (P1-05) cannot be enforced without it');
+}
+
 // --- Universal catalog (shared/registry/catalog/) — optional, validated if present ---
 
 const catalogDir = 'shared/registry/catalog';
 const catalogFiles = {
-  domains: { schema: 'domain', idField: 'domain_id' },
+  domains: { schema: 'domain-catalog', idField: 'domain_id' },
   labs: { schema: 'lab', idField: 'id' },
   patterns: { schema: 'pattern', idField: 'id' },
 };
@@ -209,9 +309,26 @@ for (const [fileBase, { schema: schemaName, idField }] of Object.entries(catalog
     }
     if (fileBase === 'labs') allLabIds.add(item.id);
     if (fileBase === 'patterns') allPatternIds.add(item.id);
+    if (fileBase === 'domains') allDomainIds.add(item.domain_id);
   }
   ok(`${fileBase}.yaml: ${validCount}/${items.length} ${schemaName} entries valid`);
 }
+
+// --- Foreign-key check (P2-01 post-Codex fix): every personal domain_id in
+// domain-state.yaml must resolve to a real domain in the universal catalog.
+// domains.yaml is the id space personal exposure entries point into — the
+// personal file's own header comment already documented this as the
+// intent, but nothing actually checked it until now.
+// TR: Codex, kişisel domain-state.yaml'ın evrensel domains.yaml katalogundan
+// DAHA FAZLA domain içerdiğini bulmuştu — bu, "domain_id burada bir
+// REFERANS'tır" iddiasının hiçbir zaman DOĞRULANMADIĞI anlamına geliyordu.
+// Bu kontrol artık bunu gerçek bir foreign-key kısıtlaması olarak uygular.
+for (const id of personalDomainIds) {
+  if (!allDomainIds.has(id)) {
+    fail(`${dtRoot}/domain-state.yaml`, `personal domain exposure references domain_id '${id}', which does not exist in the universal catalog (shared/registry/catalog/domains.yaml) — every personal domain_id must resolve to a real catalog entry (foreign-key check)`);
+  }
+}
+if (personalDomainIds.size > 0) ok(`domain foreign-key check: ${personalDomainIds.size} personal domain_id references checked against the universal catalog`);
 
 // --- Evidence registry (06-EVIDENCE/evidence.yaml — owned there per Section 33-35) ---
 
@@ -374,6 +491,35 @@ if (relationships && Array.isArray(relationships.relationships)) {
   ok('claim-integrity: CI_VERIFIED competencies checked for a linked CI-verified evidence entry');
 }
 
+// --- Relationship semantics: no PRACTICED_IN from a NOT_PRACTICED
+// repository dimension (P1-04 post-Codex fix, made structurally
+// enforced rather than a one-time manual correction) ---
+// PRACTICED_IN claims real repository execution of a competency inside a
+// specific lab. If that competency's own repository.status is
+// NOT_PRACTICED, any PRACTICED_IN edge from it directly contradicts its
+// own declared state — this is exactly the class of bug Codex found
+// (competency.observability.elastic-log-analysis PRACTICED_IN a lab it
+// never actually ran Elastic in). This check makes that class of error
+// fail automatically going forward, not just fixed once by hand.
+// TR: Codex'in bulduğu "Jenkins/Elastic PRACTICED_IN" hatası MANUEL
+// olarak düzeltildi (bkz. relationships.yaml), ama bu kontrol OLMADAN
+// aynı sınıf hata gelecekte SESSİZCE geri gelebilirdi. Şimdi bir
+// competency'nin repository.status'u NOT_PRACTICED iken ondan çıkan bir
+// PRACTICED_IN kenarı varsa, validator bunu otomatik olarak YAKALAR.
+if (relationships && Array.isArray(relationships.relationships)) {
+  let checkedCount = 0;
+  for (const rel of relationships.relationships) {
+    if (rel.predicate !== 'PRACTICED_IN') continue;
+    const comp = allCompetencyEntries.get(rel.from);
+    if (!comp) continue;
+    checkedCount += 1;
+    if (comp.repository && comp.repository.status === 'NOT_PRACTICED') {
+      fail(relFile, `relationship ${rel.from} PRACTICED_IN ${rel.to} — competency '${rel.from}' has repository.status: NOT_PRACTICED, which directly contradicts a PRACTICED_IN claim (no relationship may claim repository execution for a competency explicitly marked as not practiced in the repository)`);
+    }
+  }
+  ok(`relationship-semantic check: ${checkedCount} PRACTICED_IN edges checked against their competency's repository.status`);
+}
+
 // --- Generated-output drift ---
 // shared/registry/generated/REGISTRY-INDEX.md must be exactly what
 // build-indexes.mjs would produce right now — if it isn't, someone
@@ -384,13 +530,23 @@ if (relationships && Array.isArray(relationships.relationships)) {
 // düzenlenirse) hiçbir hata YAKALANMAZ — dosyalar sessizce birbirinden
 // uzaklaşır (drift). Bu, "tek gerçek kaynak" ilkesinin ihlalini otomatik
 // olarak tespit eden tek kontroldür.
+// TR: Codex post-audit fix (P2-02) — Windows'ta (veya CRLF'e normalize eden
+// bir git ayarında) checkout edilen REGISTRY-INDEX.md CRLF satır sonlarına
+// sahip olabilirken, buildIndexMarkdown() her zaman LF üretir. Karşılaştırma
+// öncesi her iki tarafı da LF'ye normalize etmek, gerçek içerik farkını
+// (bir kayıt eklenip index'in yeniden üretilmemesi gibi) GİZLEMEZ — yalnızca
+// EOL temsilini eşitler.
+function normalizeEol(text) {
+  return text === null ? text : text.replace(/\r\n/g, '\n');
+}
+
 const generatedIndexPath = 'shared/registry/generated/REGISTRY-INDEX.md';
-const committedIndex = loadYamlOrText(generatedIndexPath);
-const freshIndex = buildIndexMarkdown(ROOT);
+const committedIndex = normalizeEol(loadYamlOrText(generatedIndexPath));
+const freshIndex = normalizeEol(buildIndexMarkdown(ROOT));
 if (committedIndex !== freshIndex) {
-  fail(generatedIndexPath, "committed file does not match a fresh regeneration — run 'npm run registry:build-indexes' and commit the diff");
+  fail(generatedIndexPath, "committed file does not match a fresh regeneration — run 'npm run registry:build-indexes' and commit the diff (comparison is EOL-normalized — this is real content drift, not a line-ending difference)");
 } else {
-  ok('generated-output drift: shared/registry/generated/REGISTRY-INDEX.md matches a fresh regeneration');
+  ok('generated-output drift: shared/registry/generated/REGISTRY-INDEX.md matches a fresh regeneration (EOL-normalized comparison)');
 }
 
 function loadYamlOrText(relPath) {

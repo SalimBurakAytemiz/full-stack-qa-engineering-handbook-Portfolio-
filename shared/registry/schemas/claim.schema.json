@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/claim.schema.json",
+  "title": "Claim-level provenance entry",
+  "description": "One entry per individual professional action/claim in 01-SALIM-BURAK-DIGITAL-TWIN/registry/professional-experience.yaml (a single what_i_did bullet or other_professional_project_exposure item). Post-Codex fix (P1-05): a broad file-level source declaration is not enough to prove every individual claim is real — this schema lets the validator check CLAIM-LEVEL provenance, not just file-level.",
+  "type": "object",
+  "required": ["claim_id", "claim_type", "text", "source_id", "verification_state"],
+  "properties": {
+    "claim_id": {
+      "type": "string",
+      "pattern": "^claim\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "claim_type": {
+      "enum": ["WHAT_I_DID", "OTHER_PROFESSIONAL_PROJECT_EXPOSURE"],
+      "description": "WHAT_I_DID claims must carry professional_case_id; OTHER_PROFESSIONAL_PROJECT_EXPOSURE claims must not (that list has no case-level id in professional-experience.yaml)."
+    },
+    "professional_case_id": {
+      "type": ["string", "null"],
+      "pattern": "^pro\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Must be an EXACT, byte-for-byte match of the bullet text in professional-experience.yaml this claim sources. The validator diffs these directly — this is the mechanism that makes an invented, unsourced bullet fail validation."
+    },
+    "source_id": {
+      "type": "string",
+      "pattern": "^src\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$",
+      "description": "Must resolve to a real entry in source-provenance.yaml#sources."
+    },
+    "verification_state": {
+      "enum": ["SOURCED", "USER_CONFIRMATION_REQUIRED"],
+      "description": "SOURCED: the source_id genuinely contains this claim's content. USER_CONFIRMATION_REQUIRED: reserved for a future claim awaiting confirmation — such a claim must not simultaneously appear as a live bullet in professional-experience.yaml (it would then be an unconfirmed claim being presented as settled fact)."
+    },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": false
+}

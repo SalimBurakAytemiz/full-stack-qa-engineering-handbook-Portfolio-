@@ -4,6 +4,10 @@
 // this script — it is not hand-edited. See lib/build-index-markdown.mjs
 // for the actual generation logic (shared with validate-registry.mjs's
 // generated-output-drift check).
+// TR: Bu dosyayı ELLE düzenleme — üretilen çıktı, `npm run
+// registry:build-indexes` her çalıştığında lib/build-index-markdown.mjs
+// tarafından baştan üretilir; elle yapılan bir düzenleme bir sonraki
+// regenerasyonda sessizce KAYBOLUR (veya drift kontrolünü FAIL ettirir).
 
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

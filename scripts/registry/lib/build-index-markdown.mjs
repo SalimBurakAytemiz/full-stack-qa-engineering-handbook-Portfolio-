@@ -3,6 +3,11 @@
 // validate-registry.mjs (the generated-output-drift check, which
 // regenerates this in memory and diffs it against the committed file —
 // see Section 41's "generated-output drift" requirement).
+// TR: Bu mantık İKİ çağıran arasında PAYLAŞILIR — CLI ve validator FARKLI
+// kopyalar kullansaydı, biri güncellenip diğeri unutulabilirdi ve
+// drift kontrolü kendi kendine sessizce yanlış geçerdi (P3-01: her alan
+// adı değişikliği burada TEK bir yerde yapılır — bkz. `maturity` alanı
+// yeniden adlandırmasının P2-01'de bu dosyada nasıl düzeltildiği).
 import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
@@ -38,12 +43,20 @@ export function buildIndexMarkdown(root) {
   }
   lines.push('');
 
+  // TR: Codex post-audit fix (P2-01) — domains.yaml artık `exposure`
+  // (kişisel exposure sözlüğü) değil `maturity` (D0-D5, evrensel katalog
+  // olgunluğu) alanı taşıyor; bu tablo o yeniden adlandırmaya göre
+  // güncellenmedikçe her satır sessizce "undefined" yazardı (drift
+  // kontrolü bunu YAKALAMAZ, çünkü hem committed hem taze regenerasyon
+  // AYNI kırık mantığı kullanırdı — bu, bir generator hatasının neden
+  // yalnızca "diff eşleşiyor mu" kontrolüyle DEĞİL, üretilen İÇERİĞİN
+  // kendisi incelenerek yakalanabileceğinin somut bir örneğidir).
   lines.push('## Domain Maturity');
   lines.push('');
-  lines.push('| Domain | Exposure | Note |');
+  lines.push('| Domain | Maturity | Note |');
   lines.push('|---|---|---|');
   for (const d of domainsCatalog.items) {
-    lines.push(`| ${d.label} | ${d.exposure} | ${d.note || ''} |`);
+    lines.push(`| ${d.label} | ${d.maturity} | ${d.note || ''} |`);
   }
   lines.push('');
 

@@ -32,13 +32,18 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 
 ## Domain Maturity
 
-| Domain | Exposure | Note |
+| Domain | Maturity | Note |
 |---|---|---|
-| E-Commerce | PROFESSIONAL_EXECUTED | Repository maturity D4 EXECUTABLE — see 03-DOMAINS/02-COMMERCE-RETAIL/E-COMMERCE/README.md. |
-| FinTech | PROFESSIONAL_EXECUTED | Repository maturity D3 CASE_DESIGNED — see 03-DOMAINS/01-FINANCIAL-SERVICES/FINTECH/README.md. |
-| Media / Live Streaming | PROFESSIONAL_PARTICIPATED | Repository maturity D2 QA_MAPPED — deep domain-QA knowledge (actors, event/reconnect/token-expiry risk catalog, security/performance/observability, test strategy), no executable lab yet. See 03-DOMAINS/03-MEDIA-STREAMING/README.md. |
-| Multi-Country Mobile / Localization | PROFESSIONAL_EXECUTED | Repository maturity D2 QA_MAPPED — deep domain-QA knowledge (feature parity, country-specific behavior, visual/accessibility, release strategy), no dedicated multi-country lab yet. See 03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/README.md. |
-| Insurance | NONE | Repository maturity D2 QA_MAPPED — deep learning-only domain-QA knowledge (lifecycle, business rules, transferable test methodology), zero professional or repository-execution grounding, explicitly stated. See 03-DOMAINS/01-FINANCIAL-SERVICES/INSURANCE/README.md. |
+| E-Commerce | D4_EXECUTABLE |  |
+| OMS (Order Management System) | D0_INDEXED | Codex post-audit fix (P2-01): added — this domain_id was already referenced by 01-SALIM-BURAK-DIGITAL-TWIN/registry/domain-state.yaml (personal exposure PROFESSIONAL_EXECUTED) but had no universal catalog entry, which the new foreign-key check now requires. No standalone 03-DOMAINS/ page exists yet; OMS content currently lives embedded within the E-Commerce domain page (see 03-DOMAINS/README.md's 'Indexed only' list). Repository maturity is D0 (indexed, not yet a standalone documented page) — this is a REPOSITORY-CONTENT-DEPTH fact, unrelated to and not lowering Salim's own PROFESSIONAL_EXECUTED personal exposure, which is a separate, personal fact owned by domain-state.yaml. |
+| FinTech | D3_CASE_DESIGNED |  |
+| Cryptocurrency | D0_INDEXED | Codex post-audit fix (P2-01): added — see domain.commerce.oms note above for the same reasoning. Listed in 03-DOMAINS/README.md's 'Indexed only' set; no standalone page yet. |
+| Trading / Precious Metals | D0_INDEXED | Codex post-audit fix (P2-01): added — see domain.commerce.oms note above for the same reasoning. |
+| Media / Live Streaming | D2_QA_MAPPED | Codex post-audit fix (P2-03, applied here too): corrected from a stale D1_DOCUMENTED — the page's own header (03-DOMAINS/03-MEDIA-STREAMING/README.md line 3) states D2 QA_MAPPED, matching .ai/ARCHITECTURE-STATE.md's record of this domain's deep-dive round. See also 03-DOMAINS/README.md, fixed in the same pass. |
+| Multi-Country Mobile / Localization | D2_QA_MAPPED | Codex post-audit fix (P2-03, applied here too): corrected from a stale D1_DOCUMENTED — same reasoning as domain.media.streaming above. |
+| Insurance | D2_QA_MAPPED | Codex post-audit fix (P2-03, applied here too): corrected from a stale D0_INDEXED — the page's own header (03-DOMAINS/01-FINANCIAL-SERVICES/INSURANCE/README.md line 3) states D2 QA_MAPPED (deep learning/transferable-methodology content, explicitly zero professional or repository-execution grounding — maturity reflects documentation depth, not practiced experience, per the page's own line 5). |
+| Healthcare | D0_INDEXED | Codex post-audit fix (P2-01): added — see domain.commerce.oms note above for the same reasoning. |
+| Telecom | D0_INDEXED | Codex post-audit fix (P2-01): added — see domain.commerce.oms note above for the same reasoning. |
 
 ## Executable Labs
 
@@ -66,7 +71,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Payment | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/PAYMENT.md` |
 | Notification | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/NOTIFICATION.md` |
 | Async Events | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/ASYNC-EVENTS.md` |
-| Retry | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RETRY.md` |
+| Retry | DOCUMENTED_ONLY | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RETRY.md` |
 | Rate Limiting | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RATE-LIMITING.md` |
 | State Machine | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/STATE-MACHINE.md` |
 | Search | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SEARCH.md` |
@@ -88,18 +93,24 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Evidence | Maturity | Artifact |
 |---|---|---|
 | Backend unit/integration test suite (node:test) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/backend/tests` |
-| API contract testing — Postman/Newman/AJV | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/evidence/P5-API-TESTING` |
+| API contract testing — public/schema package (Postman/Newman/AJV) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION` |
+| API contract testing — protected/auth package (Postman/Newman) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/evidence/P5-API-TESTING/P5.3-AUTH-AUTHORIZATION` |
+| API contract testing — orders/payment package (Newman + AJV) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT` |
+| API contract testing — notifications package (Newman + AJV) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/evidence/P5-API-TESTING/P5.6-NOTIFICATIONS` |
+| API-to-DB validation package (node:sqlite + fetch) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/evidence/P5-API-TESTING/P5.7-API-DB-VALIDATION` |
 | Web QA — Playwright functional/visual/accessibility | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/evidence/PHASE-8-WEB-MOBILE-QA/EXECUTION.md` |
 | Visual regression + accessibility (axe-core) | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-9-VISUAL-ACCESSIBILITY/EXECUTION.md` |
 | Selenium lab — real browser automation, CI-only real pass | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md` |
-| JMeter load test with JTL-content fail-gate | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md` |
+| JMeter workload design — .jmx test plan (threads/ramp-up/correlation/threshold) | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/automation-labs/jmeter/qa-demo-system-load-test.jmx` |
+| JMeter fail-gate logic — JTL-content-based PASS/FAIL, fixture-tested | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/jmeter/scripts/run-jmeter.test.js` |
+| JMeter real binary execution — attempted, root cause diagnosed, BLOCKED (not a successful load run) | E1_DOCUMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md` |
 | Locust load test | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline (4 real jobs) | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
-| BUG-AUTH-EDU-001 — reproduced defect with root cause | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
+| BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (224 edges)
+## Relationships (235 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -142,7 +153,6 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | pattern.async-events | VALIDATES_FLOW | lab.backend-api.rest-graphql-websocket |
 | pattern.authentication | VALIDATES_FLOW | lab.backend-api.rest-graphql-websocket |
 | pattern.authorization | VALIDATES_FLOW | lab.backend-api.rest-graphql-websocket |
-| pattern.retry | VALIDATES_FLOW | lab.cicd.github-actions |
 | pattern.rate-limiting | LEARNING | gap.performance.k6 |
 | competency.mobile.appium | USES_TOOL | tool.appium |
 | competency.web.selenium | USES_TOOL | tool.selenium |
@@ -182,7 +192,6 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.performance.locust | USES_TOOL | tool.locust |
 | lab.database.sql-validation | USES_TECHNOLOGY | tech.sql |
 | lab.database.sql-validation | USES_TOOL | tool.sqlite |
-| lab.observability.elastic-log-analysis | USES_TOOL | tool.elastic |
 | lab.cicd.github-actions | USES_TOOL | platform.github-actions |
 | competency.api.rest | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.api.graphql | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
@@ -197,15 +206,20 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.performance.locust | PRACTICED_IN | lab.performance.locust |
 | competency.security.security-aware-qa | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.correlation-logging | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
-| competency.observability.elastic-log-analysis | PRACTICED_IN | lab.observability.elastic-log-analysis |
-| competency.cicd.jenkins | PRACTICED_IN | lab.cicd.github-actions |
+| competency.observability.elastic-log-analysis | RELATED_TO | lab.observability.elastic-log-analysis |
 | competency.mobile.appium | LEARNING | gap.appium.repo-device-evidence |
 | lab.backend-api.rest-graphql-websocket | TESTED_BY | evidence.backend.unit-integration-suite |
-| lab.api-contract.postman-newman-ajv | TESTED_BY | evidence.api-tests.newman-ajv-suite |
+| lab.api-contract.postman-newman-ajv | TESTED_BY | evidence.api-tests.public-schema-suite |
+| lab.api-contract.postman-newman-ajv | TESTED_BY | evidence.api-tests.protected-auth-suite |
+| lab.api-contract.postman-newman-ajv | TESTED_BY | evidence.api-tests.orders-payment-suite |
+| lab.api-contract.postman-newman-ajv | TESTED_BY | evidence.api-tests.notifications-suite |
+| lab.api-contract.postman-newman-ajv | TESTED_BY | evidence.api-tests.api-db-validation-suite |
 | lab.web-automation.playwright | TESTED_BY | evidence.web.playwright-functional-visual-accessibility |
 | lab.web-automation.playwright | TESTED_BY | evidence.web.visual-accessibility |
 | lab.web-automation.selenium | TESTED_BY | evidence.selenium.ci-verified-run |
-| lab.performance.jmeter | TESTED_BY | evidence.performance.jmeter-fail-gate-run |
+| lab.performance.jmeter | TESTED_BY | evidence.performance.jmeter-workload-design |
+| lab.performance.jmeter | TESTED_BY | evidence.performance.jmeter-fail-gate-logic |
+| lab.performance.jmeter | DOCUMENTED_BY | evidence.performance.jmeter-real-execution-blocked |
 | lab.performance.locust | TESTED_BY | evidence.performance.locust-load-run |
 | lab.database.sql-validation | TESTED_BY | evidence.database.sql-validation-suite |
 | lab.security.owasp-mapping | DOCUMENTED_BY | evidence.security.owasp-mapping-review |
@@ -217,7 +231,11 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.database.sql-data-validation | EVIDENCED_BY | evidence.backend.unit-integration-suite |
 | competency.security.security-aware-qa | EVIDENCED_BY | evidence.backend.unit-integration-suite |
 | competency.observability.correlation-logging | EVIDENCED_BY | evidence.backend.unit-integration-suite |
-| competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.newman-ajv-suite |
+| competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.public-schema-suite |
+| competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.protected-auth-suite |
+| competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.orders-payment-suite |
+| competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.notifications-suite |
+| competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.api-db-validation-suite |
 | competency.web.playwright | EVIDENCED_BY | evidence.web.playwright-functional-visual-accessibility |
 | competency.web.accessibility | EVIDENCED_BY | evidence.web.playwright-functional-visual-accessibility |
 | competency.web.visual-testing | EVIDENCED_BY | evidence.web.playwright-functional-visual-accessibility |
@@ -273,6 +291,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | tool.gatling | LEARNING | gap.performance.gatling |
 | tool.jira | RELATED_TO | tool.azure-devops |
 | tool.confluence | RELATED_TO | tool.azure-devops |
+| tool.trello | RELATED_TO | tool.azure-devops |
+| tool.cucumber | RELATED_TO | tool.playwright |
+| tool.device-farm | RELATED_TO | tool.appium |
+| tool.adb | RELATED_TO | tool.appium |
 | competency.web.selenium | LEARNING | gap.selenium.professional-exposure |
 | competency.web.playwright | LEARNING | gap.playwright.professional-exposure |
 | competency.observability.opentelemetry-jaeger | LEARNING | gap.observability.distributed-tracing |

@@ -15,9 +15,21 @@ const { schema } = require('../src/graphql/schema');
 // kararını gerektirir; sessizce geçmez.
 const CONTRACT_PATH = path.join(__dirname, '..', '..', '..', 'shared', 'contracts', 'graphql', 'schema.graphql');
 
+// TR: Codex post-audit fix (P2-02) — Windows'ta (veya CRLF'e normalize eden
+// herhangi bir git ayarında) checkout edilen schema.graphql dosyası CRLF
+// satır sonlarına sahip olabilir, ancak `printSchema()` her zaman LF üretir
+// — bu, hiçbir GERÇEK içerik farkı olmadan bu testin sahte (false-positive)
+// FAIL vermesine yol açardı. Karşılaştırmadan ÖNCE her iki tarafı da LF'ye
+// normalize ediyoruz; bu yalnızca EOL temsilini eşitler, gerçek içerik
+// farkını (bir alan/tip değişikliği gibi) GİZLEMEZ — o fark normalize
+// sonrası hâlâ farklı metin üretir.
+function normalizeEol(text) {
+  return text.replace(/\r\n/g, '\n');
+}
+
 test('GraphQL schema contract drift: the real schema matches the committed canonical snapshot', () => {
-  const actual = printSchema(schema) + '\n';
-  const canonical = fs.readFileSync(CONTRACT_PATH, 'utf8');
+  const actual = normalizeEol(printSchema(schema) + '\n');
+  const canonical = normalizeEol(fs.readFileSync(CONTRACT_PATH, 'utf8'));
 
   assert.equal(
     actual,
@@ -25,6 +37,7 @@ test('GraphQL schema contract drift: the real schema matches the committed canon
     'The real GraphQL schema (src/graphql/schema.js) no longer matches ' +
       'shared/contracts/graphql/schema.graphql. If this change is intentional, ' +
       'regenerate the snapshot with `node scripts/print-graphql-schema.js` and ' +
-      'commit the diff for review — do not edit the snapshot by hand.'
+      'commit the diff for review — do not edit the snapshot by hand. ' +
+      '(Comparison is EOL-normalized — this is real content drift, not a line-ending difference.)'
   );
 });
