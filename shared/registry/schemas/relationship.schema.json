@@ -8,23 +8,33 @@
   "properties": {
     "from": {
       "type": "string",
-      "pattern": "^(competency|domain|tool|tech|platform|protocol|lab|evidence|gap|profile|pro)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+      "pattern": "^(competency|domain|tool|tech|platform|protocol|lab|evidence|gap|profile|pro|pattern|interview)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
     },
     "predicate": {
+      "description": "Controlled relation vocabulary (Section 41, extended per the graph-integrity pass). RELATED_TO is a fallback of last resort — prefer a specific predicate.",
       "enum": [
         "REQUIRES",
+        "PREREQUISITE_OF",
         "USES_TOOL",
+        "USES_TECHNOLOGY",
+        "USES_PATTERN",
         "APPLIES_TO_DOMAIN",
-        "DEMONSTRATED_BY",
-        "PRODUCES_EVIDENCE",
-        "ADDRESSES_GAP",
-        "MAPS_TO_PATTERN",
-        "OWNED_BY"
+        "DOCUMENTED_BY",
+        "IMPLEMENTED_BY",
+        "TESTED_BY",
+        "EVIDENCED_BY",
+        "AUDITED_BY",
+        "PROFESSIONAL_EXPERIENCE_IN",
+        "PRACTICED_IN",
+        "LEARNING",
+        "SUPPORTS_COMPETENCY",
+        "VALIDATES_FLOW",
+        "RELATED_TO"
       ]
     },
     "to": {
       "type": "string",
-      "pattern": "^(competency|domain|tool|tech|platform|protocol|lab|evidence|gap|profile|pro)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+      "pattern": "^(competency|domain|tool|tech|platform|protocol|lab|evidence|gap|profile|pro|pattern|interview)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
     },
     "note": { "type": "string" }
   },

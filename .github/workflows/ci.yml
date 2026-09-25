@@ -19,6 +19,27 @@ defaults:
     working-directory: QA-DEMO-SYSTEM
 
 jobs:
+  registry-integrity:
+    # Increment 2 — wires the registry validator (scripts/registry/
+    # validate-registry.mjs) into CI as a real quality gate, not a
+    # decorative always-pass step. Runs at the repo root (overriding the
+    # job-default QA-DEMO-SYSTEM working directory above), where the
+    # registry's own package.json and node_modules live — a completely
+    # separate npm workspace from QA-DEMO-SYSTEM. No `needs:` — this is a
+    # pure docs/registry check with no dependency on a running server.
+    name: Registry integrity (schema, relationships, generated-output)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run registry:validate
+
   backend-tests:
     name: Backend unit/integration tests (node:test)
     runs-on: ubuntu-latest

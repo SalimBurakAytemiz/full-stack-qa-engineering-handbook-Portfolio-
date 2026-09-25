@@ -2,14 +2,17 @@
 // Registry validator (Section 41 of the master transformation spec).
 // Loads every registry YAML file this repository actually has, validates
 // each entry against its JSON Schema, and checks cross-file reference
-// integrity (duplicate IDs, dangling pointers). Exits non-zero on any
-// failure so this is usable as a real CI gate, not just documentation.
+// integrity (duplicate IDs, dangling pointers, orphans, claim-integrity
+// rules). Exits non-zero on any failure so this is usable as a real CI
+// gate, not just documentation. This is the exact script CI runs — see
+// .github/workflows/ci.yml's "Registry integrity" job.
 
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import yaml from 'js-yaml';
 import Ajv from 'ajv';
+import { buildIndexMarkdown } from './lib/build-index-markdown.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
@@ -17,7 +20,7 @@ const SCHEMAS_DIR = path.join(ROOT, 'shared', 'registry', 'schemas');
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 const schemas = {};
-for (const name of ['competency', 'domain', 'tool', 'lab', 'evidence', 'relationship', 'profile-state']) {
+for (const name of ['competency', 'domain', 'tool', 'lab', 'evidence', 'relationship', 'profile-state', 'pattern']) {
   const file = path.join(SCHEMAS_DIR, `${name}.schema.json`);
   schemas[name] = ajv.compile(JSON.parse(readFileSync(file, 'utf8')));
 }
@@ -25,9 +28,13 @@ for (const name of ['competency', 'domain', 'tool', 'lab', 'evidence', 'relation
 let errorCount = 0;
 const knownIds = new Map(); // id -> file it was first seen in
 const allGapIds = new Set();
-const allCompetencyIds = new Set();
+const allCompetencyEntries = new Map(); // id -> full entry
 const allDomainIds = new Set();
 const allToolIds = new Set();
+const allLabIds = new Set();
+const allEvidenceEntries = new Map(); // id -> full entry
+const allPatternIds = new Set();
+const allProfessionalCaseIds = new Set();
 
 function fail(file, message) {
   errorCount += 1;
@@ -84,7 +91,7 @@ if (competencyState && Array.isArray(competencyState.competencies)) {
     const file = `${dtRoot}/competency-state.yaml`;
     if (validateEntry('competency', c, file, `competency '${c.id}'`)) {
       if (registerId(c.id, file)) validCount += 1;
-      allCompetencyIds.add(c.id);
+      allCompetencyEntries.set(c.id, c);
       for (const g of c.gaps || []) allGapIds.add(`ref:${g}:${file}`);
     }
   }
@@ -150,12 +157,41 @@ for (const ref of allGapIds) {
 }
 if (allGapIds.size > 0) ok(`${allGapIds.size} gap references checked against gaps.yaml`);
 
+// --- Professional experience (claim-integrity: no professional claim
+// without provenance) ---
+const proFile = `${dtRoot}/professional-experience.yaml`;
+const proData = loadYaml(proFile);
+if (proData && Array.isArray(proData.professional_cases)) {
+  let validCount = 0;
+  for (const p of proData.professional_cases) {
+    if (typeof p.sanitized !== 'boolean') {
+      fail(proFile, `professional case '${p.id}' is missing a 'sanitized' boolean — every professional claim must state whether it is sanitized (claim-integrity: no claim without source classification)`);
+      continue;
+    }
+    if (registerId(p.id, proFile)) validCount += 1;
+    allProfessionalCaseIds.add(p.id);
+  }
+  ok(`professional-experience.yaml: ${validCount}/${proData.professional_cases.length} professional cases valid (sanitized field present)`);
+}
+
+const sourceProvenanceFile = `${dtRoot}/source-provenance.yaml`;
+const sourceProvenance = loadYaml(sourceProvenanceFile);
+if (sourceProvenance && Array.isArray(sourceProvenance.sources)) {
+  const proSource = sourceProvenance.sources.find((s) => (s.covers || []).includes('professional-experience'));
+  if (!proSource) {
+    fail(sourceProvenanceFile, `no source declares coverage of 'professional-experience' — every professional claim in professional-experience.yaml would then have no traceable provenance`);
+  } else {
+    ok(`source-provenance.yaml: professional-experience coverage traced to '${proSource.id}'`);
+  }
+}
+
 // --- Universal catalog (shared/registry/catalog/) — optional, validated if present ---
 
 const catalogDir = 'shared/registry/catalog';
 const catalogFiles = {
   domains: { schema: 'domain', idField: 'domain_id' },
   labs: { schema: 'lab', idField: 'id' },
+  patterns: { schema: 'pattern', idField: 'id' },
 };
 for (const [fileBase, { schema: schemaName, idField }] of Object.entries(catalogFiles)) {
   const data = loadYaml(`${catalogDir}/${fileBase}.yaml`);
@@ -171,19 +207,13 @@ for (const [fileBase, { schema: schemaName, idField }] of Object.entries(catalog
     if (item.path && !existsSync(path.join(ROOT, item.path))) {
       fail(file, `${schemaName} '${item[idField]}' path does not exist: ${item.path}`);
     }
+    if (fileBase === 'labs') allLabIds.add(item.id);
+    if (fileBase === 'patterns') allPatternIds.add(item.id);
   }
   ok(`${fileBase}.yaml: ${validCount}/${items.length} ${schemaName} entries valid`);
 }
 
 // --- Evidence registry (06-EVIDENCE/evidence.yaml — owned there per Section 33-35) ---
-
-const allLabIds = new Set();
-{
-  const labsData = loadYaml(`${catalogDir}/labs.yaml`);
-  if (labsData && Array.isArray(labsData.items)) {
-    for (const l of labsData.items) allLabIds.add(l.id);
-  }
-}
 
 const evidenceFile = '06-EVIDENCE/evidence.yaml';
 const evidenceData = loadYaml(evidenceFile);
@@ -192,12 +222,20 @@ if (evidenceData && Array.isArray(evidenceData.items)) {
   for (const e of evidenceData.items) {
     if (validateEntry('evidence', e, evidenceFile, `evidence '${e.id}'`)) {
       if (registerId(e.id, evidenceFile)) validCount += 1;
+      allEvidenceEntries.set(e.id, e);
     }
     if (e.artifact && !existsSync(path.join(ROOT, e.artifact))) {
       fail(evidenceFile, `evidence '${e.id}' artifact path does not exist: ${e.artifact}`);
     }
     if (e.related_lab && !allLabIds.has(e.related_lab)) {
       fail(evidenceFile, `evidence '${e.id}' related_lab '${e.related_lab}' not found in labs.yaml`);
+    }
+    // Claim-integrity: AUDITED/E5 without independent audit evidence.
+    // The schema's if/then already requires audit_record structurally for
+    // E5_INDEPENDENTLY_AUDITED — this is a second, explicit check so the
+    // rule is visible here too, not only buried in the JSON Schema.
+    if (e.maturity === 'E5_INDEPENDENTLY_AUDITED' && !e.audit_record) {
+      fail(evidenceFile, `evidence '${e.id}' claims E5_INDEPENDENTLY_AUDITED without an audit_record — no self-declared AUDITED evidence is allowed`);
     }
   }
   ok(`evidence.yaml: ${validCount}/${evidenceData.items.length} evidence entries valid, all artifact paths checked`);
@@ -207,17 +245,122 @@ if (evidenceData && Array.isArray(evidenceData.items)) {
 
 const relFile = 'shared/registry/relationships/relationships.yaml';
 const relationships = loadYaml(relFile);
+const allKnownIdsForRelationships = new Set([
+  ...allCompetencyEntries.keys(),
+  ...allDomainIds,
+  ...allToolIds,
+  ...allLabIds,
+  ...allEvidenceEntries.keys(),
+  ...allPatternIds,
+  ...allProfessionalCaseIds,
+  ...realGapIds,
+]);
+const referencedEvidenceIds = new Set();
+const referencedLabIds = new Set();
+
 if (relationships && Array.isArray(relationships.relationships)) {
   let validCount = 0;
   for (const rel of relationships.relationships) {
-    if (validateEntry('relationship', rel, relFile, `relationship ${rel.from} ${rel.predicate} ${rel.to}`)) {
-      validCount += 1;
-      // Best-effort dangling-reference check against what we've seen loaded
-      // so far (catalog is not exhaustive yet, so this only warns, not fails,
-      // for ids outside the personal registry + catalog we actually loaded).
+    const label = `relationship ${rel.from} ${rel.predicate} ${rel.to}`;
+    if (!validateEntry('relationship', rel, relFile, label)) continue;
+
+    // "missing relation targets": both from and to must resolve to a real,
+    // already-loaded id — not just be shaped like one.
+    let targetsOk = true;
+    if (!allKnownIdsForRelationships.has(rel.from)) {
+      fail(relFile, `${label} — 'from' id '${rel.from}' does not resolve to any known registry entry`);
+      targetsOk = false;
+    }
+    if (!allKnownIdsForRelationships.has(rel.to)) {
+      fail(relFile, `${label} — 'to' id '${rel.to}' does not resolve to any known registry entry`);
+      targetsOk = false;
+    }
+    if (targetsOk) validCount += 1;
+
+    if (allEvidenceEntries.has(rel.to)) referencedEvidenceIds.add(rel.to);
+    if (allEvidenceEntries.has(rel.from)) referencedEvidenceIds.add(rel.from);
+    if (allLabIds.has(rel.to)) referencedLabIds.add(rel.to);
+    if (allLabIds.has(rel.from)) referencedLabIds.add(rel.from);
+  }
+  ok(`relationships.yaml: ${validCount}/${relationships.relationships.length} relationships valid (schema + both endpoints resolve)`);
+}
+
+// --- Orphan checks ---
+// Orphan evidence: no lab points to it via related_lab AND no relationship
+// edge references it either way.
+for (const [id, e] of allEvidenceEntries) {
+  const hasLabLink = Boolean(e.related_lab);
+  const hasRelationshipLink = referencedEvidenceIds.has(id);
+  if (!hasLabLink && !hasRelationshipLink) {
+    fail(evidenceFile, `evidence '${id}' is orphaned — not linked from any lab's related_lab and not referenced by any relationship edge`);
+  }
+}
+// Orphan labs: no evidence points back to it via related_lab AND no
+// relationship edge references it either.
+const labsWithEvidenceLink = new Set();
+for (const e of allEvidenceEntries.values()) {
+  if (e.related_lab) labsWithEvidenceLink.add(e.related_lab);
+}
+for (const id of allLabIds) {
+  if (!labsWithEvidenceLink.has(id) && !referencedLabIds.has(id)) {
+    fail(catalogDir + '/labs.yaml', `lab '${id}' is orphaned — no evidence entry's related_lab points to it and no relationship edge references it`);
+  }
+}
+ok(`orphan check: ${allEvidenceEntries.size} evidence and ${allLabIds.size} lab entries checked for orphaning`);
+
+// --- Claim-integrity: CI_VERIFIED without CI evidence ---
+// Any competency whose repository.status is CI_VERIFIED must have a
+// relationship edge pointing at an evidence entry whose maturity is
+// E4_CI_VERIFIED or higher — otherwise the claim has no real CI proof
+// behind it in the graph.
+// TR: Bir competency'nin repository.status alanı CI_VERIFIED OLABİLİR
+// ama bunu destekleyen gerçek bir evidence bağlantısı YOKSA, bu durum
+// "iddia var, kanıt yok" anlamına gelir — Section 42'nin "NO CI_VERIFIED
+// WITHOUT CI EVIDENCE" kuralının YAML alanı seviyesinde değil, GRAF
+// seviyesinde uygulanmasıdır. Bu kontrol olmadan, biri competency-state.yaml'da
+// statüyü CI_VERIFIED yazıp hiçbir zaman gerçek bir bağlantı eklemeyi
+// unutabilir — bu, schema validation'ın YAKALAYAMAYACAĞI bir hatadır.
+if (relationships && Array.isArray(relationships.relationships)) {
+  const ciVerifiedMaturities = new Set(['E4_CI_VERIFIED', 'E5_INDEPENDENTLY_AUDITED']);
+  for (const [id, c] of allCompetencyEntries) {
+    if (c.repository.status !== 'CI_VERIFIED') continue;
+    const linkedEvidenceIds = relationships.relationships
+      .filter((r) => r.from === id && allEvidenceEntries.has(r.to))
+      .map((r) => r.to);
+    const hasCiEvidence = linkedEvidenceIds.some((eid) => {
+      const e = allEvidenceEntries.get(eid);
+      return e && ciVerifiedMaturities.has(e.maturity);
+    });
+    if (!hasCiEvidence) {
+      fail(relFile, `competency '${id}' claims repository.status: CI_VERIFIED but has no relationship edge to an E4_CI_VERIFIED (or higher) evidence entry — no CI_VERIFIED claim without real CI evidence`);
     }
   }
-  ok(`relationships.yaml: ${validCount}/${relationships.relationships.length} relationships schema-valid`);
+  ok('claim-integrity: CI_VERIFIED competencies checked for a linked CI-verified evidence entry');
+}
+
+// --- Generated-output drift ---
+// shared/registry/generated/REGISTRY-INDEX.md must be exactly what
+// build-indexes.mjs would produce right now — if it isn't, someone
+// edited the registry without regenerating the index (or edited the
+// generated file by hand), and the two are now silently out of sync.
+// TR: Bu kontrol OLMADAN, registry YAML dosyaları güncellenip
+// REGISTRY-INDEX.md güncellenmezse (veya tam tersi, index elle
+// düzenlenirse) hiçbir hata YAKALANMAZ — dosyalar sessizce birbirinden
+// uzaklaşır (drift). Bu, "tek gerçek kaynak" ilkesinin ihlalini otomatik
+// olarak tespit eden tek kontroldür.
+const generatedIndexPath = 'shared/registry/generated/REGISTRY-INDEX.md';
+const committedIndex = loadYamlOrText(generatedIndexPath);
+const freshIndex = buildIndexMarkdown(ROOT);
+if (committedIndex !== freshIndex) {
+  fail(generatedIndexPath, "committed file does not match a fresh regeneration — run 'npm run registry:build-indexes' and commit the diff");
+} else {
+  ok('generated-output drift: shared/registry/generated/REGISTRY-INDEX.md matches a fresh regeneration');
+}
+
+function loadYamlOrText(relPath) {
+  const full = path.join(ROOT, relPath);
+  if (!existsSync(full)) return null;
+  return readFileSync(full, 'utf8');
 }
 
 console.log('');
