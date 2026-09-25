@@ -48,10 +48,48 @@ sources:
       - tool-state (repository dimension)
       - competency-state (repository dimension)
 
-conflict_log: []
-# TR: Bu increment'te kaynaklar arasında çözülemeyen bir çelişki
-# BULUNMADI — bulunursa buraya CONFLICTING_SOURCE olarak kaydedilecek,
-# sessizce daha etkileyici versiyon seçilmeyecek.
+conflict_log:
+  # TR: Post-Codex fix campaign (2026-09-25) tarafından bulunan ve
+  # düzeltilen İÇSEL tutarsızlıklar — bunlar iki BAĞIMSIZ kaynak
+  # arasındaki çözülemeyen çelişkiler değil, bir dosyanın kendi beyan
+  # ettiği tek owner_fact kaynağını eksik yansıttığı durumlardır; bu
+  # nedenle precedence tablosuna göre yeniden kullanıcı teyidi
+  # gerektirmeden doğrudan düzeltilebilirler (rank 2 kaynağın kendi
+  # içeriği zaten yeterlidir).
+  - id: conflict.domain-state.media-streaming-exposure-level
+    type: internal_derivation_inconsistency
+    found_by: "post-codex audit fix campaign, P1-01"
+    description: >
+      domain-state.yaml#domain.media.streaming exposure seviyesi
+      PROFESSIONAL_PARTICIPATED idi, ancak kendi owner_fact'i olan
+      professional-experience.yaml#pro.streaming.sdk-context'in
+      what_i_did listesi execution-seviyesinde ifadeler içeriyor
+      ("REST API automation", "Stream creation and Live Stream
+      end-to-end testing", "Provider flow validation") — bu,
+      PARTICIPATED değil EXECUTED seviyesine karşılık gelir.
+    resolution: "exposure PROFESSIONAL_EXECUTED olarak düzeltildi (domain-state.yaml)."
+    resolved: true
+
+  - id: conflict.domain-state.precious-metals-exposure-category
+    type: internal_derivation_inconsistency
+    found_by: "post-codex audit fix campaign, P1-01"
+    description: >
+      domain-state.yaml#domain.financial.trading-precious-metals
+      yalnızca professional_domain_tool_knowledge (zayıf, WORKING/AWARE
+      seviyesi) kategorisine referans veriyordu ve LEARNING olarak
+      etiketlenmişti; ancak professional-experience.yaml'ın
+      other_professional_project_exposure listesinde aynı konu "FX /
+      Precious Metals FinTech QA" olarak ayrı ve daha güçlü bir olgu
+      kategorisinde de mevcuttur (bu iki kategori professional-experience.yaml'ın
+      kendi TR açıklamasına göre farklı ağırlıktadır).
+    resolution: "exposure PROFESSIONAL_PARTICIPATED olarak yükseltildi, owner_fact other_professional_project_exposure girdisine güncellendi (domain-state.yaml). Vaka derinliği hâlâ yok, bu yüzden PROFESSIONAL_EXECUTED değil."
+    resolved: true
+# TR: Bu increment'te İKİ BAĞIMSIZ kaynak arasında çözülemeyen bir
+# çelişki BULUNMADI — yukarıdaki iki madde tek-kaynaklı içsel
+# tutarsızlıklardır. Gerçek çok-kaynaklı bir çelişki bulunursa buraya
+# CONFLICTING_SOURCE tipiyle ve muhtemelen USER_CONFIRMATION_REQUIRED
+# statüsüyle kaydedilecek, sessizce daha etkileyici versiyon
+# seçilmeyecek.
 
 unresolved_personal_facts:
   # TR: Bu liste, "mühendislik olarak eksik" ile "kişisel bir gerçek

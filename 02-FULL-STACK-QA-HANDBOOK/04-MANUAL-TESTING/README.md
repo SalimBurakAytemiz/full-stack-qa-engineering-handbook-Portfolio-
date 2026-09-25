@@ -48,9 +48,13 @@ Session notes should capture what a scripted bug report needs anyway:
 exact repro steps, expected vs. actual, and — critically — *why it
 matters* (user impact, not just "this is wrong"). `BUG-AUTH-EDU-001`
 (`QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/`) is this repository's own
-real example of a defect investigated and documented to that standard:
-request/response evidence captured, root cause identified, a
-regression test added so it can't silently reappear.
+real example of investigating a historically-planned defect to that
+standard: real request/response evidence captured, both API and UI
+steps actually executed against a running instance. The honest result
+was **NOT REPRODUCED** — the described behavior never existed in this
+implementation — and existing regression coverage (`backend/tests/auth.test.js`)
+was confirmed to already cover the exact scenario, so no new test was
+added. See `EXECUTION.md` section 8-9 for the full reasoning.
 
 ## Scripted vs. exploratory: when to use which
 

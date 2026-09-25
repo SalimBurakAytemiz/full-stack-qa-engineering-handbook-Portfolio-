@@ -16,8 +16,9 @@ items:
     label: "API Contract Testing — Postman/Newman/AJV"
     maturity: L4_CI_VERIFIED
     path: "QA-DEMO-SYSTEM/api-tests"
-    evidence_id: evidence.api-tests.newman-ajv-suite
+    evidence_id: evidence.api-tests.public-schema-suite
     related_domains: [domain.commerce.ecommerce]
+    note: "TR: Codex post-audit fix (P1-03) — bu lab artık BEŞ ayrı paketi kapsıyor (public/schema, protected/auth, orders/payment, notifications, API-to-DB), her biri kendi evidence.* kaydına ve kendi CI job'una sahip (bkz. relationships.yaml'daki ek TESTED_BY kenarları ve 06-EVIDENCE/evidence.yaml). evidence_id alanı schema gereği tekil olduğu için yalnızca ilk/foundation paketi (public/schema) işaret eder."
 
   - id: lab.web-automation.playwright
     label: "Web Automation — Playwright"

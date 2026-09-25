@@ -20,9 +20,12 @@ tool_categories:
   web_automation:
     - { id: tool.playwright, label: "Playwright", kind: TOOL, owner: "competency-state.yaml#competency.web.playwright" }
     - { id: tool.selenium, label: "Selenium", kind: TOOL, owner: "competency-state.yaml#competency.web.selenium" }
+    - { id: tool.cucumber, label: "BDD / Cucumber", kind: TOOL, note: "TR: QA-COMPETENCY-MAP.md (superseded) EXPERIENCE olarak kaydediyordu, ancak güncel canonical kaynaklarda (master transformation prompt, repository evidence) doğrulanmıyor — USER_CONFIRMATION_REQUIRED. Jira/Confluence ile aynı desen (satır 66-67)." }
 
   mobile_automation:
     - { id: tool.appium, label: "Appium", kind: TOOL, owner: "competency-state.yaml#competency.mobile.appium" }
+    - { id: tool.device-farm, label: "Browser & Device Farms", kind: TOOL, note: "TR: QA-COMPETENCY-MAP.md (superseded) EXPERIENCE olarak kaydediyordu, ancak güncel canonical kaynaklarda doğrulanmıyor — USER_CONFIRMATION_REQUIRED." }
+    - { id: tool.adb, label: "Android Debug Bridge (ADB)", kind: TOOL, note: "TR: QA-COMPETENCY-MAP.md (superseded) EXPERIENCE olarak kaydediyordu, ancak güncel canonical kaynaklarda doğrulanmıyor — USER_CONFIRMATION_REQUIRED." }
 
   performance:
     - { id: tool.jmeter, label: "JMeter", kind: TOOL, owner: "competency-state.yaml#competency.performance.jmeter" }
@@ -62,6 +65,7 @@ tool_categories:
     - { id: tool.azure-devops, label: "Azure DevOps", kind: TOOL, owner: "professional-experience.yaml#pro.fintech.stablex-like" }
     - { id: tool.jira, label: "Jira", kind: TOOL, note: "TR: Kaynak veride doğrudan doğrulanmadı — USER_CONFIRMATION_REQUIRED." }
     - { id: tool.confluence, label: "Confluence", kind: TOOL, note: "TR: USER_CONFIRMATION_REQUIRED." }
+    - { id: tool.trello, label: "Trello", kind: TOOL, note: "TR: QA-COMPETENCY-MAP.md (superseded) EXPERIENCE olarak kaydediyordu, ancak güncel canonical kaynaklarda doğrulanmıyor — USER_CONFIRMATION_REQUIRED. Jira/Confluence ile aynı desen." }
 
 related:
   fact_owner: "competency-state.yaml"

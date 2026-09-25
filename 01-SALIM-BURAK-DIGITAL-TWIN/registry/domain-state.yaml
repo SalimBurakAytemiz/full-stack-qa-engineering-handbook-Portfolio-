@@ -35,8 +35,9 @@ personal_domain_exposure:
 
   - domain_id: domain.media.streaming
     label: "Media / Live Streaming"
-    exposure: PROFESSIONAL_PARTICIPATED
+    exposure: PROFESSIONAL_EXECUTED
     owner_fact: "professional-experience.yaml#pro.streaming.sdk-context"
+    note: "TR: Codex post-audit correction — owner_fact'in kendi what_i_did içeriği (REST API automation, end-to-end testing, provider flow validation) execution-seviyesinde ifade ediliyor; önceki PROFESSIONAL_PARTICIPATED etiketi kendi kaynağını eksik yansıtıyordu. Bkz. source-provenance.yaml#conflict_log (internal derivation correction, tekil kaynağa karşı)."
 
   - domain_id: domain.financial.crypto
     label: "Cryptocurrency"
@@ -45,8 +46,9 @@ personal_domain_exposure:
 
   - domain_id: domain.financial.trading-precious-metals
     label: "Trading / Precious Metals"
-    exposure: LEARNING
-    note: "TR: 'FX / Precious Metals FinTech' other_professional_project_exposure listesinde geçer — vaka derinliği YOKTUR."
+    exposure: PROFESSIONAL_PARTICIPATED
+    owner_fact: "professional-experience.yaml#other_professional_project_exposure (\"FX / Precious Metals FinTech QA\")"
+    note: "TR: Codex post-audit correction — bu domain aynı zamanda other_professional_project_exposure'da 'FX / Precious Metals FinTech QA' olarak adlandırılmıştır (professional_domain_tool_knowledge'daki genel 'precious-metals-trading' girdisinden AYRI ve daha güçlü bir olgu kategorisidir — bkz. professional-experience.yaml'ın kendi TR açıklaması). Önceki LEARNING etiketi yalnızca zayıf kategoriyi yansıtıyor, var olan daha güçlü kaynağı görmezden geliyordu. Vaka derinliği (professional_cases seviyesinde ayrı bir dosya) hâlâ YOKTUR — bu nedenle PROFESSIONAL_EXECUTED değil, PROFESSIONAL_PARTICIPATED."
 
   - domain_id: domain.insurance
     label: "Insurance"
