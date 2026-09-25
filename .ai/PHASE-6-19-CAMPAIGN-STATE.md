@@ -1,0 +1,445 @@
+# Phase 6–19 Full Completion Campaign — State
+
+> Bu dosya campaign'in canonical checkpoint kaydıdır. Implementation
+> evidence'ının YERİNE geçmez — her phase kendi evidence dosyasını
+> `QA-DEMO-SYSTEM/evidence/` altında üretir. Bu dosya yalnızca "nerede
+> kaldık, sırada ne var" sorusuna hızlı cevap verir.
+
+- **Campaign branch:** `feat/phase-6-19-full-completion-campaign`
+- **Base commit (main, Phase 5 CLEAN):** `837ff2ff1c0c1ada0435d793cfb09479fa954e2f`
+- **Codex review policy:** Codex, Phase 6–19 implementation sırasında KULLANILMIYOR.
+  Yalnızca campaign tamamen bittikten sonra, bağımsız audit için devreye girecek.
+  Bu nedenle her phase'in kendi statüsü **"CLAUDE IMPLEMENTATION COMPLETE —
+  PENDING FINAL CODEX AUDIT"** olarak işaretlenir; asla "Codex reviewed"
+  veya "independently verified" denmez (bkz. Phase 18 notu aşağıda).
+- **Merge policy:** Campaign boyunca PR açılmaz, main'e merge edilmez.
+  Her phase yalnızca bu campaign branch'ine commit/push edilir.
+
+## Phase 18 — Independent Review netliği
+
+ROADMAP.md'nin kendi Phase 18'i ("Repository bağımsız reviewer tarafından
+incelenecektir") normalde Codex'in rolüdür. Bu campaign'de Codex Phase
+6–19 boyunca kullanılmadığından, campaign içindeki "Phase 18" adımı
+**Claude'un kendi yapılandırılmış self-audit'i** olacaktır — gerçek,
+bağımsız üçüncü-taraf inceleme YERİNE GEÇMEZ ve evidence'ta asla öyle
+sunulmaz. Repository'nin gerçek "Independent Review" durumu, bu
+campaign'in sonunda yapılacak asıl Codex audit'i ile sağlanacaktır.
+
+---
+
+## Tooling / Environment Notları (bu oturumda doğrulandı)
+
+| Araç | Durum | Not |
+|---|---|---|
+| Node.js | v22.22.2 | Mevcut, Phase 5'te kullanıldı |
+| `graphql` (npm) | 17.0.2, kurulabilir | Phase 6 GraphQL katmanı için |
+| Playwright + Chromium | `/opt/pw-browsers/chromium` kurulu | Phase 8 (Web) / Phase 9 (Visual/A11y) için — `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` |
+| `selenium-webdriver` (npm) | 4.49.0, kurulabilir | Phase 10 Selenium lab için |
+| Java | OpenJDK 21.0.10, kurulu | JMeter için gerekli |
+| JMeter | `apt-get install jmeter` ile kuruldu — **v2.13 (2015), eski** | Phase 10 JMeter lab için; modern 5.x DEĞİL — bu dürüstçe dokümante edilecek. **Sistem-seviyesi kurulum, repo'ya commit edilmez** — RUN-INSTRUCTIONS'a prerequisite olarak yazılacak |
+| Appium | Kurulmadı — gerçek Android/iOS emulator/simulator bu container'da YOK | Phase 8 Mobile ve Phase 10 Appium için gerçek altyapı eksikliği — **infrastructure gap**, LEARNING/documentation olarak ele alınacak, fake "ran against real device" evidence üretilmeyecek |
+| Jenkins | Kurulu değil, gerçek server yok | Phase 12 — GitHub Actions ile paralel/eşdeğer bir CI pipeline + gerçek bir Jenkinsfile (syntax-valid, ama çalıştırılmadığı dürüstçe belirtilerek) üretilecek |
+| Elastic / OpenTelemetry / Jaeger | Kurulu değil | Phase 13 — gerçek stack kurulumu yerine LEARNING dokümantasyonu + backend'e gerçek correlation-ID/structured-logging eklenmesi (bu kısmı gerçek kod) |
+| Burp Suite / OWASP ZAP | Kurulu değil (GUI/lisanslı araçlar) | Phase 11 — LEARNING dokümantasyonu; güvenlik testleri kendisi QA-DEMO-SYSTEM'e karşı gerçek Newman/Node testleriyle yapılacak |
+| k6 / Gatling / Locust | Gerçek k6 binary'si npm'de değil (ayrı Go binary) | Phase 14 — kurulum denenecek, olmazsa LEARNING dokümantasyonu |
+
+**Genel prensip:** Gerçekten çalıştırılabilen her şey GERÇEK kod+test+evidence
+ile yapılır. Bu sandboxed ortamda gerçekten mevcut olmayan altyapı
+(mobil cihaz/emulator, Jenkins server, Elastic stack, lisanslı GUI
+araçları, harici bulut hesapları) için sahte "PASS" evidence ÜRETİLMEZ —
+bunun yerine dürüst LEARNING/dokümantasyon içeriği + (mümkünse) o konunun
+gerçek, çalıştırılabilir bir alt-kümesi sağlanır. Bu, projenin baştan beri
+uyguladığı Evidence Integrity kuralının doğal devamıdır.
+
+---
+
+## Phase Durumu
+
+| Phase | Adı | Durum | Base SHA | Head SHA |
+|---|---|---|---|---|
+| 6 | GraphQL / WebSocket / Event Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 837ff2f | 9e83721 |
+| 7 | Database Testing | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9e83721 | 8a31c62 |
+| 8 | Web & Mobile QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 8a31c62 | 026623c |
+| 9 | Visual & Accessibility | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 026623c | 5b94cea |
+| 10 | Automation Learning Labs (Selenium/Appium/JMeter) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 5b94cea | 9d4d6a6 |
+| 11 | Security-Aware QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 9d4d6a6 | ace6371 |
+| 12 | CI/CD & Environment | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | ace6371 | 7796f0f |
+| 13 | Logging / Observability / Production QA | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 7796f0f | d6848a1 |
+| 14 | Modern QA Learning Labs | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | d6848a1 | 90a4b04 |
+| 15 | Case Studies (7) | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 90a4b04 | 27ea9d8 |
+| 16 | Interview Preparation | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | 27ea9d8 | f8b4188 |
+| 17 | Final Integration | CLAUDE IMPLEMENTATION COMPLETE — PENDING FINAL CODEX AUDIT | f8b4188 | fda6e61 |
+| 18 | Independent Review (Claude self-audit) | CLAUDE SELF-AUDIT COMPLETE — PENDING FINAL CODEX AUDIT | fda6e61 | 43ed85a |
+| 19 | Clean | CLAUDE BUILD CAMPAIGN COMPLETE — CODEX AUDIT PENDING | 43ed85a | 83ca997 |
+
+---
+
+## Phase 6 — Kapanış Özeti (tamamlandı)
+
+- 24 yeni test (19 GraphQL + 5 WS-advanced), tam backend regresyonu 96/96.
+- Phase 5 bağımlılığı (`requireAuth.js` → `resolveSession` refactor)
+  gerçek Postman koleksiyonuna karşı ayrıca doğrulandı (19/19 request,
+  42/42 assertion).
+- Firebase Events → dürüstçe LEARNING-only (gerçek bulut hesabı yok).
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-6-GRAPHQL-WEBSOCKET-EVENT/EXECUTION.md`
+
+## Phase 7 — Kapanış Özeti (tamamlandı)
+
+- 15 yeni test (`tests/database-testing.test.js`) — SELECT/WHERE/JOIN/
+  Sorting, CRUD lifecycle, NULL/UNIQUE(email) validation, financial
+  SUM-aggregate cross-check, timestamp format+monotonicity, UI→DB
+  end-to-end, seed-vs-source-JSON determinism proof.
+- Mevcut Phase 4/5 testleri (`seed.test.js`/`events.test.js`/
+  `notifications.test.js`) zaten CHECK/FK/UNIQUE(order_id,*) kapsıyordu
+  — tekrar edilmedi, evidence'ta referans verildi.
+- Tam backend regresyonu: 111/111. Yeni dependency yok.
+- Audit/History → dürüstçe NOT IMPLEMENTED (kaynak kodda audit tablosu yok).
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md`
+- Detaylar için evidence dosyalarına bakınız — bu state dosyası onların
+  yerine geçmez.
+
+## Phase 8 — Kapanış Özeti (tamamlandı)
+
+- Yeni `web-tests` npm workspace, `@playwright/test` (devDependency),
+  önceden kurulu Chromium (`/opt/pw-browsers/chromium-1194`) kullanıldı,
+  indirme yapılmadı.
+- 14 yeni Playwright testi (Functional, Responsive, Network Inspection,
+  Storage, Cookies-negatif, DevTools console, Frontend/Backend
+  Validation, gerçek WS→DOM realtime bildirim). İki ardışık çalıştırma
+  ikisinde de 14/14 (flaky değil).
+- Tam backend regresyonu: 111/111 (yeni workspace backend'i etkilemedi).
+- Cross-Browser → yalnızca Chromium (dürüstçe belirtildi, Firefox/WebKit yok).
+- Mobile (16 madde) → dürüstçe LEARNING-only (`MOBILE-LEARNING.md`).
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-8-WEB-MOBILE-QA/EXECUTION.md` + `MOBILE-LEARNING.md`
+
+## Phase 9 — Kapanış Özeti (tamamlandı)
+
+- `@axe-core/playwright` (devDependency, MPL-2.0) eklendi. 6 yeni
+  accessibility testi: WCAG (wcag2a+wcag2aa, login+products), Contrast
+  (color-contrast kuralı), Accessibility Labels
+  (`toHaveAccessibleName()`), Keyboard Navigation + Focus (Tab sırası +
+  klavye-yalnızca form submit) — **axe-core GERÇEKTEN 0 violation
+  buldu, bastırılmadı**.
+- 3 yeni visual-regression testi (login/products baseline + negatif
+  kontrol) — negatif kontrol testinde ilk denemede yanlış
+  `maxDiffPixelRatio` nedeniyle false-negative riski BULUNDU ve
+  düzeltildi (bkz. evidence Bölüm 5) — "Difference Visualization
+  gerçekten fark yakalıyor mu?" sorusu ciddiye alındı.
+- Tam web-tests suite 3 ardışık çalıştırmada 23/23 (flaky değil). Tam
+  backend regresyonu 111/111.
+- Figma Comparison + gerçek ekran-okuyucu yazılımı → dürüstçe
+  LEARNING-only.
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-9-VISUAL-ACCESSIBILITY/EXECUTION.md`
+
+## Phase 10 — Kapanış Özeti (tamamlandı)
+
+- **Selenium:** Gerçek POM kodu yazıldı (`automation-labs/selenium/`),
+  gerçek backend'e (port 4400) karşı çalıştırıldı. Kök neden kesin
+  izole edildi: chromedriver 147.x + Chromium 141.x uyumsuz, eşleşen
+  driver'ı hem Selenium Manager hem `npm install chromedriver@141`
+  indiremedi (`googlechromelabs.github.io` allowlist dışı, 403). CODE
+  COMPLETE — EXECUTION BLOCKED (doğrulanmış).
+- **JMeter:** Gerçek `.jmx` planı yazıldı, gerçek backend'e (port 4500)
+  karşı çalıştırıldı. Hata (`ForbiddenClassException: ScriptWrapper`)
+  JMeter'ın KENDİ stok şablonuyla çapraz doğrulanarak dosya değil
+  kurulum sorunu olduğu KANITLANDI — apt `jmeter 2.13` (2015) + sistem
+  `libxstream-java 1.4.20` (tek mevcut sürüm) uyumsuzluğu. CODE
+  COMPLETE — EXECUTION BLOCKED (doğrulanmış).
+- **Appium:** LEARNING-only (Phase 8 Mobile ile aynı gerekçe).
+- Tam backend regresyonu: 111/111. Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/`
+
+## Phase 11 — Kapanış Özeti (tamamlandı)
+
+- Yeni `backend/tests/security.test.js` (12 test): IDOR/BOLA (3),
+  XSS-oriented (2 — biri GERÇEK bir bulgu içeriyor, aşağıda), SQLi-
+  oriented (3), Mass Assignment (2), Sensitive Data (2).
+- **Gerçek bulgu:** `payment_token` bilinmeyen değer hatası, ham
+  istemci girdisini JSON mesajına yansıtıyor (`payment.service.js`).
+  Üç bağımsız kontrol noktasıyla (content-type JSON, frontend
+  `textContent` kullanımı, bu hatanın hiçbir UI'da gösterilmemesi)
+  uçtan uca istismar edilemez olduğu KANITLANDI — non-blocking
+  hardening notu olarak kaydedildi, küçümsenmedi.
+- RBAC/OTP/Rate Limiting/File Upload → `grep` ile doğrulanıp NOT
+  IMPLEMENTED (icat edilmedi).
+- OWASP API Security Top 10 → gerçek eşleştirme
+  (`OWASP-API-TOP-10-MAPPING.md`). Burp Suite/OWASP ZAP → LEARNING-only.
+- Tam backend regresyonu: 123/123 (111 mevcut + 12 yeni).
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/`
+
+## Phase 12 — Kapanış Özeti (tamamlandı)
+
+- **GERÇEK, bu oturumdan BAĞIMSIZ doğrulanmış CI/CD kanıtı:**
+  `.github/workflows/ci.yml` push edildi (commit `6ac36bc`), GitHub
+  Actions Run #1 (`id: 35950797840`) GitHub'ın kendi API'siyle
+  sorgulandı — **3/3 job SUCCESS** (backend node:test, web-tests
+  Playwright gerçek `playwright install` ile, api-tests Newman/AJV).
+  Bu, Phase 10'un Selenium/JMeter altyapı-kısıtlarıyla doğrudan
+  tezat oluşturuyor: GH Actions runner'ları bu sandbox'ın ağ
+  kısıtlarına TABİ DEĞİL, dolayısıyla GERÇEK bir PASS elde edildi.
+- `web-tests/playwright.config.js` taşınabilir hale getirildi
+  (sabit sandbox yolu yerine opsiyonel `PLAYWRIGHT_CHROMIUM_PATH`
+  env var) — yerel 23/23 PASS ile yeniden doğrulandı.
+- `Jenkinsfile` (syntax-valid, `ci.yml` ile aynı 3 aşama) yazıldı,
+  dürüstçe NOT EXECUTED (gerçek Jenkins server yok).
+- DEV/QA/UAT/Stage/Production, Environment Validation, Server/
+  Application Recycle — `ENVIRONMENT-CONCEPTS.md`.
+- Tam backend regresyonu: 123/123. Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-12-CICD-ENVIRONMENT/`
+
+## Phase 13 — Kapanış Özeti (tamamlandı)
+
+- Yeni `backend/src/middleware/requestContext.js` — her isteğe
+  `crypto.randomUUID()` korelasyon ID'si, `X-Request-Id` response
+  header'ı, yapısal tek-satırlık access-log.
+- **Gerçek bulgu + düzeltme:** İlk yazımda `req.path` `finish` event'i
+  içinde LAZY okunduğu için Express'in router-mount path-stripping
+  davranışı nedeniyle YANLIŞ logluyordu (`/api/products` için `/`) —
+  kök neden izole edildi, `req.originalUrl`'i senkron yakalayarak
+  düzeltildi, regresyon testiyle kilitlendi.
+- 5 yeni test (`observability.test.js`). Tam backend regresyonu:
+  128/128 (123 mevcut + 5 yeni). Global middleware olduğu için Phase
+  5'in protected Postman koleksiyonuna karşı da ayrıca doğrulandı
+  (19/19, 42/42).
+- Smoke/Production/Release/Stability/Hotfix Testing → Phase 12'nin
+  GERÇEK CI pipeline'ı ve bu campaign'in kendi pratiği referans
+  verilerek karşılandı (tekrar test yazılmadı).
+- Elastic/OpenTelemetry/Jaeger → dürüstçe LEARNING-only.
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY/`
+
+## Phase 14 — Kapanış Özeti (tamamlandı)
+
+- **Code Coverage (GERÇEK):** `node --test --experimental-test-coverage`
+  — 128/128 test, `all files: line 99.11% / branch 96.63% / funcs
+  97.77%`. Yeni dependency yok, `backend/package.json`'a `test:coverage`
+  script'i eklendi. Çıktı `code-coverage-output.txt`'e kaydedildi.
+- **k6/Gatling/Locust (GERÇEK — Locust ile):** `pip3 install locust`
+  başarılı (saf Python, JMeter'ın JVM/XStream sorunundan bağımsız).
+  Gerçek `locustfile.py` gerçek backend'e karşı çalıştırıldı: 526
+  istek, **0 hata**, p95=5ms p99=15ms.
+- **Docker for QA (CODE COMPLETE — EXECUTION BLOCKED, doğrulanmış):**
+  `docker` CLI var, daemon YOK (`docker info` ile doğrulandı). Gerçek
+  `Dockerfile` + `docker-compose.yml` + `.dockerignore` yazıldı;
+  `docker compose config` (daemon gerektirmez) ile syntax GERÇEKTEN
+  doğrulandı. İki gerçek tasarım hatası (npm workspace lockfile
+  uyuşmazlığı, `shared/`'ın yanlış konumlandırılması) yapım
+  denemesinden ÖNCE bulunup düzeltildi.
+- Kalan 9 madde (Pact/Kafka/RabbitMQ/SonarQube/Allure/Feature Flags/
+  Canary/Blue-Green/Cloud QA) → dürüstçe LEARNING-only.
+- Tam backend regresyonu: 128/128 (bu faz backend kaynak koduna
+  dokunmadı). Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/`
+
+## Phase 15 — Kapanış Özeti (tamamlandı)
+
+- 7 case-study dosyası yazıldı — 4/7 GERÇEK sentez (Authentication,
+  E-Commerce Order Flow, Payment Flow, Real-Time WebSocket/Event Flow
+  — hepsi Phase 5/6/7/8/11/14'ün ZATEN çalıştırılmış gerçek kanıtına
+  dayanıyor), 2/7 dürüstçe LEARNING (Multi-Country/Localization —
+  `grep` ile NOT IMPLEMENTED doğrulandı; Mobile Migration — Phase 8/10
+  altyapı eksikliği), 1/7 kısmen ikisi de (Production Incident —
+  Phase 13'ün correlation-ID altyapısı gerçek, senaryo kurgusal).
+- Bu faz yeni kod/test YAZMADI (bilinçli, test-ekonomisi) — 128
+  testlik tam backend regresyonu, case study'lerde referans verilen
+  TÜM test dosyalarının hâlâ PASS olduğunu doğruladı.
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-15-CASE-STUDIES/`
+
+## Phase 16 — Kapanış Özeti (tamamlandı)
+
+- `INTERVIEW-PREP.md` — 14 kategori, 26 soru, 5-bölümlü format (Short/
+  Detailed/Example/Real QA Risk/Related Lab).
+- TÜM "Related Lab" referansları (24 benzersiz dosya yolu) bu oturumda
+  GERÇEKTEN dosya-varlığı kontrolüyle doğrulandı — sıfır kırık
+  referans.
+- Sorular gerçek campaign bulgularına atıf yapıyor (chromedriver/
+  Chromium uyuşmazlığı, payment_token reflection, req.path bug'ı,
+  GraphQL nullable field davranışı, retries:0 kararı, gerçek CI
+  çalıştırması, gerçek p95/p99 sayıları) — icat edilmedi.
+- Tam backend regresyonu: 128/128 (bu faz kod değiştirmedi). Açık
+  blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-16-INTERVIEW-PREPARATION/`
+
+## Phase 17 — Kapanış Özeti (tamamlandı)
+
+- 13 kontrol (broken links, terminology, knowledge status, tests,
+  automation, reports, evidence, CI, security, secrets, repository
+  navigation, case study traceability, documentation consistency)
+  çalıştırıldı.
+- **1 gerçek tutarsızlık bulundu ve düzeltildi:** Case Study 05'teki
+  `web-tests/realtime-notification.spec.js` referansı `tests/`
+  alt-dizinini atlıyordu — düzeltildi.
+- **GERÇEK CI geçmişi doğrulandı:** GitHub Actions API ile 6/6
+  çalıştırma SUCCESS (Phase 12'den bu yana HER push'ta) — bu, Phase
+  13-16'da eklenen tüm yeni testlerin CI'da da gerçekten PASS ettiğinin
+  bağımsız kanıtı.
+- Tam backend regresyonu: 128/128. Tam web-tests regresyonu: 23/23.
+- Kapsamlı secret taraması (69 dosya, 7102 satır — tüm Phase 6-19
+  diff'i): sıfır gerçek secret.
+- ROADMAP.md'nin "Current Status" bölümü BİLİNÇLİ olarak dokunulmadı
+  (Phase 6-19 henüz Codex tarafından incelenmedi, Phase 5'te durduğu
+  gibi kalması DOĞRU).
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-17-FINAL-INTEGRATION/`
+
+## Phase 18 — Kapanış Özeti (tamamlandı)
+
+- Risk-odaklı, eleştirel bir kendi-kendini-inceleme yapıldı (mekanik
+  kontroller değil, "bu gerçekten doğru mu" sorusu).
+- **1 GERÇEK bulgu bulundu ve düzeltildi:** GraphQL katmanının,
+  REST'in `errorHandler.js` disiplininin aksine, beklenmeyen dahili
+  hataları maskelemediği (ham mesaj sızıntısı riski) — ampirik olarak
+  doğrulandı (`node -e` ile gerçek bir crash senaryosu), düzeltildi
+  (`maskUnexpectedErrors()`, yalnızca execution-fazı + bilinmeyen-kod
+  hatalarını maskeler, validation hatalarını ASLA maskelemez — bu
+  ayrım da ampirik doğrulandı), 7 yeni testle kilitlendi
+  (`tests/graphql-error-masking.test.js`).
+- **1 kapsam-dışı gözlem** (session expiry mesajı yanıltıcı, Phase
+  4'ten kalma, bu campaign'in kapsamı dışında) sessizce atlanmadan
+  kaydedildi, düzeltilmedi.
+- Tam backend regresyonu: 135/135 (128 önceki + 7 yeni). Tam
+  web-tests regresyonu: 23/23.
+- Açık blocker: 0.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-18-INDEPENDENT-REVIEW/`
+  (`CLAUDE-SELF-AUDIT.md` + `EXECUTION.md`) — AÇIKÇA "bağımsız
+  inceleme DEĞİLDİR" olarak etiketlendi.
+
+## Phase 19 — Kapanış Özeti (tamamlandı)
+
+- Yeni kod YAZILMADI — bu faz, Phase 6-18'in TAMAMINI tek bir final
+  regresyonda birlikte doğrulayan kapanış fazıdır.
+- Backend tam regresyonu: **135/135**. Web-tests tam regresyonu:
+  **23/23**.
+- API-tests: 6 suite'in TAMAMI 0 fail ile PASS etti — 5'i LIVE (her
+  birinden ÖNCE `npm run db:seed` ile, gerçek canlı sunucuya karşı):
+  Public (11 req/26 assertion), Protected (19 req/42 assertion),
+  Orders&Payment AJV (64 req/118 assertion), Notifications AJV (20
+  req/48 assertion), API→DB (17 scenario/97 assertion); 1'i LOCAL/
+  STATIC (`db:seed`/canlı sunucu GEREKTİRMEZ, hiç HTTP isteği atmaz —
+  bkz. Codex fix-campaign B9): Schema negative-proof (19/19 proof
+  case).
+- **Gerçek operasyonel bulgu (dürüstçe kaydedildi):** Final
+  regresyonun ilk turunda `api:test:orders-payment`, ARADA
+  `db:seed` çalıştırılmadan üç suite art arda koşulduğu için stock-
+  decrement assertion'ında başarısız oldu. Bu bir Phase 6-19 kod
+  regresyonu DEĞİLDİ — projenin kendi (Phase 5'ten kalma,
+  `api-tests/README.md`'de belgelenen) reset protokolüne uyulmaması
+  sonucuydu. Doğru sırayla (`db:seed` → suite) yeniden çalıştırılarak
+  ampirik olarak doğrulandı (64/64, 118/118 PASS) — detay:
+  `evidence/PHASE-19-CLEAN/EXECUTION.md` Bölüm 4.
+- GitHub Actions CI: dal üzerindeki 8/8 run SUCCESS (GitHub API ile
+  gerçekten sorgulandı, en son run HEAD üzerinde).
+- Evidence dizinindeki TÜM göreli markdown linkleri programatik
+  taranarak doğrulandı: 0 kırık link.
+- Secret taraması: 0 gerçek secret (yalnızca "secret loglanmıyor"
+  diyen kod yorumları eşleşti).
+- Runtime artifact temizliği: final regresyon için başlatılan arka
+  plan sunucusu durduruldu, ürettiği `data/qa-demo.db` silindi,
+  `git status` working tree clean.
+- Konsolide Codex Audit Manifest yazıldı:
+  `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md`.
+- Açık blocker: **0**.
+- Evidence: `QA-DEMO-SYSTEM/evidence/PHASE-19-CLEAN/EXECUTION.md`
+
+## [GÜNCELLEME] Codex'in Bağımsız İlk Audit'i ve TEK TOPLU FIX CAMPAIGN
+
+Yukarıdaki "CLAUDE BUILD CAMPAIGN COMPLETE — CODEX AUDIT PENDING"
+durumu, Codex'in GERÇEK bağımsız ilk audit'i ile test edildi.
+**FINAL VERDICT: FAIL / CHANGES REQUIRED — 9 blocker (B1-B9, P1×2 +
+P2×7), 7 non-blocking not (N1-N7).** Bu, "0 blocker" iddiasının
+YANLIŞ olduğunu ve Claude'un kendi self-audit'inin (Phase 18) bu
+blocker'ların HİÇBİRİNİ yakalamadığını kanıtladı — tam olarak
+campaign'in kendi kurallarının öngördüğü, gerçek bağımsız incelemenin
+neden gerekli olduğunun kanıtı.
+
+Bunun üzerine TEK TOPLU BİR FIX CAMPAIGN yürütüldü (aynı dal üzerinde,
+`a359b39` → `8fab168`, 7 commit, FIX-1'den FIX-6'ya): B1-B9'un
+TAMAMI ve N1-N7'nin TAMAMI ele alındı. Detaylar:
+`.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md` (Bölüm 1b) ve
+`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`.
+
+**Final durum: B1-B9 hepsi RESOLVED, N1-N7 hepsi RESOLVED/VERIFIED/
+DOCUMENTED. Açık blocker: 0. Final regresyon: Backend 144/144, Web-tests
+26/26, API-tests 6 suite (5 live + 1 local/static) 0 fail, GitHub
+Actions 4/4 job SUCCESS (yeni selenium-lab job'u dahil, GERÇEKTEN
+PASS).**
+
+## [GÜNCELLEME 2] Codex'in FIX-DELTA Re-Review'u ve 2. FIX ROUND
+
+Codex'in yukarıdaki 1. fix campaign turu (`a359b39` → `2b1966d`)
+üzerindeki BAĞIMSIZ fix-delta re-review'u da **FAIL / CHANGES
+REQUIRED** sonucu verdi: B1-B4/B6-B9 gerçekten RESOLVED'dı, ama
+**B5'in fail-gate parçası eksikti** (correlation + threshold gerçekti,
+ama başarısız bir JMeter örneğini process exit code'a bağlayan bir
+runner yoktu) ve **N6'nın kendisi de stale kalmıştı** (`2b1966d`
+manifest'i, kendi commit'inin etkisini sayıma katmadan "37 commit / 87
+dosya" yazmıştı; Codex'in bağımsız `git log`/`git diff --stat` kontrolü
+gerçek sayının 38/88 olduğunu buldu). N4/N5/N7 de spesifik, bounded
+kapsamlarla yeniden açıldı.
+
+Bunun üzerine 2. bir fix round (aynı dal üzerinde, `2b1966d` → bu
+commit, FIX-7 + bu manifest-sync commit'i) yürütüldü: B5'in fail-gate
+parçası GERÇEK kodla tamamlandı (`automation-labs/jmeter/scripts/run-jmeter.js`,
+fixture-tabanlı 7/7 unit test + controlled PASS/FAIL kanıtı), N4 gerçek
+bir redaksiyon koduyla kapatıldı, N5'in kategori dağılımı gerçek
+sayımla düzeltildi, N7 hedefli 7 dosyada Türkçe WHY yorumu ile
+kapatıldı, ve N6 bu kez **yapısal olarak** (bir commit kendi SHA'sını
+literal yazamayacağı için "bu commit" self-reference ilkesiyle, asla
+stale olamayacak şekilde) düzeltildi. Detaylar:
+`.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md` (Bölüm 1c) ve
+`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`.
+
+**2. round sonrası final durum: B1-B9 hepsi RESOLVED (B5 dahil TAM
+RESOLVED), N4/N5/N6/N7 hepsi RESOLVED. Açık blocker: 0. Açık
+non-blocking not: 0. Backend regresyonu: 149/149. JMeter fail-gate
+unit testleri: 7/7.**
+
+## [GÜNCELLEME 3] Codex'in 2. Fix-Delta Re-Review'u ve 3. FIX ROUND
+
+Codex'in 2. fix campaign turu (`2b1966d` → `3555b53`) üzerindeki
+BAĞIMSIZ 2. fix-delta re-review'u da **FAIL / CHANGES REQUIRED**
+sonucu verdi — ama bu kez yalnızca 2 açık blocker kaldı: B1-B9 hepsi
+gerçekten RESOLVED'dı, N5/N7 gerçekten RESOLVED'dı.
+
+1. **N4 — 2. round'un KENDİ kodunda gerçek bir regresyon:**
+   `redactSensitiveQuery()`'nin `decodeURIComponent(key)` çağrısı
+   unguarded'dı; malformed percent-encoding (`?x%ZZ=1`) bir `URIError`
+   fırlatıyor, bu da SADECE loglama amaçlı bir middleware'in route'un
+   gerçek cevabını 500'e çevirmesine yol açıyordu.
+2. **N6 — yine stale, ama farklı bir yerde:** bu kez "bu commit"
+   self-reference ilkesi doğru çalışıyordu, ama TARİHSEL
+   `a359b39..2b1966d` aralığı hiç yeniden hesaplanmamıştı (hâlâ eski
+   "34 dosya/7 commit" yazıyordu) — gerçek sayı 35/8'di (aralığın
+   kendi son commit'i, `2b1966d`, sayıma dahil edilmemişti).
+
+3. bir fix round (`3555b53` → bu commit, FIX-9 + FIX-10) yürütüldü:
+   N4, `safeDecodeURIComponent()` (try/catch, ASLA throw etmez) ve
+   fail-closed bir placeholder ile GERÇEKTEN kapatıldı — 8 yeni test
+   (Codex'in istediği A/B/C/D senaryolarının hepsi, gerçek HTTP
+   isteğiyle doğrulandı). N6 bu kez hem self-reference ilkesini
+   KORUYARAK hem de TÜM tarihsel aralıkları (`a359b39..2b1966d`,
+   `2b1966d..3555b53`) gerçek `git log`/`git diff --stat` ile yeniden
+   doğrulayarak, net bir range-semantiği tablosuyla kapatıldı.
+   Detaylar: `.ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md` (Bölüm 1d) ve
+   `.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`.
+
+**3. round sonrası final durum: B1-B9, N4, N5, N6, N7 hepsi
+GERÇEKTEN RESOLVED. Açık blocker: 0. Backend regresyonu: 157/157.**
+
+## Campaign Statüsü: CLAUDE 3. FIX ROUND COMPLETE — CODEX'İN BİR SONRAKİ (4.) TURU İÇİN BEKLEMEDE
+
+Phase 6'dan Phase 19'a kadar TÜM fazlar VE Codex'in ÜÇ ayrı bağımsız
+turda bulduğu TÜM blocker'lar/non-blocking notlar ele alınmıştır.
+Main'e merge YAPILMADI, PR AÇILMADI, branch SİLİNMEDİ, history
+SIKIŞTIRILMADI — campaign kendi kurallarına göre burada durur. Bu
+görevin kendi talimatı gereği, Codex BU TURDA ÇAĞRILMADI — bir sonraki
+adım (varsa) bu campaign'in dışında, ayrı bir görev olarak yapılacak
+Codex'in DÖRDÜNCÜ turudur (`.ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md`)
+— Codex'in Phase 6-19'un TAMAMINI yeniden taramasına GEREK YOKTUR,
+yalnızca `3555b53..HEAD` delta'sını incelemesi yeterlidir.

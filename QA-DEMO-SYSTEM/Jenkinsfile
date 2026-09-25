@@ -1,0 +1,102 @@
+// Phase 12 — CI/CD & Environment (Jenkins LEARNING lab).
+//
+// STATUS: syntax-valid, real declarative pipeline — NEVER EXECUTED. No
+// Jenkins server (master or agent) is installed or reachable in this
+// sandboxed environment (verified — see EXECUTION.md "Tooling" table).
+// This mirrors the SAME three stages as .github/workflows/ci.yml (which
+// WAS genuinely run and verified via the GitHub Actions API — see
+// EXECUTION.md section 2) so the two pipelines are directly comparable:
+// this file documents Jenkins-specific mechanics (declarative Pipeline
+// syntax, stage/step structure, post-build actions, workspace handling)
+// without fabricating a "ran on Jenkins" result.
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'node22'
+    }
+
+    options {
+        timestamps()
+        // A real Jenkins convention — abort a hung build instead of
+        // consuming an agent indefinitely.
+        timeout(time: 20, unit: 'MINUTES')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install') {
+            steps {
+                dir('QA-DEMO-SYSTEM') {
+                    sh 'npm ci'
+                }
+            }
+        }
+
+        stage('Backend Tests') {
+            steps {
+                dir('QA-DEMO-SYSTEM') {
+                    sh 'npm test --workspace backend'
+                }
+            }
+        }
+
+        stage('Web QA (Playwright)') {
+            steps {
+                dir('QA-DEMO-SYSTEM/web-tests') {
+                    sh 'npx playwright install --with-deps chromium'
+                }
+                dir('QA-DEMO-SYSTEM') {
+                    sh 'npm test --workspace web-tests'
+                }
+            }
+        }
+
+        stage('API Schema Validation') {
+            steps {
+                dir('QA-DEMO-SYSTEM') {
+                    // Codex fix-campaign N3 (non-blocking): the real default
+                    // DB path (backend/src/config/index.js, when DB_PATH is
+                    // unset) is backend/data/qa-demo.db. This previously
+                    // targeted data/qa-demo.db (one level too shallow),
+                    // which never matched a real file — on a Jenkins agent
+                    // with a REUSED, persistent workspace (unlike GitHub
+                    // Actions' always-fresh runners), that would have
+                    // silently failed to clean stale state between builds.
+                    // Never actually run (no Jenkins server in this
+                    // sandbox), but a real latent bug in code presented as
+                    // ready-to-run — fixed to the correct path.
+                    sh '''
+                        rm -f backend/data/qa-demo.db
+                        nohup node backend/src/server.js > /tmp/jenkins-backend.log 2>&1 &
+                        for i in $(seq 1 20); do
+                          curl -sf http://localhost:3000/api/health && break
+                          sleep 0.5
+                        done
+                    '''
+                    sh 'npm run api:test:postman --workspace api-tests'
+                }
+            }
+        }
+    }
+
+    post {
+        // "Console Output" / "Test Failure Analysis" in a real Jenkins
+        // job come from this stage's own recorded log plus a test-report
+        // publisher plugin (e.g. junit) reading structured output — this
+        // repo's node:test runs don't currently emit JUnit XML, so a real
+        // pipeline would add --test-reporter=junit before wiring this up
+        // for real; noted here rather than silently assumed.
+        always {
+            echo 'Pipeline finished — see the Console Output above for each stage.'
+        }
+        failure {
+            echo 'Build FAILED — see the failing stage above for the real error (Test Failure Analysis starts here).'
+        }
+    }
+}

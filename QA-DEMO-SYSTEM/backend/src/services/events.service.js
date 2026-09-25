@@ -7,6 +7,13 @@ const ORDER_PAID_EVENT_TYPE = 'order.paid';
 // general HTTP idempotency system (that remains out of P4.3 scope, see
 // docs/RUN-INSTRUCTIONS.md). A second attempt to emit order.paid for the
 // same order throws a constraint violation instead of silently duplicating.
+//
+// KORELASYON NEDENİ (Codex final fix round N7): burada üretilen `eventId`,
+// bu event'ten türeyen notification'a (notifications.service.js) VE
+// WebSocket üzerinden push edilen mesaja kadar İZ SÜRÜLEBİLİR bir zincirin
+// başlangıcıdır — B1 fix'i (GraphQL→WebSocket push) hangi transporttan
+// (REST veya GraphQL) geldiğine bakmaksızın AYNI bu event/notification
+// zincirini kullanır, iki ayrı iş mantığı YOKTUR.
 function createOrderPaidEvent(db, { orderId, userId, total }) {
   const eventId = crypto.randomUUID();
   const payload = JSON.stringify({ orderId, userId, total });
