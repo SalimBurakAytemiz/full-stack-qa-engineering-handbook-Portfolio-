@@ -16,7 +16,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Elastic — QA Log Investigation / RCA | INDEPENDENT | EXECUTED | NOT_PRACTICED |
 | Request Correlation ID / Structured Logging | INDEPENDENT | NONE | CI_VERIFIED |
 | OpenTelemetry / Jaeger / Distributed Tracing | AWARE | NONE | NOT_PRACTICED |
-| Security-Aware QA (Auth/AuthZ/RBAC/IDOR/XSS-SQLi-oriented/Mass Assignment) | WORKING | PARTICIPATED | CI_VERIFIED |
+| Security-Aware QA (Auth/AuthZ/RBAC/IDOR/XSS-SQLi-oriented/Mass Assignment) | WORKING | NONE | CI_VERIFIED |
 | Burp Suite | AWARE | NONE | NOT_PRACTICED |
 | OWASP ZAP | AWARE | NONE | NOT_PRACTICED |
 | SQL for QA / Data Validation | INDEPENDENT | EXECUTED | CI_VERIFIED |
@@ -110,7 +110,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | GitHub Actions CI pipeline (4 real jobs) | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (235 edges)
+## Relationships (236 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -254,6 +254,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.performance.locust | LEARNING | gap.performance.k6 |
 | competency.performance.locust | LEARNING | gap.performance.gatling |
 | competency.web.accessibility | LEARNING | gap.accessibility.professional-exposure |
+| competency.security.security-aware-qa | LEARNING | gap.security.professional-exposure |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.api-contract.postman-newman-ajv |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.database.sql-validation |

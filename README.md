@@ -20,18 +20,27 @@ tests behind it.
   — what I know, what I've done professionally, what I've practiced in
   this repository, and where the honest gaps are. These are never
   merged into one "experience" claim.
-- **Explore the QA handbook** → the numbered `0X-*` directories at repo
-  root (Foundations, Requirement Analysis, Risk & Test Design, Manual
-  Testing, Test Management, Defect Management, API Testing, and the
-  rest of the Phase 0-5 handbook content). A reorganized, fully
-  navigable `02-FULL-STACK-QA-HANDBOOK/` is planned but not yet built —
-  see [`ROADMAP.md`](ROADMAP.md) and `.ai/NEXT-ACTIONS.md`.
+- **Explore the QA handbook** → [`02-FULL-STACK-QA-HANDBOOK/`](02-FULL-STACK-QA-HANDBOOK/)
+  — all 24 target topics (Foundations, Requirement Analysis, Risk &
+  Test Design, Manual Testing, Software Architecture for QA, API/DB/
+  Web/Mobile/Integration Testing, Automation, Performance, Security,
+  Observability, CI/CD, Release, Test Management, Metrics, Agile/
+  Leadership, 23 System Patterns, Modern QA, Learning Paths) have real,
+  non-placeholder canonical content — see that folder's own README for
+  the full index. The old root-level `0X-*` directories this section
+  used to point to were migrated here (`git mv`, preserving history —
+  see `.ai/DECISIONS.md` D2) and no longer exist at repo root.
+- **Explore domain-specific QA knowledge** → [`03-DOMAINS/`](03-DOMAINS/)
+  — E-Commerce, FinTech, Media/Streaming, Mobile/Multi-Country, and
+  Insurance, each at a stated, real maturity level (D0-D5).
 - **Browse the executable lab** → [`QA-DEMO-SYSTEM/`](QA-DEMO-SYSTEM/README.md)
   — a real Node.js/Express/SQLite application with Auth, Products,
   Orders, Payment, Events, Notifications, GraphQL, and WebSocket
   layers, exercised by Playwright, Selenium, JMeter, Locust, Postman/
-  Newman/AJV, and a 157-test backend suite, wired into GitHub Actions
-  CI (4/4 jobs green as of the last verified campaign HEAD).
+  Newman/AJV, and a 160-test backend suite, wired into GitHub Actions
+  CI (see `.ai/TEST-STATUS.md` for the current, exact per-suite result
+  — job/test counts change as coverage grows, so this README points
+  there instead of hardcoding a number that would drift).
 - **View evidence** → [`01-SALIM-BURAK-DIGITAL-TWIN/08-EVIDENCE-MAP.md`](01-SALIM-BURAK-DIGITAL-TWIN/08-EVIDENCE-MAP.md)
   indexes exactly where each piece of repository-practice evidence
   lives, and what an independent Codex audit already reviewed
@@ -54,7 +63,11 @@ it.
 Phase 0-19 of the original roadmap are implementation-complete and
 independently Codex-audited (final verdict: **PASS**, merged to `main`
 — see [`ROADMAP.md`](ROADMAP.md) for the phase-by-phase status table).
-A larger transformation — into a Digital Twin + QA Handbook + Domain
-Knowledge Base + Executable Labs system — is in progress; its current
-scope and what remains are tracked honestly in
+The larger transformation into a Digital Twin + QA Handbook + Domain
+Knowledge Base + Executable Labs system is implementation-complete
+(every implementable master-transformation requirement is COMPLETE —
+see `.ai/MASTER-REQUIREMENTS-COMPLIANCE.md`) and has gone through
+multiple rounds of independent Codex verification and fix campaigns;
+current state, open findings (if any), and what's genuinely still
+outstanding (never hidden) are tracked honestly in
 [`.ai/CODEX-FULL-AUDIT-HANDOFF.md`](.ai/CODEX-FULL-AUDIT-HANDOFF.md).

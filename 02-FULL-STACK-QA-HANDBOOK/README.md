@@ -41,7 +41,7 @@ not incompleteness; no row implies content that isn't there.
 | 19 | QA Metrics & Reporting | [`19-QA-METRICS-AND-REPORTING/`](19-QA-METRICS-AND-REPORTING/) + `05-TEST-MANAGEMENT/14-QA-METRICS.md` | Metrics (existing) + reporting artifacts (HTML reports, contextualized-metric pattern, evidence maturity scale) |
 | 20 | Agile QA & Ownership | [`20-AGILE-QA-AND-OWNERSHIP/`](20-AGILE-QA-AND-OWNERSHIP/) | DoR/DoD, shift-left, acceptance criteria, ceremonies, whole-team ownership mechanics |
 | 21 | QA Leadership | [`21-QA-LEADERSHIP/`](21-QA-LEADERSHIP/) | Test strategy ownership, quality-gate design, ship/no-ship calls, mentoring, upward reporting |
-| 22 | System Patterns | [`22-SYSTEM-PATTERNS/`](22-SYSTEM-PATTERNS/) | 9/22 patterns written at real depth (see that folder's own status table); remainder honestly marked NOT YET WRITTEN |
+| 22 | System Patterns | [`22-SYSTEM-PATTERNS/`](22-SYSTEM-PATTERNS/) | 23/23 patterns written at real depth (see that folder's own status table for each pattern's real IMPLEMENTED/NOT_IMPLEMENTED/NOT_APPLICABLE/DOCUMENTED_ONLY status) |
 | 23 | Modern QA Engineering | `../QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/` | Full |
 | 24 | Learning Paths | [`24-LEARNING-PATHS/`](24-LEARNING-PATHS/) | 6 specialization paths, each built from real `gap.*` registry entries, not a generic curriculum |
 

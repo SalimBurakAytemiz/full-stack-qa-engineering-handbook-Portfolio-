@@ -1,21 +1,35 @@
 # Tools and Workflows
 
-**Status: EXPERIENCE** (bkz. bölüm 6 için istisna)
+**Status: UNIVERSAL TOOL KNOWLEDGE** — bu sayfa Test/Defect Management
+araçlarının genel QA kullanım kalıplarını anlatır; **kişisel deneyim
+iddiası değildir**. Her aracın Salim için gerçek personal/professional
+durumu (EXPERIENCE / USER_CONFIRMATION_REQUIRED) yalnızca
+`01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml`'da tutulur ve bu
+sayfa altındaki her araç bölümünde o kaynağa göre doğru şekilde
+etiketlenir — evrensel handbook içeriği sessizce kişisel deneyime
+dönüşmez (Section 37/42).
 
 ---
 
 ## 1. Neden Önemli?
 
-Bu dosya, QA-COMPETENCY-MAP.md'de EXPERIENCE olarak işaretlenmiş
-araçları (Jira, Azure DevOps, Trello, Confluence), **QA perspektifinden**
-karşılaştırır: her aracın Test Management ve Defect Management için
-nasıl kullanıldığını gösterir.
+Bu dosya, Test Management ve Defect Management'ta yaygın olarak
+kullanılan araçları (Jira, Azure DevOps, Trello, Confluence), **QA
+perspektifinden** karşılaştırır: her aracın bu iş akışları için nasıl
+kullanıldığını gösterir — bu genel/evrensel bir QA metodoloji
+anlatımıdır. Hangi araçla gerçek profesyonel deneyim olduğu, aşağıdaki
+her bölümde `tool-state.yaml`'a göre ayrı ayrı belirtilir (bazıları
+CONFIRMED EXPERIENCE, bazıları henüz USER_CONFIRMATION_REQUIRED) — eski
+ve superseded olan `QA-COMPETENCY-MAP.md`'nin tamamını EXPERIENCE
+sayan sınıflandırması artık kaynak olarak kullanılmaz.
 
 ---
 
 ## 2. Jira
 
-**Status: EXPERIENCE**
+**Status: USER_CONFIRMATION_REQUIRED** (`tool-state.yaml#tool.jira` — kaynak veride
+doğrudan doğrulanmadı; aşağıdaki QA kullanım kalıbı evrensel/genel
+bilgidir, kişisel deneyim iddiası değildir)
 
 ### QA Ne Yapabilir?
 
@@ -50,7 +64,8 @@ issue'larından link verilir; bu, Traceability'nin (bkz.
 
 ## 3. Azure DevOps
 
-**Status: EXPERIENCE**
+**Status: EXPERIENCE** (`tool-state.yaml#tool.azure-devops`, owner:
+`professional-experience.yaml#pro.fintech.stablex-like` — confirmed)
 
 ### QA Ne Yapabilir?
 
@@ -84,7 +99,10 @@ Azure DevOps Wiki veya harici bir dokümantasyon aracına work item'lar
 
 ## 4. Trello
 
-**Status: EXPERIENCE**
+**Status: USER_CONFIRMATION_REQUIRED** (`tool-state.yaml#tool.trello` — superseded
+QA-COMPETENCY-MAP.md EXPERIENCE olarak kaydediyordu, güncel canonical
+kaynakta doğrulanmıyor; aşağıdaki QA kullanım kalıbı evrensel/genel
+bilgidir, kişisel deneyim iddiası değildir)
 
 ### QA Ne Yapabilir?
 
@@ -117,7 +135,9 @@ eklenir.
 
 ## 5. Confluence
 
-**Status: EXPERIENCE**
+**Status: USER_CONFIRMATION_REQUIRED** (`tool-state.yaml#tool.confluence` — kaynak
+veride doğrudan doğrulanmadı; aşağıdaki QA kullanım kalıbı evrensel/genel
+bilgidir, kişisel deneyim iddiası değildir)
 
 ### QA Ne Yapabilir?
 

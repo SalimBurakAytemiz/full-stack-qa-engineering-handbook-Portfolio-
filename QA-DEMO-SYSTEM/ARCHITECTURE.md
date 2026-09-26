@@ -460,7 +460,7 @@ ilerleyebilir; sıralama pratik/izlenebilirlik amacıyla önerilmiştir.
 | P4.1 | Sistem `npm install && npm run dev` ile ayağa kalkıyor; login + Products listeleme gerçekten çalışıyor |
 | P4.2 | Bir sipariş gerçekten oluşturuluyor; approved/declined/timeout durumları deterministik şekilde tetiklenebiliyor |
 | P4.3 | WebSocket bağlantısı kuruluyor; en az bir order event'i gerçek zamanlı notification'a dönüşüyor |
-| P4.4 | BUG-AUTH-EDU-001 gerçek adımlarla tekrar üretildi; gerçek evidence üretildi; Phase 3 kayıtları değişmedi; yeni Phase 4 kaydı Phase 3'e referans veriyor |
+| P4.4 | BUG-AUTH-EDU-001 için gerçek sistemde bir reproduction attempt gerçekten çalıştırıldı (API + UI); sonuç: **NOT REPRODUCED** (tarif edilen davranış bu implementasyonda hiç mevcut olmamış); mevcut regression coverage (`backend/tests/auth.test.js`) bu senaryoyu zaten kapsadığı için yeni bir regression testi eklenmedi; gerçek evidence üretildi; Phase 3 kayıtları değişmedi; yeni Phase 4 kaydı Phase 3'e referans veriyor (bkz. `evidence/BUG-AUTH-EDU-001/EXECUTION.md`) |
 | P4.5 | Sıfır bir ortamda RUN-INSTRUCTIONS takip edilerek sistem çalıştırılabiliyor; Smoke Checklist PASS |
 | P4.6 | `QA-DEMO-SYSTEM/README.md` eksiksiz; `ROADMAP.md` Phase 4 → CLEAN, Phase 5 → IN PROGRESS; broken link yok |
 

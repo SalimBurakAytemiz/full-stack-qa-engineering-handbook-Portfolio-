@@ -84,9 +84,42 @@ conflict_log:
       kendi TR açıklamasına göre farklı ağırlıktadır).
     resolution: "exposure PROFESSIONAL_PARTICIPATED olarak yükseltildi, owner_fact other_professional_project_exposure girdisine güncellendi (domain-state.yaml). Vaka derinliği hâlâ yok, bu yüzden PROFESSIONAL_EXECUTED değil."
     resolved: true
-# TR: Bu increment'te İKİ BAĞIMSIZ kaynak arasında çözülemeyen bir
-# çelişki BULUNMADI — yukarıdaki iki madde tek-kaynaklı içsel
-# tutarsızlıklardır. Gerçek çok-kaynaklı bir çelişki bulunursa buraya
+
+  - id: conflict.competency.accessibility-historical-experience-vs-current-none
+    type: CONFLICTING_SOURCE
+    found_by: "Codex final verification, F1-1 (2026-09-26)"
+    description: >
+      İKİ BAĞIMSIZ kaynak arasında gerçek bir çelişki: superseded
+      QA-COMPETENCY-MAP.md (madde 24, "Accessibility Testing") bunu
+      "Status: EXPERIENCE" olarak kaydediyordu (older_user_statement,
+      rank 4). Güncel canonical kaynak (src.master-transformation-prompt.2026-09-25,
+      rank 1-2) bu konuda professional experience'ı DOĞRULAMIYOR —
+      competency-state.yaml#competency.web.accessibility'nin
+      professional.status'u bu yüzden NONE'dır. Bu, tek-kaynaklı bir
+      içsel türetme hatası DEĞİL, gerçek çok-kaynaklı bir çelişkidir;
+      önceden yalnızca sessizce NONE'a çözülmüştü, burada AÇIKÇA
+      kaydedilmemişti.
+    resolution: "Precedence tablosuna göre (rank 1-2 > rank 4) professional.status NONE olarak KORUNDU — repository dimension (CI_VERIFIED, accessibility.spec.js) ayrı ve doğru bir olgu olarak zaten mevcuttu, değişmedi. Çelişkinin kendisi artık burada açıkça kayıtlıdır; sessizce ezilmemiştir."
+    resolved: true
+
+  - id: conflict.competency.security-aware-qa-unsupported-participated
+    type: internal_derivation_inconsistency
+    found_by: "Codex final verification, F1-2 (2026-09-26)"
+    description: >
+      competency-state.yaml#competency.security.security-aware-qa'nın
+      professional.status'u PARTICIPATED idi ve notu "kaynak veri bunu
+      professional knowledge listesi olarak veriyor" diyordu — ancak bu
+      iddia DOĞRULANAMADI: professional-experience.yaml içinde
+      "security"/"owasp"/"auth" için (what_i_did, other_professional_project_exposure,
+      professional_domain_tool_knowledge dahil) SIFIR eşleşme bulundu.
+      Bu, knowledge (WORKING) seviyesinin otomatik olarak professional
+      participation'a dönüştüğü bir örnektir — hiçbir gerçek kaynak
+      girdisi yokken.
+    resolution: "professional.status NONE olarak düzeltildi; yeni gap.security.professional-exposure eklendi (accessibility'deki aynı desenle). Repository dimension (CI_VERIFIED, security.test.js) etkilenmedi ve doğru kalır."
+    resolved: true
+# TR: Yukarıdaki iki BAĞIMSIZ-kaynak çelişkisi (accessibility) dışında,
+# bu increment'te İKİ BAĞIMSIZ kaynak arasında BAŞKA çözülemeyen bir
+# çelişki BULUNMADI. Gerçek çok-kaynaklı bir çelişki bulunursa buraya
 # CONFLICTING_SOURCE tipiyle ve muhtemelen USER_CONFIRMATION_REQUIRED
 # statüsüyle kaydedilecek, sessizce daha etkileyici versiyon
 # seçilmeyecek.

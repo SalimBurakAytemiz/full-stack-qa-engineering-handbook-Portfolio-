@@ -105,6 +105,41 @@ if (competencyState && Array.isArray(competencyState.competencies)) {
   ok(`competency-state.yaml: ${validCount}/${competencyState.competencies.length} competencies valid`);
 }
 
+// --- Claim-integrity (F1-2 post-verification fix): knowledge must never
+// silently become professional participation. A competency's own note can
+// admit that its ONLY grounding is a knowledge-level list (not a real
+// what_i_did case action) while still assigning an elevated professional
+// status (PARTICIPATED/EXECUTED/AUDITED) — this is a self-contradicting
+// entry, and the exact defect Codex found in competency.security.security-aware-qa
+// (professional.status: PARTICIPATED with a note literally admitting the
+// source is a "professional knowledge listesi", not a case action).
+// TR: Codex, competency-state.yaml'da bir competency'nin KENDİ notunun
+// "bu yalnızca bir knowledge listesinden geliyor, gerçek bir vaka fiili
+// değil" dediği halde professional.status'un PARTICIPATED/EXECUTED
+// olarak bırakıldığını bulmuştu. Bu kontrol, bu türden bir öz-çelişkiyi
+// gelecekte de otomatik olarak yakalar — yalnızca bu turda bulunan tek
+// örneği elle düzeltmekle YETİNMEZ.
+const KNOWLEDGE_ONLY_MARKERS = [
+  'professional knowledge listesi',
+  'knowledge listesi olarak',
+  'professional_domain_tool_knowledge listesinde',
+];
+if (competencyState && Array.isArray(competencyState.competencies)) {
+  const elevatedStatuses = new Set(['PARTICIPATED', 'EXECUTED', 'AUDITED']);
+  let checkedCount = 0;
+  for (const c of competencyState.competencies) {
+    const prof = c.professional;
+    if (!prof || !elevatedStatuses.has(prof.status)) continue;
+    checkedCount += 1;
+    const text = `${prof.note || ''} ${prof.evidence || ''}`;
+    const hit = KNOWLEDGE_ONLY_MARKERS.find((m) => text.includes(m));
+    if (hit) {
+      fail(`${dtRoot}/competency-state.yaml`, `competency '${c.id}' has professional.status: ${prof.status} but its own note/evidence admits knowledge-list-only grounding ("${hit}") — knowledge must never automatically become professional participation; downgrade professional.status to NONE or remove the self-contradicting marker text`);
+    }
+  }
+  ok(`claim-integrity: ${checkedCount} elevated professional-status competencies checked for knowledge-only-derivation self-contradiction`);
+}
+
 const domainState = loadYaml(`${dtRoot}/domain-state.yaml`);
 if (domainState && Array.isArray(domainState.personal_domain_exposure)) {
   // domain_id here is a REFERENCE into shared/registry/catalog/domains.yaml
@@ -208,6 +243,30 @@ if (sourceProvenance && Array.isArray(sourceProvenance.sources)) {
 const claimsFile = `${dtRoot}/claims.yaml`;
 const claimsData = loadYaml(claimsFile);
 const realSourceIds = new Set((sourceProvenance && sourceProvenance.sources || []).map((s) => s.id));
+const sourceTypeById = new Map((sourceProvenance && sourceProvenance.sources || []).map((s) => [s.id, s.type]));
+
+// --- Professional claim source SCOPE (F2 post-verification fix). Every
+// entry in claims.yaml is, by definition, a professional-experience claim
+// (WHAT_I_DID or OTHER_PROFESSIONAL_PROJECT_EXPOSURE) — so its source_id
+// must resolve not merely to *some* source-provenance.yaml entry, but to
+// one whose declared TYPE is actually valid evidence of professional
+// history. source-provenance.yaml's own precedence table already states
+// this rule in prose ("Repository kanıtı yalnızca repository pratiğini
+// kanıtlar, profesyonel istihdam deneyimini KANITLAMAZ") — this enforces
+// it as a real, executable constraint instead of only prose.
+// TR: Codex, bir professional WHAT_I_DID claim'inin source_id'sini
+// src.repository-campaign-evidence.phase-0-19 (type: repository_evidence)
+// olarak değiştirip validation'ın hâlâ exit 0 verdiğini KANITLADI —
+// önceki kontrol yalnızca "source_id GERÇEK bir source'a çözümleniyor mu"
+// diye bakıyordu, o source'un TÜRÜNE (type) hiç bakmıyordu. Bu, tek bir
+// source ID'yi hardcode ederek değil, source_id'nin TİPİNİ (semantic
+// class) kontrol ederek çözülür — gelecekte eklenecek herhangi bir
+// repository_evidence tipli kaynak da otomatik olarak reddedilir.
+const PROFESSIONAL_CLAIM_VALID_SOURCE_TYPES = new Set([
+  'latest_explicit_user_confirmation',
+  'current_professional_cv_or_canonical_professional_data',
+  'older_user_statement',
+]);
 
 if (claimsData && Array.isArray(claimsData.claims)) {
   let validClaimCount = 0;
@@ -222,6 +281,11 @@ if (claimsData && Array.isArray(claimsData.claims)) {
     seenClaimIds.add(c.claim_id);
     if (!realSourceIds.has(c.source_id)) {
       fail(claimsFile, `${label} — source_id '${c.source_id}' does not resolve to any entry in source-provenance.yaml#sources`);
+      continue;
+    }
+    const sourceType = sourceTypeById.get(c.source_id);
+    if (!PROFESSIONAL_CLAIM_VALID_SOURCE_TYPES.has(sourceType)) {
+      fail(claimsFile, `${label} — source_id '${c.source_id}' has type '${sourceType}', which is not a valid source class for a professional claim (repository evidence proves repository PRACTICE only, never professional EXPERIENCE — see source-provenance.yaml#precedence rank 3's own note)`);
       continue;
     }
     if (c.claim_type === 'WHAT_I_DID' && !c.professional_case_id) {
@@ -491,21 +555,33 @@ if (relationships && Array.isArray(relationships.relationships)) {
   ok('claim-integrity: CI_VERIFIED competencies checked for a linked CI-verified evidence entry');
 }
 
-// --- Relationship semantics: no PRACTICED_IN from a NOT_PRACTICED
-// repository dimension (P1-04 post-Codex fix, made structurally
-// enforced rather than a one-time manual correction) ---
+// --- Relationship semantics: PRACTICED_IN requires REAL repository
+// practice, not merely "not explicitly NOT_PRACTICED" (F3 post-verification
+// fix, tightening P1-04's original check). ---
 // PRACTICED_IN claims real repository execution of a competency inside a
-// specific lab. If that competency's own repository.status is
-// NOT_PRACTICED, any PRACTICED_IN edge from it directly contradicts its
-// own declared state — this is exactly the class of bug Codex found
-// (competency.observability.elastic-log-analysis PRACTICED_IN a lab it
-// never actually ran Elastic in). This check makes that class of error
-// fail automatically going forward, not just fixed once by hand.
-// TR: Codex'in bulduğu "Jenkins/Elastic PRACTICED_IN" hatası MANUEL
-// olarak düzeltildi (bkz. relationships.yaml), ama bu kontrol OLMADAN
-// aynı sınıf hata gelecekte SESSİZCE geri gelebilirdi. Şimdi bir
-// competency'nin repository.status'u NOT_PRACTICED iken ondan çıkan bir
-// PRACTICED_IN kenarı varsa, validator bunu otomatik olarak YAKALAR.
+// specific lab. repository.status has a real maturity ORDER (this file's
+// own header comment): NOT_PRACTICED < DOCUMENTED < IMPLEMENTED < EXECUTED
+// < CI_VERIFIED < AUDITED. The original version of this check only
+// rejected status === NOT_PRACTICED — Codex proved this was too weak by
+// reintroducing `competency.cicd.jenkins PRACTICED_IN lab.cicd.github-actions`:
+// Jenkins' repository.status is DOCUMENTED, not NOT_PRACTICED, so the old
+// check let it through even though this competency's OWN evidence text
+// says "gerçek Jenkins server hiç mevcut olmadı, ÇALIŞTIRILMADI" (a real
+// Jenkins server never existed, was NEVER EXECUTED) — DOCUMENTED in this
+// repository's own vocabulary means "written/configured, not proven
+// executed," which is precisely NOT what PRACTICED_IN may claim.
+// The fix: PRACTICED_IN now requires repository.status to be at or above
+// IMPLEMENTED (real evidence of having actually run, not just a
+// syntax-valid config) — verified against all 13 currently-real
+// PRACTICED_IN edges, every one of which is already IMPLEMENTED or higher,
+// so no legitimate edge is broken by tightening this threshold.
+// TR: Önceki kontrol yalnızca "NOT_PRACTICED DEĞİL mi" diye bakıyordu —
+// bu, DOCUMENTED (yazılmış ama hiç ÇALIŞTIRILMAMIŞ) durumundaki bir
+// competency'nin PRACTICED_IN iddiasını YAKALAYAMIYORDU. Codex tam olarak
+// bunu kanıtladı (Jenkins). Şimdi eşik IMPLEMENTED VE ÜZERİ'ne
+// yükseltildi — DOCUMENTED artık PRACTICED_IN için YETERSİZ sayılır.
+const REPOSITORY_STATUS_ORDER = ['NOT_PRACTICED', 'DOCUMENTED', 'IMPLEMENTED', 'EXECUTED', 'CI_VERIFIED', 'AUDITED'];
+const MIN_PRACTICED_IN_STATUS_RANK = REPOSITORY_STATUS_ORDER.indexOf('IMPLEMENTED');
 if (relationships && Array.isArray(relationships.relationships)) {
   let checkedCount = 0;
   for (const rel of relationships.relationships) {
@@ -513,11 +589,13 @@ if (relationships && Array.isArray(relationships.relationships)) {
     const comp = allCompetencyEntries.get(rel.from);
     if (!comp) continue;
     checkedCount += 1;
-    if (comp.repository && comp.repository.status === 'NOT_PRACTICED') {
-      fail(relFile, `relationship ${rel.from} PRACTICED_IN ${rel.to} — competency '${rel.from}' has repository.status: NOT_PRACTICED, which directly contradicts a PRACTICED_IN claim (no relationship may claim repository execution for a competency explicitly marked as not practiced in the repository)`);
+    const status = comp.repository && comp.repository.status;
+    const rank = REPOSITORY_STATUS_ORDER.indexOf(status);
+    if (rank < MIN_PRACTICED_IN_STATUS_RANK) {
+      fail(relFile, `relationship ${rel.from} PRACTICED_IN ${rel.to} — competency '${rel.from}' has repository.status: ${status}, which is below IMPLEMENTED and therefore cannot support a PRACTICED_IN claim (PRACTICED_IN requires real, executed repository practice — NOT_PRACTICED and DOCUMENTED both mean the competency was never actually run in this repository)`);
     }
   }
-  ok(`relationship-semantic check: ${checkedCount} PRACTICED_IN edges checked against their competency's repository.status`);
+  ok(`relationship-semantic check: ${checkedCount} PRACTICED_IN edges checked against their competency's repository.status (requires >= IMPLEMENTED)`);
 }
 
 // --- Generated-output drift ---

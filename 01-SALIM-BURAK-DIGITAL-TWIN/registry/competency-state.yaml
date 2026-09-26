@@ -117,12 +117,12 @@ competencies:
     label: "Security-Aware QA (Auth/AuthZ/RBAC/IDOR/XSS-SQLi-oriented/Mass Assignment)"
     knowledge: WORKING
     professional:
-      status: PARTICIPATED
-      note: "TR: Kaynak veri bunu 'professional knowledge' listesi olarak veriyor — bir 'what_i_did' vaka fiili İLE değil. EXECUTED yerine bilinçli olarak PARTICIPATED seçildi (Section 71 self-check — daha etkileyici versiyonu sessizce seçmemek için). OWASP genel bilgi/deneyim geçerlidir; sistematik OWASP API Security Top 10 derin pratiği ABARTILMAZ."
+      status: NONE
+      note: "TR: Codex post-audit correction (F1-2) — önceki PARTICIPATED statüsü, professional-experience.yaml'da bu konuya dair HİÇBİR gerçek what_i_did/other_professional_project_exposure/professional_domain_tool_knowledge girdisi OLMADIĞI halde verilmişti (doğrulandı: professional-experience.yaml içinde 'security'/'owasp'/'auth' için sıfır eşleşme). Önceki not 'kaynak veri bunu professional knowledge listesi olarak veriyor' diyordu ama bu iddia YANLIŞTI — gösterilebilir hiçbir kaynak yoktu. Knowledge (WORKING, genel QA metodolojisi) asla otomatik olarak professional participation'a DÖNÜŞMEMELİDİR. Repository dimension (aşağıda) ayrı ve doğru bir olgudur — security.test.js gerçekten var ve CI_VERIFIED'dır, bu professional iddiasını gerektirmez."
     repository:
       status: CI_VERIFIED
       evidence: "security.test.js — IDOR/BOLA, XSS-oriented, SQLi-oriented, mass assignment, sensitive-data testleri, backend regresyonun parçası"
-    gaps: [gap.security.owasp-api-top10-depth]
+    gaps: [gap.security.owasp-api-top10-depth, gap.security.professional-exposure]
 
   - id: competency.security.burp-suite
     label: "Burp Suite"
@@ -211,7 +211,9 @@ competencies:
   - id: competency.web.accessibility
     label: "Accessibility Testing (axe-core / WCAG)"
     knowledge: WORKING
-    professional: { status: NONE }
+    professional:
+      status: NONE
+      note: "TR: Codex post-audit correction (F1-3) — superseded QA-COMPETENCY-MAP.md bu konuyu 'Status: EXPERIENCE' olarak kaydediyordu (madde 24, Accessibility Testing), ancak güncel canonical kaynak (master transformation prompt) bunu professional experience olarak DOĞRULAMIYOR. Precedence kuralına göre (source-provenance.yaml#precedence: current_professional_cv_or_canonical_professional_data > older_user_statement) NONE doğrudur — ancak bu artık source-provenance.yaml#conflict_log'da açık bir çelişki olarak KAYITLIDIR, sessizce ezilmemiştir."
     repository:
       status: CI_VERIFIED
       evidence: "accessibility.spec.js — WCAG2A/AA, contrast, accessible-name, keyboard navigation; 0 real violation found (not suppressed)"

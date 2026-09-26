@@ -501,6 +501,10 @@ relationships:
   - from: competency.web.accessibility
     predicate: LEARNING
     to: gap.accessibility.professional-exposure
+  - from: competency.security.security-aware-qa
+    predicate: LEARNING
+    to: gap.security.professional-exposure
+    note: "Codex post-audit correction (F1-2): professional.status corrected PARTICIPATED -> NONE; this gap edge replaces the unsupported professional claim with an honest, explicit gap."
 
   # ============================================================
   # Graph-completeness pass — every previously-orphaned canonical

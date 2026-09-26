@@ -70,6 +70,10 @@ gaps:
     types: [PROFESSIONAL_EXPOSURE]
     label: "Accessibility testing — professional project exposure"
 
+  - id: gap.security.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Security-aware QA (Auth/AuthZ/IDOR/XSS-SQLi/Mass Assignment) — professional project exposure"
+
   - id: gap.contract-testing.pact
     types: [KNOWLEDGE, PRACTICE]
     label: "Pact / consumer-driven contract testing"
