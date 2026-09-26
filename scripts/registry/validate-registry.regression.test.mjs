@@ -190,6 +190,32 @@ test('relationship semantics: PRACTICED_IN cannot be claimed for a competency wh
   );
 });
 
+// Codex final-verification fix (F2): Codex proved a professional WHAT_I_DID
+// claim could be re-pointed at a repository_evidence-typed source
+// (src.repository-campaign-evidence.phase-0-19) and validation still
+// exited 0 — repository practice is evidence of REPOSITORY practice, never
+// of PROFESSIONAL experience. This test reproduces exactly that mutation
+// and requires the new source-TYPE allowlist check to reject it.
+// TR: Bu, Codex'in kanıtladığı BİREBİR ihlaldir — bir professional claim,
+// source-provenance.yaml'da type: repository_evidence olan bir kaynağa
+// yeniden bağlanıyor. Düzeltme SEMANTIC CLASS'ı (source'un `type` alanını)
+// kontrol eder, tek bir source ID'yi değil — bu yüzden test de doğrudan
+// gerçek claims.yaml içeriğini mutasyona uğratır.
+test('claim-level provenance: a professional claim sourced from repository_evidence-typed source fails validation (exact Codex F2 violation)', async () => {
+  await withMutatedFile(
+    '01-SALIM-BURAK-DIGITAL-TWIN/registry/claims.yaml',
+    (content) => content.replace(
+      '    text: "E-Commerce and Mobile QA"\n    source_id: src.master-transformation-prompt.2026-09-25',
+      '    text: "E-Commerce and Mobile QA"\n    source_id: src.repository-campaign-evidence.phase-0-19'
+    ),
+    () => {
+      const result = runValidator();
+      assert.notEqual(result.code, 0, 'validator must FAIL when a professional claim is sourced from a repository_evidence-typed source');
+      assert.match(result.stderr, /is not a valid source class for a professional claim/);
+    }
+  );
+});
+
 // Codex final-verification fix (F3): this is the LITERAL false-relationship
 // Codex reintroduced to prove the old check insufficient — Jenkins has
 // repository.status: DOCUMENTED (not NOT_PRACTICED), so the OLD validator
