@@ -18,15 +18,15 @@
 | Alan | Değer |
 |---|---|
 | Defect | `BUG-AUTH-EDU-001` |
-| Phase 3 source (historical, değiştirilmedi) | [`06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/`](../../../06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/README.md) |
-| Phase 3 Bug Report | [`03-BUG-REPORT.md`](../../../06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/03-BUG-REPORT.md) |
-| Phase 3 Steps to Reproduce | [`04-STEPS-TO-REPRODUCE.md`](../../../06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/04-STEPS-TO-REPRODUCE.md) |
-| Phase 3 Expected Result | [`05-EXPECTED-RESULT.md`](../../../06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/05-EXPECTED-RESULT.md) |
-| Phase 3 Actual Result (kurgusal) | [`06-ACTUAL-RESULT.md`](../../../06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/06-ACTUAL-RESULT.md) |
-| Phase 3 Evidence Plan | [`09-EVIDENCE-PLAN.md`](../../../06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/09-EVIDENCE-PLAN.md) — bu Phase 4 kaydına referans veriyordu |
-| Phase 3 Retest (historical) | [`10-RETEST.md`](../../../06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/10-RETEST.md) — **NOT EXECUTED**, değiştirilmedi |
-| Phase 3 Regression (historical) | [`11-REGRESSION.md`](../../../06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/11-REGRESSION.md) — **NOT EXECUTED**, değiştirilmedi |
-| Related Requirement/AC | AC-AUTH-004, BR-AUTH-003 (bkz. [`03-TEST-DESIGN/examples/AUTHENTICATION-FEATURE/`](../../../03-TEST-DESIGN/examples/AUTHENTICATION-FEATURE/03-ACCEPTANCE-CRITERIA.md)) |
+| Phase 3 source (historical, değiştirilmedi) | [`06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/`](../../../02-FULL-STACK-QA-HANDBOOK/06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/README.md) |
+| Phase 3 Bug Report | [`03-BUG-REPORT.md`](../../../02-FULL-STACK-QA-HANDBOOK/06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/03-BUG-REPORT.md) |
+| Phase 3 Steps to Reproduce | [`04-STEPS-TO-REPRODUCE.md`](../../../02-FULL-STACK-QA-HANDBOOK/06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/04-STEPS-TO-REPRODUCE.md) |
+| Phase 3 Expected Result | [`05-EXPECTED-RESULT.md`](../../../02-FULL-STACK-QA-HANDBOOK/06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/05-EXPECTED-RESULT.md) |
+| Phase 3 Actual Result (kurgusal) | [`06-ACTUAL-RESULT.md`](../../../02-FULL-STACK-QA-HANDBOOK/06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/06-ACTUAL-RESULT.md) |
+| Phase 3 Evidence Plan | [`09-EVIDENCE-PLAN.md`](../../../02-FULL-STACK-QA-HANDBOOK/06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/09-EVIDENCE-PLAN.md) — bu Phase 4 kaydına referans veriyordu |
+| Phase 3 Retest (historical) | [`10-RETEST.md`](../../../02-FULL-STACK-QA-HANDBOOK/06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/10-RETEST.md) — **NOT EXECUTED**, değiştirilmedi |
+| Phase 3 Regression (historical) | [`11-REGRESSION.md`](../../../02-FULL-STACK-QA-HANDBOOK/06-DEFECT-MANAGEMENT/examples/AUTHENTICATION-BUG/11-REGRESSION.md) — **NOT EXECUTED**, değiştirilmedi |
+| Related Requirement/AC | AC-AUTH-004, BR-AUTH-003 (bkz. [`03-TEST-DESIGN/examples/AUTHENTICATION-FEATURE/`](../../../02-FULL-STACK-QA-HANDBOOK/03-TEST-DESIGN/examples/AUTHENTICATION-FEATURE/03-ACCEPTANCE-CRITERIA.md)) |
 | Phase 4 execution (bu doküman) | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
 **Önemli:** Yukarıdaki Phase 3 dosyalarının hiçbiri bu paket kapsamında

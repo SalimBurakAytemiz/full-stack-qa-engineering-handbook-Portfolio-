@@ -1,0 +1,147 @@
+# TR: Bu dosya, Digital Twin içindeki HER iddianın nereden geldiğini izlenebilir kılar.
+# Bir iddianın kaynağı yoksa (source: null), o iddia YAZILAMAZ — Section 42 "NO CLAIM
+# WITHOUT SOURCE" kuralının doğrudan uygulamasıdır.
+
+schema_version: 1
+last_updated: "2026-09-25"
+
+precedence:
+  # TR: Çelişen veri geldiğinde bu sırayla çözülür — daha "etkileyici" olanı
+  # değil, hiyerarşide daha yüksek olanı seçmek zorunludur.
+  - rank: 1
+    source: latest_explicit_user_confirmation
+  - rank: 2
+    source: current_professional_cv_or_canonical_professional_data
+  - rank: 3
+    source: repository_evidence
+    scope: repository_practice_facts_only
+    note: "TR: Repository kanıtı yalnızca repository pratiğini kanıtlar, profesyonel istihdam deneyimini KANITLAMAZ."
+  - rank: 4
+    source: older_user_statement
+  - rank: 5
+    source: assistant_ai_inference
+
+sources:
+  - id: src.master-transformation-prompt.2026-09-25
+    type: latest_explicit_user_confirmation
+    description: >
+      Bu Digital Twin increment'inin tek canonical kaynağı: kullanıcının
+      "MASTER TRANSFORMATION PROMPT" mesajı (Section 3, 4, 5, 39, 66),
+      2026-09-25 tarihli. Profil, profesyonel deneyim, domain exposure,
+      araç/teknoloji ayrımları ve bilinen gap'ler doğrudan bu mesajdan
+      alınmıştır — icat edilmemiştir.
+    covers:
+      - profile
+      - professional-experience
+      - domain-state (professional dimension)
+      - tool-state (professional dimension)
+      - gaps
+      - certifications (negative confirmation: no certificate invented)
+  - id: src.repository-campaign-evidence.phase-0-19
+    type: repository_evidence
+    description: >
+      QA-DEMO-SYSTEM/evidence/ altındaki Phase 0-19 execution kanıtları
+      (backend test sonuçları, Playwright/Selenium/JMeter lab evidence,
+      GitHub Actions CI sonuçları) — yalnızca REPOSITORY PRACTICE
+      boyutunu besler, professional deneyim iddiası ÜRETMEZ.
+    covers:
+      - tool-state (repository dimension)
+      - competency-state (repository dimension)
+
+conflict_log:
+  # TR: Post-Codex fix campaign (2026-09-25) tarafından bulunan ve
+  # düzeltilen İÇSEL tutarsızlıklar — bunlar iki BAĞIMSIZ kaynak
+  # arasındaki çözülemeyen çelişkiler değil, bir dosyanın kendi beyan
+  # ettiği tek owner_fact kaynağını eksik yansıttığı durumlardır; bu
+  # nedenle precedence tablosuna göre yeniden kullanıcı teyidi
+  # gerektirmeden doğrudan düzeltilebilirler (rank 2 kaynağın kendi
+  # içeriği zaten yeterlidir).
+  - id: conflict.domain-state.media-streaming-exposure-level
+    type: internal_derivation_inconsistency
+    found_by: "post-codex audit fix campaign, P1-01"
+    description: >
+      domain-state.yaml#domain.media.streaming exposure seviyesi
+      PROFESSIONAL_PARTICIPATED idi, ancak kendi owner_fact'i olan
+      professional-experience.yaml#pro.streaming.sdk-context'in
+      what_i_did listesi execution-seviyesinde ifadeler içeriyor
+      ("REST API automation", "Stream creation and Live Stream
+      end-to-end testing", "Provider flow validation") — bu,
+      PARTICIPATED değil EXECUTED seviyesine karşılık gelir.
+    resolution: "exposure PROFESSIONAL_EXECUTED olarak düzeltildi (domain-state.yaml)."
+    resolved: true
+
+  - id: conflict.domain-state.precious-metals-exposure-category
+    type: internal_derivation_inconsistency
+    found_by: "post-codex audit fix campaign, P1-01"
+    description: >
+      domain-state.yaml#domain.financial.trading-precious-metals
+      yalnızca professional_domain_tool_knowledge (zayıf, WORKING/AWARE
+      seviyesi) kategorisine referans veriyordu ve LEARNING olarak
+      etiketlenmişti; ancak professional-experience.yaml'ın
+      other_professional_project_exposure listesinde aynı konu "FX /
+      Precious Metals FinTech QA" olarak ayrı ve daha güçlü bir olgu
+      kategorisinde de mevcuttur (bu iki kategori professional-experience.yaml'ın
+      kendi TR açıklamasına göre farklı ağırlıktadır).
+    resolution: "exposure PROFESSIONAL_PARTICIPATED olarak yükseltildi, owner_fact other_professional_project_exposure girdisine güncellendi (domain-state.yaml). Vaka derinliği hâlâ yok, bu yüzden PROFESSIONAL_EXECUTED değil."
+    resolved: true
+
+  - id: conflict.competency.accessibility-historical-experience-vs-current-none
+    type: CONFLICTING_SOURCE
+    found_by: "Codex final verification, F1-1 (2026-09-26)"
+    description: >
+      İKİ BAĞIMSIZ kaynak arasında gerçek bir çelişki: superseded
+      QA-COMPETENCY-MAP.md (madde 24, "Accessibility Testing") bunu
+      "Status: EXPERIENCE" olarak kaydediyordu (older_user_statement,
+      rank 4). Güncel canonical kaynak (src.master-transformation-prompt.2026-09-25,
+      rank 1-2) bu konuda professional experience'ı DOĞRULAMIYOR —
+      competency-state.yaml#competency.web.accessibility'nin
+      professional.status'u bu yüzden NONE'dır. Bu, tek-kaynaklı bir
+      içsel türetme hatası DEĞİL, gerçek çok-kaynaklı bir çelişkidir;
+      önceden yalnızca sessizce NONE'a çözülmüştü, burada AÇIKÇA
+      kaydedilmemişti.
+    resolution: "Precedence tablosuna göre (rank 1-2 > rank 4) professional.status NONE olarak KORUNDU — repository dimension (CI_VERIFIED, accessibility.spec.js) ayrı ve doğru bir olgu olarak zaten mevcuttu, değişmedi. Çelişkinin kendisi artık burada açıkça kayıtlıdır; sessizce ezilmemiştir."
+    resolved: true
+
+  - id: conflict.competency.security-aware-qa-unsupported-participated
+    type: internal_derivation_inconsistency
+    found_by: "Codex final verification, F1-2 (2026-09-26)"
+    description: >
+      competency-state.yaml#competency.security.security-aware-qa'nın
+      professional.status'u PARTICIPATED idi ve notu "kaynak veri bunu
+      professional knowledge listesi olarak veriyor" diyordu — ancak bu
+      iddia DOĞRULANAMADI: professional-experience.yaml içinde
+      "security"/"owasp"/"auth" için (what_i_did, other_professional_project_exposure,
+      professional_domain_tool_knowledge dahil) SIFIR eşleşme bulundu.
+      Bu, knowledge (WORKING) seviyesinin otomatik olarak professional
+      participation'a dönüştüğü bir örnektir — hiçbir gerçek kaynak
+      girdisi yokken.
+    resolution: "professional.status NONE olarak düzeltildi; yeni gap.security.professional-exposure eklendi (accessibility'deki aynı desenle). Repository dimension (CI_VERIFIED, security.test.js) etkilenmedi ve doğru kalır."
+    resolved: true
+# TR: Yukarıdaki iki BAĞIMSIZ-kaynak çelişkisi (accessibility) dışında,
+# bu increment'te İKİ BAĞIMSIZ kaynak arasında BAŞKA çözülemeyen bir
+# çelişki BULUNMADI. Gerçek çok-kaynaklı bir çelişki bulunursa buraya
+# CONFLICTING_SOURCE tipiyle ve muhtemelen USER_CONFIRMATION_REQUIRED
+# statüsüyle kaydedilecek, sessizce daha etkileyici versiyon
+# seçilmeyecek.
+
+unresolved_personal_facts:
+  # TR: Bu liste, "mühendislik olarak eksik" ile "kişisel bir gerçek
+  # olarak henüz teyit edilmemiş" arasındaki farkı somutlaştırır. Buraya
+  # giren her madde: (a) iki kaynakta da (satır 25 ve 40) YOKTUR, (b)
+  # icat EDİLMEZ, (c) mühendislik/registry tamamlanmışlığını ENGELLEMEZ
+  # — çünkü repository'nin görevi, bu belirsizliği DOĞRU temsil etmektir,
+  # kendiliğinden bir hikaye üretmek değildir.
+  - id: fact.career-motivation.why-qa
+    status: USER_CONFIRMATION_REQUIRED
+    question: "Why QA instead of software development, and what draws Salim to the field?"
+    checked_sources:
+      - src.master-transformation-prompt.2026-09-25
+      - src.repository-campaign-evidence.phase-0-19
+    finding: >
+      Neither source contains first-person motivational/narrative
+      content — both are structured competency, professional-case, and
+      domain-exposure data, not a career-story narrative. There is
+      nothing to extract or paraphrase without inventing it.
+    referenced_by:
+      - "07-INTERVIEW/19-CAREER-NARRATIVE-QUESTIONS.md"
+    resolution: "Awaits a direct answer from Salim; not treated as blocking, since accurately representing 'not yet confirmed' is itself the correct, complete state for this fact — see Section 66 (Learning/Gap Transparency) and Section 71 (self-check) of the master transformation spec."

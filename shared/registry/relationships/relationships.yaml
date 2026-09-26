@@ -1,0 +1,860 @@
+# Relationship registry (Section 41). Controlled-vocabulary edges between
+# catalog entries — see shared/registry/schemas/relationship.schema.json
+# for the predicate list. Built by a systematic pass across competencies,
+# domains, tools, patterns, labs, evidence, professional experience, and
+# gaps (not just an increasing edge count) — see .ai/DECISIONS.md for the
+# pass's method. Every edge connects two ids that are real, loaded
+# registry entries; scripts/registry/validate-registry.mjs enforces this
+# (a relationship to a fabricated or not-yet-built entry fails CI).
+#
+# The two mandated traceability paths (see .ai/DECISIONS.md) are:
+#   COMPETENCY -> DOMAIN/PATTERN -> TOOL -> LAB -> TEST/EVIDENCE
+#   PROFESSIONAL EXPERIENCE -> DOMAIN -> COMPETENCY -> repository practice/evidence
+# Both are walkable end-to-end for the E-Commerce/FinTech core; see the
+# "core traceability" section below for the explicit edges that prove it.
+schema_version: 1
+last_updated: "2026-09-25"
+
+relationships:
+  # ============================================================
+  # PROFESSIONAL EXPERIENCE -> DOMAIN (mandated path, leg 1)
+  # ============================================================
+  - from: pro.ecommerce.skechers-turkey
+    predicate: PROFESSIONAL_EXPERIENCE_IN
+    to: domain.commerce.ecommerce
+  - from: pro.fintech.stablex-like
+    predicate: PROFESSIONAL_EXPERIENCE_IN
+    to: domain.financial.fintech
+  - from: pro.mobile.defacto-like
+    predicate: PROFESSIONAL_EXPERIENCE_IN
+    to: domain.mobile.multi-country
+  - from: pro.streaming.sdk-context
+    predicate: PROFESSIONAL_EXPERIENCE_IN
+    to: domain.media.streaming
+
+  # ============================================================
+  # COMPETENCY -> DOMAIN (mandated path, leg 2 — what competencies
+  # this domain's practice actually draws on). Direction is
+  # competency APPLIES_TO_DOMAIN domain — "this competency applies
+  # to this domain," matching the predicate name literally.
+  # ============================================================
+  - from: competency.api.rest
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.commerce.ecommerce
+  - from: competency.api.graphql
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.commerce.ecommerce
+  - from: competency.integration.websocket
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.commerce.ecommerce
+  - from: competency.database.sql-data-validation
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.commerce.ecommerce
+  - from: competency.api.contract-automation
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.commerce.ecommerce
+  - from: competency.database.sql-data-validation
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.financial.fintech
+    note: "Order/payment/transaction-state correctness is the shared throughline between E-Commerce and FinTech — see 03-DOMAINS/01-FINANCIAL-SERVICES/FINTECH/README.md."
+  - from: competency.mobile.appium
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.financial.fintech
+  - from: competency.observability.elastic-log-analysis
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.financial.fintech
+  - from: competency.cicd.jenkins
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.financial.fintech
+  - from: competency.frontend-qa.react-react-native-flutter
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.mobile.multi-country
+  - from: competency.web.visual-testing
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.mobile.multi-country
+  - from: competency.integration.provider-sdk-qa
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.media.streaming
+  - from: competency.integration.websocket
+    predicate: APPLIES_TO_DOMAIN
+    to: domain.media.streaming
+
+  # ============================================================
+  # DOMAIN -> PATTERN (mandated path, leg 2 alt — what canonical
+  # system patterns this domain's real flow exercises)
+  # ============================================================
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.idempotency
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.concurrency
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.payment
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.notification
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.async-events
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.authentication
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.authorization
+  - from: domain.financial.fintech
+    predicate: USES_PATTERN
+    to: pattern.idempotency
+    note: "Synthetic reuse of the same Commerce order/payment flow — see 05-EXECUTABLE-LABS/README.md D1."
+  - from: domain.financial.fintech
+    predicate: USES_PATTERN
+    to: pattern.payment
+
+  # ============================================================
+  # PATTERN -> COMPETENCY (which competency a pattern's QA
+  # treatment actually supports)
+  # ============================================================
+  - from: pattern.idempotency
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.database.sql-data-validation
+  - from: pattern.concurrency
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.database.sql-data-validation
+  - from: pattern.authentication
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.api.rest
+  - from: pattern.authorization
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.api.rest
+  - from: pattern.notification
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.integration.websocket
+  - from: pattern.async-events
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.integration.websocket
+
+  # ============================================================
+  # PATTERN -> LAB (which lab's real tests validate the flow the
+  # pattern describes)
+  # ============================================================
+  - from: pattern.idempotency
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: pattern.concurrency
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: pattern.payment
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: pattern.notification
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: pattern.async-events
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: pattern.authentication
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: pattern.authorization
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: pattern.rate-limiting
+    predicate: LEARNING
+    to: gap.performance.k6
+    note: "Rate limiting is NOT_IMPLEMENTED in this repository (real, stated gap) — linked as a learning area, not a validated flow."
+
+  # ============================================================
+  # COMPETENCY -> TOOL (mandated path, leg 3)
+  # ============================================================
+  - from: competency.mobile.appium
+    predicate: USES_TOOL
+    to: tool.appium
+  - from: competency.web.selenium
+    predicate: USES_TOOL
+    to: tool.selenium
+  - from: competency.web.playwright
+    predicate: USES_TOOL
+    to: tool.playwright
+  - from: competency.performance.jmeter
+    predicate: USES_TOOL
+    to: tool.jmeter
+  - from: competency.performance.locust
+    predicate: USES_TOOL
+    to: tool.locust
+  - from: competency.cicd.jenkins
+    predicate: USES_TOOL
+    to: tool.jenkins
+  - from: competency.cicd.jenkins
+    predicate: RELATED_TO
+    to: platform.github-actions
+    note: "Repository CI genuinely runs on GitHub Actions (4/4 PASS) — Jenkins itself exists only as a syntax-valid, unexecuted file. Neither USES_TOOL (not actually used for this repo's CI) nor a stronger predicate fits; RELATED_TO is deliberate here, not a shortcut."
+  - from: competency.environment.docker
+    predicate: USES_TOOL
+    to: tool.docker
+  - from: competency.observability.elastic-log-analysis
+    predicate: USES_TOOL
+    to: tool.elastic
+  - from: competency.observability.opentelemetry-jaeger
+    predicate: USES_TOOL
+    to: tool.opentelemetry
+  - from: competency.observability.opentelemetry-jaeger
+    predicate: USES_TOOL
+    to: tool.jaeger
+  - from: competency.security.burp-suite
+    predicate: USES_TOOL
+    to: tool.burp-suite
+  - from: competency.security.owasp-zap
+    predicate: USES_TOOL
+    to: tool.owasp-zap
+  - from: competency.web.visual-testing
+    predicate: USES_TOOL
+    to: tool.figma
+  - from: competency.web.visual-testing
+    predicate: USES_TOOL
+    to: tool.python-visual-comparison
+  - from: competency.web.accessibility
+    predicate: USES_TOOL
+    to: tool.axe-core
+  - from: competency.api.contract-automation
+    predicate: USES_TOOL
+    to: tool.postman
+  - from: competency.api.contract-automation
+    predicate: USES_TOOL
+    to: tool.newman
+  - from: competency.api.contract-automation
+    predicate: USES_TOOL
+    to: tool.ajv
+  - from: competency.api.contract-automation
+    predicate: USES_TECHNOLOGY
+    to: tech.json-schema
+  - from: competency.api.graphql
+    predicate: USES_TECHNOLOGY
+    to: protocol.graphql
+  - from: competency.api.rest
+    predicate: USES_TECHNOLOGY
+    to: protocol.rest
+  - from: competency.integration.websocket
+    predicate: USES_TECHNOLOGY
+    to: protocol.websocket
+  - from: competency.database.sql-data-validation
+    predicate: USES_TECHNOLOGY
+    to: tech.sql
+  - from: competency.database.sql-data-validation
+    predicate: USES_TOOL
+    to: tool.sqlite
+
+  # ============================================================
+  # TOOL <-> LAB (a lab's real code uses this tool/technology)
+  # ============================================================
+  - from: lab.backend-api.rest-graphql-websocket
+    predicate: USES_TECHNOLOGY
+    to: protocol.rest
+  - from: lab.backend-api.rest-graphql-websocket
+    predicate: USES_TECHNOLOGY
+    to: protocol.graphql
+  - from: lab.backend-api.rest-graphql-websocket
+    predicate: USES_TECHNOLOGY
+    to: protocol.websocket
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: USES_TOOL
+    to: tool.postman
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: USES_TOOL
+    to: tool.newman
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: USES_TOOL
+    to: tool.ajv
+  - from: lab.web-automation.playwright
+    predicate: USES_TOOL
+    to: tool.playwright
+  - from: lab.web-automation.playwright
+    predicate: USES_TOOL
+    to: tool.axe-core
+  - from: lab.web-automation.selenium
+    predicate: USES_TOOL
+    to: tool.selenium
+  - from: lab.performance.jmeter
+    predicate: USES_TOOL
+    to: tool.jmeter
+  - from: lab.performance.locust
+    predicate: USES_TOOL
+    to: tool.locust
+  - from: lab.database.sql-validation
+    predicate: USES_TECHNOLOGY
+    to: tech.sql
+  - from: lab.database.sql-validation
+    predicate: USES_TOOL
+    to: tool.sqlite
+  - from: lab.cicd.github-actions
+    predicate: USES_TOOL
+    to: platform.github-actions
+
+  # ============================================================
+  # COMPETENCY -> LAB (repository practice location — PRACTICED_IN)
+  # ============================================================
+  - from: competency.api.rest
+    predicate: PRACTICED_IN
+    to: lab.backend-api.rest-graphql-websocket
+  - from: competency.api.graphql
+    predicate: PRACTICED_IN
+    to: lab.backend-api.rest-graphql-websocket
+  - from: competency.integration.websocket
+    predicate: PRACTICED_IN
+    to: lab.backend-api.rest-graphql-websocket
+  - from: competency.database.sql-data-validation
+    predicate: PRACTICED_IN
+    to: lab.database.sql-validation
+  - from: competency.api.contract-automation
+    predicate: PRACTICED_IN
+    to: lab.api-contract.postman-newman-ajv
+  - from: competency.web.playwright
+    predicate: PRACTICED_IN
+    to: lab.web-automation.playwright
+  - from: competency.web.visual-testing
+    predicate: PRACTICED_IN
+    to: lab.web-automation.playwright
+  - from: competency.web.accessibility
+    predicate: PRACTICED_IN
+    to: lab.web-automation.playwright
+  - from: competency.web.selenium
+    predicate: PRACTICED_IN
+    to: lab.web-automation.selenium
+  - from: competency.performance.jmeter
+    predicate: PRACTICED_IN
+    to: lab.performance.jmeter
+  - from: competency.performance.locust
+    predicate: PRACTICED_IN
+    to: lab.performance.locust
+  - from: competency.security.security-aware-qa
+    predicate: PRACTICED_IN
+    to: lab.backend-api.rest-graphql-websocket
+    note: "security.test.js is part of the backend workspace's test suite, not a separate lab."
+  - from: competency.observability.correlation-logging
+    predicate: PRACTICED_IN
+    to: lab.backend-api.rest-graphql-websocket
+    note: "observability.test.js is part of the backend workspace's test suite."
+  - from: competency.observability.elastic-log-analysis
+    predicate: RELATED_TO
+    to: lab.observability.elastic-log-analysis
+    note: "Codex post-audit correction (P1-04): NOT PRACTICED_IN — competency-state.yaml's own repository.status for this competency is NOT_PRACTICED ('repository yerine correlation-ID + structured logging kullanır'; no real Elastic runtime exists anywhere in this repository, see the removed USES_TOOL edge above). The lab is real RCA/log-investigation work (see its DOCUMENTED_BY edge to evidence.defect.bug-auth-edu-001) that draws on the same analytical competency without the Elastic tool itself — RELATED_TO is deliberate here, matching the existing Jenkins/GitHub-Actions RELATED_TO precedent (see .ai/DECISIONS.md D7), not a shortcut."
+  - from: competency.mobile.appium
+    predicate: LEARNING
+    to: gap.appium.repo-device-evidence
+    note: "No repository lab exists for Appium — see 05-EXECUTABLE-LABS/README.md's stated Mobile gap."
+
+  # ============================================================
+  # LAB -> EVIDENCE / COMPETENCY -> EVIDENCE (mandated path, leg 4
+  # — what real evidence backs the practice, including the specific
+  # edges that justify each CI_VERIFIED competency claim)
+  # ============================================================
+  - from: lab.backend-api.rest-graphql-websocket
+    predicate: TESTED_BY
+    to: evidence.backend.unit-integration-suite
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: TESTED_BY
+    to: evidence.api-tests.public-schema-suite
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: TESTED_BY
+    to: evidence.api-tests.protected-auth-suite
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: TESTED_BY
+    to: evidence.api-tests.orders-payment-suite
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: TESTED_BY
+    to: evidence.api-tests.notifications-suite
+  - from: lab.api-contract.postman-newman-ajv
+    predicate: TESTED_BY
+    to: evidence.api-tests.api-db-validation-suite
+  - from: lab.web-automation.playwright
+    predicate: TESTED_BY
+    to: evidence.web.playwright-functional-visual-accessibility
+  - from: lab.web-automation.playwright
+    predicate: TESTED_BY
+    to: evidence.web.visual-accessibility
+  - from: lab.web-automation.selenium
+    predicate: TESTED_BY
+    to: evidence.selenium.ci-verified-run
+  - from: lab.performance.jmeter
+    predicate: TESTED_BY
+    to: evidence.performance.jmeter-workload-design
+  - from: lab.performance.jmeter
+    predicate: TESTED_BY
+    to: evidence.performance.jmeter-fail-gate-logic
+  - from: lab.performance.jmeter
+    predicate: DOCUMENTED_BY
+    to: evidence.performance.jmeter-real-execution-blocked
+    note: "Codex post-audit fix (P2-04): DOCUMENTED_BY, not TESTED_BY — this evidence records a real, diagnosed BLOCKER, not a passing test."
+  - from: lab.performance.locust
+    predicate: TESTED_BY
+    to: evidence.performance.locust-load-run
+  - from: lab.database.sql-validation
+    predicate: TESTED_BY
+    to: evidence.database.sql-validation-suite
+  - from: lab.security.owasp-mapping
+    predicate: DOCUMENTED_BY
+    to: evidence.security.owasp-mapping-review
+  - from: lab.cicd.github-actions
+    predicate: IMPLEMENTED_BY
+    to: evidence.cicd.github-actions-pipeline
+  - from: lab.observability.elastic-log-analysis
+    predicate: DOCUMENTED_BY
+    to: evidence.defect.bug-auth-edu-001
+    note: "The RCA/log-investigation evidence for this lab is the BUG-AUTH-EDU-001 case, the only real access-log investigation this repository has produced."
+
+  # Explicit competency -> evidence edges for every CI_VERIFIED claim
+  # (scripts/registry/validate-registry.mjs enforces that every one of
+  # these exists — this is not decorative, removing one fails CI).
+  - from: competency.api.rest
+    predicate: EVIDENCED_BY
+    to: evidence.backend.unit-integration-suite
+  - from: competency.api.graphql
+    predicate: EVIDENCED_BY
+    to: evidence.backend.unit-integration-suite
+  - from: competency.integration.websocket
+    predicate: EVIDENCED_BY
+    to: evidence.backend.unit-integration-suite
+  - from: competency.database.sql-data-validation
+    predicate: EVIDENCED_BY
+    to: evidence.backend.unit-integration-suite
+  - from: competency.security.security-aware-qa
+    predicate: EVIDENCED_BY
+    to: evidence.backend.unit-integration-suite
+  - from: competency.observability.correlation-logging
+    predicate: EVIDENCED_BY
+    to: evidence.backend.unit-integration-suite
+  - from: competency.api.contract-automation
+    predicate: EVIDENCED_BY
+    to: evidence.api-tests.public-schema-suite
+  - from: competency.api.contract-automation
+    predicate: EVIDENCED_BY
+    to: evidence.api-tests.protected-auth-suite
+  - from: competency.api.contract-automation
+    predicate: EVIDENCED_BY
+    to: evidence.api-tests.orders-payment-suite
+  - from: competency.api.contract-automation
+    predicate: EVIDENCED_BY
+    to: evidence.api-tests.notifications-suite
+  - from: competency.api.contract-automation
+    predicate: EVIDENCED_BY
+    to: evidence.api-tests.api-db-validation-suite
+  - from: competency.web.playwright
+    predicate: EVIDENCED_BY
+    to: evidence.web.playwright-functional-visual-accessibility
+  - from: competency.web.accessibility
+    predicate: EVIDENCED_BY
+    to: evidence.web.playwright-functional-visual-accessibility
+  - from: competency.web.visual-testing
+    predicate: EVIDENCED_BY
+    to: evidence.web.playwright-functional-visual-accessibility
+  - from: competency.web.selenium
+    predicate: EVIDENCED_BY
+    to: evidence.selenium.ci-verified-run
+
+  # ============================================================
+  # Competency prerequisite structure (REQUIRES / PREREQUISITE_OF)
+  # ============================================================
+  - from: competency.api.contract-automation
+    predicate: REQUIRES
+    to: competency.api.rest
+  - from: competency.api.rest
+    predicate: PREREQUISITE_OF
+    to: competency.api.contract-automation
+  - from: competency.web.playwright
+    predicate: PREREQUISITE_OF
+    to: competency.web.visual-testing
+  - from: competency.web.playwright
+    predicate: PREREQUISITE_OF
+    to: competency.web.accessibility
+
+  # ============================================================
+  # Gap linkage (LEARNING — a competency's known, tracked gap)
+  # ============================================================
+  - from: competency.mobile.appium
+    predicate: LEARNING
+    to: gap.appium.framework-from-scratch
+  - from: competency.performance.jmeter
+    predicate: LEARNING
+    to: gap.jmeter.from-scratch-framework
+  - from: competency.environment.docker
+    predicate: LEARNING
+    to: gap.docker.runtime-depth
+  - from: competency.observability.opentelemetry-jaeger
+    predicate: LEARNING
+    to: gap.observability.opentelemetry
+  - from: competency.observability.opentelemetry-jaeger
+    predicate: LEARNING
+    to: gap.observability.jaeger
+  - from: competency.security.burp-suite
+    predicate: LEARNING
+    to: gap.security.burp-suite
+  - from: competency.security.owasp-zap
+    predicate: LEARNING
+    to: gap.security.owasp-zap
+  - from: competency.performance.locust
+    predicate: LEARNING
+    to: gap.performance.k6
+  - from: competency.performance.locust
+    predicate: LEARNING
+    to: gap.performance.gatling
+  - from: competency.web.accessibility
+    predicate: LEARNING
+    to: gap.accessibility.professional-exposure
+  - from: competency.security.security-aware-qa
+    predicate: LEARNING
+    to: gap.security.professional-exposure
+    note: "Codex post-audit correction (F1-2): professional.status corrected PARTICIPATED -> NONE; this gap edge replaces the unsupported professional claim with an honest, explicit gap."
+
+  # ============================================================
+  # Graph-completeness pass — every previously-orphaned canonical
+  # entity closed with a real, specific edge (not RELATED_TO padding).
+  # See .ai/DECISIONS.md for the method: each edge below traces to a
+  # real fact (a source-data technology list, an actual CI dependency,
+  # or a genuine conceptual adjacency), not invented to raise the count.
+  # ============================================================
+
+  # DOMAIN -> LAB where implemented (was previously only expressed via
+  # competency -> lab; adding the direct domain -> lab edge the
+  # completeness audit explicitly asked for).
+  - from: domain.commerce.ecommerce
+    predicate: IMPLEMENTED_BY
+    to: lab.backend-api.rest-graphql-websocket
+  - from: domain.commerce.ecommerce
+    predicate: IMPLEMENTED_BY
+    to: lab.api-contract.postman-newman-ajv
+  - from: domain.commerce.ecommerce
+    predicate: IMPLEMENTED_BY
+    to: lab.database.sql-validation
+  - from: domain.financial.fintech
+    predicate: IMPLEMENTED_BY
+    to: lab.backend-api.rest-graphql-websocket
+    note: "Synthetic reuse of the Commerce order/payment flow, not a dedicated FinTech lab — see 05-EXECUTABLE-LABS/README.md D1."
+
+  # DOMAIN -> SYSTEM PATTERN for the three newly deep-dived domains
+  # (Streaming, Mobile/Multi-Country, Insurance), matching the patterns
+  # each domain page's own "Related System Patterns" section names.
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.authentication
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.authorization
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.async-events
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.notification
+  - from: domain.mobile.multi-country
+    predicate: USES_PATTERN
+    to: pattern.authentication
+  - from: domain.mobile.multi-country
+    predicate: USES_PATTERN
+    to: pattern.authorization
+  - from: domain.mobile.multi-country
+    predicate: USES_PATTERN
+    to: pattern.payment
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.idempotency
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.payment
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.authorization
+
+  # PROFESSIONAL EXPERIENCE -> TOOL/TECHNOLOGY, drawn directly from each
+  # professional case's own `technologies:` list in
+  # professional-experience.yaml (only entries that map to a real
+  # registered tool/tech/protocol id — items with no matching id, e.g.
+  # "react-native", "swagger", are not force-mapped to an unrelated id).
+  - from: pro.ecommerce.skechers-turkey
+    predicate: USES_TECHNOLOGY
+    to: protocol.graphql
+  - from: pro.ecommerce.skechers-turkey
+    predicate: USES_TECHNOLOGY
+    to: protocol.rest
+  - from: pro.ecommerce.skechers-turkey
+    predicate: USES_TOOL
+    to: tool.ajv
+  - from: pro.ecommerce.skechers-turkey
+    predicate: USES_TOOL
+    to: tool.newman
+  - from: pro.ecommerce.skechers-turkey
+    predicate: USES_TECHNOLOGY
+    to: tech.json-schema
+  - from: pro.fintech.stablex-like
+    predicate: USES_TOOL
+    to: tool.postman
+  - from: pro.fintech.stablex-like
+    predicate: USES_TECHNOLOGY
+    to: protocol.websocket
+  - from: pro.fintech.stablex-like
+    predicate: USES_TOOL
+    to: tool.appium
+  - from: pro.fintech.stablex-like
+    predicate: USES_TOOL
+    to: tool.jenkins
+  - from: pro.fintech.stablex-like
+    predicate: USES_TOOL
+    to: tool.elastic
+  - from: pro.fintech.stablex-like
+    predicate: USES_TOOL
+    to: tool.azure-devops
+  - from: pro.fintech.stablex-like
+    predicate: USES_TECHNOLOGY
+    to: tech.sql
+  - from: pro.mobile.defacto-like
+    predicate: USES_TOOL
+    to: tool.figma
+  - from: pro.mobile.defacto-like
+    predicate: USES_TOOL
+    to: tool.python-visual-comparison
+  - from: pro.streaming.sdk-context
+    predicate: USES_TECHNOLOGY
+    to: protocol.rest
+  - from: pro.streaming.sdk-context
+    predicate: USES_TECHNOLOGY
+    to: protocol.websocket
+
+  # Orphaned tool closure
+  - from: lab.cicd.github-actions
+    predicate: REQUIRES
+    to: tool.git
+  - from: lab.cicd.github-actions
+    predicate: USES_TOOL
+    to: platform.github
+  - from: lab.backend-api.rest-graphql-websocket
+    predicate: USES_TECHNOLOGY
+    to: platform.node
+  - from: tool.k6
+    predicate: LEARNING
+    to: gap.performance.k6
+  - from: tool.gatling
+    predicate: LEARNING
+    to: gap.performance.gatling
+  - from: tool.jira
+    predicate: RELATED_TO
+    to: tool.azure-devops
+    note: "Both project/QA-management tooling in the same catalog category (04-TOOLS-AND-TECH/11-PROJECT-QA-MANAGEMENT/); Jira's own professional use is USER_CONFIRMATION_REQUIRED (tool-state.yaml), so no stronger predicate applies."
+  - from: tool.confluence
+    predicate: RELATED_TO
+    to: tool.azure-devops
+    note: "Same reasoning as tool.jira above — USER_CONFIRMATION_REQUIRED, no confirmed practice to link to."
+  - from: tool.trello
+    predicate: RELATED_TO
+    to: tool.azure-devops
+    note: "Codex post-audit fix (P1-01): same reasoning as tool.jira/tool.confluence above — USER_CONFIRMATION_REQUIRED (superseded QA-COMPETENCY-MAP.md claimed EXPERIENCE, current canonical source does not confirm it), no confirmed practice to link to."
+  - from: tool.cucumber
+    predicate: RELATED_TO
+    to: tool.playwright
+    note: "Codex post-audit fix (P1-01): USER_CONFIRMATION_REQUIRED — same category (web/test automation) as Playwright, no confirmed practice to link to a stronger predicate."
+  - from: tool.device-farm
+    predicate: RELATED_TO
+    to: tool.appium
+    note: "Codex post-audit fix (P1-01): USER_CONFIRMATION_REQUIRED — same category (mobile automation) as Appium, no confirmed practice to link to a stronger predicate."
+  - from: tool.adb
+    predicate: RELATED_TO
+    to: tool.appium
+    note: "Codex post-audit fix (P1-01): USER_CONFIRMATION_REQUIRED — same category (mobile automation) as Appium, no confirmed practice to link to a stronger predicate."
+
+  # Orphaned gap closure — GAP -> TARGET COMPETENCY/DOMAIN/PROFILE
+  - from: competency.web.selenium
+    predicate: LEARNING
+    to: gap.selenium.professional-exposure
+  - from: competency.web.playwright
+    predicate: LEARNING
+    to: gap.playwright.professional-exposure
+  - from: competency.observability.opentelemetry-jaeger
+    predicate: LEARNING
+    to: gap.observability.distributed-tracing
+  - from: competency.security.security-aware-qa
+    predicate: LEARNING
+    to: gap.security.owasp-api-top10-depth
+  - from: competency.api.contract-automation
+    predicate: LEARNING
+    to: gap.contract-testing.pact
+  - from: competency.api.contract-automation
+    predicate: LEARNING
+    to: gap.service-virtualization
+  - from: competency.api.contract-automation
+    predicate: LEARNING
+    to: gap.reporting.allure-from-scratch
+    note: "Newman/HTML reporting is this repository's real reporting tool; Allure is a learning-level alternative, not practiced."
+  - from: competency.cicd.jenkins
+    predicate: LEARNING
+    to: gap.static-analysis.sonarqube-depth
+  - from: competency.integration.websocket
+    predicate: LEARNING
+    to: gap.messaging.kafka
+  - from: competency.integration.websocket
+    predicate: LEARNING
+    to: gap.messaging.rabbitmq
+  - from: competency.environment.docker
+    predicate: LEARNING
+    to: gap.cloud-qa.depth
+  - from: competency.cicd.jenkins
+    predicate: LEARNING
+    to: gap.release.feature-flags
+  - from: competency.cicd.jenkins
+    predicate: LEARNING
+    to: gap.release.canary
+  - from: competency.cicd.jenkins
+    predicate: LEARNING
+    to: gap.release.blue-green
+  - from: domain.insurance
+    predicate: LEARNING
+    to: gap.domain.insurance-professional
+  - from: domain.healthcare
+    predicate: LEARNING
+    to: gap.domain.healthcare-professional
+  - from: domain.telecom
+    predicate: LEARNING
+    to: gap.domain.telecom-professional
+  - from: profile.salim-burak-aytemiz
+    predicate: LEARNING
+    to: gap.certification.istqb
+
+  # Personal-exposure-only domains (present in domain-state.yaml, not in
+  # the universal catalog since no dedicated repository/domain page
+  # exists for them) — closed with the most specific real edge available.
+  - from: pro.ecommerce.skechers-turkey
+    predicate: PROFESSIONAL_EXPERIENCE_IN
+    to: domain.commerce.oms
+    note: "'OMS issue investigation' is explicitly listed in this case's what_i_did — a real sub-area of the same professional context, not a separate case."
+  - from: domain.financial.crypto
+    predicate: RELATED_TO
+    to: domain.financial.fintech
+    note: "LEARNING-level exposure only (domain-state.yaml), no dedicated gap or competency tracks it specifically — the closest real, specific fact is its conceptual adjacency to the FinTech domain it was mentioned alongside in the source data."
+  - from: domain.financial.trading-precious-metals
+    predicate: RELATED_TO
+    to: domain.financial.fintech
+    note: "Same reasoning as domain.financial.crypto above — 'FX / Precious Metals FinTech' in the source data's own phrasing."
+
+  # ============================================================
+  # The 14 newly-written System Patterns — each closed with the
+  # specific edge its own "Related System Patterns"/"Related Domains"
+  # section names, not a generic placeholder.
+  # ============================================================
+  - from: pattern.state-machine
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.database.sql-data-validation
+  - from: pattern.state-machine
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.state-machine
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.state-machine
+
+  - from: pattern.search
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.database.sql-data-validation
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.search
+
+  - from: pattern.pagination
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.database.sql-data-validation
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.pagination
+
+  - from: pattern.file-upload
+    predicate: RELATED_TO
+    to: domain.insurance
+    note: "Claim-document upload is Insurance's own named use case for this pattern, per that domain page — no dedicated competency or lab exists for either side, so RELATED_TO is the honest predicate here."
+
+  - from: pattern.import-export
+    predicate: USES_PATTERN
+    to: pattern.file-upload
+  - from: pattern.import-export
+    predicate: USES_PATTERN
+    to: pattern.pagination
+  - from: pattern.import-export
+    predicate: USES_PATTERN
+    to: pattern.multi-tenancy
+
+  - from: pattern.timeout
+    predicate: USES_PATTERN
+    to: pattern.retry
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.timeout
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.timeout
+
+  - from: pattern.cache
+    predicate: SUPPORTS_COMPETENCY
+    to: competency.database.sql-data-validation
+  - from: domain.commerce.ecommerce
+    predicate: USES_PATTERN
+    to: pattern.cache
+
+  - from: pattern.audit-log
+    predicate: USES_PATTERN
+    to: pattern.async-events
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.audit-log
+
+  - from: pattern.webhook
+    predicate: USES_PATTERN
+    to: pattern.idempotency
+  - from: pattern.webhook
+    predicate: USES_PATTERN
+    to: pattern.retry
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.webhook
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.webhook
+
+  - from: pattern.third-party-integration
+    predicate: VALIDATES_FLOW
+    to: lab.backend-api.rest-graphql-websocket
+  - from: pattern.third-party-integration
+    predicate: USES_PATTERN
+    to: pattern.payment
+  - from: domain.media.streaming
+    predicate: USES_PATTERN
+    to: pattern.third-party-integration
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.third-party-integration
+
+  - from: pattern.scheduled-jobs
+    predicate: USES_PATTERN
+    to: pattern.idempotency
+  - from: domain.insurance
+    predicate: USES_PATTERN
+    to: pattern.scheduled-jobs
+
+  - from: pattern.feature-flags
+    predicate: LEARNING
+    to: gap.release.feature-flags
+  - from: domain.mobile.multi-country
+    predicate: USES_PATTERN
+    to: pattern.feature-flags
+
+  - from: pattern.localization
+    predicate: RELATED_TO
+    to: domain.mobile.multi-country
+    note: "This pattern's own page explicitly defers its deep treatment to the domain page — the domain, not a competency or lab, is the real owner of this pattern's depth here."
+
+  - from: pattern.multi-tenancy
+    predicate: USES_PATTERN
+    to: pattern.authorization
+
+related:
+  schema: "../schemas/relationship.schema.json"
+  narrative_docs:
+    - "../../../02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/README.md"
+    - "../../../.ai/DECISIONS.md"

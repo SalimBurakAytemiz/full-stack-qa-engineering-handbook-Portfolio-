@@ -21,12 +21,39 @@ const loginCases = require('../test-data/login-cases.json');
 // unmodified-from-a-working-environment code, not a stub.
 
 const PARALLEL_SESSION_COUNT = 3;
+const DRIVER_STARTUP_TIMEOUT_MS = Number(process.env.SELENIUM_DRIVER_STARTUP_TIMEOUT_MS) || 30_000;
+
+// Codex final-verification fix (F6, applied here too — same class of bug
+// as login-flow.test.js): a bare `main();` with no top-level rejection
+// handling and an unbounded driver-startup call can let a hang or an
+// unanticipated error reach end-of-process with no explicit exitCode ever
+// set, defaulting to a silent 0. See login-flow.test.js's block comment
+// for the full analysis; the same three-layer fix is applied below.
+let explicitOutcomeReported = false;
+function reportOutcome(exitCode) {
+  explicitOutcomeReported = true;
+  process.exitCode = exitCode;
+}
+process.on('exit', () => {
+  if (!explicitOutcomeReported) {
+    console.log('SELENIUM_PARALLEL_STATUS: INCOMPLETE_NO_EXPLICIT_RESULT');
+    process.exitCode = 3;
+  }
+});
+
+function withTimeout(promise, ms, label) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label} did not complete within ${ms}ms`)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
 
 async function runOneSession(index, baseUrl) {
   const startedAt = Date.now();
   let driver;
   try {
-    driver = await buildDriver('chrome');
+    driver = await withTimeout(buildDriver('chrome'), DRIVER_STARTUP_TIMEOUT_MS, `session[${index}] driver startup`);
   } catch (err) {
     return { index, status: 'EXECUTION_BLOCKED', durationMs: Date.now() - startedAt, error: err.message };
   }
@@ -75,12 +102,21 @@ async function main() {
 
   if (blocked === results.length) {
     console.log('SELENIUM_PARALLEL_STATUS: EXECUTION_BLOCKED (all sessions)');
-    process.exitCode = 2;
+    reportOutcome(2);
+    return;
+  }
+  if (results.length !== PARALLEL_SESSION_COUNT) {
+    console.log(`SELENIUM_PARALLEL_STATUS: INCOMPLETE — expected ${PARALLEL_SESSION_COUNT} results, got ${results.length}`);
+    reportOutcome(2);
     return;
   }
 
   console.log(`SELENIUM_PARALLEL_SUMMARY: ${passed}/${results.length} passed`);
-  process.exitCode = failed > 0 || blocked > 0 ? 1 : 0;
+  reportOutcome(failed > 0 || blocked > 0 ? 1 : 0);
 }
 
-main();
+main().catch((err) => {
+  console.log('SELENIUM_PARALLEL_STATUS: EXECUTION_BLOCKED');
+  console.log(`SELENIUM_PARALLEL_BLOCK_REASON: unhandled error in main() — ${err && err.stack ? err.stack : err}`);
+  reportOutcome(2);
+});

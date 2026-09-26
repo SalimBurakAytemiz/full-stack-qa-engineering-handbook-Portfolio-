@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/domain-catalog.schema.json",
+  "title": "Universal domain catalog entry",
+  "description": "One entry in shared/registry/catalog/domains.yaml — the domain's OWN repository maturity (D0-D5, Section 15), independent of any one person's exposure. Post-Codex fix (P2-01): this catalog previously reused domain.schema.json (personal exposure entries), which forced it to carry a fake 'universal exposure' field mirroring personal EXPOSURE vocabulary — the exact ownership violation Codex flagged ('universal catalog must not own personal exposure state'). Personal exposure belongs ONLY in 01-SALIM-BURAK-DIGITAL-TWIN/registry/domain-state.yaml, validated against domain.schema.json.",
+  "type": "object",
+  "required": ["domain_id", "label", "maturity"],
+  "properties": {
+    "domain_id": {
+      "type": "string",
+      "pattern": "^domain\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "label": { "type": "string", "minLength": 1 },
+    "maturity": {
+      "enum": ["D0_INDEXED", "D1_DOCUMENTED", "D2_QA_MAPPED", "D3_CASE_DESIGNED", "D4_EXECUTABLE", "D5_EVIDENCE_VERIFIED"],
+      "description": "Section 15 domain maturity model — repository content depth, never a person's exposure level."
+    },
+    "path": {
+      "type": "string",
+      "description": "Repository-relative path to this domain's README, if one exists yet (D0 entries may have none)."
+    },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": false
+}

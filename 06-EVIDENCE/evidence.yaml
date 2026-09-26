@@ -1,0 +1,158 @@
+# Evidence registry (Section 33-35). This is the ONE owner of evidence
+# maturity facts — narrative docs (case studies, lab READMEs, the Digital
+# Twin's 08-EVIDENCE-MAP.md) reference these ids, they do not restate the
+# maturity level. E5_INDEPENDENTLY_AUDITED is never set here by Claude
+# itself (see shared/registry/schemas/evidence.schema.json).
+#
+# artifact paths are checked at repository HEAD — see
+# scripts/registry/validate-registry.mjs for the schema check; a stale
+# path here is a real defect, not a formatting issue.
+schema_version: 1
+last_updated: "2026-09-25"
+
+items:
+  - id: evidence.backend.unit-integration-suite
+    label: "Backend unit/integration test suite (node:test)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/backend/tests"
+    produced_by: "npm test --workspace backend (also runs in .github/workflows/ci.yml)"
+    related_lab: lab.backend-api.rest-graphql-websocket
+
+  - id: evidence.api-tests.public-schema-suite
+    label: "API contract testing — public/schema package (Postman/Newman/AJV)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/evidence/P5-API-TESTING/P5.1-POSTMAN-FOUNDATION"
+    produced_by: "npm run api:test:postman --workspace api-tests (ci.yml job: api-schema-validation)"
+    related_lab: lab.api-contract.postman-newman-ajv
+
+  - id: evidence.api-tests.protected-auth-suite
+    label: "API contract testing — protected/auth package (Postman/Newman)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/evidence/P5-API-TESTING/P5.3-AUTH-AUTHORIZATION"
+    produced_by: "npm run api:test:auth --workspace api-tests (ci.yml job: api-auth-tests)"
+    related_lab: lab.api-contract.postman-newman-ajv
+    # TR: Codex post-audit fix (P1-03) — bu paket P5.3'ten beri lokal
+    # olarak 19/19 request, 42/42 assertion ile PASS ediyordu ancak
+    # CI'a hiç bağlanmamıştı; api-schema-validation job'ının kapsamı
+    # yalnızca public/schema koleksiyonuydu. Ayrı bir CI job'u
+    # (api-auth-tests) eklenerek gerçek CI coverage sağlandı.
+
+  - id: evidence.api-tests.orders-payment-suite
+    label: "API contract testing — orders/payment package (Newman + AJV)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/evidence/P5-API-TESTING/P5.5-ORDERS-PAYMENT"
+    produced_by: "npm run api:test:orders-payment --workspace api-tests (ci.yml job: api-orders-payment-tests, seeded fresh before each run)"
+    related_lab: lab.api-contract.postman-newman-ajv
+    note: "TR: Codex post-audit fix (P1-03) — aynı gerekçe: stok mutasyonu içeren bu paket P5.5'ten beri lokal 64/64 request, 118/118 assertion PASS ediyordu ancak CI'a bağlı değildi. Ayrı bir seed-then-run CI job'u eklendi."
+
+  - id: evidence.api-tests.notifications-suite
+    label: "API contract testing — notifications package (Newman + AJV)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/evidence/P5-API-TESTING/P5.6-NOTIFICATIONS"
+    produced_by: "npm run api:test:notifications --workspace api-tests (ci.yml job: api-notifications-tests, seeded fresh before each run)"
+    related_lab: lab.api-contract.postman-newman-ajv
+    note: "TR: Codex post-audit fix (P1-03) — aynı gerekçe: P5.6'dan beri lokal 20/20 request, 48/48 assertion PASS ediyordu ancak CI'a bağlı değildi."
+
+  - id: evidence.api-tests.api-db-validation-suite
+    label: "API-to-DB validation package (node:sqlite + fetch)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/evidence/P5-API-TESTING/P5.7-API-DB-VALIDATION"
+    produced_by: "npm run api:test:db --workspace api-tests (ci.yml job: api-db-validation, seeded fresh before each run)"
+    related_lab: lab.api-contract.postman-newman-ajv
+    note: "TR: Codex post-audit fix (P1-03) — aynı gerekçe: P5.7'den beri lokal 17/17 senaryo, 97/97 assertion PASS ediyordu ancak CI'a bağlı değildi."
+
+  - id: evidence.web.playwright-functional-visual-accessibility
+    label: "Web QA — Playwright functional/visual/accessibility"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-8-WEB-MOBILE-QA/EXECUTION.md"
+    produced_by: "npm test --workspace web-tests (also runs in .github/workflows/ci.yml)"
+    related_lab: lab.web-automation.playwright
+
+  - id: evidence.web.visual-accessibility
+    label: "Visual regression + accessibility (axe-core)"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-9-VISUAL-ACCESSIBILITY/EXECUTION.md"
+    produced_by: "npm test --workspace web-tests"
+    related_lab: lab.web-automation.playwright
+
+  - id: evidence.selenium.ci-verified-run
+    label: "Selenium lab — real browser automation, CI-only real pass"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md"
+    produced_by: "npm run selenium:test --workspace automation-labs (runs in .github/workflows/ci.yml — local runs are sandbox-blocked, documented as a known split)"
+    related_lab: lab.web-automation.selenium
+
+  - id: evidence.performance.jmeter-workload-design
+    label: "JMeter workload design — .jmx test plan (threads/ramp-up/correlation/threshold)"
+    maturity: E2_IMPLEMENTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/jmeter/qa-demo-system-load-test.jmx"
+    produced_by: "hand-authored, cross-validated against JMeter's own stock template (see PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md section 3)"
+    related_lab: lab.performance.jmeter
+    note: "Codex post-audit fix (P2-04, split A of 3): parameterized Thread Group (threads/rampUp/loops), CSV-driven test data, and a DurationAssertion threshold (3000ms) in every sampler's hashTree — a real workload/threshold design, distinct from whether the real binary could execute it (see .jmeter-real-execution-blocked below) or whether its fail-gate logic was validated (see .jmeter-fail-gate-logic below)."
+
+  - id: evidence.performance.jmeter-fail-gate-logic
+    label: "JMeter fail-gate logic — JTL-content-based PASS/FAIL, fixture-tested"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/jmeter/scripts/run-jmeter.test.js"
+    produced_by: "node --test run-jmeter.test.js — 7/7 PASS, real execution, independent of the real JMeter runtime (fixture JTL files)"
+    related_lab: lab.performance.jmeter
+    note: "Codex post-audit fix (P2-04, split B of 3): this is deterministic fail-gate VALIDATION LOGIC being tested (does the wrapper correctly parse a JTL file's success/failure column and report PASS/FAIL?), genuinely executed and genuinely PASSING — NOT a real JMeter load run. JMeter's own process exit code does not reliably reflect internal sample/assertion failures (empirically confirmed — a real JMeter crash still exited 0, see PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md section 3.5); the wrapper inspects the JTL file content instead, and that inspection logic is what these 7 tests prove works."
+
+  - id: evidence.performance.jmeter-real-execution-blocked
+    label: "JMeter real binary execution — attempted, root cause diagnosed, BLOCKED (not a successful load run)"
+    maturity: E1_DOCUMENTED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md"
+    produced_by: "jmeter -n -t ... (real binary invocation, multiple attempts including JMeter's own stock template as an isolation control) — every attempt failed with the same com.thoughtworks.xstream.security.ForbiddenClassException"
+    related_lab: lab.performance.jmeter
+    note: "Codex post-audit fix (P2-04, split C of 3): do NOT present this as a successful load run. Root cause is environment-specific (this sandbox's apt jmeter 2.13 package predates a modern XStream version's security-policy defaults — see EXECUTION.md section 3 for the full isolation trace against JMeter's own stock template, which failed identically), not a defect in this repository's own .jmx/wrapper code. run-jmeter.js (see .jmeter-fail-gate-logic above) correctly detects and reports this real failure as JMETER_STATUS: LAUNCH_OR_RUNTIME_ERROR, exit code 1 — that correct detection is itself real, executed behavior, but the underlying load test never produced real load-test results in this environment. maturity is E1_DOCUMENTED (a real, thoroughly diagnosed attempt is documented), explicitly not E3_EXECUTED or E4_CI_VERIFIED."
+
+  - id: evidence.performance.locust-load-run
+    label: "Locust load test"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md"
+    produced_by: "locust (local execution only)"
+    related_lab: lab.performance.locust
+
+  - id: evidence.database.sql-validation-suite
+    label: "Database — SQL/data validation suite"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md"
+    produced_by: "npm test --workspace backend (db-tests are part of the backend workspace)"
+    related_lab: lab.database.sql-validation
+
+  - id: evidence.security.owasp-mapping-review
+    label: "OWASP API Security Top 10 mapping review"
+    maturity: E2_IMPLEMENTED
+    artifact: "QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md"
+    produced_by: "manual review, not an automated scan (Burp/ZAP are documented gaps, not run)"
+    related_lab: lab.security.owasp-mapping
+
+  - id: evidence.cicd.github-actions-pipeline
+    label: "GitHub Actions CI pipeline (4 real jobs)"
+    maturity: E4_CI_VERIFIED
+    artifact: ".github/workflows/ci.yml"
+    produced_by: "GitHub Actions, triggered on push/PR"
+    related_lab: lab.cicd.github-actions
+
+  - id: evidence.defect.bug-auth-edu-001
+    label: "BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md"
+    produced_by: "manual reproduction attempt (API + UI); pre-existing regression coverage in backend/tests/auth.test.js confirmed to already cover this exact scenario, no new test added"
+    related_lab: lab.backend-api.rest-graphql-websocket
+    # TR: Codex post-audit correction (P1-02) — bu maddenin önceki
+    # metni ("reproduced defect with root cause" / "automated
+    # regression test added") EXECUTION.md'nin kendi Final Reproduction
+    # Result'ı (bölüm 8: "NOT REPRODUCED") ve Retest & Regression
+    # bölümü (bölüm 9: "Mevcut regression coverage bulundu — yeni test
+    # eklenmedi") ile ÇELİŞİYORDU. EXECUTION.md tarihsel kayıt olarak
+    # DEĞİŞTİRİLMEDİ — yalnızca bu türetilmiş özet, kendi kanıtını
+    # doğru yansıtacak şekilde düzeltildi. maturity E3_EXECUTED
+    # doğrudur (gerçek bir execution gerçekleşti — sonucu NOT
+    # REPRODUCED olsa da execution'ın kendisi gerçektir), yalnızca
+    # sonucun NİTELİĞİ yanlış temsil ediliyordu.
+
+related:
+  narrative_docs:
+    - "01-SALIM-BURAK-DIGITAL-TWIN/08-EVIDENCE-MAP.md"
+  schema: "../shared/registry/schemas/evidence.schema.json"

@@ -1,0 +1,134 @@
+# System pattern catalog (Section 13). Status reflects
+# 02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/README.md's own status
+# table — this file does not restate the narrative, only gives each
+# pattern a stable id for relationship edges (USES_PATTERN, VALIDATES_FLOW).
+schema_version: 1
+last_updated: "2026-09-25"
+
+items:
+  - id: pattern.authentication
+    label: "Authentication"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/AUTHENTICATION.md"
+
+  - id: pattern.authorization
+    label: "Authorization"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/AUTHORIZATION.md"
+
+  - id: pattern.idempotency
+    label: "Idempotency"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/IDEMPOTENCY.md"
+
+  - id: pattern.concurrency
+    label: "Concurrency"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/CONCURRENCY.md"
+
+  - id: pattern.payment
+    label: "Payment"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/PAYMENT.md"
+
+  - id: pattern.notification
+    label: "Notification"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/NOTIFICATION.md"
+
+  - id: pattern.async-events
+    label: "Async Events"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/ASYNC-EVENTS.md"
+
+  - id: pattern.retry
+    label: "Retry"
+    status: DOCUMENTED_ONLY
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RETRY.md"
+    note: "Codex post-audit correction (P2-05): no real retry mechanism exists anywhere in QA-DEMO-SYSTEM/backend/src or automation-labs (verified by grep — zero matches for retry/Retry/RETRY in either); the JMeter fail-gate wrapper explicitly does NOT auto-retry, by design (see RETRY.md's own 'Related labs' section). Previously marked IMPLEMENTED with a note claiming a 'CI/test-execution level (JMeter/Selenium retry policy)' — that claim was also false (same grep covers automation-labs/, zero matches). Not implementing fake retry logic solely to satisfy a status badge — accuracy over feature count."
+
+  - id: pattern.rate-limiting
+    label: "Rate Limiting"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RATE-LIMITING.md"
+    note: "Documented as a real, stated gap — QA-DEMO-SYSTEM's backend has no rate-limiting middleware."
+
+  - id: pattern.state-machine
+    label: "State Machine"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/STATE-MACHINE.md"
+    note: "The general technique behind Payment/Idempotency — orders.status transitions."
+
+  - id: pattern.search
+    label: "Search"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SEARCH.md"
+
+  - id: pattern.pagination
+    label: "Pagination"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/PAGINATION.md"
+
+  - id: pattern.file-upload
+    label: "File Upload"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FILE-UPLOAD.md"
+
+  - id: pattern.import-export
+    label: "Import / Export"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/IMPORT-EXPORT.md"
+
+  - id: pattern.timeout
+    label: "Timeout"
+    status: NOT_APPLICABLE
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/TIMEOUT.md"
+    note: "No outbound third-party dependency exists in this repository's executable scope to apply an explicit timeout against."
+
+  - id: pattern.cache
+    label: "Cache"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/CACHE.md"
+
+  - id: pattern.audit-log
+    label: "Audit Log"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/AUDIT-LOG.md"
+    note: "The events table is structurally similar but serves notifications, not compliance auditing — see the page's own honest distinction."
+
+  - id: pattern.webhook
+    label: "Webhook"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/WEBHOOK.md"
+
+  - id: pattern.third-party-integration
+    label: "Third-Party Integration"
+    status: IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/THIRD-PARTY-INTEGRATION.md"
+    note: "payment.service.js's deterministic fake-token design is a real, deliberate synthetic integration point."
+
+  - id: pattern.scheduled-jobs
+    label: "Scheduled Jobs"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SCHEDULED-JOBS.md"
+
+  - id: pattern.feature-flags
+    label: "Feature Flags"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FEATURE-FLAGS.md"
+
+  - id: pattern.localization
+    label: "Localization"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/LOCALIZATION.md"
+    note: "Not implemented at the application level; the real, professionally-grounded treatment lives in 03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/."
+
+  - id: pattern.multi-tenancy
+    label: "Multi-Tenancy"
+    status: NOT_IMPLEMENTED
+    path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/MULTI-TENANCY.md"
+    note: "Single-tenant by design — no tenant concept exists."
+
+related:
+  narrative_docs:
+    - "../../../02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/README.md"

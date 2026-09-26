@@ -1,0 +1,6 @@
+node_modules/
+
+# Codex independent-review runner evidence (scripts/review/codex-review-runner.mjs).
+# Transient per-run artifacts (bundles, stdout/stderr, results) — durable
+# review OUTCOMES belong in .ai/ (committed), not this raw evidence trail.
+.review-evidence/

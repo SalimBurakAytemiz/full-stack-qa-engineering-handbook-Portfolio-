@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/domain.schema.json",
+  "title": "Domain exposure entry",
+  "description": "One entry in a personal domain-state.yaml's `personal_domain_exposure` array — personal EXPOSURE, not the universal domain's own maturity (D0-D5), which is a separate, domain-owned fact.",
+  "type": "object",
+  "required": ["domain_id", "label", "exposure"],
+  "properties": {
+    "domain_id": {
+      "type": "string",
+      "pattern": "^domain\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "label": { "type": "string", "minLength": 1 },
+    "exposure": {
+      "enum": ["NONE", "LEARNING", "PROFESSIONAL_PARTICIPATED", "PROFESSIONAL_EXECUTED"]
+    },
+    "owner_fact": {
+      "type": "string",
+      "description": "Pointer to the file#anchor that owns the underlying professional-case fact (one fact, one owner)."
+    },
+    "repository_practice": { "type": "string" },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": true
+}

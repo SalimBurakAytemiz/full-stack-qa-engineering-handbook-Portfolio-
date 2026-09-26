@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/evidence.schema.json",
+  "title": "Evidence registry entry",
+  "description": "One entry in 06-EVIDENCE/evidence.yaml. Maturity must not exceed what the artifact field can actually substantiate (Section 33-35) — Claude may never author an E5 entry (no self-declared AUDITED).",
+  "type": "object",
+  "required": ["id", "label", "maturity", "artifact"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^evidence\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "label": { "type": "string", "minLength": 1 },
+    "maturity": {
+      "enum": ["E0_CLAIMED", "E1_DOCUMENTED", "E2_IMPLEMENTED", "E3_EXECUTED", "E4_CI_VERIFIED", "E5_INDEPENDENTLY_AUDITED"],
+      "description": "E5 must never be set by Claude itself — it requires an external audit record."
+    },
+    "artifact": {
+      "type": "string",
+      "description": "Repository-relative path to the real file/log/report this entry points to."
+    },
+    "produced_by": {
+      "type": "string",
+      "description": "Command or CI job that generated the artifact, e.g. 'npm test' or a GitHub Actions job name."
+    },
+    "related_lab": {
+      "type": "string",
+      "pattern": "^lab\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "related_competency": {
+      "type": "string",
+      "pattern": "^competency\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "audit_record": {
+      "type": "string",
+      "description": "Required when maturity is E5_INDEPENDENTLY_AUDITED — points to the external audit record, e.g. a Codex review file."
+    },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": false,
+  "if": {
+    "properties": { "maturity": { "const": "E5_INDEPENDENTLY_AUDITED" } }
+  },
+  "then": {
+    "required": ["id", "label", "maturity", "artifact", "audit_record"]
+  }
+}

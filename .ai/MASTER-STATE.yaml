@@ -1,0 +1,82 @@
+schema_version: 1
+last_updated: "2026-09-25"
+
+repository:
+  main_branch_head: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
+  transformation_branch: "feat/qa-digital-twin-full-stack-transformation"
+  transformation_base_sha: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
+
+post_codex_fix_campaign:
+  status: "COMPLETE — all 13 findings (P1-01..P1-05, P2-01..P2-06, P3-01..P3-02) FIXED, 0 FALSE_POSITIVE, 0 EXTERNALLY_BLOCKED"
+  base_sha: "a8f0cd2fcc5ed24deb4c7ec2e5fa652f981c33fd"
+  closure_matrix: ".ai/CODEX-POST-FIX-CLOSURE-MATRIX.md"
+  prior_handoff_status: "FIX_REQUIRED (P0:0 P1:5 P2:6 P3:2) — historical record, not rewritten; see .ai/CODEX-FULL-AUDIT-HANDOFF.md's own preserved history section"
+  key_new_mechanisms:
+    - "01-SALIM-BURAK-DIGITAL-TWIN/registry/claims.yaml — claim-level provenance (P1-05), 56 entries, 1:1 with every professional bullet"
+    - "shared/registry/schemas/domain-catalog.schema.json — universal domain catalog no longer carries personal-exposure vocabulary (P2-01)"
+    - "scripts/registry/validate-registry.mjs — claim-level provenance check, domain foreign-key check, relationship-semantic (PRACTICED_IN vs NOT_PRACTICED) check, EOL-normalized drift comparison"
+    - "scripts/registry/validate-registry.regression.test.mjs — 9 regression tests proving both negative (real defect -> FAIL) and positive (real harmless variance -> PASS) validator behavior against real files"
+    - ".github/workflows/ci.yml — 4 new API CI jobs (auth/orders-payment/notifications/db), wired and locally proven"
+
+phase_0_19_campaign:
+  status: "MERGED_TO_MAIN"
+  codex_audit: "COMPLETE — final verdict PASS, multiple fix-delta re-review rounds"
+  canonical_manifests:
+    - ".ai/PHASE-6-19-CODEX-AUDIT-MANIFEST.md"
+    - ".ai/PHASE-6-19-CODEX-FIX-DELTA-MANIFEST.md"
+    - ".ai/PHASE-6-19-CAMPAIGN-STATE.md"
+  merge_pr: 24
+  merge_commit: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
+
+master_transformation_campaign:
+  status: "COMPLETE — every implementable repository requirement is COMPLETE, NOT_APPLICABLE, EXTERNALLY_BLOCKED, or USER_CONFIRMATION_REQUIRED (zero PARTIAL rows)"
+  # TR: Bu alan artık dürüstçe "COMPLETE" yazabilir — çünkü "tamamlandı"
+  # iddiası burada "75 bölümün hayal edilebilecek her alt-alt-konusu
+  # yazıldı" anlamına GELMİYOR; ".ai/MASTER-REQUIREMENTS-COMPLIANCE.md"
+  # dosyasındaki HER satırın PARTIAL olmayan, gerçek ve doğrulanabilir
+  # bir statüye sahip olduğu anlamına GELİYOR. Bu ayrım önemlidir ve
+  # o dosyanın kendisinde de aynı netlikte açıklanmıştır.
+  final_completion_round:
+    delivered:
+      - "02-FULL-STACK-QA-HANDBOOK/: all 24 target topics audited against the real filesystem; 7 real gaps found (04-MANUAL-TESTING was genuinely empty despite the README claiming otherwise) and closed with real, non-filler content"
+      - "22-SYSTEM-PATTERNS/: 9/23 -> 23/23 patterns written, each stating its real IMPLEMENTED/NOT_IMPLEMENTED/NOT_APPLICABLE status"
+      - "03-DOMAINS/: Streaming, Mobile/Multi-Country, Insurance deep-dived from D0/D1 shallow pages to D2 QA_MAPPED real domain-QA knowledge"
+      - "Relationship graph: 133 -> 224 edges; every canonical entity across every type (competency/domain/tool/pattern/gap/professional-case, plus evidence/labs) verified to have zero orphans by an automated, generalized check"
+      - ".ai/MASTER-REQUIREMENTS-COMPLIANCE.md rewritten: every previously-PARTIAL row reclassified to COMPLETE, NOT_APPLICABLE, or EXTERNALLY_BLOCKED with a specific, named reason"
+      - "Third full-regression pass this session: backend 160/160, API 331/331, Playwright 26/26, Locust real run 0 failures, JMeter fail-gate unit tests 7/7, registry validator 0 errors across 224 relationships and 121+21 entities"
+    genuinely_open_not_engineering_work:
+      - "Registry CI job not yet observed on a live GitHub Actions run (EXTERNALLY_BLOCKED — no Actions/API access from this session; the job itself is complete and locally proven)"
+      - "Real JMeter binary blocked by an environment-specific XStream issue (EXTERNALLY_BLOCKED, re-confirmed by a real attempt this session)"
+      - "Selenium local run environment-blocked (EXTERNALLY_BLOCKED, re-confirmed by a real attempt this session)"
+      - "fact.career-motivation.why-qa (USER_CONFIRMATION_REQUIRED — a personal fact, not engineering work)"
+    detail: ".ai/NEXT-ACTIONS.md"
+    compliance_map: ".ai/MASTER-REQUIREMENTS-COMPLIANCE.md"
+
+test_status:
+  backend: "160/160 PASS"
+  api_contract_suites: "public 26/26 assert, auth 42/42 assert, orders-payment 118/118 assert (1 confirmed flake re-run — see TEST-STATUS.md), notifications 48/48 assert, api-db 97/97 assert — all re-run this session against a live server"
+  playwright: "26/26 PASS (PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium required this session — env build-version mismatch, not a repository defect)"
+  selenium: "NOT_EXECUTED — EXECUTION_BLOCKED (sandbox network, re-confirmed by a real attempt this session)"
+  jmeter_real_binary: "NOT_EXECUTED — LAUNCH_OR_RUNTIME_ERROR (environment-specific XStream issue, re-confirmed this session, see DECISIONS.md D9)"
+  jmeter_gate_unit_tests: "7/7 PASS"
+  locust: "not re-run this session (no locust-related finding); last real run 280 requests, 0 failures"
+  registry_validator: "0 errors — 235 relationships, 0 orphans across every entity type (125 competency/domain/tool/pattern/gap/professional-case + 17 evidence + 10 lab), plus 3 NEW structural checks this session (claim-level provenance, domain foreign-key, relationship-semantic PRACTICED_IN) — see post_codex_fix_campaign above"
+  registry_regression_suite: "9/9 PASS — scripts/registry/validate-registry.regression.test.mjs, proves negative+positive validator behavior against real files"
+  last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign, historical) — the registry-integrity job and 4 new API CI jobs are proven locally this session, not yet observed on a live run (EXTERNALLY_BLOCKED)"
+  detail: ".ai/TEST-STATUS.md"
+
+branch_note:
+  harness_designated_branch: "claude/stoic-pasteur-svbmxs"
+  actual_work_branch: "feat/qa-digital-twin-full-stack-transformation"
+  reason: "see .ai/DECISIONS.md D5 — the designated branch has none of this transformation's history; work continued on the branch that actually contains it, per the user's explicit repeated instruction"
+
+pointers:
+  digital_twin: "01-SALIM-BURAK-DIGITAL-TWIN/"
+  codex_handoff: ".ai/CODEX-FULL-AUDIT-HANDOFF.md"
+  post_codex_closure_matrix: ".ai/CODEX-POST-FIX-CLOSURE-MATRIX.md"
+  next_actions: ".ai/NEXT-ACTIONS.md"
+  decisions: ".ai/DECISIONS.md"
+  known_issues: ".ai/KNOWN-ISSUES.md"
+  test_status: ".ai/TEST-STATUS.md"
+  architecture_state: ".ai/ARCHITECTURE-STATE.md"
+  migration_state: ".ai/MIGRATION-STATE.md"

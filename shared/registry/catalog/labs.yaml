@@ -1,0 +1,70 @@
+# Universal executable-lab catalog (Section 30). Each entry points to real,
+# checked-in code — no lab is listed here without a real path that exists
+# in the repository at HEAD.
+schema_version: 1
+last_updated: "2026-09-25"
+
+items:
+  - id: lab.backend-api.rest-graphql-websocket
+    label: "Backend API — REST, GraphQL, WebSocket"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/backend"
+    evidence_id: evidence.backend.unit-integration-suite
+    related_domains: [domain.commerce.ecommerce]
+
+  - id: lab.api-contract.postman-newman-ajv
+    label: "API Contract Testing — Postman/Newman/AJV"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/api-tests"
+    evidence_id: evidence.api-tests.public-schema-suite
+    related_domains: [domain.commerce.ecommerce]
+    note: "TR: Codex post-audit fix (P1-03) — bu lab artık BEŞ ayrı paketi kapsıyor (public/schema, protected/auth, orders/payment, notifications, API-to-DB), her biri kendi evidence.* kaydına ve kendi CI job'una sahip (bkz. relationships.yaml'daki ek TESTED_BY kenarları ve 06-EVIDENCE/evidence.yaml). evidence_id alanı schema gereği tekil olduğu için yalnızca ilk/foundation paketi (public/schema) işaret eder."
+
+  - id: lab.web-automation.playwright
+    label: "Web Automation — Playwright"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/web-tests"
+    related_domains: [domain.commerce.ecommerce]
+
+  - id: lab.web-automation.selenium
+    label: "Web Automation — Selenium (portability-scoped)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/selenium"
+    related_domains: [domain.commerce.ecommerce]
+
+  - id: lab.performance.jmeter
+    label: "Performance — JMeter with fail-gate wrapper"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/jmeter"
+    note: "Fail-gate inspects JTL content — JMeter's own process exit code does not reliably reflect internal sample/assertion failures."
+
+  - id: lab.performance.locust
+    label: "Performance — Locust load test"
+    maturity: L2_TESTED
+    path: "QA-DEMO-SYSTEM/automation-labs/locust"
+
+  - id: lab.security.owasp-mapping
+    label: "Security — OWASP API Security Top 10 mapping"
+    maturity: L1_IMPLEMENTED
+    path: "QA-DEMO-SYSTEM/backend/tests/security.test.js"
+
+  - id: lab.database.sql-validation
+    label: "Database — SQL data validation suite"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/backend/tests/database-testing.test.js"
+    related_domains: [domain.commerce.ecommerce]
+
+  - id: lab.observability.elastic-log-analysis
+    label: "Observability — access-log / RCA investigation"
+    maturity: L2_TESTED
+    path: "QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY"
+
+  - id: lab.cicd.github-actions
+    label: "CI/CD — GitHub Actions pipeline"
+    maturity: L4_CI_VERIFIED
+    path: ".github/workflows"
+
+related:
+  fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"
+  narrative_docs:
+    - "05-EXECUTABLE-LABS/README.md"
