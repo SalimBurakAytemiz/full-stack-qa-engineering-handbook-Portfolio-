@@ -94,7 +94,16 @@ export function buildIndexMarkdown(root) {
   for (const r of relationships.relationships) {
     lines.push(`| ${r.from} | ${r.predicate} | ${r.to} |`);
   }
-  lines.push('');
 
+  // Codex final-verification fix (F7): no trailing lines.push('') here —
+  // `join('\n') + '\n'` already terminates the file with exactly one
+  // newline after the last real content line. The previous version had
+  // BOTH a trailing empty-string push AND the `+ '\n'`, producing two
+  // newlines at EOF (a blank line at end of file) — exactly what
+  // `git diff --check` flags as "new blank line at EOF". Every OTHER
+  // `lines.push('')` in this file is a real, intentional blank line
+  // SEPARATING two sections — this was the one and only spot where an
+  // identical-looking call was actually a trailing-whitespace bug rather
+  // than deliberate formatting.
   return lines.join('\n') + '\n';
 }

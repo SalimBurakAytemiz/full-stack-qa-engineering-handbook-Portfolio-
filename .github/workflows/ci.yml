@@ -249,3 +249,13 @@ jobs:
       - run: npm run selenium:test --workspace automation-labs
         env:
           QA_DEMO_BASE_URL: http://127.0.0.1:3000
+      # Codex final-verification fix (F6): proves the lifecycle safety net
+      # (bounded driver-startup timeout, explicit-outcome-or-forced-nonzero
+      # exit) actually works, on THIS runner's real environment (real
+      # Chrome — the "genuine EXECUTED, 2/2 passed, exit 0" branch) and via
+      # fault injection (the "silent-exit"/"hung driver" branches, which
+      # don't need a real browser). Portable by design — passes here and
+      # in a Chrome-less sandbox alike.
+      - run: node --test automation-labs/selenium/tests/login-flow-lifecycle.regression.test.js
+        env:
+          QA_DEMO_BASE_URL: http://127.0.0.1:3000

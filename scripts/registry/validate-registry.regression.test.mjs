@@ -185,7 +185,33 @@ test('relationship semantics: PRACTICED_IN cannot be claimed for a competency wh
     () => {
       const result = runValidator();
       assert.notEqual(result.code, 0, 'validator must FAIL when a PRACTICED_IN edge is added for a competency with repository.status: NOT_PRACTICED');
-      assert.match(result.stderr, /directly contradicts a PRACTICED_IN claim/);
+      assert.match(result.stderr, /cannot support a PRACTICED_IN claim/);
+    }
+  );
+});
+
+// Codex final-verification fix (F3): this is the LITERAL false-relationship
+// Codex reintroduced to prove the old check insufficient — Jenkins has
+// repository.status: DOCUMENTED (not NOT_PRACTICED), so the OLD validator
+// logic (`status !== 'NOT_PRACTICED'` -> pass) let this through even though
+// a real Jenkins server was never run against lab.cicd.github-actions. This
+// test reintroduces exactly that edge and requires the NEW rank-threshold
+// check (>= IMPLEMENTED) to reject it.
+// TR: Bu, Codex'in validator'ı YETERSİZ kanıtlamak için kullandığı BİREBİR
+// ilişkidir — Jenkins DOCUMENTED'dır (NOT_PRACTICED değil), bu yüzden eski
+// kontrol bunu GEÇİRİRDİ. Bu test, düzeltilmiş rank-eşiği kontrolünün bu
+// spesifik girdiyi de reddettiğini kalıcı olarak kanıtlar.
+test('relationship semantics: PRACTICED_IN cannot be claimed for Jenkins (repository.status: DOCUMENTED) against github-actions lab — exact Codex F3 false relationship', async () => {
+  await withMutatedFile(
+    'shared/registry/relationships/relationships.yaml',
+    (content) => content.replace(
+      /\nrelated:\n/,
+      '\n  - from: competency.cicd.jenkins\n    predicate: PRACTICED_IN\n    to: lab.cicd.github-actions\n    note: "REGRESSION TEST ONLY - Jenkins repository.status is DOCUMENTED, not IMPLEMENTED+; a real Jenkins server was never run against this lab; this edge must fail."\n\nrelated:\n'
+    ),
+    () => {
+      const result = runValidator();
+      assert.notEqual(result.code, 0, 'validator must FAIL when a PRACTICED_IN edge claims Jenkins (DOCUMENTED) was practiced against the github-actions lab');
+      assert.match(result.stderr, /cannot support a PRACTICED_IN claim/);
     }
   );
 });

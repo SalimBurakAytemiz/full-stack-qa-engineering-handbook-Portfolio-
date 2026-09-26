@@ -350,4 +350,3 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | domain.mobile.multi-country | USES_PATTERN | pattern.feature-flags |
 | pattern.localization | RELATED_TO | domain.mobile.multi-country |
 | pattern.multi-tenancy | USES_PATTERN | pattern.authorization |
-
