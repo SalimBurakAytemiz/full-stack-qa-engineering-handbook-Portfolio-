@@ -383,3 +383,28 @@ test('system-patterns sync: a non-canonical status word (Third-Party Integration
     }
   );
 });
+
+// Codex final-verification fix (N6): evidence.yaml's CI-pipeline label
+// previously hardcoded "(4 real jobs)" and silently went stale as
+// .github/workflows/ci.yml grew to its current 9 job families. The fix
+// removed the hardcoded count entirely rather than just updating it to a
+// new number that would itself go stale later. This test proves the
+// brittle "(<N> real job(s))" pattern cannot silently come back.
+// TR: evidence.yaml'ın CI-pipeline etiketi eskiden "(4 real jobs)"
+// olarak sabitlenmişti ve workflow büyüdükçe SESSİZCE bayatladı. Bu test,
+// kırılgan "(<N> real job(s))" kalıbının SESSİZCE geri gelemeyeceğini
+// kanıtlar.
+test('evidence CI-pipeline label: a reintroduced hardcoded job count fails validation (exact Codex N6 drift)', async () => {
+  await withMutatedFile(
+    '06-EVIDENCE/evidence.yaml',
+    (content) => content.replace(
+      'label: "GitHub Actions CI pipeline with real executable QA jobs"',
+      'label: "GitHub Actions CI pipeline (9 real jobs)"'
+    ),
+    () => {
+      const result = runValidator();
+      assert.notEqual(result.code, 0, 'validator must FAIL when the CI-pipeline evidence label hardcodes an exact job count again');
+      assert.match(result.stderr, /hardcodes an exact job count/);
+    }
+  );
+});

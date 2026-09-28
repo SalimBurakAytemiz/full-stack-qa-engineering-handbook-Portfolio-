@@ -128,11 +128,31 @@ items:
     related_lab: lab.security.owasp-mapping
 
   - id: evidence.cicd.github-actions-pipeline
-    label: "GitHub Actions CI pipeline (4 real jobs)"
+    label: "GitHub Actions CI pipeline with real executable QA jobs"
     maturity: E4_CI_VERIFIED
     artifact: ".github/workflows/ci.yml"
     produced_by: "GitHub Actions, triggered on push/PR"
     related_lab: lab.cicd.github-actions
+    # Codex final-verification fix (N6): this label previously hardcoded
+    # "(4 real jobs)", which drifted as the workflow grew to its current
+    # 9 job families (registry-integrity, backend-tests, web-tests,
+    # api-schema-validation, api-auth-tests, api-orders-payment-tests,
+    # api-notifications-tests, api-db-validation, selenium-lab) without
+    # the label ever being updated — a stale count presented as current
+    # truth. Rather than re-hardcode a new exact number (which would only
+    # go stale again the next time a job is added or removed), the label
+    # now states the durable fact — real, executable jobs run in GitHub
+    # Actions — and omits the count entirely; the exact, always-current
+    # job list lives in .github/workflows/ci.yml itself (this entry's own
+    # `artifact` field), which is the actual source of truth for job
+    # count and never needs to be kept in sync with prose describing it.
+    # TR: Bu etiket önceki sürümde "(4 real jobs)" olarak sabitlenmişti;
+    # workflow büyüyüp güncel 9 job ailesine ulaşırken etiket hiç
+    # güncellenmedi — bayat bir sayı güncel gerçekmiş gibi sunuluyordu.
+    # Yeni bir sabit sayı yazmak yerine (bu da bir sonraki job eklenişinde
+    # yine bayatlar), etiket artık kalıcı gerçeği ifade ediyor ve sayıyı
+    # tamamen atlıyor — tam ve her zaman güncel job listesi zaten
+    # `.github/workflows/ci.yml`'nin kendisinde yaşıyor.
 
   - id: evidence.defect.bug-auth-edu-001
     label: "BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED"

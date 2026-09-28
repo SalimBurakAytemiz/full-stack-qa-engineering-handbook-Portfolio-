@@ -99,13 +99,42 @@ const forceSessionHangWithHandle = process.env.SELENIUM_TEST_FORCE_SESSION_HANG_
 const forceQuitHang = process.env.SELENIUM_TEST_FORCE_QUIT_HANG === '1';
 const forceQuitReject = process.env.SELENIUM_TEST_FORCE_QUIT_REJECT === '1';
 const forceMixedCleanupFailure = process.env.SELENIUM_TEST_FORCE_MIXED_CLEANUP_FAILURE === '1';
+// N4-R (P2, Codex final-verification): driver.quit() can also reject with
+// an Error/WebDriverError whose .message is the EMPTY STRING. Codex proved
+// the previous fix used `err.message` itself as the failure flag
+// (`if (cleanupError)`), which is falsy for `''` — an empty-message
+// rejection was silently lost and the session wrongly reported PASS. These
+// flags reproduce that exact shape with stub drivers, independent of the
+// message-bearing `forceQuitReject` above.
+// TR: driver.quit() ayrıca .message'ı BOŞ STRING olan bir Error/
+// WebDriverError ile de reddedebilir. Codex, önceki düzeltmenin
+// `err.message`'ın kendisini hata bayrağı olarak kullandığını kanıtladı
+// (`if (cleanupError)`) — bu, `''` için falsy'dir, yani boş mesajlı bir
+// red sessizce kayboluyordu. Bu bayraklar, stub driver'larla bu şekli
+// yeniden üretir.
+const forceQuitRejectEmptyError = process.env.SELENIUM_TEST_FORCE_QUIT_REJECT_EMPTY_ERROR === '1';
+const forceQuitRejectEmptyWebDriverError = process.env.SELENIUM_TEST_FORCE_QUIT_REJECT_EMPTY_WEBDRIVER_ERROR === '1';
+const forceMixedCleanupFailureEmptyWebDriverError = process.env.SELENIUM_TEST_FORCE_MIXED_CLEANUP_FAILURE_EMPTY_WEBDRIVER_ERROR === '1';
+const forceAllEmptyCleanupFailure = process.env.SELENIUM_TEST_FORCE_ALL_EMPTY_CLEANUP_FAILURE === '1';
 // N4 positive control (item C): a fast, portable (no real Chrome/network
 // needed) proof that a batch where every session's action AND cleanup
 // genuinely succeed is reported as a clean PASS with no cleanup-failure
 // line — independent of the real-Chrome test, which is non-deterministic
 // in a sandbox without a matching chromedriver/network access.
 const forceAllStubSuccess = process.env.SELENIUM_TEST_FORCE_ALL_STUB_SUCCESS === '1';
-const stubMode = forceSessionHangWithHandle || forceQuitHang || forceQuitReject || forceMixedCleanupFailure || forceAllStubSuccess;
+const stubMode = forceSessionHangWithHandle || forceQuitHang || forceQuitReject
+  || forceQuitRejectEmptyError || forceQuitRejectEmptyWebDriverError
+  || forceMixedCleanupFailure || forceMixedCleanupFailureEmptyWebDriverError
+  || forceAllEmptyCleanupFailure || forceAllStubSuccess;
+
+// N4-R: a real Selenium rejection type (extends Error, distinct `.name`)
+// used to prove the fix is not accidentally keyed off `Error` specifically.
+class WebDriverError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'WebDriverError';
+  }
+}
 
 // N4: driver.quit() can fail in two genuinely different ways — it can
 // HANG (never settle, and in a real hung-socket case may leave an active
@@ -122,6 +151,12 @@ function buildStubDriver(quitBehavior) {
       if (quitBehavior === 'reject') {
         throw new Error('synthetic driver.quit() rejection (regression coverage only)');
       }
+      if (quitBehavior === 'reject-empty-error') {
+        throw new Error();
+      }
+      if (quitBehavior === 'reject-empty-webdriver-error') {
+        throw new WebDriverError();
+      }
     },
   };
 }
@@ -134,7 +169,11 @@ async function runOneSession(index, baseUrl) {
       let quitBehavior = 'ok';
       if (forceQuitHang) quitBehavior = 'hang';
       else if (forceQuitReject) quitBehavior = 'reject';
+      else if (forceQuitRejectEmptyError) quitBehavior = 'reject-empty-error';
+      else if (forceQuitRejectEmptyWebDriverError) quitBehavior = 'reject-empty-webdriver-error';
       else if (forceMixedCleanupFailure) quitBehavior = index === 0 ? 'reject' : 'ok';
+      else if (forceMixedCleanupFailureEmptyWebDriverError) quitBehavior = index === 1 ? 'reject-empty-webdriver-error' : 'ok';
+      else if (forceAllEmptyCleanupFailure) quitBehavior = 'reject-empty-webdriver-error';
       driver = buildStubDriver(quitBehavior);
     } else {
       driver = await withTimeout(buildDriver('chrome'), DRIVER_STARTUP_TIMEOUT_MS, `session[${index}] driver startup`);
@@ -192,21 +231,43 @@ async function runOneSession(index, baseUrl) {
   // kanıtladı — hata yalnızca bir NOTE olarak loglanıyor, session'ın
   // sonucuna hiç YANSITILMIYORDU. Cleanup artık kendi açık sonucuyla
   // izlenir ve nihai duruma dahil edilir.
-  let cleanupError = null;
+  //
+  // N4-R (Codex final-verification): the *existence* of a driver.quit()
+  // rejection determines cleanup failure — never `err.message`. A prior
+  // version used `cleanupError = err.message` as BOTH the diagnostic text
+  // AND (via `if (cleanupError)`) the failure flag, so a rejection with an
+  // empty `.message` (a bare `new Error()`, or a Selenium WebDriverError
+  // instance with no message) was silently treated as success. The
+  // boolean below is set unconditionally inside the catch block; message
+  // content is derived separately and only ever affects diagnostic text,
+  // with a safe non-empty fallback when the thrown error carries none.
+  // TR: Cleanup başarısızlığını `err.message` DEĞİL, red'in VAR OLMASI
+  // belirler. Önceki sürüm `err.message`'ı hem tanı metni hem de (
+  // `if (cleanupError)` üzerinden) başarısızlık bayrağı olarak
+  // kullanıyordu — bu yüzden `.message`'ı boş olan bir red (çıplak
+  // `new Error()` veya mesajsız bir WebDriverError) sessizce başarı
+  // sayılıyordu. Aşağıdaki boolean, catch bloğunun içinde KOŞULSUZ
+  // olarak ayarlanır; mesaj içeriği yalnızca tanı metnini etkiler.
+  let cleanupFailed = false;
+  let cleanupError;
   try {
     // N2: cleanup is bounded here too — the previous version called
     // driver.quit() with no timeout at all, so a hung quit() for any
     // ONE session could hang the entire Promise.all batch.
     await withTimeout(driver.quit(), CLEANUP_TIMEOUT_MS, `session[${index}] driver.quit()`);
   } catch (err) {
-    cleanupError = err.message;
+    cleanupFailed = true; // an exception occurred — this alone is failure.
+    const rawMessage = err && typeof err.message === 'string' ? err.message : '';
+    cleanupError = rawMessage.length > 0
+      ? rawMessage
+      : `cleanup rejected without message (${(err && (err.name || err.constructor?.name)) || 'unknown error type'})`;
   }
 
   const durationMs = Date.now() - startedAt;
   if (actionStatus === 'FAIL') {
-    return { index, status: 'FAIL', durationMs, error: actionError, cleanupError: cleanupError || undefined };
+    return { index, status: 'FAIL', durationMs, error: actionError, cleanupError: cleanupFailed ? cleanupError : undefined };
   }
-  if (cleanupError) {
+  if (cleanupFailed) {
     return { index, status: 'CLEANUP_FAILED', durationMs, error: cleanupError };
   }
   return { index, status: 'PASS', durationMs };

@@ -111,6 +111,63 @@ test('N4 regression (item C, positive control): when actions AND cleanup all gen
   assert.doesNotMatch(stdout, /SELENIUM_PARALLEL_CLEANUP_FAILURES/, 'a genuinely clean run must never claim a cleanup failure that was not injected');
 });
 
+// N4-R adversarial regression coverage (Codex final-verification) —
+// Codex proved the N4 fix above was itself incomplete: it used
+// `err.message` as BOTH the diagnostic text and (via `if (cleanupError)`)
+// the failure flag, so a driver.quit() rejection whose `.message` is the
+// empty string (a bare `new Error()`, or a Selenium WebDriverError with no
+// message) was silently treated as cleanup success. These four tests
+// (items B, C, D, E of the mandatory regression list) reproduce that exact
+// shape; item A (message-bearing reject) is already covered by the "N4
+// regression (item B)" test above, and items F/G (cleanup timeout+handle,
+// positive control) by the "N4 regression (item A)"/"(item C)" tests above.
+
+test('N4-R regression (item B): driver.quit() rejects with an empty-message Error() on every session -> overall exit non-zero, failure not silently lost', () => {
+  const result = run({ SELENIUM_TEST_FORCE_QUIT_REJECT_EMPTY_ERROR: '1', SELENIUM_WHOLE_RUN_DEADLINE_MS: '10000' }, 10_000);
+  const stdout = result.stdout || '';
+  assert.notEqual(result.code, 0, 'an empty-message cleanup rejection must not be swallowed by falsy-string truthiness — the batch must still fail');
+  assert.match(stdout, /session\[0\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /session\[1\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /session\[2\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /SELENIUM_PARALLEL_SUMMARY: 0\/3 passed/, 'an empty-message cleanup rejection must never be counted as passed');
+  assert.match(stdout, /SELENIUM_PARALLEL_CLEANUP_FAILURES: 3\/3/);
+  assert.match(stdout, /cleanup rejected without message/, 'an empty err.message must fall back to a safe, non-empty diagnostic derived from the error type — never converted into a missing failure state');
+});
+
+test('N4-R regression (item C): driver.quit() rejects with an empty-message WebDriverError on every session -> overall exit non-zero, failure not silently lost', () => {
+  const result = run({ SELENIUM_TEST_FORCE_QUIT_REJECT_EMPTY_WEBDRIVER_ERROR: '1', SELENIUM_WHOLE_RUN_DEADLINE_MS: '10000' }, 10_000);
+  const stdout = result.stdout || '';
+  assert.notEqual(result.code, 0, 'a real Selenium-shaped rejection type (WebDriverError) with an empty message must still fail the batch');
+  assert.match(stdout, /session\[0\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /session\[1\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /session\[2\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /SELENIUM_PARALLEL_SUMMARY: 0\/3 passed/);
+  assert.match(stdout, /SELENIUM_PARALLEL_CLEANUP_FAILURES: 3\/3/);
+  assert.match(stdout, /cleanup rejected without message \(WebDriverError\)/, 'the safe fallback diagnostic must be derived from the real error type name, not a generic Error label');
+});
+
+test('N4-R regression (item D): mixed batch — session[1]\'s cleanup rejects with an empty-message WebDriverError, sessions[0] and [2] fully succeed -> overall exit non-zero, session[1] named', () => {
+  const result = run({ SELENIUM_TEST_FORCE_MIXED_CLEANUP_FAILURE_EMPTY_WEBDRIVER_ERROR: '1', SELENIUM_WHOLE_RUN_DEADLINE_MS: '10000' }, 10_000);
+  const stdout = result.stdout || '';
+  assert.notEqual(result.code, 0, 'one session\'s empty-message cleanup failure must make the whole batch non-zero, even with 2 genuine full successes');
+  assert.match(stdout, /session\[0\] \[PASS\]/);
+  assert.match(stdout, /session\[1\] \[CLEANUP_FAILED\]/, 'the empty-message rejection must still be recognized and attributed to the correct session');
+  assert.match(stdout, /session\[2\] \[PASS\]/);
+  assert.match(stdout, /SELENIUM_PARALLEL_SUMMARY: 2\/3 passed/, 'the cleanup-failed session must not be counted as passed merely because its message was empty');
+  assert.match(stdout, /SELENIUM_PARALLEL_CLEANUP_FAILURES: 1\/3 — session\(s\) \[1\]/, 'the aggregate line must name exactly which session\'s cleanup failed');
+});
+
+test('N4-R regression (item E): all three sessions\' cleanup rejects with an empty-message error -> 0/3 successful, overall exit non-zero', () => {
+  const result = run({ SELENIUM_TEST_FORCE_ALL_EMPTY_CLEANUP_FAILURE: '1', SELENIUM_WHOLE_RUN_DEADLINE_MS: '10000' }, 10_000);
+  const stdout = result.stdout || '';
+  assert.notEqual(result.code, 0, 'three genuine (if empty-message) cleanup failures must never be reported as a passing batch');
+  assert.match(stdout, /session\[0\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /session\[1\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /session\[2\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /SELENIUM_PARALLEL_SUMMARY: 0\/3 passed/);
+  assert.match(stdout, /SELENIUM_PARALLEL_CLEANUP_FAILURES: 3\/3/);
+});
+
 test('N2/F6 regression: the real, unmodified parallel path never exits 0 without an explicit status line (works in both this sandbox\'s EXECUTION_BLOCKED environment and a CI runner with real Chrome)', () => {
   const result = run({});
   const stdout = result.stdout || '';

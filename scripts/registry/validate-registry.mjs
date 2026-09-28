@@ -546,6 +546,26 @@ if (evidenceData && Array.isArray(evidenceData.items)) {
     }
   }
   ok(`evidence.yaml: ${validCount}/${evidenceData.items.length} evidence entries valid, all artifact paths checked`);
+
+  // N6 (Codex final-verification): the CI-pipeline evidence label used to
+  // hardcode an exact job count ("(4 real jobs)") that silently went stale
+  // as .github/workflows/ci.yml grew to its current 9 job families —
+  // nothing ever re-checked the label against the workflow it describes.
+  // Rather than parse the workflow YAML here (unnecessary coupling for a
+  // label whose real point is "real, CI-verified jobs run here", not a
+  // specific number — see evidence.yaml's own comment on this entry), this
+  // guard just forbids the brittle "(<N> real job(s))" pattern from coming
+  // back, so a future edit cannot silently reintroduce a number that will
+  // itself go stale the next time a job is added or removed.
+  // TR: CI-pipeline evidence etiketi eskiden sabit bir job sayısı
+  // içeriyordu ("(4 real jobs)") ve workflow büyüdükçe SESSİZCE bayatladı.
+  // Workflow YAML'ını burada ayrıştırmak yerine (gereksiz bir bağlantı),
+  // bu kontrol yalnızca kırılgan "(<N> real job(s))" kalıbının geri
+  // gelmesini engeller.
+  const ciPipelineEvidence = evidenceData.items.find((e) => e.id === 'evidence.cicd.github-actions-pipeline');
+  if (ciPipelineEvidence && /\(\s*\d+\s+real jobs?\s*\)/i.test(ciPipelineEvidence.label)) {
+    fail(evidenceFile, `evidence 'evidence.cicd.github-actions-pipeline' label hardcodes an exact job count ("${ciPipelineEvidence.label}") — this drifts silently as .github/workflows/ci.yml's job list changes (Codex N6); state the durable fact without a parenthetical count instead`);
+  }
 }
 
 // --- Relationships (shared/registry/relationships/relationships.yaml) ---
