@@ -408,3 +408,40 @@ test('evidence CI-pipeline label: a reintroduced hardcoded job count fails valid
     }
   );
 });
+
+// Codex final-verification fix (N6, round 2): Codex proved the guard above
+// only protects evidence.yaml — the SAME stale-job-count drift also lived,
+// unprotected, in several other current-state prose surfaces (a CI/CD
+// tools README, registry notes, digital-twin profile docs, a Playwright
+// test comment). This test proves the new, explicitly-scoped
+// CURRENT_CI_PROSE_SURFACES guard actually fires when one of THOSE files
+// (not evidence.yaml) regresses, using the real 04-TOOLS-AND-TECH/05-CI-CD/
+// README.md file as the reproduction target.
+// TR: Codex, yukarıdaki korumanın YALNIZCA evidence.yaml'ı koruduğunu
+// kanıtladı — aynı bayatlama başka güncel-durum metin yüzeylerinde de
+// korumasız yaşıyordu. Bu test, yeni CURRENT_CI_PROSE_SURFACES korumasının
+// evidence.yaml DIŞINDAKİ bir dosya bayatladığında da gerçekten
+// tetiklendiğini kanıtlar.
+test('current CI prose consistency: a reintroduced stale job-count phrase in a non-evidence.yaml current-state surface fails validation (exact Codex N6 round-2 drift)', async () => {
+  await withMutatedFile(
+    '04-TOOLS-AND-TECH/05-CI-CD/README.md',
+    (content) => content.replace(
+      '**Setup:** `.github/workflows/ci.yml` — dedicated jobs for registry',
+      '**Setup:** `.github/workflows/ci.yml` — four jobs: dedicated jobs for registry'
+    ),
+    () => {
+      const result = runValidator();
+      assert.notEqual(result.code, 0, 'validator must FAIL when a current-state CI documentation surface reintroduces a stale job-count phrase');
+      assert.match(result.stderr, /current CI prose consistency/);
+      assert.match(result.stderr, /04-TOOLS-AND-TECH\/05-CI-CD\/README\.md/);
+    }
+  );
+});
+
+// Positive control: the real, unmodified current-state surfaces must all
+// pass — proves the guard does not false-positive on the legitimate
+// durable wording these files now use.
+test('current CI prose consistency: the real, unmodified current-state CI documentation surfaces all pass', () => {
+  const result = runValidator();
+  assert.equal(result.code, 0, 'the real repository must pass the current CI prose consistency check with no stale phrases present');
+});

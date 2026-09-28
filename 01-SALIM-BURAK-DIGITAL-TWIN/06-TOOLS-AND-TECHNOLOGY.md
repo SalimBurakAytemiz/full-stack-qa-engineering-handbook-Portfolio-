@@ -28,8 +28,10 @@ JMeter, Locust. k6 and Gatling are gaps (see
 
 Jenkins (professional execution; repository Jenkinsfile is
 syntax-valid, never run against a real server). GitHub Actions (the
-platform this repository's own CI actually runs on — 4/4 jobs green as
-of the last verified campaign HEAD).
+platform this repository's own CI actually runs on — every current job
+green; see `.github/workflows/ci.yml` for the current job set, not
+restated here as a fixed number since an earlier count went stale as
+the workflow grew).
 
 ## Data
 

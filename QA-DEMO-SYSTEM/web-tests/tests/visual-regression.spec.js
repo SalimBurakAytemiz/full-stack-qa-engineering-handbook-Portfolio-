@@ -22,8 +22,8 @@ const { login } = require('./helpers');
 // own snapshotPathTemplate behavior, not something this repo configured).
 // This repo's canonical, actually-executed environment is Linux — this
 // sandboxed dev session AND the real GitHub Actions CI (.github/workflows/
-// ci.yml, `runs-on: ubuntu-latest` for all 3 jobs, verified) both run on
-// Linux, so only `-chromium-linux.png` baselines exist, and none are
+// ci.yml, `runs-on: ubuntu-latest` for every current job, verified) both
+// run on Linux, so only `-chromium-linux.png` baselines exist, and none are
 // claimed to have PASSED on Windows (none have ever been executed there).
 // If this suite were ever run on a real Windows machine, Playwright would
 // look for a `*-chromium-win32.png` baseline, find none, and FAIL CLOSED

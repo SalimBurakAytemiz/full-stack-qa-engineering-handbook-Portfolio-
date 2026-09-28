@@ -189,7 +189,7 @@ relationships:
   - from: competency.cicd.jenkins
     predicate: RELATED_TO
     to: platform.github-actions
-    note: "Repository CI genuinely runs on GitHub Actions (4/4 PASS) — Jenkins itself exists only as a syntax-valid, unexecuted file. Neither USES_TOOL (not actually used for this repo's CI) nor a stronger predicate fits; RELATED_TO is deliberate here, not a shortcut."
+    note: "Repository CI genuinely runs on GitHub Actions (all current jobs PASS — see .github/workflows/ci.yml for the current job set) — Jenkins itself exists only as a syntax-valid, unexecuted file. Neither USES_TOOL (not actually used for this repo's CI) nor a stronger predicate fits; RELATED_TO is deliberate here, not a shortcut. (Codex N6: this note previously hardcoded an exact job count that drifted as the workflow grew; durable wording preferred instead.)"
   - from: competency.environment.docker
     predicate: USES_TOOL
     to: tool.docker

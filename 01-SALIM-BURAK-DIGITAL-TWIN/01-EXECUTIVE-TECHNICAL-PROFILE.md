@@ -20,9 +20,11 @@ Full detail in [`07-PROFESSIONAL-CASE-MAP.md`](07-PROFESSIONAL-CASE-MAP.md).
 reference platform (`QA-DEMO-SYSTEM`) built and tested end to end —
 GraphQL, WebSocket, database, security, observability, CI/CD, and
 automation labs (Playwright, Selenium, JMeter, Locust) — with 157/157
-backend tests passing and GitHub Actions CI green (4/4 jobs) as of the
-last verified campaign HEAD. This is repository practice, not a claim
-that it recreates any employer's actual system.
+backend tests passing and GitHub Actions CI green across every current
+job (see `.github/workflows/ci.yml` for the current job set —
+deliberately not restated here as a fixed number, since an earlier
+count went stale as the workflow grew). This is repository practice,
+not a claim that it recreates any employer's actual system.
 
 **How to verify any specific claim:** every competency below carries
 three independent states — knowledge, professional, repository — never

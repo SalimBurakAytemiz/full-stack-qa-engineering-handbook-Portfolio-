@@ -568,6 +568,55 @@ if (evidenceData && Array.isArray(evidenceData.items)) {
   }
 }
 
+// --- Current CI prose consistency (Codex final-verification, N6 round 2) ---
+// Codex proved the evidence.yaml-only guard above did NOT catch the SAME
+// class of drift living in several other CURRENT (non-historical) docs
+// that describe .github/workflows/ci.yml's job count in prose — a stale
+// "4 jobs"/"4/4 PASS"/"all 3 jobs"/"3-stage pipeline" phrase in any of
+// them is just as misleading as the evidence.yaml label was. This is a
+// narrowly scoped, explicit ALLOWLIST of the current-state surfaces that
+// describe ci.yml's job structure — deliberately NOT a repo-wide scan,
+// because historical audit/campaign records (.ai/PHASE-6-19-*, P5.x
+// EXECUTION.md, etc.) legitimately mention an older job count for the
+// campaign SHA they document, and rewriting those would falsify history.
+// Deliberately NOT parsing ci.yml itself here either (same unnecessary-
+// coupling reasoning as the evidence.yaml guard above) — this only
+// forbids the specific brittle phrasings Codex named from reappearing in
+// the files that are actually meant to describe CURRENT CI state.
+// TR: Yukarıdaki evidence.yaml-özel kontrol, AYNI bayatlama türünün başka
+// GÜNCEL (tarihsel olmayan) dosyalarda da yaşadığını YAKALAMIYORDU. Bu,
+// ci.yml'in job yapısını tanımlayan güncel-durum yüzeylerinin dar
+// kapsamlı, açık bir İZİN LİSTESİdir — kasıtlı olarak repo-geneli bir
+// tarama DEĞİLDİR, çünkü tarihsel denetim/kampanya kayıtları (ör.
+// .ai/PHASE-6-19-*, P5.x EXECUTION.md) o kampanya SHA'sı için o zamanki
+// gerçek job sayısından MEŞRU olarak bahsedebilir; bunları yeniden
+// yazmak tarihi tahrif eder.
+const CURRENT_CI_PROSE_SURFACES = [
+  '04-TOOLS-AND-TECH/05-CI-CD/README.md',
+  '01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml',
+  'shared/registry/relationships/relationships.yaml',
+  '01-SALIM-BURAK-DIGITAL-TWIN/01-EXECUTIVE-TECHNICAL-PROFILE.md',
+  '01-SALIM-BURAK-DIGITAL-TWIN/06-TOOLS-AND-TECHNOLOGY.md',
+  'QA-DEMO-SYSTEM/web-tests/tests/visual-regression.spec.js',
+];
+const STALE_CI_PROSE_PATTERN = /(\b4\s+(real\s+)?jobs?\b|\bfour\s+jobs?\b|4\/4(\s*(PASS|jobs?))?|\ball\s+3\s+jobs?\b|\bthree\s+jobs?\b|\b3-stage\s+pipeline\b)/i;
+let checkedCiProseCount = 0;
+for (const relPath of CURRENT_CI_PROSE_SURFACES) {
+  const fullPath = path.join(ROOT, relPath);
+  if (!existsSync(fullPath)) {
+    fail(relPath, `current CI prose consistency check expects this file to exist — update CURRENT_CI_PROSE_SURFACES in validate-registry.mjs if it was intentionally moved or removed`);
+    continue;
+  }
+  const content = readFileSync(fullPath, 'utf8');
+  const match = content.match(STALE_CI_PROSE_PATTERN);
+  if (match) {
+    const lineNum = content.slice(0, match.index).split('\n').length;
+    fail(relPath, `current CI prose consistency: line ${lineNum} contains a stale/brittle CI job-count phrase ("${match[0]}") — this drifts silently as .github/workflows/ci.yml's job list changes (Codex N6); use durable wording ("every current job", "see .github/workflows/ci.yml for the current job set") instead of a hardcoded count`);
+  }
+  checkedCiProseCount += 1;
+}
+if (checkedCiProseCount > 0) ok(`current CI prose consistency: ${checkedCiProseCount} current-state surface(s) checked for stale CI job-count phrasing`);
+
 // --- Relationships (shared/registry/relationships/relationships.yaml) ---
 
 const relFile = 'shared/registry/relationships/relationships.yaml';

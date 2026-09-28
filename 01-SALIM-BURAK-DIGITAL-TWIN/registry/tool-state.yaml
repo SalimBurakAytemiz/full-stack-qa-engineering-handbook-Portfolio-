@@ -35,7 +35,7 @@ tool_categories:
 
   ci_cd:
     - { id: tool.jenkins, label: "Jenkins", kind: TOOL, owner: "competency-state.yaml#competency.cicd.jenkins" }
-    - { id: platform.github-actions, label: "GitHub Actions", kind: PLATFORM, owner: "competency-state.yaml#competency.cicd.jenkins", note: "TR: Repository CI GERÇEKTEN GitHub Actions üzerinde çalışır (4/4 PASS) — Jenkins yalnızca syntax-valid dosya olarak mevcuttur." }
+    - { id: platform.github-actions, label: "GitHub Actions", kind: PLATFORM, owner: "competency-state.yaml#competency.cicd.jenkins", note: "TR: Repository CI GERÇEKTEN GitHub Actions üzerinde çalışır (tüm current job'lar PASS — bkz. .github/workflows/ci.yml) — Jenkins yalnızca syntax-valid dosya olarak mevcuttur. (Codex N6: bu not eskiden sabit bir job sayısı içeriyordu, workflow büyüdükçe bayatladı; sabit sayı yerine kalıcı ifade tercih edildi.)" }
 
   data:
     - { id: tech.sql, label: "SQL", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.database.sql-data-validation" }
