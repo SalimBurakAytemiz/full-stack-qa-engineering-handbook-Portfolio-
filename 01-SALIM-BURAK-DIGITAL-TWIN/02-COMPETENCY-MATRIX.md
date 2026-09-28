@@ -16,13 +16,13 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Appium (mobile automation) | INDEPENDENT | execution: EXECUTED, planning: PARTICIPATED, framework: NONE | DOCUMENTED |
 | Selenium (web automation) | WORKING | NONE | CI_VERIFIED |
 | Playwright (web automation) | WORKING | NONE | CI_VERIFIED |
-| JMeter (performance) | WORKING | execution: EXECUTED, framework: NONE | IMPLEMENTED |
+| JMeter (performance) | WORKING | execution: EXECUTED, planning: PARTICIPATED, framework: NONE | IMPLEMENTED |
 | Jenkins (CI/CD) | WORKING | execution: EXECUTED, pipeline-from-scratch: NONE | DOCUMENTED |
 | Docker | WORKING | NONE | IMPLEMENTED |
 | Elastic (log analysis / RCA) | INDEPENDENT | EXECUTED | NOT_PRACTICED |
 | Request correlation / structured logging | INDEPENDENT | NONE | CI_VERIFIED |
 | OpenTelemetry / Jaeger | AWARE | NONE | NOT_PRACTICED |
-| Security-aware QA (auth/authz/RBAC/IDOR/XSS-SQLi-oriented) | WORKING | PARTICIPATED | CI_VERIFIED |
+| Security-aware QA (auth/authz/RBAC/IDOR/XSS-SQLi-oriented) | WORKING | NONE | CI_VERIFIED |
 | Burp Suite | AWARE | NONE | NOT_PRACTICED |
 | OWASP ZAP | AWARE | NONE | NOT_PRACTICED |
 | SQL for QA / data validation | INDEPENDENT | EXECUTED | CI_VERIFIED |
@@ -54,3 +54,13 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
   `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md`
   and `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md`
   for the exact environment-limitation evidence.
+- Codex final-verification fix (R1): Security-aware QA's professional
+  column was previously `PARTICIPATED`, but no professional-experience
+  source actually confirms security-testing participation — the note it
+  cited was a self-referential list, not a professional case. Corrected
+  to `NONE` (matching `registry/competency-state.yaml`); repository
+  practice (real IDOR/XSS/SQLi-oriented tests, `CI_VERIFIED`) is real,
+  but it is repository practice, not professional experience — the two
+  are independent dimensions and one does not imply the other. See
+  `registry/source-provenance.yaml#conflict_log` for the correction
+  record.

@@ -241,3 +241,97 @@ test('relationship semantics: PRACTICED_IN cannot be claimed for Jenkins (reposi
     }
   );
 });
+
+// Codex final-verification fix (R1-10): this is the LITERAL drift Codex
+// found — 02-COMPETENCY-MATRIX.md's Security-Aware QA row said
+// PARTICIPATED after competency-state.yaml's professional.status had
+// already been corrected to NONE. Nothing previously checked that this
+// current personal-view rendering agreed with canonical state, so the
+// disagreement passed registry validation silently. This test reverts
+// the matrix row to the exact stale wording and requires the new
+// competency-matrix sync check to reject it.
+// TR: Bu, Codex'in bulduğu BİREBİR sürüklenmedir — competency-state.yaml
+// NONE'a düzeltildikten SONRA bile 02-COMPETENCY-MATRIX.md hâlâ
+// PARTICIPATED yazıyordu. Bu test, satırı tam o eski haline döndürüp yeni
+// senkronizasyon kontrolünün bunu reddettiğini kalıcı olarak kanıtlar.
+test('competency-matrix sync: a stale Professional column that disagrees with canonical competency-state.yaml fails validation (exact Codex R1 drift)', async () => {
+  await withMutatedFile(
+    '01-SALIM-BURAK-DIGITAL-TWIN/02-COMPETENCY-MATRIX.md',
+    (content) => content.replace(
+      '| Security-aware QA (auth/authz/RBAC/IDOR/XSS-SQLi-oriented) | WORKING | NONE | CI_VERIFIED |',
+      '| Security-aware QA (auth/authz/RBAC/IDOR/XSS-SQLi-oriented) | WORKING | PARTICIPATED | CI_VERIFIED |'
+    ),
+    () => {
+      const result = runValidator();
+      assert.notEqual(result.code, 0, 'validator must FAIL when the matrix Professional column disagrees with canonical competency-state.yaml professional.status');
+      assert.match(result.stderr, /matrix Professional column says "PARTICIPATED" but canonical competency-state\.yaml says "NONE"/);
+    }
+  );
+});
+
+test('competency-matrix sync: a row missing a canonical multi-field professional status token fails validation', async () => {
+  await withMutatedFile(
+    '01-SALIM-BURAK-DIGITAL-TWIN/02-COMPETENCY-MATRIX.md',
+    (content) => content.replace(
+      '| JMeter (performance) | WORKING | execution: EXECUTED, planning: PARTICIPATED, framework: NONE | IMPLEMENTED |',
+      '| JMeter (performance) | WORKING | execution: EXECUTED, framework: NONE | IMPLEMENTED |'
+    ),
+    () => {
+      const result = runValidator();
+      assert.notEqual(result.code, 0, 'validator must FAIL when the matrix silently drops a canonical professional-status token (here: PARTICIPATED)');
+      assert.match(result.stderr, /status tokens .* do not match canonical field values/);
+    }
+  );
+});
+
+// Codex final-verification fix (N1): this is the LITERAL false relationship
+// Codex used to prove the old (rank-only) PRACTICED_IN check insufficient —
+// competency.api.graphql's OWN repository.status is CI_VERIFIED (passes
+// the rank check on its own), but lab.performance.locust is REST-only
+// load-test code that never exercises GraphQL at all. The general
+// coverage-semantics mechanism (labs.yaml's covers_competencies) must
+// reject this regardless of the source competency's own maturity.
+// TR: Bu, Codex'in rütbe-YALNIZCA kontrolünü YETERSİZ kanıtlamak için
+// kullandığı BİREBİR ilişkidir — GraphQL'in KENDİ repository.status'u
+// CI_VERIFIED'dır (rütbe kontrolünü tek başına GEÇER), ama Locust lab'ı
+// yalnızca REST tabanlıdır, hiç GraphQL çalıştırmaz. Genel kapsam
+// mekanizması (labs.yaml#covers_competencies) bunu kaynak competency'nin
+// kendi rütbesinden BAĞIMSIZ olarak reddetmelidir.
+test('relationship semantics: PRACTICED_IN cannot be claimed for GraphQL against the REST-only Locust lab — exact Codex N1 false relationship', async () => {
+  await withMutatedFile(
+    'shared/registry/relationships/relationships.yaml',
+    (content) => content.replace(
+      /\nrelated:\n/,
+      '\n  - from: competency.api.graphql\n    predicate: PRACTICED_IN\n    to: lab.performance.locust\n    note: "REGRESSION TEST ONLY - Locust lab is REST-only load-test code and never exercises GraphQL; this edge must fail even though GraphQL competency.repository.status is CI_VERIFIED."\n\nrelated:\n'
+    ),
+    () => {
+      const result = runValidator();
+      assert.notEqual(result.code, 0, 'validator must FAIL when a PRACTICED_IN edge claims GraphQL was practiced in the REST-only Locust lab, even though GraphQL\'s own repository.status is CI_VERIFIED');
+      assert.match(result.stderr, /does not declare 'competency\.api\.graphql' in its covers_competencies/);
+    }
+  );
+});
+
+test('relationship semantics: PRACTICED_IN coverage check still rejects the Jenkins/github-actions false relationship (both rank AND coverage now fail it)', async () => {
+  await withMutatedFile(
+    'shared/registry/relationships/relationships.yaml',
+    (content) => content.replace(
+      /\nrelated:\n/,
+      '\n  - from: competency.cicd.jenkins\n    predicate: PRACTICED_IN\n    to: lab.cicd.github-actions\n    note: "REGRESSION TEST ONLY - re-verifies the N1 coverage mechanism independently rejects this too (lab.cicd.github-actions declares zero covers_competencies)."\n\nrelated:\n'
+    ),
+    () => {
+      const result = runValidator();
+      assert.notEqual(result.code, 0, 'validator must FAIL Jenkins PRACTICED_IN github-actions under the coverage check too');
+      assert.match(result.stderr, /does not declare 'competency\.cicd\.jenkins' in its covers_competencies/);
+    }
+  );
+});
+
+// Positive control: every one of the 13 real PRACTICED_IN edges currently
+// in relationships.yaml must still pass BOTH the rank check and the new
+// coverage check — proves the general mechanism does not silently break
+// legitimate, already-established relationships.
+test('relationship semantics: all real PRACTICED_IN edges in relationships.yaml still pass after the N1 coverage-semantics check', () => {
+  const result = runValidator();
+  assert.equal(result.code, 0, 'the unmodified repository must still pass full registry validation (0 errors) after the N1 coverage mechanism was added');
+});

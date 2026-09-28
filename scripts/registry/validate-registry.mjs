@@ -19,6 +19,7 @@ import path from 'node:path';
 import yaml from 'js-yaml';
 import Ajv from 'ajv';
 import { buildIndexMarkdown } from './lib/build-index-markdown.mjs';
+import { parseCompetencyMatrixTable, labelsMatch, extractStatusTokens } from './lib/parse-competency-matrix.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
@@ -39,6 +40,7 @@ const allDomainIds = new Set(); // universal catalog (shared/registry/catalog/do
 const personalDomainIds = new Set(); // domain_ids referenced by 01-SALIM-BURAK-DIGITAL-TWIN/registry/domain-state.yaml (must be a subset of allDomainIds — FK check below)
 const allToolIds = new Set();
 const allLabIds = new Set();
+const allLabEntries = new Map(); // id -> full lab catalog entry (used by the PRACTICED_IN coverage-semantics check)
 const allEvidenceEntries = new Map(); // id -> full entry
 const allPatternIds = new Set();
 const allProfessionalCaseIds = new Set();
@@ -138,6 +140,77 @@ if (competencyState && Array.isArray(competencyState.competencies)) {
     }
   }
   ok(`claim-integrity: ${checkedCount} elevated professional-status competencies checked for knowledge-only-derivation self-contradiction`);
+}
+
+// --- Competency-matrix sync check (Codex final-verification fix, R1-10) ---
+// 01-SALIM-BURAK-DIGITAL-TWIN/02-COMPETENCY-MATRIX.md is a hand-authored,
+// human-readable rendering that states in its own header it is "authored
+// to match [competency-state.yaml] exactly." Codex proved this can go
+// silently stale (the Security-Aware QA row still said PARTICIPATED after
+// the canonical field was corrected to NONE) — nothing previously checked
+// that this CURRENT personal view actually agrees with canonical state.
+// This is not a byte-exact generated-output-drift check (the file is not
+// generated, and free-text prose around multi-field professional entries
+// like Appium/JMeter/Jenkins legitimately varies in wording) — it is a
+// semantic cross-check: every canonical competency must have a matching
+// row, and that row's Knowledge/Professional/Repository columns must
+// agree with the canonical values.
+// TR: Codex, bu dosyanın "competency-state.yaml ile birebir eşleşecek
+// şekilde yazılmıştır" dediği halde GERÇEKTE sessizce eskidiğini
+// kanıtladı (Security-Aware QA satırı, canonical NONE'a düzeltildikten
+// SONRA bile hâlâ PARTICIPATED yazıyordu). Bu kontrol olmadan, gelecekte
+// competency-state.yaml güncellenip bu tablo unutulursa, hiçbir otomatik
+// mekanizma bunu YAKALAMAZDI — registry validation "0 errors" derken
+// kişisel/mevcut görünüm canonical'dan sessizce ayrışabilirdi.
+const MATRIX_PATH = `${dtRoot.replace('/registry', '')}/02-COMPETENCY-MATRIX.md`;
+if (competencyState && Array.isArray(competencyState.competencies) && existsSync(path.join(ROOT, MATRIX_PATH))) {
+  const matrixMarkdown = readFileSync(path.join(ROOT, MATRIX_PATH), 'utf8');
+  const matrixRows = parseCompetencyMatrixTable(matrixMarkdown);
+  const takenRows = new Set();
+  let checkedCount = 0;
+
+  for (const c of competencyState.competencies) {
+    const row = matrixRows.find((r) => !takenRows.has(r) && labelsMatch(r.label, c.label));
+    if (!row) {
+      fail(MATRIX_PATH, `competency '${c.id}' (label: "${c.label}") has no matching row in 02-COMPETENCY-MATRIX.md — a current personal view must not silently omit or disagree with canonical state`);
+      continue;
+    }
+    takenRows.add(row);
+    checkedCount += 1;
+
+    if (row.knowledge !== c.knowledge) {
+      fail(MATRIX_PATH, `competency '${c.id}': matrix Knowledge column says "${row.knowledge}" but canonical competency-state.yaml says "${c.knowledge}"`);
+    }
+    if (row.repository !== c.repository.status) {
+      fail(MATRIX_PATH, `competency '${c.id}': matrix Repository column says "${row.repository}" but canonical competency-state.yaml says "${c.repository.status}"`);
+    }
+    if (c.professional.status) {
+      // Single unified status — the matrix column must be that exact token.
+      if (row.professional !== c.professional.status) {
+        fail(MATRIX_PATH, `competency '${c.id}': matrix Professional column says "${row.professional}" but canonical competency-state.yaml says "${c.professional.status}" — a current personal view must never disagree with canonical professional state`);
+      }
+    } else {
+      // Multi-field professional (e.g. execution/planning/framework_development)
+      // — key-name prose in the matrix legitimately abbreviates field names,
+      // so compare the SET of status tokens (EXECUTED/PARTICIPATED/NONE/...)
+      // rather than requiring an exact string reproduction.
+      const canonicalTokens = Object.entries(c.professional)
+        .filter(([k]) => k !== 'note' && k !== 'evidence')
+        .map(([, v]) => v)
+        .filter((v) => typeof v === 'string')
+        .sort();
+      const matrixTokens = extractStatusTokens(row.professional);
+      if (JSON.stringify(canonicalTokens) !== JSON.stringify(matrixTokens)) {
+        fail(MATRIX_PATH, `competency '${c.id}': matrix Professional column ("${row.professional}") status tokens ${JSON.stringify(matrixTokens)} do not match canonical field values ${JSON.stringify(canonicalTokens)}`);
+      }
+    }
+  }
+  for (const row of matrixRows) {
+    if (!takenRows.has(row)) {
+      fail(MATRIX_PATH, `row "${row.label}" does not match any competency in competency-state.yaml — remove it or it references a renamed/removed entry`);
+    }
+  }
+  ok(`competency-matrix sync: ${checkedCount}/${competencyState.competencies.length} rows cross-checked against canonical competency-state.yaml (knowledge/professional/repository)`);
 }
 
 const domainState = loadYaml(`${dtRoot}/domain-state.yaml`);
@@ -371,7 +444,7 @@ for (const [fileBase, { schema: schemaName, idField }] of Object.entries(catalog
     if (item.path && !existsSync(path.join(ROOT, item.path))) {
       fail(file, `${schemaName} '${item[idField]}' path does not exist: ${item.path}`);
     }
-    if (fileBase === 'labs') allLabIds.add(item.id);
+    if (fileBase === 'labs') { allLabIds.add(item.id); allLabEntries.set(item.id, item); }
     if (fileBase === 'patterns') allPatternIds.add(item.id);
     if (fileBase === 'domains') allDomainIds.add(item.domain_id);
   }
@@ -582,6 +655,31 @@ if (relationships && Array.isArray(relationships.relationships)) {
 // yükseltildi — DOCUMENTED artık PRACTICED_IN için YETERSİZ sayılır.
 const REPOSITORY_STATUS_ORDER = ['NOT_PRACTICED', 'DOCUMENTED', 'IMPLEMENTED', 'EXECUTED', 'CI_VERIFIED', 'AUDITED'];
 const MIN_PRACTICED_IN_STATUS_RANK = REPOSITORY_STATUS_ORDER.indexOf('IMPLEMENTED');
+
+// --- Relationship semantics, part 2: PRACTICED_IN also requires the
+// TARGET LAB to actually cover the competency (Codex final-verification
+// fix, N1). The maturity-rank check above only answers "has this
+// competency ever been practiced ANYWHERE in this repository?" — it
+// cannot answer "does THIS SPECIFIC lab practice it?" Codex proved this
+// gap by reintroducing `competency.api.graphql PRACTICED_IN
+// lab.performance.locust`: GraphQL's own repository.status is CI_VERIFIED
+// (passes the rank check), but the Locust lab is REST-only load-test code
+// that never speaks GraphQL — the OLD validator had no mechanism to ask
+// the target lab anything at all. The fix is a GENERAL mechanism, not a
+// blacklist of known-bad pairs: every lab in labs.yaml now declares
+// `covers_competencies` (grounded in the real, already-established
+// PRACTICED_IN edges — see labs.yaml's own header comment), and a
+// PRACTICED_IN edge is only semantically valid if the target lab's
+// declared coverage actually includes the source competency.
+// TR: Yukarıdaki rütbe kontrolü yalnızca "bu competency HERHANGİ bir
+// yerde pratiğe döküldü mü?" sorusunu cevaplar — "BU SPESİFİK lab bunu
+// gerçekten kapsıyor mu?" sorusunu SORAMAZ. Codex, GraphQL'in kendi
+// repository.status'u CI_VERIFIED olduğu (rütbe kontrolünü GEÇTİĞİ)
+// halde, hiçbir GraphQL kodu içermeyen Locust lab'ına PRACTICED_IN
+// iddiası eklenebildiğini kanıtladı. Çözüm bir KARA LİSTE değil, GENEL
+// bir mekanizmadır: her lab artık covers_competencies alanıyla neyi
+// GERÇEKTEN kapsadığını beyan eder, ve bu kenar yalnızca hedef lab'ın
+// beyanı kaynak competency'yi İÇERİYORSA geçerli sayılır.
 if (relationships && Array.isArray(relationships.relationships)) {
   let checkedCount = 0;
   for (const rel of relationships.relationships) {
@@ -589,13 +687,20 @@ if (relationships && Array.isArray(relationships.relationships)) {
     const comp = allCompetencyEntries.get(rel.from);
     if (!comp) continue;
     checkedCount += 1;
+
     const status = comp.repository && comp.repository.status;
     const rank = REPOSITORY_STATUS_ORDER.indexOf(status);
     if (rank < MIN_PRACTICED_IN_STATUS_RANK) {
       fail(relFile, `relationship ${rel.from} PRACTICED_IN ${rel.to} — competency '${rel.from}' has repository.status: ${status}, which is below IMPLEMENTED and therefore cannot support a PRACTICED_IN claim (PRACTICED_IN requires real, executed repository practice — NOT_PRACTICED and DOCUMENTED both mean the competency was never actually run in this repository)`);
     }
+
+    const lab = allLabEntries.get(rel.to);
+    const coverage = (lab && Array.isArray(lab.covers_competencies)) ? lab.covers_competencies : [];
+    if (!coverage.includes(rel.from)) {
+      fail(relFile, `relationship ${rel.from} PRACTICED_IN ${rel.to} — lab '${rel.to}' does not declare '${rel.from}' in its covers_competencies (shared/registry/catalog/labs.yaml) — a competency's own repository.status being high enough is not sufficient; the TARGET LAB must actually, concretely exercise this specific competency (real protocol/tool/technique), and this lab's coverage declaration does not include it`);
+    }
   }
-  ok(`relationship-semantic check: ${checkedCount} PRACTICED_IN edges checked against their competency's repository.status (requires >= IMPLEMENTED)`);
+  ok(`relationship-semantic check: ${checkedCount} PRACTICED_IN edges checked against their competency's repository.status (requires >= IMPLEMENTED) AND against the target lab's declared covers_competencies`);
 }
 
 // --- Generated-output drift ---

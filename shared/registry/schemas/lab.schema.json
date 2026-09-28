@@ -23,6 +23,11 @@
       "type": "array",
       "items": { "type": "string", "pattern": "^domain\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$" }
     },
+    "covers_competencies": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^competency\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$" },
+      "description": "Codex final-verification fix (N1): the set of competencies this lab actually, concretely exercises (a real protocol/tool/technique it runs against real code) — not a maturity claim. A PRACTICED_IN edge from a competency to this lab is only semantically valid if the competency's id appears here; see validate-registry.mjs's PRACTICED_IN coverage-semantics check. An empty/absent list means this lab declares no competency coverage yet, so no PRACTICED_IN edge may target it."
+    },
     "note": { "type": "string" }
   },
   "additionalProperties": false

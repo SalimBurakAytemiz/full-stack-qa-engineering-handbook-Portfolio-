@@ -259,3 +259,14 @@ jobs:
       - run: node --test automation-labs/selenium/tests/login-flow-lifecycle.regression.test.js
         env:
           QA_DEMO_BASE_URL: http://127.0.0.1:3000
+      # Codex final-verification fix (N2): real parallel execution
+      # (independent concurrent WebDriver sessions), then its own
+      # adversarial lifecycle regression suite (bounded per-session
+      # action/cleanup, whole-run deadline, hard-exit-guaranteed
+      # termination even with a real leaked handle in one session).
+      - run: npm run selenium:test:parallel --workspace automation-labs
+        env:
+          QA_DEMO_BASE_URL: http://127.0.0.1:3000
+      - run: node --test automation-labs/selenium/scripts/run-parallel-lifecycle.regression.test.js
+        env:
+          QA_DEMO_BASE_URL: http://127.0.0.1:3000

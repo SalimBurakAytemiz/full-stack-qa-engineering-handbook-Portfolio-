@@ -1,14 +1,23 @@
 # Jira Bug Workflow
 
-**Status: EXPERIENCE**
+**Status: USER_CONFIRMATION_REQUIRED** (`01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml#tool.jira`
+— kaynak veride Salim için doğrudan doğrulanmadı; aşağıdaki workflow
+anlatımı evrensel/genel QA metodolojisidir, **kişisel deneyim iddiası
+değildir**. Codex final-verification fix (R1): bu sayfanın önceki
+"Status: EXPERIENCE" başlığı, superseded `QA-COMPETENCY-MAP.md`'nin
+eski sınıflandırmasına dayanıyordu ve canonical `tool-state.yaml`
+durumuyla çelişiyordu — evrensel handbook içeriği sessizce kişisel
+deneyime dönüşemez.)
 
 ---
 
 ## 1. Neden Önemli?
 
-Jira, QA-COMPETENCY-MAP.md'de EXPERIENCE olarak işaretlenen ana bug
-takip araçlarından biridir. Bu dosya, bir QA'nın Jira üzerinde
-**gerçek defect operasyonunu** nasıl yürüttüğünü anlatır.
+Jira, bug/defect takibinde yaygın kullanılan araçlardan biridir. Bu
+dosya, bir QA'nın Jira üzerinde defect operasyonunu **genel/evrensel QA
+perspektifinden** nasıl yürüttüğünü anlatır — Salim için bu aracın
+gerçek profesyonel kullanımı ayrıca doğrulanmadıkça (bkz. yukarıdaki
+Status satırı), bu bir kişisel deneyim iddiası değildir.
 
 > **Not:** Bu dosyada gerçek bir Jira arayüzü ekran görüntüsü
 > uydurulmamıştır ve gerçek bir Jira UI screenshot'ı varmış gibi de

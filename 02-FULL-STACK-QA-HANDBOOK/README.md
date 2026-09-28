@@ -57,8 +57,12 @@ not incompleteness; no row implies content that isn't there.
 
 None of the 24 topics above is a heading, a TODO, or a shallow stub.
 Coverage depth still varies honestly by topic — `22-SYSTEM-PATTERNS/`
-states its own 9/22 sub-coverage rather than claiming completeness it
-doesn't have, and Mobile QA (#9) is knowledge-level by necessity (no
+has all 23/23 pattern pages written at real depth, but "written" does
+not mean "implemented in this repository's codebase": each page states
+its own real status (see that folder's own status table), and roughly
+half are honestly `NOT_IMPLEMENTED` or `NOT_APPLICABLE` — a verified,
+stated gap, not a padded claim of completeness the codebase doesn't
+have. Mobile QA (#9) is knowledge-level by necessity (no
 device/emulator infrastructure has ever existed in this repository's
 build environment) rather than padded with fabricated execution
 evidence. Every topic ties into the registry where a real link exists —
