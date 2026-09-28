@@ -8,12 +8,16 @@ re-explaining it, per the "one fact, one owner" rule.
 
 All 23 patterns in the master taxonomy now have real, substantive
 documentation — none is a heading, a TODO, or a shallow stub. Depth
-still varies honestly: 9 patterns are backed by real, executable
-evidence in this repository (marked IMPLEMENTED below); the remaining
-14 are real QA knowledge for patterns this repository's own
-`QA-DEMO-SYSTEM` does not implement, each explicitly stating that and
-grounding its risk/test-strategy content in transferable methodology
-rather than fabricated evidence.
+still varies honestly, and the table below is the CURRENT rendering of
+`shared/registry/catalog/patterns.yaml` (the canonical source — if the
+two ever disagree, the YAML wins): **9 IMPLEMENTED** (backed by real,
+executable evidence in this repository), **1 DOCUMENTED_ONLY** (Retry —
+real QA knowledge, but no real retry mechanism exists anywhere in this
+repository's code, verified by grep across `backend/src` and
+`automation-labs`; not implemented merely to claim a badge), **12
+NOT_IMPLEMENTED** (a real, verified gap in this repository), and **1
+NOT_APPLICABLE** (Timeout — no real dependency/scenario to implement
+against). 9 + 1 + 12 + 1 = 23.
 
 | Pattern | Status | Real evidence in this repo |
 |---|---|---|
@@ -24,7 +28,7 @@ rather than fabricated evidence.
 | [Payment](PAYMENT.md) | IMPLEMENTED | payment.service.js (deterministic fake tokens) |
 | [Notification](NOTIFICATION.md) | IMPLEMENTED | notifications.service.js, WebSocket push |
 | [Async Events](ASYNC-EVENTS.md) | IMPLEMENTED | events.service.js, websocket-events-advanced.test.js |
-| [Retry](RETRY.md) | IMPLEMENTED | JMeter/Selenium CI retry policy, N4 fail-safe pattern |
+| [Retry](RETRY.md) | DOCUMENTED_ONLY | No real retry mechanism exists anywhere in `backend/src` or `automation-labs` (verified by grep, zero matches) — the JMeter fail-gate wrapper explicitly does NOT auto-retry, by design (see RETRY.md's own "Related labs" section) |
 | [State Machine](STATE-MACHINE.md) | IMPLEMENTED | orders.status transitions (the general technique behind Payment/Idempotency above) |
 | [Rate Limiting](RATE-LIMITING.md) | NOT_IMPLEMENTED | Real, stated gap — verified no rate-limiting middleware exists |
 | [Search](SEARCH.md) | NOT_IMPLEMENTED | No query/filter parameter on any endpoint — verified |
@@ -35,7 +39,7 @@ rather than fabricated evidence.
 | [Cache](CACHE.md) | NOT_IMPLEMENTED | Every product read hits SQLite directly — verified |
 | [Audit Log](AUDIT-LOG.md) | NOT_IMPLEMENTED | The `events` table is structurally similar but serves notifications, not compliance auditing — see the page's own honest distinction |
 | [Webhook](WEBHOOK.md) | NOT_IMPLEMENTED | No outbound webhook or inbound receiver endpoint exists |
-| [Third-Party Integration](THIRD-PARTY-INTEGRATION.md) | MODELED SYNTHETICALLY | payment.service.js's deterministic fake-token design is the real, deliberate example |
+| [Third-Party Integration](THIRD-PARTY-INTEGRATION.md) | IMPLEMENTED | payment.service.js's deterministic fake-token design is a real, deliberate synthetic integration point |
 | [Scheduled Jobs](SCHEDULED-JOBS.md) | NOT_IMPLEMENTED | No cron/scheduled job exists — every code path is request-triggered |
 | [Feature Flags](FEATURE-FLAGS.md) | NOT_IMPLEMENTED | Tracked as `gap.release.feature-flags` |
 | [Localization](LOCALIZATION.md) | NOT_IMPLEMENTED at app level | Real professional-grounded treatment lives in `03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/` instead |

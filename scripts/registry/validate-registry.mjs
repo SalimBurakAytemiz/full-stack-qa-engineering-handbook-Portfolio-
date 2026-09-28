@@ -20,6 +20,7 @@ import yaml from 'js-yaml';
 import Ajv from 'ajv';
 import { buildIndexMarkdown } from './lib/build-index-markdown.mjs';
 import { parseCompetencyMatrixTable, labelsMatch, extractStatusTokens } from './lib/parse-competency-matrix.mjs';
+import { parseSystemPatternsTable } from './lib/parse-system-patterns-readme.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
@@ -43,6 +44,7 @@ const allLabIds = new Set();
 const allLabEntries = new Map(); // id -> full lab catalog entry (used by the PRACTICED_IN coverage-semantics check)
 const allEvidenceEntries = new Map(); // id -> full entry
 const allPatternIds = new Set();
+const allPatternEntries = new Map(); // id -> full pattern catalog entry (used by the System Patterns README sync check)
 const allProfessionalCaseIds = new Set();
 
 function fail(file, message) {
@@ -445,10 +447,61 @@ for (const [fileBase, { schema: schemaName, idField }] of Object.entries(catalog
       fail(file, `${schemaName} '${item[idField]}' path does not exist: ${item.path}`);
     }
     if (fileBase === 'labs') { allLabIds.add(item.id); allLabEntries.set(item.id, item); }
-    if (fileBase === 'patterns') allPatternIds.add(item.id);
+    if (fileBase === 'patterns') { allPatternIds.add(item.id); allPatternEntries.set(item.id, item); }
     if (fileBase === 'domains') allDomainIds.add(item.domain_id);
   }
   ok(`${fileBase}.yaml: ${validCount}/${items.length} ${schemaName} entries valid`);
+}
+
+// --- System Patterns README sync check (Codex final-verification fix, N5) ---
+// 02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/README.md's status table is a
+// hand-authored rendering of patterns.yaml. Codex proved it can go silently
+// stale: Retry's canonical status was already corrected to DOCUMENTED_ONLY
+// (a prior fix, P2-05 — see .ai/CODEX-POST-FIX-CLOSURE-MATRIX.md) but the
+// README's table still said IMPLEMENTED with a fabricated "JMeter/Selenium
+// CI retry policy" evidence claim. Worse, a SECOND pattern (Third-Party
+// Integration) was simultaneously mislabeled with a non-canonical status
+// word ("MODELED SYNTHETICALLY" — not a valid value in pattern.schema.json)
+// instead of its real canonical IMPLEMENTED — meaning the table's aggregate
+// "9 IMPLEMENTED" count still LOOKED right even though which 9 patterns
+// were counted was wrong. This check matches by the table row's link
+// target (an exact filename match against each pattern's own `path`, far
+// more reliable than label-text fuzzy matching) and requires the status
+// column to literally start with the canonical status token — catching
+// both a wrong status AND a count that only "looks" right.
+// TR: Codex, bu tablonun "toplam sayı doğru göründüğü için" sessizce
+// hatalı olabileceğini kanıtladı — Retry ve Third-Party Integration
+// arasında bir SWAP vardı (biri fazladan IMPLEMENTED, diğeri eksik), ve
+// "9 IMPLEMENTED" toplamı bu iki hatanın birbirini GÖTÜRMESİ sayesinde
+// hâlâ doğru görünüyordu. Bu kontrol dosya-adı eşleşmesi kullanır (etiket
+// metni değil) — her pattern'in kendi `path` alanının dosya adıyla BİREBİR
+// eşleşir, bu yüzden etiket kelimelerindeki ufak farklardan etkilenmez.
+if (allPatternEntries.size > 0 && existsSync(path.join(ROOT, '02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/README.md'))) {
+  const patternsReadmePath = '02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/README.md';
+  const patternsReadmeMd = readFileSync(path.join(ROOT, patternsReadmePath), 'utf8');
+  const patternRows = parseSystemPatternsTable(patternsReadmeMd);
+  const takenPatternRows = new Set();
+  let checkedPatternCount = 0;
+
+  for (const [, p] of allPatternEntries) {
+    const expectedFile = p.path.split('/').pop();
+    const row = patternRows.find((r) => !takenPatternRows.has(r) && r.file === expectedFile);
+    if (!row) {
+      fail(patternsReadmePath, `pattern '${p.id}' (expected link target "${expectedFile}") has no matching row in the System Patterns README — a current index must not silently omit or disagree with canonical patterns.yaml`);
+      continue;
+    }
+    takenPatternRows.add(row);
+    checkedPatternCount += 1;
+    if (!row.status.startsWith(p.status)) {
+      fail(patternsReadmePath, `pattern '${p.id}': README status column says "${row.status}" but canonical patterns.yaml says "${p.status}" — a current index must never disagree with canonical pattern status`);
+    }
+  }
+  for (const row of patternRows) {
+    if (!takenPatternRows.has(row)) {
+      fail(patternsReadmePath, `README row linking to "${row.file}" does not match any pattern in patterns.yaml — remove it or it references a renamed/removed entry`);
+    }
+  }
+  ok(`system-patterns sync: ${checkedPatternCount}/${allPatternEntries.size} rows cross-checked against canonical patterns.yaml`);
 }
 
 // --- Foreign-key check (P2-01 post-Codex fix): every personal domain_id in

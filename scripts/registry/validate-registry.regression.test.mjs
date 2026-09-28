@@ -335,3 +335,51 @@ test('relationship semantics: all real PRACTICED_IN edges in relationships.yaml 
   const result = runValidator();
   assert.equal(result.code, 0, 'the unmodified repository must still pass full registry validation (0 errors) after the N1 coverage mechanism was added');
 });
+
+// Codex final-verification fix (N5): this is the LITERAL drift Codex
+// found — the System Patterns README still said Retry was IMPLEMENTED
+// (with a fabricated "JMeter/Selenium CI retry policy" evidence claim)
+// after patterns.yaml's canonical status had already been corrected to
+// DOCUMENTED_ONLY in an earlier fix round. This test reverts the README
+// row to the exact stale wording and requires the new system-patterns
+// sync check to reject it.
+// TR: Bu, Codex'in bulduğu BİREBİR sürüklenmedir — patterns.yaml zaten
+// DOCUMENTED_ONLY'ye düzeltilmişken, README hâlâ IMPLEMENTED yazıyordu.
+test('system-patterns sync: a stale Retry status that disagrees with canonical patterns.yaml fails validation (exact Codex N5 drift)', async () => {
+  await withMutatedFile(
+    '02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/README.md',
+    (content) => content.replace(
+      '| [Retry](RETRY.md) | DOCUMENTED_ONLY | No real retry mechanism exists anywhere in `backend/src` or `automation-labs` (verified by grep, zero matches) — the JMeter fail-gate wrapper explicitly does NOT auto-retry, by design (see RETRY.md\'s own "Related labs" section) |',
+      '| [Retry](RETRY.md) | IMPLEMENTED | JMeter/Selenium CI retry policy, N4 fail-safe pattern |'
+    ),
+    () => {
+      const result = runValidator();
+      assert.notEqual(result.code, 0, 'validator must FAIL when the README status column disagrees with canonical patterns.yaml');
+      assert.match(result.stderr, /pattern 'pattern\.retry': README status column says "IMPLEMENTED" but canonical patterns\.yaml says "DOCUMENTED_ONLY"/);
+    }
+  );
+});
+
+// Codex final-verification fix (N5, item 7): this is the swap Codex
+// explicitly warned about — a mislabel that keeps the AGGREGATE count
+// looking right (still "9 IMPLEMENTED") even though the actual MEMBERS
+// are wrong. This test reintroduces exactly that mislabel (Third-Party
+// Integration back to its stale non-canonical status word) and requires
+// the check to catch it independently of any total-count arithmetic.
+// TR: Codex'in özellikle uyardığı SWAP budur — toplam sayı hâlâ doğru
+// GÖRÜNÜR ("9 IMPLEMENTED"), ama GERÇEK üyelik yanlıştır. Bu test bunu
+// bire bir yeniden üretir.
+test('system-patterns sync: a non-canonical status word (Third-Party Integration mislabeled) fails validation even though the aggregate count would still match', async () => {
+  await withMutatedFile(
+    '02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/README.md',
+    (content) => content.replace(
+      '| [Third-Party Integration](THIRD-PARTY-INTEGRATION.md) | IMPLEMENTED | payment.service.js\'s deterministic fake-token design is a real, deliberate synthetic integration point |',
+      '| [Third-Party Integration](THIRD-PARTY-INTEGRATION.md) | MODELED SYNTHETICALLY | payment.service.js\'s deterministic fake-token design is the real, deliberate example |'
+    ),
+    () => {
+      const result = runValidator();
+      assert.notEqual(result.code, 0, 'validator must FAIL when a status word is not a prefix-match of the canonical status, even if it superficially looks like a status label');
+      assert.match(result.stderr, /pattern 'pattern\.third-party-integration': README status column says "MODELED SYNTHETICALLY" but canonical patterns\.yaml says "IMPLEMENTED"/);
+    }
+  );
+});

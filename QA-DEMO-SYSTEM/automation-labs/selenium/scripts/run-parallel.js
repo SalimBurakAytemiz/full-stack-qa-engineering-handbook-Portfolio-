@@ -89,45 +89,73 @@ function withTimeout(promise, ms, label) {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
-// --- Test-only fault injection (N2 adversarial regression coverage) ---
-// Strict equality against '1' only; a real run never sets this, so it
-// cannot affect production execution. When set, ALL sessions use a stub
-// driver (no real Chrome needed) and session[0] specifically hangs with a
-// real leaked handle — proving that one hung session inside a parallel
-// batch still terminates deterministically, and does not prevent the
-// other sessions (or the whole process) from reaching a real result.
-// TR: Gerçek bir çalıştırma bu değişkeni ASLA ayarlamaz. Ayarlandığında
-// TÜM session'lar stub driver kullanır ve session[0] gerçek bir sızdırılmış
-// handle ile hang eder — paralel bir grup içindeki TEK bir hung session'ın
-// bile sürecin deterministik olarak sonlanmasını ENGELLEMEDİĞİNİ kanıtlar.
+// --- Test-only fault injection (N2/N4 adversarial regression coverage) ---
+// Strict equality against '1' only; a real run never sets these, so none
+// can affect production execution. Each flag below drives a STUB driver
+// (no real Chrome needed) through a specific lifecycle-failure shape.
+// TR: Gerçek bir çalıştırma bu değişkenleri ASLA ayarlamaz. Her bayrak,
+// bir STUB driver aracılığıyla belirli bir lifecycle-hata şeklini tetikler.
 const forceSessionHangWithHandle = process.env.SELENIUM_TEST_FORCE_SESSION_HANG_WITH_HANDLE === '1';
+const forceQuitHang = process.env.SELENIUM_TEST_FORCE_QUIT_HANG === '1';
+const forceQuitReject = process.env.SELENIUM_TEST_FORCE_QUIT_REJECT === '1';
+const forceMixedCleanupFailure = process.env.SELENIUM_TEST_FORCE_MIXED_CLEANUP_FAILURE === '1';
+// N4 positive control (item C): a fast, portable (no real Chrome/network
+// needed) proof that a batch where every session's action AND cleanup
+// genuinely succeed is reported as a clean PASS with no cleanup-failure
+// line — independent of the real-Chrome test, which is non-deterministic
+// in a sandbox without a matching chromedriver/network access.
+const forceAllStubSuccess = process.env.SELENIUM_TEST_FORCE_ALL_STUB_SUCCESS === '1';
+const stubMode = forceSessionHangWithHandle || forceQuitHang || forceQuitReject || forceMixedCleanupFailure || forceAllStubSuccess;
+
+// N4: driver.quit() can fail in two genuinely different ways — it can
+// HANG (never settle, and in a real hung-socket case may leave an active
+// handle alive) or it can REJECT (settle immediately, but with an error).
+// Both must be caught and both must prevent a session from being reported
+// PASS. 'ok' is the default/production behavior (quit resolves cleanly).
+function buildStubDriver(quitBehavior) {
+  return {
+    async quit() {
+      if (quitBehavior === 'hang') {
+        setInterval(() => {}, 60_000); // deliberately leaked handle
+        await new Promise(() => {}); // deliberately never resolves
+      }
+      if (quitBehavior === 'reject') {
+        throw new Error('synthetic driver.quit() rejection (regression coverage only)');
+      }
+    },
+  };
+}
 
 async function runOneSession(index, baseUrl) {
   const startedAt = Date.now();
   let driver;
   try {
-    driver = forceSessionHangWithHandle
-      ? { async quit() {} }
-      : await withTimeout(buildDriver('chrome'), DRIVER_STARTUP_TIMEOUT_MS, `session[${index}] driver startup`);
+    if (stubMode) {
+      let quitBehavior = 'ok';
+      if (forceQuitHang) quitBehavior = 'hang';
+      else if (forceQuitReject) quitBehavior = 'reject';
+      else if (forceMixedCleanupFailure) quitBehavior = index === 0 ? 'reject' : 'ok';
+      driver = buildStubDriver(quitBehavior);
+    } else {
+      driver = await withTimeout(buildDriver('chrome'), DRIVER_STARTUP_TIMEOUT_MS, `session[${index}] driver startup`);
+    }
   } catch (err) {
     return { index, status: 'EXECUTION_BLOCKED', durationMs: Date.now() - startedAt, error: err.message };
   }
 
-  let result;
+  let actionStatus = 'PASS';
+  let actionError;
   try {
-    if (forceSessionHangWithHandle) {
-      if (index === 0) {
-        await withTimeout(
-          (async () => {
-            setInterval(() => {}, 60_000); // deliberately leaked handle
-            await new Promise(() => {}); // deliberately never resolves
-          })(),
-          TEST_ACTION_TIMEOUT_MS,
-          `session[${index}] test action`
-        );
-      }
-      result = { index, status: 'PASS', durationMs: Date.now() - startedAt };
-    } else {
+    if (forceSessionHangWithHandle && index === 0) {
+      await withTimeout(
+        (async () => {
+          setInterval(() => {}, 60_000); // deliberately leaked handle
+          await new Promise(() => {}); // deliberately never resolves
+        })(),
+        TEST_ACTION_TIMEOUT_MS,
+        `session[${index}] test action`
+      );
+    } else if (!stubMode) {
       // N2: the login/navigation/assertion action is bounded the same
       // way driver startup is — an unbounded action was one of the gaps
       // Codex found (only driver startup had a timeout before).
@@ -142,23 +170,46 @@ async function runOneSession(index, baseUrl) {
         const names = await productsPage.getProductNames();
         assert.ok(names.includes('QA Demo Klavye'), `expected seeded product in list, got: ${names.join(', ')}`);
       })(), TEST_ACTION_TIMEOUT_MS, `session[${index}] test action`);
-      result = { index, status: 'PASS', durationMs: Date.now() - startedAt };
     }
+    // else: the other stub scenarios (forceQuitHang/forceQuitReject/
+    // forceMixedCleanupFailure) synthesize an instant-pass action —
+    // their whole point is to isolate a CLEANUP failure, not an action
+    // failure.
   } catch (err) {
-    result = { index, status: 'FAIL', durationMs: Date.now() - startedAt, error: err.message };
-  } finally {
-    if (driver) {
-      try {
-        // N2: cleanup is bounded here too — the previous version called
-        // driver.quit() with no timeout at all, so a hung quit() for any
-        // ONE session could hang the entire Promise.all batch.
-        await withTimeout(driver.quit(), CLEANUP_TIMEOUT_MS, `session[${index}] driver.quit()`);
-      } catch (err) {
-        console.log(`SELENIUM_PARALLEL_NOTE: session[${index}] driver.quit() did not complete cleanly: ${err.message}`);
-      }
-    }
+    actionStatus = 'FAIL';
+    actionError = err.message;
   }
-  return result;
+
+  // N4: Codex proved a session whose actions passed could still be
+  // reported PASS even when its own driver.quit() timed out or rejected
+  // — the failure was logged as a NOTE only, never fed back into the
+  // session's result. Cleanup is now tracked as its own explicit outcome,
+  // always attempted (bounded, as before), and factored into the final
+  // status below — a session cannot be a clean PASS if its required
+  // cleanup never reached a supported terminal state.
+  // TR: Codex, aksiyonları BAŞARILI olan bir session'ın, driver.quit()
+  // zaman aşımına uğrasa veya reddedilse bile hâlâ PASS raporlanabildiğini
+  // kanıtladı — hata yalnızca bir NOTE olarak loglanıyor, session'ın
+  // sonucuna hiç YANSITILMIYORDU. Cleanup artık kendi açık sonucuyla
+  // izlenir ve nihai duruma dahil edilir.
+  let cleanupError = null;
+  try {
+    // N2: cleanup is bounded here too — the previous version called
+    // driver.quit() with no timeout at all, so a hung quit() for any
+    // ONE session could hang the entire Promise.all batch.
+    await withTimeout(driver.quit(), CLEANUP_TIMEOUT_MS, `session[${index}] driver.quit()`);
+  } catch (err) {
+    cleanupError = err.message;
+  }
+
+  const durationMs = Date.now() - startedAt;
+  if (actionStatus === 'FAIL') {
+    return { index, status: 'FAIL', durationMs, error: actionError, cleanupError: cleanupError || undefined };
+  }
+  if (cleanupError) {
+    return { index, status: 'CLEANUP_FAILED', durationMs, error: cleanupError };
+  }
+  return { index, status: 'PASS', durationMs };
 }
 
 async function runParallelSessions() {
@@ -180,6 +231,7 @@ async function runParallelSessions() {
 
   const blocked = results.filter((r) => r.status === 'EXECUTION_BLOCKED').length;
   const failed = results.filter((r) => r.status === 'FAIL').length;
+  const cleanupFailed = results.filter((r) => r.status === 'CLEANUP_FAILED').length;
   const passed = results.filter((r) => r.status === 'PASS').length;
 
   if (blocked === results.length) {
@@ -194,7 +246,16 @@ async function runParallelSessions() {
   }
 
   console.log(`SELENIUM_PARALLEL_SUMMARY: ${passed}/${results.length} passed`);
-  reportOutcome(failed > 0 || blocked > 0 ? 1 : 0);
+  if (cleanupFailed > 0) {
+    // N4: a run must not be reported as a clean overall success when one
+    // or more sessions' required cleanup did not reach a supported
+    // terminal state, even if every session's own test actions passed —
+    // named explicitly here, not just buried in the per-session lines
+    // above, so an aggregate-only reader still sees it.
+    const failedIndexes = results.filter((r) => r.status === 'CLEANUP_FAILED').map((r) => r.index).join(', ');
+    console.log(`SELENIUM_PARALLEL_CLEANUP_FAILURES: ${cleanupFailed}/${results.length} — session(s) [${failedIndexes}] did not complete required cleanup within its bounded timeout/without rejecting`);
+  }
+  reportOutcome(failed > 0 || blocked > 0 || cleanupFailed > 0 ? 1 : 0);
 }
 
 async function main() {

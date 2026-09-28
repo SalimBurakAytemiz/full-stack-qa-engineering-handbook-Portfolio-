@@ -49,6 +49,68 @@ test('N2 regression: one hung session (with a real leaked handle) inside a paral
   assert.ok(result.elapsedMs < 6_000, `expected self-termination well under 6s, got ${result.elapsedMs}ms — a leaked handle in one session must not keep the whole process alive`);
 });
 
+// N4 adversarial regression coverage — Codex proved a session whose
+// actions PASSED could still be reported PASS overall even when its own
+// driver.quit() timed out (item A) or rejected (item B), or when one
+// session's cleanup failed inside an otherwise-successful parallel batch
+// (item D). These four tests prove the actual AGGREGATE contract (exit
+// code, per-session status, explicit CLEANUP_FAILURES line) — not merely
+// that an error line was printed somewhere in stdout.
+
+test('N4 regression (item A): actions PASS but driver.quit() never resolves on every session -> overall exit non-zero, no PASS summary claim', () => {
+  const result = run(
+    { SELENIUM_TEST_FORCE_QUIT_HANG: '1', SELENIUM_CLEANUP_TIMEOUT_MS: '1000', SELENIUM_HARD_EXIT_GRACE_MS: '500', SELENIUM_WHOLE_RUN_DEADLINE_MS: '10000' },
+    10_000
+  );
+  const stdout = result.stdout || '';
+  assert.notEqual(result.code, 0, 'a batch where every session\'s cleanup hangs must exit non-zero even though every action passed');
+  assert.match(stdout, /session\[0\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /session\[1\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /session\[2\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /SELENIUM_PARALLEL_SUMMARY: 0\/3 passed/, 'a session with hung cleanup must never be counted in "passed"');
+  assert.match(stdout, /SELENIUM_PARALLEL_CLEANUP_FAILURES: 3\/3/, 'the aggregate must explicitly name the cleanup-failure count, not just log a per-session NOTE');
+  assert.equal(result.timedOut, false, 'no external supervisor may be required to terminate the runner — it must self-terminate');
+  assert.ok(result.elapsedMs < 6_000, `expected self-termination well under 6s despite real leaked handles, got ${result.elapsedMs}ms`);
+});
+
+test('N4 regression (item B): actions PASS but driver.quit() rejects on every session -> overall exit non-zero, no PASS summary claim', () => {
+  const result = run({ SELENIUM_TEST_FORCE_QUIT_REJECT: '1', SELENIUM_WHOLE_RUN_DEADLINE_MS: '10000' }, 10_000);
+  const stdout = result.stdout || '';
+  assert.notEqual(result.code, 0, 'a batch where every session\'s cleanup rejects must exit non-zero even though every action passed');
+  assert.match(stdout, /session\[0\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /session\[1\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /session\[2\] \[CLEANUP_FAILED\]/);
+  assert.match(stdout, /SELENIUM_PARALLEL_SUMMARY: 0\/3 passed/);
+  assert.match(stdout, /SELENIUM_PARALLEL_CLEANUP_FAILURES: 3\/3/);
+  assert.equal(result.timedOut, false, 'no external supervisor may be required to terminate the runner');
+});
+
+test('N4 regression (item D): mixed batch — 2 sessions fully succeed, 1 session\'s cleanup fails -> overall exit non-zero, failed session named', () => {
+  const result = run({ SELENIUM_TEST_FORCE_MIXED_CLEANUP_FAILURE: '1', SELENIUM_WHOLE_RUN_DEADLINE_MS: '10000' }, 10_000);
+  const stdout = result.stdout || '';
+  assert.notEqual(result.code, 0, 'one session\'s cleanup failure must make the WHOLE batch non-zero, even with 2 genuine full successes');
+  assert.match(stdout, /session\[0\] \[CLEANUP_FAILED\]/, 'the specific failed session must be identified');
+  assert.match(stdout, /session\[1\] \[PASS\]/);
+  assert.match(stdout, /session\[2\] \[PASS\]/);
+  assert.match(stdout, /SELENIUM_PARALLEL_SUMMARY: 2\/3 passed/, 'the cleanup-failed session must not be counted as passed');
+  assert.match(stdout, /SELENIUM_PARALLEL_CLEANUP_FAILURES: 1\/3 — session\(s\) \[0\]/, 'the aggregate line must name exactly which session\'s cleanup failed');
+  assert.equal(result.timedOut, false, 'no external supervisor may be required to terminate the runner');
+});
+
+test('N4 regression (item C, positive control): when actions AND cleanup all genuinely succeed, the aggregate is a clean PASS with no cleanup-failure line', () => {
+  // Fast, portable (no real Chrome/network needed) positive control,
+  // independent of the real-Chrome test below (which is non-deterministic
+  // in a sandbox without a matching chromedriver/network access).
+  const result = run({ SELENIUM_TEST_FORCE_ALL_STUB_SUCCESS: '1' }, 10_000);
+  const stdout = result.stdout || '';
+  assert.equal(result.code, 0, 'a batch where every session\'s action and cleanup genuinely succeed must exit 0');
+  assert.match(stdout, /session\[0\] \[PASS\]/);
+  assert.match(stdout, /session\[1\] \[PASS\]/);
+  assert.match(stdout, /session\[2\] \[PASS\]/);
+  assert.match(stdout, /SELENIUM_PARALLEL_SUMMARY: 3\/3 passed/);
+  assert.doesNotMatch(stdout, /SELENIUM_PARALLEL_CLEANUP_FAILURES/, 'a genuinely clean run must never claim a cleanup failure that was not injected');
+});
+
 test('N2/F6 regression: the real, unmodified parallel path never exits 0 without an explicit status line (works in both this sandbox\'s EXECUTION_BLOCKED environment and a CI runner with real Chrome)', () => {
   const result = run({});
   const stdout = result.stdout || '';
