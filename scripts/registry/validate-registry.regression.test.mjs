@@ -445,3 +445,89 @@ test('current CI prose consistency: the real, unmodified current-state CI docume
   const result = runValidator();
   assert.equal(result.code, 0, 'the real repository must pass the current CI prose consistency check with no stale phrases present');
 });
+
+// Codex final-verification fix (N6 round 3): Codex proved the round-2
+// guard was still a fixed-phrase blacklist (a differently-worded mutation
+// like "3-job" or "4/4 PASS" could slip past it) AND that its allowlist
+// missed three real current-state surfaces (05-EXECUTABLE-LABS/README.md,
+// 07-INTERVIEW/18-ABOUT-THIS-REPOSITORY-QUESTIONS.md,
+// competency-state.yaml's Jenkins entry). The guard is now a genuine
+// shape match (any digit/count-word directly adjacent to "job(s)"/"stage
+// pipeline", or a scoped "CI ... N/N PASS" form) — this test proves it
+// catches every variant Codex named, reproduced on TWO different
+// protected surfaces, not just the one file the round-2 test used.
+// TR: Codex, round-2 korumasının hâlâ sabit bir ifade listesi olduğunu
+// (farklı ifade edilmiş bir mutasyon onu atlayabilirdi) VE izin
+// listesinin üç gerçek güncel-durum yüzeyini kaçırdığını kanıtladı. Bu
+// test, korumanın Codex'in belirttiği HER varyantı, TEK bir dosya değil,
+// İKİ farklı korumalı yüzeyde yeniden üretilmiş olarak yakaladığını
+// kanıtlar.
+const N6_ROUND3_STALE_VARIANTS = [
+  { label: 'four jobs', text: 'Current CI: four jobs.' },
+  { label: '4 jobs', text: 'Current CI: 4 jobs.' },
+  { label: '4-job GitHub Actions pipeline', text: 'Current CI: 4-job GitHub Actions pipeline.' },
+  { label: '3 jobs', text: 'Current CI: 3 jobs.' },
+  { label: 'three jobs', text: 'Current CI: three jobs.' },
+  { label: 'all 3 jobs passed', text: 'Current CI: all 3 jobs passed.' },
+  { label: 'same 3-stage pipeline', text: 'Current CI mirrors the same 3-stage pipeline.' },
+  { label: 'same three-stage pipeline', text: 'Current CI mirrors the same three-stage pipeline.' },
+  { label: '4/4 PASS', text: 'Current CI: 4/4 PASS.' },
+  { label: '4 real jobs', text: 'Current CI: 4 real jobs.' },
+];
+const N6_ROUND3_TARGET_FILES = [
+  '04-TOOLS-AND-TECH/05-CI-CD/README.md',
+  'QA-DEMO-SYSTEM/web-tests/tests/visual-regression.spec.js',
+];
+for (const targetFile of N6_ROUND3_TARGET_FILES) {
+  test(`current CI prose consistency (N6 round 3): all 10 mandatory stale-phrase variants are rejected on ${targetFile}`, async () => {
+    for (const variant of N6_ROUND3_STALE_VARIANTS) {
+      await withMutatedFile(
+        targetFile,
+        (content) => `${variant.text}\n${content}`,
+        () => {
+          const result = runValidator();
+          assert.notEqual(result.code, 0, `validator must FAIL when ${targetFile} contains the stale phrase "${variant.label}"`);
+          assert.match(result.stderr, /current CI prose consistency/, `failure for "${variant.label}" must come from the current CI prose consistency check`);
+        }
+      );
+    }
+  });
+}
+
+// Mandatory historical positive controls: explicitly-scoped historical CI
+// counts must still PASS even inside a protected current-state surface —
+// proves the guard checks local historical scope, not just file identity.
+test('current CI prose consistency (N6 round 3): explicitly historical-SHA-scoped CI counts pass even inside a protected current surface', async () => {
+  await withMutatedFile(
+    '04-TOOLS-AND-TECH/05-CI-CD/README.md',
+    (content) => `At historical SHA 81b77b4, the campaign had 4 jobs.\n${content}`,
+    () => {
+      const result = runValidator();
+      assert.equal(result.code, 0, 'an explicitly historical-SHA-scoped CI job count must not be rejected as current-state drift');
+    }
+  );
+});
+test('current CI prose consistency (N6 round 3): explicitly Phase-scoped historical CI counts pass even inside a protected current surface', async () => {
+  await withMutatedFile(
+    '04-TOOLS-AND-TECH/05-CI-CD/README.md',
+    (content) => `During Phase 6-19, 4/4 jobs passed at that point.\n${content}`,
+    () => {
+      const result = runValidator();
+      assert.equal(result.code, 0, 'an explicitly Phase-scoped historical CI job count must not be rejected as current-state drift');
+    }
+  );
+});
+
+// UNRELATED false-positive guards: assertion/request counts and HTTP
+// status codes must never be mistaken for CI job-topology claims, even
+// though they share digits with the patterns above.
+test('current CI prose consistency (N6 round 3): assertion counts and HTTP status codes are never mistaken for CI job-topology claims', async () => {
+  await withMutatedFile(
+    '04-TOOLS-AND-TECH/05-CI-CD/README.md',
+    (content) => `The suite reports 4/4 assertions passed; a malformed request returns HTTP 404 and an unauthenticated one HTTP 401. See the Scheduled Jobs pattern for background-task QA guidance.\n${content}`,
+    () => {
+      const result = runValidator();
+      assert.equal(result.code, 0, 'assertion counts, HTTP status codes, and the "Scheduled Jobs" pattern name must never be flagged as stale CI job-topology claims');
+    }
+  );
+});

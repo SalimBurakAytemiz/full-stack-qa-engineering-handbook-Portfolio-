@@ -34,7 +34,9 @@ before being used to validate the real content — see `.ai/DECISIONS.md`.
 
 `QA-DEMO-SYSTEM` is the real, running code — backend, tests, CI. It was
 not moved or renamed during this transformation because it has a
-passing 157-test suite and a 4-job GitHub Actions pipeline that both
+passing 157-test suite and depends on a current GitHub Actions workflow
+with dedicated registry, backend, web, API, and Selenium QA jobs (see
+`.github/workflows/ci.yml` for the current job set), both of which
 depend on its current file paths. `05-EXECUTABLE-LABS/README.md` is a
 documented index over that code, mapping each real path to a stable
 `lab.*` registry id — a decision made explicitly to avoid risking a

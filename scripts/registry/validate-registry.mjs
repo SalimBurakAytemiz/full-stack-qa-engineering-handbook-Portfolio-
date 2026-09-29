@@ -591,15 +591,78 @@ if (evidenceData && Array.isArray(evidenceData.items)) {
 // .ai/PHASE-6-19-*, P5.x EXECUTION.md) o kampanya SHA'sı için o zamanki
 // gerçek job sayısından MEŞRU olarak bahsedebilir; bunları yeniden
 // yazmak tarihi tahrif eder.
+// Codex final-verification fix (N6 round 3): the round-2 guard above was
+// itself proven incomplete two ways. (1) it was a literal-alternation
+// blacklist ("4 jobs" | "four jobs" | ...) that a mutation like "3-job"
+// or "4/4 PASS" phrased slightly differently could still slip past, and
+// (2) its allowlist missed three real current-state surfaces that still
+// carried the same drift (05-EXECUTABLE-LABS/README.md,
+// 07-INTERVIEW/18-ABOUT-THIS-REPOSITORY-QUESTIONS.md, and
+// competency-state.yaml's Jenkins entry claiming it "mirrors the same
+// 3-stage pipeline as ci.yml" — false on both the number and the
+// equivalence claim). The pattern below is now a genuine SHAPE match
+// (any number, digit or word, directly adjacent to "job(s)"/"stage
+// pipeline", plus a narrowly-scoped "CI ... N/N PASS" form) rather than
+// a fixed phrase list, so a rewording Codex has not seen yet still gets
+// caught as long as it has the same shape.
+// TR: Round-2 koruması kendi de iki şekilde eksik kanıtlandı: (1) sabit
+// bir ifade listesiydi, ufak bir yeniden ifadeyle (örn. "3-job") atlanabilirdi,
+// (2) izin listesi aynı bayatlamanın yaşadığı üç gerçek güncel-durum
+// yüzeyini kaçırıyordu. Aşağıdaki desen artık sabit bir ifade listesi
+// değil, gerçek bir ŞEKİL eşleşmesidir.
 const CURRENT_CI_PROSE_SURFACES = [
   '04-TOOLS-AND-TECH/05-CI-CD/README.md',
+  '05-EXECUTABLE-LABS/README.md',
+  '07-INTERVIEW/18-ABOUT-THIS-REPOSITORY-QUESTIONS.md',
   '01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml',
+  '01-SALIM-BURAK-DIGITAL-TWIN/registry/competency-state.yaml',
   'shared/registry/relationships/relationships.yaml',
   '01-SALIM-BURAK-DIGITAL-TWIN/01-EXECUTIVE-TECHNICAL-PROFILE.md',
   '01-SALIM-BURAK-DIGITAL-TWIN/06-TOOLS-AND-TECHNOLOGY.md',
   'QA-DEMO-SYSTEM/web-tests/tests/visual-regression.spec.js',
+  '06-EVIDENCE/evidence.yaml',
 ];
-const STALE_CI_PROSE_PATTERN = /(\b4\s+(real\s+)?jobs?\b|\bfour\s+jobs?\b|4\/4(\s*(PASS|jobs?))?|\ball\s+3\s+jobs?\b|\bthree\s+jobs?\b|\b3-stage\s+pipeline\b)/i;
+
+// A count word or digit, immediately adjacent (optional hyphen/space,
+// optional "real ") to "job(s)" — catches "4 jobs", "four jobs",
+// "4-job", "four-job", "3-job", "three-job", "4 real jobs", "all 3 jobs"
+// (the "all "/"same " prefix a human adds is outside what this needs to
+// anchor on) — or a count word/digit adjacent to "stage pipeline" —
+// catches "3-stage pipeline", "three-stage pipeline" — or the narrow
+// "CI ... N/N PASS" shape ("Current CI: 4/4 PASS"), which is scoped to
+// require an explicit CI/pipeline/workflow word immediately before the
+// fraction so it can never match an unrelated "N/N PASS" describing a
+// test-case or assertion count elsewhere in the same sentence (e.g. a
+// real "GitHub Actions selenium-lab job'unda ... 2/2 PASS" test-result
+// note, or "run-jmeter.test.js — 7/7 PASS" — neither of those has a
+// CI/pipeline/workflow word immediately before its own N/N).
+const CI_JOB_COUNT_WORD = '(?:\\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)';
+const STALE_CI_PROSE_PATTERN = new RegExp(
+  `(${CI_JOB_COUNT_WORD}[\\s-]*(?:real[\\s-]+)?jobs?\\b` +
+  `|${CI_JOB_COUNT_WORD}[\\s-]*stage[\\s-]*pipelines?\\b` +
+  `|\\b(?:CI|pipeline|workflow)\\b[^\\n]{0,10}?\\d+\\s*\\/\\s*\\d+\\s*PASS\\b)`,
+  'i'
+);
+
+// A match inside a protected surface is exempt ONLY when the surrounding
+// text (the matched line plus up to 3 lines immediately before it —
+// comments explaining a past fix routinely put the "previously"/"eskiden"
+// marker a line or two above the actual old phrase they're quoting) makes
+// its historical scope explicit. This is what lets evidence.yaml's own
+// "this label previously hardcoded '(4 real jobs)'" fix-explanation
+// stand, and what a genuinely historical record elsewhere would need to
+// do to earn the same pass — never file location alone.
+// TR: Korumalı bir yüzey içindeki bir eşleşme YALNIZCA çevresindeki metin
+// (eşleşen satır + öncesindeki en fazla 3 satır) tarihsel kapsamı açıkça
+// belirtiyorsa muaf tutulur — asla yalnızca dosya konumu yüzünden değil.
+// NOTE: \b is deliberately NOT used around the Turkish alternatives —
+// JS's non-Unicode regex engine treats ö/ç/ş/ı/ğ/ü as non-word
+// characters, so `\bönceki\b` silently fails to match "önceki" preceded
+// by a space (neither side registers as a \w/non-\w transition). Plain
+// substring matching is used for those instead; false-positive risk is
+// negligible for words this specific and this long.
+const HISTORICAL_SCOPE_MARKER = /(\b(?:historical|previously|formerly)\b|\bat that (?:point|time)\b|\bas of (?:SHA|commit|run)\b|\bold SHA\b|\bhistorical SHA\b|\bPhase\s*\d+[-–]\d+\b|önceki|eskiden|geçmiş)/i;
+
 let checkedCiProseCount = 0;
 for (const relPath of CURRENT_CI_PROSE_SURFACES) {
   const fullPath = path.join(ROOT, relPath);
@@ -608,10 +671,15 @@ for (const relPath of CURRENT_CI_PROSE_SURFACES) {
     continue;
   }
   const content = readFileSync(fullPath, 'utf8');
-  const match = content.match(STALE_CI_PROSE_PATTERN);
-  if (match) {
-    const lineNum = content.slice(0, match.index).split('\n').length;
-    fail(relPath, `current CI prose consistency: line ${lineNum} contains a stale/brittle CI job-count phrase ("${match[0]}") — this drifts silently as .github/workflows/ci.yml's job list changes (Codex N6); use durable wording ("every current job", "see .github/workflows/ci.yml for the current job set") instead of a hardcoded count`);
+  const lines = content.split('\n');
+  const globalPattern = new RegExp(STALE_CI_PROSE_PATTERN.source, 'gi');
+  let m;
+  while ((m = globalPattern.exec(content))) {
+    const lineNum = content.slice(0, m.index).split('\n').length; // 1-indexed
+    const windowStart = Math.max(0, lineNum - 4); // up to 3 lines before, 0-indexed
+    const window = lines.slice(windowStart, lineNum).join('\n'); // through the matched line
+    if (HISTORICAL_SCOPE_MARKER.test(window)) continue; // explicitly-scoped historical mention — allowed
+    fail(relPath, `current CI prose consistency: line ${lineNum} contains a stale/brittle CI job-count phrase ("${m[0]}") with no explicit historical scope — this drifts silently as .github/workflows/ci.yml's job list changes (Codex N6); use durable wording ("every current job", "see .github/workflows/ci.yml for the current job set") instead of a hardcoded count, or add explicit historical scope (a SHA/run/"Phase N-M"/"previously") if this genuinely describes a past state`);
   }
   checkedCiProseCount += 1;
 }

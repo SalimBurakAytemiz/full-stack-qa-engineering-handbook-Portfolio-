@@ -70,7 +70,7 @@ competencies:
       pipeline_development_from_scratch: NONE
     repository:
       status: DOCUMENTED
-      evidence: "Jenkinsfile syntax-valid, aynı 3 aşamalı pipeline'ı ci.yml ile yansıtır — gerçek Jenkins server hiç mevcut olmadı, ÇALIŞTIRILMADI"
+      evidence: "Jenkinsfile syntax-valid — kendi başına 5 aşamalı (Checkout/Install/Backend Tests/Web QA/API Schema Validation) dar kapsamlı bir örnek pipeline; ci.yml'i BİREBİR YANSITMAZ — ci.yml artık kendi başına, daha geniş, ayrı ayrı registry/backend/web/API/Selenium QA job ailelerinden oluşur (bkz. .github/workflows/ci.yml). Gerçek Jenkins server hiç mevcut olmadı, ÇALIŞTIRILMADI. (Codex N6 round 3: bu alan eskiden 'aynı 3 aşamalı pipeline'ı ci.yml ile yansıtır' diyordu — bu hem sayısal hem de eşdeğerlik iddiası olarak yanlıştı.)"
     gaps: []
 
   - id: competency.environment.docker

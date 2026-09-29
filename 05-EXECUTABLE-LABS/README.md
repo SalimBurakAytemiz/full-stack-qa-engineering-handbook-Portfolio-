@@ -9,7 +9,10 @@ into a modular `QA-REFERENCE-PLATFORM` with `TEST-PACKS/` and
 code**, not a physical directory move.
 
 Reason: `QA-DEMO-SYSTEM` is a real, working, CI-verified system —
-157 backend tests passing, a 4-job GitHub Actions pipeline, Playwright,
+157 backend tests passing, the repository's current multi-job GitHub
+Actions QA pipeline (see `.github/workflows/ci.yml` for the current job
+set — deliberately not restated as a fixed number here, since an
+earlier count went stale as the workflow grew), Playwright,
 Selenium, JMeter, and API contract suites all wired to real npm scripts
 and real relative `require()`/import paths. A file-system-level move (or
 copy) risks breaking those paths and workspace boundaries (npm
