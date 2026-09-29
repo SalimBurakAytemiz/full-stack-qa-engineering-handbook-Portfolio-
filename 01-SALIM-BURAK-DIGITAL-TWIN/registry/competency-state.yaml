@@ -240,6 +240,62 @@ competencies:
       note: "TR: CI_VERIFIED DEĞİL — hiçbir GitHub Actions job'u Locust'u çalıştırmıyor, yalnızca sandbox'ta manuel çalıştırıldı."
     gaps: [gap.performance.k6, gap.performance.gatling]
 
+  # Part 2 — Advanced QA Engineering: AI/ML/LLM Systems Testing.
+  # TR: Bu beş competency bu oturumda YENİ eklendi — her biri için
+  # professional.status BİLİNÇLİ olarak NONE'dur (hiçbir kaynak veri
+  # bunu profesyonel deneyim olarak doğrulamıyor). repository.status
+  # EXECUTED'dir çünkü gerçek, deterministik testler gerçekten
+  # çalıştırıldı (ai-systems/ altında 35/35 test PASS) — CI_VERIFIED
+  # DEĞİLDİR çünkü bu, CI'da henüz doğrulanmadı (bkz. tool-state.yaml
+  # ai_ml kategorisi ve labs.yaml#lab.ai-systems.mock-first-testing).
+
+  - id: competency.ai.llm-prompt-testing
+    label: "LLM Prompt & Golden-Set Evaluation Testing"
+    knowledge: WORKING
+    professional:
+      status: NONE
+      note: "TR: Bu tamamen yeni, hiç profesyonel olarak kullanılmamış bir alandır — repository practice profesyonel deneyime asla dönüştürülmez."
+    repository:
+      status: EXECUTED
+      evidence: "ai-systems/lib/mock-provider.js + eval-harness.js — prompt-testing.test.js (6) + golden-eval.test.js (3) genuinely passing against a deterministic mock provider, AI_TEST_MODE=mock"
+    gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
+
+  - id: competency.ai.structured-output-rag-testing
+    label: "Structured-Output & RAG (Retrieval-Augmented Generation) Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "ai-systems/lib/schema-validator.js (ajv v8) + rag.js — structured-output.test.js (4) + rag.test.js (5) genuinely passing, including a citation-integrity negative case"
+    gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
+
+  - id: competency.ai.agent-tool-calling-testing
+    label: "AI Agent & Tool-Calling Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "ai-systems/lib/agent.js — agent.test.js (6) genuinely passing: tool selection, pre-execution argument validation, no-match termination, bounded-loop force-termination"
+    gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
+
+  - id: competency.ai.safety-privacy-testing
+    label: "AI Safety, Security & Privacy Testing (Prompt Injection, Secret/PII Leakage)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "ai-systems/lib/safety.js + mock-provider.js detectInjection — safety.test.js (4) + injection-defense cases in prompt-testing.test.js genuinely passing"
+    gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
+
+  - id: competency.ai.provider-regression-testing
+    label: "AI Provider/Model Regression & Cost-Latency Budget Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "ai-systems/lib/provider-regression.js + live-provider.js — provider-regression.test.js (2) + cost-latency-budget.test.js (3) + live-provider.test.js (2) genuinely passing"
+    gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
+
 related:
   professional_source: "professional-experience.yaml"
   gap_detail: "gaps.yaml"

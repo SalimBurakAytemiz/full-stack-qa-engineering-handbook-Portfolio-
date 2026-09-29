@@ -270,3 +270,21 @@ jobs:
       - run: node --test automation-labs/selenium/scripts/run-parallel-lifecycle.regression.test.js
         env:
           QA_DEMO_BASE_URL: http://127.0.0.1:3000
+
+  ai-systems-lab:
+    # Part 2 — Advanced QA Engineering: AI/ML/LLM Systems Testing.
+    # Mock-first by design (AI_TEST_MODE=mock is the default and the only
+    # mode this job ever runs) — no backend server, no network access, and
+    # no API key (OPENAI_API_KEY/ANTHROPIC_API_KEY/GEMINI_API_KEY) is
+    # required or read here. No `needs: backend-tests` — this lab is
+    # entirely self-contained against a deterministic mock provider (see
+    # automation-labs/ai-systems/README.md for the scope boundary).
+    name: AI Systems Testing lab (mock-first, deterministic)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run ai:test --workspace automation-labs

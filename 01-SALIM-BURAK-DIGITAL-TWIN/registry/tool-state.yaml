@@ -8,6 +8,11 @@ source: src.master-transformation-prompt.2026-09-25
 # PLATFORM/PROTOCOL ayrımı ve kategori grubu tutulur.
 
 tool_categories:
+  ai_ml:
+    - { id: tool.ai-mock-provider, label: "Deterministic Mock LLM Provider (custom-built)", kind: TOOL, owner: "competency-state.yaml#competency.ai.llm-prompt-testing", note: "TR: Gerçek bir dil modeli DEĞİLDİR — kural tabanlı, tamamen deterministik bir QA fixture'ıdır (bkz. QA-DEMO-SYSTEM/automation-labs/ai-systems/lib/mock-provider.js)." }
+    - { id: tech.rag, label: "Retrieval-Augmented Generation (RAG)", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.ai.structured-output-rag-testing" }
+    - { id: tech.llm-agents, label: "LLM Agents / Tool-Calling", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.ai.agent-tool-calling-testing" }
+
   api_and_contract:
     - { id: tool.postman, label: "Postman", kind: TOOL, owner: "competency-state.yaml#competency.api.contract-automation" }
     - { id: tool.newman, label: "Newman", kind: TOOL, owner: "competency-state.yaml#competency.api.contract-automation" }

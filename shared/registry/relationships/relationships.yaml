@@ -229,6 +229,24 @@ relationships:
   - from: competency.api.contract-automation
     predicate: USES_TECHNOLOGY
     to: tech.json-schema
+  - from: competency.ai.llm-prompt-testing
+    predicate: USES_TOOL
+    to: tool.ai-mock-provider
+  - from: competency.ai.structured-output-rag-testing
+    predicate: USES_TOOL
+    to: tool.ajv
+  - from: competency.ai.structured-output-rag-testing
+    predicate: USES_TECHNOLOGY
+    to: tech.rag
+  - from: competency.ai.agent-tool-calling-testing
+    predicate: USES_TECHNOLOGY
+    to: tech.llm-agents
+  - from: competency.ai.safety-privacy-testing
+    predicate: USES_TOOL
+    to: tool.ai-mock-provider
+  - from: competency.ai.provider-regression-testing
+    predicate: USES_TOOL
+    to: tool.ai-mock-provider
   - from: competency.api.graphql
     predicate: USES_TECHNOLOGY
     to: protocol.graphql
@@ -327,6 +345,21 @@ relationships:
   - from: competency.performance.locust
     predicate: PRACTICED_IN
     to: lab.performance.locust
+  - from: competency.ai.llm-prompt-testing
+    predicate: PRACTICED_IN
+    to: lab.ai-systems.mock-first-testing
+  - from: competency.ai.structured-output-rag-testing
+    predicate: PRACTICED_IN
+    to: lab.ai-systems.mock-first-testing
+  - from: competency.ai.agent-tool-calling-testing
+    predicate: PRACTICED_IN
+    to: lab.ai-systems.mock-first-testing
+  - from: competency.ai.safety-privacy-testing
+    predicate: PRACTICED_IN
+    to: lab.ai-systems.mock-first-testing
+  - from: competency.ai.provider-regression-testing
+    predicate: PRACTICED_IN
+    to: lab.ai-systems.mock-first-testing
   - from: competency.security.security-aware-qa
     predicate: PRACTICED_IN
     to: lab.backend-api.rest-graphql-websocket
@@ -389,6 +422,9 @@ relationships:
   - from: lab.performance.locust
     predicate: TESTED_BY
     to: evidence.performance.locust-load-run
+  - from: lab.ai-systems.mock-first-testing
+    predicate: TESTED_BY
+    to: evidence.ai-systems.mock-lab-execution
   - from: lab.database.sql-validation
     predicate: TESTED_BY
     to: evidence.database.sql-validation-suite
@@ -498,6 +534,24 @@ relationships:
   - from: competency.performance.locust
     predicate: LEARNING
     to: gap.performance.gatling
+  - from: competency.ai.llm-prompt-testing
+    predicate: LEARNING
+    to: gap.ai.professional-exposure
+  - from: competency.ai.llm-prompt-testing
+    predicate: LEARNING
+    to: gap.ai.live-provider-integration
+  - from: competency.ai.structured-output-rag-testing
+    predicate: LEARNING
+    to: gap.ai.live-provider-integration
+  - from: competency.ai.agent-tool-calling-testing
+    predicate: LEARNING
+    to: gap.ai.live-provider-integration
+  - from: competency.ai.safety-privacy-testing
+    predicate: LEARNING
+    to: gap.ai.live-provider-integration
+  - from: competency.ai.provider-regression-testing
+    predicate: LEARNING
+    to: gap.ai.live-provider-integration
   - from: competency.web.accessibility
     predicate: LEARNING
     to: gap.accessibility.professional-exposure

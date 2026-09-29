@@ -133,5 +133,15 @@ gaps:
     status: PLANNED
     note: "TR: Section 39 gereği tamamlanmış hiçbir sertifika İCAT EDİLMEDİ — ISTQB gelecek hedef olarak kaydedilmiştir."
 
+  - id: gap.ai.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "AI/ML/LLM Systems Testing — professional project exposure"
+    note: "TR: Part 2'de eklenen tüm competency.ai.* alanları için ortak — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.ai.live-provider-integration
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "AI/ML/LLM Testing — real paid-API provider integration (OpenAI/Anthropic/Gemini)"
+    note: "TR: ai-systems lab'ı kasıtlı olarak mock-first'tür — hiçbir gerçek, ücretli LLM API çağrısı hiç yapılmadı. AI_TEST_MODE=live EXTERNALLY_BLOCKED raporlar, asla sessizce mock sonucu gerçekmiş gibi sunmaz."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

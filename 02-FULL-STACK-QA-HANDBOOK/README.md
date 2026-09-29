@@ -45,13 +45,28 @@ not incompleteness; no row implies content that isn't there.
 | 23 | Modern QA Engineering | `../QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/` | Full |
 | 24 | Learning Paths | [`24-LEARNING-PATHS/`](24-LEARNING-PATHS/) | 6 specialization paths, each built from real `gap.*` registry entries, not a generic curriculum |
 
-## Additional topic, real and substantial, not in the 24-item list
+## Additional topics, real and substantial, not in the 24-item list
 
 - **Defect Management** — [`06-DEFECT-MANAGEMENT/`](06-DEFECT-MANAGEMENT/)
   (41 docs). The master taxonomy doesn't list this as a separate
   numbered topic; it is folded conceptually into QA Foundations / Test
   Management, but its existing content is substantial enough to keep
   as its own folder rather than force-merge it.
+
+- **Advanced QA Engineering** — [`25-ADVANCED-QA-ENGINEERING/`](25-ADVANCED-QA-ENGINEERING/).
+  Next-generation QA practices beyond the base 24 topics. Currently
+  covers **AI/ML/LLM Systems Testing** in real depth — a genuine,
+  executable, deterministic mock-first lab
+  (`QA-DEMO-SYSTEM/automation-labs/ai-systems/`, 35 passing tests
+  across prompt testing, golden-set evaluation, structured-output
+  validation, RAG groundedness/citation checks, agent tool-calling,
+  safety/privacy leakage detection, and provider-regression detection)
+  with matching handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/AI-ML-LLM-SYSTEMS-TESTING/`](25-ADVANCED-QA-ENGINEERING/AI-ML-LLM-SYSTEMS-TESTING/).
+  Professional experience for this area is explicitly `NONE` in the
+  Digital Twin registry — this is repository practice only, disclosed
+  as such throughout (see that folder's `README.md` scope-boundary
+  note). Further advanced-QA subtopics are planned but not yet added.
 
 ## What "meaningful canonical coverage" means here
 

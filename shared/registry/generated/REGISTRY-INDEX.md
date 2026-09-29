@@ -29,6 +29,11 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Accessibility Testing (axe-core / WCAG) | WORKING | NONE | CI_VERIFIED |
 | Visual Regression / Pixel-Perfect Comparison | WORKING | EXECUTED | CI_VERIFIED |
 | Locust (Load Testing) | WORKING | NONE | EXECUTED |
+| LLM Prompt & Golden-Set Evaluation Testing | WORKING | NONE | EXECUTED |
+| Structured-Output & RAG (Retrieval-Augmented Generation) Testing | WORKING | NONE | EXECUTED |
+| AI Agent & Tool-Calling Testing | WORKING | NONE | EXECUTED |
+| AI Safety, Security & Privacy Testing (Prompt Injection, Secret/PII Leakage) | WORKING | NONE | EXECUTED |
+| AI Provider/Model Regression & Cost-Latency Budget Testing | WORKING | NONE | EXECUTED |
 
 ## Domain Maturity
 
@@ -59,6 +64,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Database — SQL data validation suite | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/backend/tests/database-testing.test.js` |
 | Observability — access-log / RCA investigation | L2_TESTED | `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY` |
 | CI/CD — GitHub Actions pipeline | L4_CI_VERIFIED | `.github/workflows` |
+| AI Systems Testing — mock-first (prompt, golden-eval, structured-output, RAG, agent, safety, provider-regression) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/ai-systems` |
 
 ## System Patterns
 
@@ -105,12 +111,13 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | JMeter fail-gate logic — JTL-content-based PASS/FAIL, fixture-tested | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/jmeter/scripts/run-jmeter.test.js` |
 | JMeter real binary execution — attempted, root cause diagnosed, BLOCKED (not a successful load run) | E1_DOCUMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md` |
 | Locust load test | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md` |
+| AI Systems Testing lab — 35/35 deterministic mock-mode tests executed | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/ai-systems/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (236 edges)
+## Relationships (254 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -174,6 +181,12 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.api.contract-automation | USES_TOOL | tool.newman |
 | competency.api.contract-automation | USES_TOOL | tool.ajv |
 | competency.api.contract-automation | USES_TECHNOLOGY | tech.json-schema |
+| competency.ai.llm-prompt-testing | USES_TOOL | tool.ai-mock-provider |
+| competency.ai.structured-output-rag-testing | USES_TOOL | tool.ajv |
+| competency.ai.structured-output-rag-testing | USES_TECHNOLOGY | tech.rag |
+| competency.ai.agent-tool-calling-testing | USES_TECHNOLOGY | tech.llm-agents |
+| competency.ai.safety-privacy-testing | USES_TOOL | tool.ai-mock-provider |
+| competency.ai.provider-regression-testing | USES_TOOL | tool.ai-mock-provider |
 | competency.api.graphql | USES_TECHNOLOGY | protocol.graphql |
 | competency.api.rest | USES_TECHNOLOGY | protocol.rest |
 | competency.integration.websocket | USES_TECHNOLOGY | protocol.websocket |
@@ -204,6 +217,11 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.web.selenium | PRACTICED_IN | lab.web-automation.selenium |
 | competency.performance.jmeter | PRACTICED_IN | lab.performance.jmeter |
 | competency.performance.locust | PRACTICED_IN | lab.performance.locust |
+| competency.ai.llm-prompt-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
+| competency.ai.structured-output-rag-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
+| competency.ai.agent-tool-calling-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
+| competency.ai.safety-privacy-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
+| competency.ai.provider-regression-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
 | competency.security.security-aware-qa | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.correlation-logging | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.elastic-log-analysis | RELATED_TO | lab.observability.elastic-log-analysis |
@@ -221,6 +239,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.performance.jmeter | TESTED_BY | evidence.performance.jmeter-fail-gate-logic |
 | lab.performance.jmeter | DOCUMENTED_BY | evidence.performance.jmeter-real-execution-blocked |
 | lab.performance.locust | TESTED_BY | evidence.performance.locust-load-run |
+| lab.ai-systems.mock-first-testing | TESTED_BY | evidence.ai-systems.mock-lab-execution |
 | lab.database.sql-validation | TESTED_BY | evidence.database.sql-validation-suite |
 | lab.security.owasp-mapping | DOCUMENTED_BY | evidence.security.owasp-mapping-review |
 | lab.cicd.github-actions | IMPLEMENTED_BY | evidence.cicd.github-actions-pipeline |
@@ -253,6 +272,12 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.security.owasp-zap | LEARNING | gap.security.owasp-zap |
 | competency.performance.locust | LEARNING | gap.performance.k6 |
 | competency.performance.locust | LEARNING | gap.performance.gatling |
+| competency.ai.llm-prompt-testing | LEARNING | gap.ai.professional-exposure |
+| competency.ai.llm-prompt-testing | LEARNING | gap.ai.live-provider-integration |
+| competency.ai.structured-output-rag-testing | LEARNING | gap.ai.live-provider-integration |
+| competency.ai.agent-tool-calling-testing | LEARNING | gap.ai.live-provider-integration |
+| competency.ai.safety-privacy-testing | LEARNING | gap.ai.live-provider-integration |
+| competency.ai.provider-regression-testing | LEARNING | gap.ai.live-provider-integration |
 | competency.web.accessibility | LEARNING | gap.accessibility.professional-exposure |
 | competency.security.security-aware-qa | LEARNING | gap.security.professional-exposure |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |

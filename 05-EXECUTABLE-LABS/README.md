@@ -48,6 +48,15 @@ lab catalog navigable and machine-checkable (see
 | Performance — Locust | `QA-DEMO-SYSTEM/automation-labs/locust` | `lab.performance.locust` | L2_TESTED |
 | Security — OWASP mapping | `QA-DEMO-SYSTEM/backend/tests/security.test.js` + `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/` | `lab.security.owasp-mapping` | L1_IMPLEMENTED |
 | CI/CD — GitHub Actions | `.github/workflows/ci.yml` | `lab.cicd.github-actions` | L4_CI_VERIFIED |
+| AI Systems Testing — mock-first | `QA-DEMO-SYSTEM/automation-labs/ai-systems` | `lab.ai-systems.mock-first-testing` | L3_AUTOMATED |
+
+The AI Systems Testing lab is Part 2's first addition —
+`AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real
+LLM API, no API key, deterministic (see the lab's own `README.md` for
+the scope boundary and `02-FULL-STACK-QA-HANDBOOK/25-ADVANCED-QA-ENGINEERING/AI-ML-LLM-SYSTEMS-TESTING/`
+for the matching handbook content). Its 5 covered competencies all have
+`professional: {status: NONE}` in the Digital Twin registry — genuinely
+new, repository-only ground, not inflated into professional experience.
 
 Mobile (Appium) has no lab entry: there is no real device/emulator
 infrastructure in this repository, and Section 47's anti-placeholder
