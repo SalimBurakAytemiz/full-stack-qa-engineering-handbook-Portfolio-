@@ -244,10 +244,11 @@ competencies:
   # TR: Bu beş competency bu oturumda YENİ eklendi — her biri için
   # professional.status BİLİNÇLİ olarak NONE'dur (hiçbir kaynak veri
   # bunu profesyonel deneyim olarak doğrulamıyor). repository.status
-  # EXECUTED'dir çünkü gerçek, deterministik testler gerçekten
-  # çalıştırıldı (ai-systems/ altında 35/35 test PASS) — CI_VERIFIED
-  # DEĞİLDİR çünkü bu, CI'da henüz doğrulanmadı (bkz. tool-state.yaml
-  # ai_ml kategorisi ve labs.yaml#lab.ai-systems.mock-first-testing).
+  # CI_VERIFIED'dır çünkü bu lab GitHub Actions'ta gerçekten çalıştırıldı
+  # ve PASS aldı (run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36623661602,
+  # commit e2a53d0, job "AI Systems Testing lab (mock-first, deterministic)" —
+  # bkz. tool-state.yaml ai_ml kategorisi ve
+  # labs.yaml#lab.ai-systems.mock-first-testing).
 
   - id: competency.ai.llm-prompt-testing
     label: "LLM Prompt & Golden-Set Evaluation Testing"
@@ -256,8 +257,8 @@ competencies:
       status: NONE
       note: "TR: Bu tamamen yeni, hiç profesyonel olarak kullanılmamış bir alandır — repository practice profesyonel deneyime asla dönüştürülmez."
     repository:
-      status: EXECUTED
-      evidence: "ai-systems/lib/mock-provider.js + eval-harness.js — prompt-testing.test.js (6) + golden-eval.test.js (3) genuinely passing against a deterministic mock provider, AI_TEST_MODE=mock"
+      status: CI_VERIFIED
+      evidence: "ai-systems/lib/mock-provider.js + eval-harness.js — prompt-testing.test.js (6) + golden-eval.test.js (3) genuinely passing against a deterministic mock provider, AI_TEST_MODE=mock, verified in GitHub Actions"
     gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
 
   - id: competency.ai.structured-output-rag-testing
@@ -265,8 +266,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "ai-systems/lib/schema-validator.js (ajv v8) + rag.js — structured-output.test.js (4) + rag.test.js (5) genuinely passing, including a citation-integrity negative case"
+      status: CI_VERIFIED
+      evidence: "ai-systems/lib/schema-validator.js (ajv v8) + rag.js — structured-output.test.js (4) + rag.test.js (5) genuinely passing, including a citation-integrity negative case, verified in GitHub Actions"
     gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
 
   - id: competency.ai.agent-tool-calling-testing
@@ -274,8 +275,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "ai-systems/lib/agent.js — agent.test.js (6) genuinely passing: tool selection, pre-execution argument validation, no-match termination, bounded-loop force-termination"
+      status: CI_VERIFIED
+      evidence: "ai-systems/lib/agent.js — agent.test.js (6) genuinely passing: tool selection, pre-execution argument validation, no-match termination, bounded-loop force-termination, verified in GitHub Actions"
     gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
 
   - id: competency.ai.safety-privacy-testing
@@ -283,8 +284,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "ai-systems/lib/safety.js + mock-provider.js detectInjection — safety.test.js (4) + injection-defense cases in prompt-testing.test.js genuinely passing"
+      status: CI_VERIFIED
+      evidence: "ai-systems/lib/safety.js + mock-provider.js detectInjection — safety.test.js (4) + injection-defense cases in prompt-testing.test.js genuinely passing, verified in GitHub Actions"
     gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
 
   - id: competency.ai.provider-regression-testing
@@ -292,8 +293,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "ai-systems/lib/provider-regression.js + live-provider.js — provider-regression.test.js (2) + cost-latency-budget.test.js (3) + live-provider.test.js (2) genuinely passing"
+      status: CI_VERIFIED
+      evidence: "ai-systems/lib/provider-regression.js + live-provider.js — provider-regression.test.js (2) + cost-latency-budget.test.js (3) + live-provider.test.js (2) genuinely passing, verified in GitHub Actions"
     gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
 
 related:

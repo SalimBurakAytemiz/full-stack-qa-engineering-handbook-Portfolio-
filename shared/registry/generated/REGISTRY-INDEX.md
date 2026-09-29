@@ -29,11 +29,11 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Accessibility Testing (axe-core / WCAG) | WORKING | NONE | CI_VERIFIED |
 | Visual Regression / Pixel-Perfect Comparison | WORKING | EXECUTED | CI_VERIFIED |
 | Locust (Load Testing) | WORKING | NONE | EXECUTED |
-| LLM Prompt & Golden-Set Evaluation Testing | WORKING | NONE | EXECUTED |
-| Structured-Output & RAG (Retrieval-Augmented Generation) Testing | WORKING | NONE | EXECUTED |
-| AI Agent & Tool-Calling Testing | WORKING | NONE | EXECUTED |
-| AI Safety, Security & Privacy Testing (Prompt Injection, Secret/PII Leakage) | WORKING | NONE | EXECUTED |
-| AI Provider/Model Regression & Cost-Latency Budget Testing | WORKING | NONE | EXECUTED |
+| LLM Prompt & Golden-Set Evaluation Testing | WORKING | NONE | CI_VERIFIED |
+| Structured-Output & RAG (Retrieval-Augmented Generation) Testing | WORKING | NONE | CI_VERIFIED |
+| AI Agent & Tool-Calling Testing | WORKING | NONE | CI_VERIFIED |
+| AI Safety, Security & Privacy Testing (Prompt Injection, Secret/PII Leakage) | WORKING | NONE | CI_VERIFIED |
+| AI Provider/Model Regression & Cost-Latency Budget Testing | WORKING | NONE | CI_VERIFIED |
 
 ## Domain Maturity
 
@@ -64,7 +64,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Database — SQL data validation suite | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/backend/tests/database-testing.test.js` |
 | Observability — access-log / RCA investigation | L2_TESTED | `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY` |
 | CI/CD — GitHub Actions pipeline | L4_CI_VERIFIED | `.github/workflows` |
-| AI Systems Testing — mock-first (prompt, golden-eval, structured-output, RAG, agent, safety, provider-regression) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/ai-systems` |
+| AI Systems Testing — mock-first (prompt, golden-eval, structured-output, RAG, agent, safety, provider-regression) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/ai-systems` |
 
 ## System Patterns
 
@@ -111,13 +111,13 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | JMeter fail-gate logic — JTL-content-based PASS/FAIL, fixture-tested | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/jmeter/scripts/run-jmeter.test.js` |
 | JMeter real binary execution — attempted, root cause diagnosed, BLOCKED (not a successful load run) | E1_DOCUMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md` |
 | Locust load test | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md` |
-| AI Systems Testing lab — 35/35 deterministic mock-mode tests executed | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/ai-systems/EXECUTION.md` |
+| AI Systems Testing lab — 35/35 deterministic mock-mode tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/ai-systems/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (254 edges)
+## Relationships (259 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -250,6 +250,11 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.database.sql-data-validation | EVIDENCED_BY | evidence.backend.unit-integration-suite |
 | competency.security.security-aware-qa | EVIDENCED_BY | evidence.backend.unit-integration-suite |
 | competency.observability.correlation-logging | EVIDENCED_BY | evidence.backend.unit-integration-suite |
+| competency.ai.llm-prompt-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
+| competency.ai.structured-output-rag-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
+| competency.ai.agent-tool-calling-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
+| competency.ai.safety-privacy-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
+| competency.ai.provider-regression-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.public-schema-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.protected-auth-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.orders-payment-suite |

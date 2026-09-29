@@ -35,11 +35,11 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Accessibility testing (axe-core) | WORKING | NONE | CI_VERIFIED |
 | Visual regression / pixel-perfect comparison | WORKING | EXECUTED | CI_VERIFIED |
 | Locust (load testing) | WORKING | NONE | EXECUTED |
-| LLM Prompt & Golden-Set Evaluation Testing | WORKING | NONE | EXECUTED |
-| Structured-Output & RAG Testing | WORKING | NONE | EXECUTED |
-| AI Agent & Tool-Calling Testing | WORKING | NONE | EXECUTED |
-| AI Safety, Security & Privacy Testing | WORKING | NONE | EXECUTED |
-| AI Provider/Model Regression & Cost-Latency Budget Testing | WORKING | NONE | EXECUTED |
+| LLM Prompt & Golden-Set Evaluation Testing | WORKING | NONE | CI_VERIFIED |
+| Structured-Output & RAG Testing | WORKING | NONE | CI_VERIFIED |
+| AI Agent & Tool-Calling Testing | WORKING | NONE | CI_VERIFIED |
+| AI Safety, Security & Privacy Testing | WORKING | NONE | CI_VERIFIED |
+| AI Provider/Model Regression & Cost-Latency Budget Testing | WORKING | NONE | CI_VERIFIED |
 
 ## Reading this table correctly
 

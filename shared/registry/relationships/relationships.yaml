@@ -460,6 +460,21 @@ relationships:
   - from: competency.observability.correlation-logging
     predicate: EVIDENCED_BY
     to: evidence.backend.unit-integration-suite
+  - from: competency.ai.llm-prompt-testing
+    predicate: EVIDENCED_BY
+    to: evidence.ai-systems.mock-lab-execution
+  - from: competency.ai.structured-output-rag-testing
+    predicate: EVIDENCED_BY
+    to: evidence.ai-systems.mock-lab-execution
+  - from: competency.ai.agent-tool-calling-testing
+    predicate: EVIDENCED_BY
+    to: evidence.ai-systems.mock-lab-execution
+  - from: competency.ai.safety-privacy-testing
+    predicate: EVIDENCED_BY
+    to: evidence.ai-systems.mock-lab-execution
+  - from: competency.ai.provider-regression-testing
+    predicate: EVIDENCED_BY
+    to: evidence.ai-systems.mock-lab-execution
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite

@@ -48,7 +48,7 @@ lab catalog navigable and machine-checkable (see
 | Performance — Locust | `QA-DEMO-SYSTEM/automation-labs/locust` | `lab.performance.locust` | L2_TESTED |
 | Security — OWASP mapping | `QA-DEMO-SYSTEM/backend/tests/security.test.js` + `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/` | `lab.security.owasp-mapping` | L1_IMPLEMENTED |
 | CI/CD — GitHub Actions | `.github/workflows/ci.yml` | `lab.cicd.github-actions` | L4_CI_VERIFIED |
-| AI Systems Testing — mock-first | `QA-DEMO-SYSTEM/automation-labs/ai-systems` | `lab.ai-systems.mock-first-testing` | L3_AUTOMATED |
+| AI Systems Testing — mock-first | `QA-DEMO-SYSTEM/automation-labs/ai-systems` | `lab.ai-systems.mock-first-testing` | L4_CI_VERIFIED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real

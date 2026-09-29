@@ -70,9 +70,10 @@ code review) and fixed at the root cause — full detail in the handbook's
   mode this evidence covers as "executed" — `live` mode is proven to
   correctly report `EXTERNALLY_BLOCKED`, not proven to call a real
   provider (it never attempts to).
-- This is a local, manual execution — **not yet CI-verified**. CI wiring
-  for this lab (mock-mode only, `.github/workflows/ci.yml`) is a
-  separate, explicitly tracked step; until a GitHub Actions run of this
-  exact suite is confirmed, this lab's registry maturity stays at
-  `L3_AUTOMATED` / evidence `E3_EXECUTED`, not `L4_CI_VERIFIED` /
-  `E4_CI_VERIFIED`.
+- **CI-verified.** Beyond this local, manual execution, the
+  `ai-systems-lab` job in `.github/workflows/ci.yml` ran this exact
+  suite on GitHub Actions and passed — see
+  `https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36623661602`
+  (commit `e2a53d0`, job "AI Systems Testing lab (mock-first,
+  deterministic)", conclusion: success). This lab's registry maturity
+  is `L4_CI_VERIFIED` / evidence `E4_CI_VERIFIED` on that basis.

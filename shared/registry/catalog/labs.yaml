@@ -101,11 +101,11 @@ items:
 
   - id: lab.ai-systems.mock-first-testing
     label: "AI Systems Testing — mock-first (prompt, golden-eval, structured-output, RAG, agent, safety, provider-regression)"
-    maturity: L3_AUTOMATED
+    maturity: L4_CI_VERIFIED
     path: "QA-DEMO-SYSTEM/automation-labs/ai-systems"
     evidence_id: evidence.ai-systems.mock-lab-execution
     covers_competencies: [competency.ai.llm-prompt-testing, competency.ai.structured-output-rag-testing, competency.ai.agent-tool-calling-testing, competency.ai.safety-privacy-testing, competency.ai.provider-regression-testing]
-    note: "TR: L4_CI_VERIFIED DEĞİL — bu lab GitHub Actions'ta henüz doğrulanmadı (yalnızca sandbox'ta node --test + run-ai-lab.js ile manuel çalıştırıldı, bkz. ai-systems/EXECUTION.md). AI_TEST_MODE=mock varsayılandır, gerçek API anahtarı gerektirmez."
+    note: "TR: GitHub Actions'ta 'AI Systems Testing lab (mock-first, deterministic)' job'ı olarak gerçekten çalıştırıldı ve PASS aldı (bkz. evidence.ai-systems.mock-lab-execution#produced_by'daki run URL'i). AI_TEST_MODE=mock varsayılandır, gerçek API anahtarı gerektirmez."
 
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"

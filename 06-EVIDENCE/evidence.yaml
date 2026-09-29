@@ -114,12 +114,12 @@ items:
     related_lab: lab.performance.locust
 
   - id: evidence.ai-systems.mock-lab-execution
-    label: "AI Systems Testing lab — 35/35 deterministic mock-mode tests executed"
-    maturity: E3_EXECUTED
+    label: "AI Systems Testing lab — 35/35 deterministic mock-mode tests executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/ai-systems/EXECUTION.md"
-    produced_by: "node --test ai-systems/tests/*.test.js ; node ai-systems/run-ai-lab.js (AI_TEST_MODE=mock, local execution only — not yet CI-verified)"
+    produced_by: "npm run ai:test --workspace automation-labs (AI_TEST_MODE=mock) — GitHub Actions job 'AI Systems Testing lab (mock-first, deterministic)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36623661602, commit e2a53d0, conclusion: success"
     related_lab: lab.ai-systems.mock-first-testing
-    note: "TR: E4_CI_VERIFIED DEĞİL — bu GitHub Actions'ta henüz çalıştırılmadı, yalnızca sandbox'ta manuel node --test ile doğrulandı."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (bkz. produced_by'daki run URL'i), sandbox'taki manuel node --test çalıştırmasına ek olarak."
 
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
