@@ -29,12 +29,13 @@ Repository Practice).
 | Folder | Status |
 |---|---|
 | `AI-ML-LLM-SYSTEMS-TESTING/` | Added — real executable mock-first lab, see below |
+| `RELIABILITY-CHAOS-PRIVACY-TESTING/` | Added — real executable chaos/reliability + privacy labs, see below |
 
-Further subtopics (chaos engineering, service virtualization, advanced
-contract testing, mutation testing, data-engineering QA, messaging,
-supply-chain security, modern protocols, production verification) are
-planned but not yet added in this pass — this folder grows incrementally,
-each addition backed by real, executed work, never a documentation-only
+Further subtopics (service virtualization, advanced contract testing,
+mutation testing, data-engineering QA, messaging, supply-chain
+security, modern protocols, production verification) are planned but
+not yet added in this pass — this folder grows incrementally, each
+addition backed by real, executed work, never a documentation-only
 placeholder claiming more than exists.
 
 ## AI/ML/LLM Systems Testing
@@ -47,3 +48,17 @@ repository's existing mapping-layer convention — see
 Read `AI-ML-LLM-SYSTEMS-TESTING/README.md` first — it states the scope
 boundary (deterministic mock, not a real model) that every other document
 in that subfolder assumes.
+
+## Reliability, Chaos Engineering & Privacy Testing
+
+Executable labs: `QA-DEMO-SYSTEM/automation-labs/chaos-reliability/`
+(fault injection, circuit breaker, resilient client) and
+`QA-DEMO-SYSTEM/automation-labs/privacy-testing/` (PII/sensitive-field
+response scanning — including real integration against the live
+backend — plus a disclosed GDPR-style data-subject-rights fixture).
+
+Read `RELIABILITY-CHAOS-PRIVACY-TESTING/README.md` first — it states
+the scope boundary (a locally-controlled fault-injection fixture, not
+real chaos-engineering infrastructure; a disclosed fixture for
+data-subject-rights testing, since the real backend has no such
+endpoints) that every other document in that subfolder assumes.

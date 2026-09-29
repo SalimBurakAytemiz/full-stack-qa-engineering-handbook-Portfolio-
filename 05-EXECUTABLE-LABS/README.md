@@ -49,6 +49,8 @@ lab catalog navigable and machine-checkable (see
 | Security — OWASP mapping | `QA-DEMO-SYSTEM/backend/tests/security.test.js` + `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/` | `lab.security.owasp-mapping` | L1_IMPLEMENTED |
 | CI/CD — GitHub Actions | `.github/workflows/ci.yml` | `lab.cicd.github-actions` | L4_CI_VERIFIED |
 | AI Systems Testing — mock-first | `QA-DEMO-SYSTEM/automation-labs/ai-systems` | `lab.ai-systems.mock-first-testing` | L4_CI_VERIFIED |
+| Chaos/Reliability — fault injection | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability` | `lab.chaos-reliability.fault-injection` | L3_AUTOMATED |
+| Privacy Testing — PII scan + data-subject-rights | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` | `lab.privacy-testing.pii-and-data-subject-rights` | L3_AUTOMATED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real
@@ -57,6 +59,15 @@ the scope boundary and `02-FULL-STACK-QA-HANDBOOK/25-ADVANCED-QA-ENGINEERING/AI-
 for the matching handbook content). Its 5 covered competencies all have
 `professional: {status: NONE}` in the Digital Twin registry — genuinely
 new, repository-only ground, not inflated into professional experience.
+
+The Chaos/Reliability and Privacy Testing labs are Part 2 Milestone
+2.2's addition — see each lab's own `README.md` for its scope boundary
+(a locally-controlled fault-injection fixture, not real chaos
+infrastructure; a disclosed in-memory fixture for GDPR-style
+data-subject-rights testing, since QA-DEMO-SYSTEM's real backend has no
+such endpoints) and `02-FULL-STACK-QA-HANDBOOK/25-ADVANCED-QA-ENGINEERING/RELIABILITY-CHAOS-PRIVACY-TESTING/`
+for the matching handbook content. All 4 covered competencies have
+`professional: {status: NONE}` in the Digital Twin registry.
 
 Mobile (Appium) has no lab entry: there is no real device/emulator
 infrastructure in this repository, and Section 47's anti-placeholder

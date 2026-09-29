@@ -121,6 +121,22 @@ items:
     related_lab: lab.ai-systems.mock-first-testing
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (bkz. produced_by'daki run URL'i), sandbox'taki manuel node --test çalıştırmasına ek olarak."
 
+  - id: evidence.chaos-reliability.fault-injection-execution
+    label: "Chaos/Reliability lab — 17/17 deterministic tests executed"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/chaos-reliability/EXECUTION.md"
+    produced_by: "node --test chaos-reliability/tests/*.test.js ; node chaos-reliability/run-chaos-lab.js (local execution only — not yet CI-verified)"
+    related_lab: lab.chaos-reliability.fault-injection
+    note: "TR: E4_CI_VERIFIED DEĞİL — bu GitHub Actions'ta henüz çalıştırılmadı, yalnızca sandbox'ta manuel node --test ile doğrulandı."
+
+  - id: evidence.privacy-testing.pii-and-rights-execution
+    label: "Privacy Testing lab — 14 unit + 3 real-backend integration tests executed"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md"
+    produced_by: "node --test privacy-testing/tests/*.test.js against a real running backend (npm run db:seed; node backend/src/server.js) ; node privacy-testing/run-privacy-lab.js — local execution only, not yet CI-verified"
+    related_lab: lab.privacy-testing.pii-and-data-subject-rights
+    note: "TR: E4_CI_VERIFIED DEĞİL — bu GitHub Actions'ta henüz çalıştırılmadı. PII scanner kısmı GERÇEK backend'e karşı çalıştı (fixture değil); data-subject-rights kısmı açıkça beyan edilmiş bir fixture'dır."
+
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
     maturity: E3_EXECUTED

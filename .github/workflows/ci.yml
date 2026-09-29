@@ -288,3 +288,51 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm run ai:test --workspace automation-labs
+
+  chaos-reliability-lab:
+    # Part 2 — Advanced QA Engineering: Chaos Engineering & Reliability
+    # Testing (Milestone 2.2). Entirely self-contained — the
+    # "unreliable dependency" is a local fixture server this lab starts
+    # and stops itself (see automation-labs/chaos-reliability/README.md
+    # for the scope boundary). No `needs: backend-tests`, no network
+    # access, no external service.
+    name: Chaos/Reliability lab (deterministic fault injection)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run chaos:test --workspace automation-labs
+
+  privacy-testing-lab:
+    # Part 2 — Advanced QA Engineering: Privacy Testing (Milestone 2.2).
+    # Unlike the AI/chaos labs, this one DOES need a running backend —
+    # its PII/sensitive-field response scanner genuinely scans real API
+    # responses (see automation-labs/privacy-testing/README.md). Same
+    # seed-and-start-server sequence as the other backend-dependent
+    # jobs above. The data-subject-rights part of this lab is a
+    # disclosed in-memory fixture and needs no server.
+    name: Privacy Testing lab (real-backend PII scan + data-subject-rights fixture)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Seed and start backend server
+        run: |
+          rm -f backend/data/qa-demo.db
+          npm run db:seed
+          nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 0.5
+          done
+          echo "Backend did not become healthy in time"; cat /tmp/ci-backend.log; exit 1
+      - run: npm run privacy:test --workspace automation-labs
+        env:
+          QA_DEMO_BASE_URL: http://127.0.0.1:3000

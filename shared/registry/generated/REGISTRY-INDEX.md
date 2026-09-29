@@ -34,6 +34,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | AI Agent & Tool-Calling Testing | WORKING | NONE | CI_VERIFIED |
 | AI Safety, Security & Privacy Testing (Prompt Injection, Secret/PII Leakage) | WORKING | NONE | CI_VERIFIED |
 | AI Provider/Model Regression & Cost-Latency Budget Testing | WORKING | NONE | CI_VERIFIED |
+| Chaos Engineering & Fault-Injection Testing | WORKING | NONE | EXECUTED |
+| Circuit Breaker & Resilience Pattern Testing | WORKING | NONE | EXECUTED |
+| PII / Sensitive-Data Response Scanning | WORKING | NONE | EXECUTED |
+| GDPR-Style Data-Subject-Rights Testing | WORKING | NONE | EXECUTED |
 
 ## Domain Maturity
 
@@ -65,6 +69,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Observability — access-log / RCA investigation | L2_TESTED | `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY` |
 | CI/CD — GitHub Actions pipeline | L4_CI_VERIFIED | `.github/workflows` |
 | AI Systems Testing — mock-first (prompt, golden-eval, structured-output, RAG, agent, safety, provider-regression) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/ai-systems` |
+| Chaos/Reliability — deterministic fault injection (circuit breaker, resilient client) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability` |
+| Privacy Testing — PII/sensitive-field response scanning + GDPR-style data-subject-rights fixture | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` |
 
 ## System Patterns
 
@@ -112,12 +118,14 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | JMeter real binary execution — attempted, root cause diagnosed, BLOCKED (not a successful load run) | E1_DOCUMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md` |
 | Locust load test | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md` |
 | AI Systems Testing lab — 35/35 deterministic mock-mode tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/ai-systems/EXECUTION.md` |
+| Chaos/Reliability lab — 17/17 deterministic tests executed | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability/EXECUTION.md` |
+| Privacy Testing lab — 14 unit + 3 real-backend integration tests executed | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (259 edges)
+## Relationships (275 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -187,6 +195,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.ai.agent-tool-calling-testing | USES_TECHNOLOGY | tech.llm-agents |
 | competency.ai.safety-privacy-testing | USES_TOOL | tool.ai-mock-provider |
 | competency.ai.provider-regression-testing | USES_TOOL | tool.ai-mock-provider |
+| competency.reliability.chaos-fault-injection-testing | USES_TOOL | tool.chaos-fault-injection-fixture |
+| competency.reliability.circuit-breaker-resilience-testing | USES_TECHNOLOGY | tech.circuit-breaker-pattern |
+| competency.privacy.pii-response-scanning | USES_TOOL | tool.pii-response-scanner |
+| competency.privacy.gdpr-data-subject-rights-testing | USES_TECHNOLOGY | tech.gdpr-data-subject-rights |
 | competency.api.graphql | USES_TECHNOLOGY | protocol.graphql |
 | competency.api.rest | USES_TECHNOLOGY | protocol.rest |
 | competency.integration.websocket | USES_TECHNOLOGY | protocol.websocket |
@@ -222,6 +234,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.ai.agent-tool-calling-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
 | competency.ai.safety-privacy-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
 | competency.ai.provider-regression-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
+| competency.reliability.chaos-fault-injection-testing | PRACTICED_IN | lab.chaos-reliability.fault-injection |
+| competency.reliability.circuit-breaker-resilience-testing | PRACTICED_IN | lab.chaos-reliability.fault-injection |
+| competency.privacy.pii-response-scanning | PRACTICED_IN | lab.privacy-testing.pii-and-data-subject-rights |
+| competency.privacy.gdpr-data-subject-rights-testing | PRACTICED_IN | lab.privacy-testing.pii-and-data-subject-rights |
 | competency.security.security-aware-qa | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.correlation-logging | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.elastic-log-analysis | RELATED_TO | lab.observability.elastic-log-analysis |
@@ -240,6 +256,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.performance.jmeter | DOCUMENTED_BY | evidence.performance.jmeter-real-execution-blocked |
 | lab.performance.locust | TESTED_BY | evidence.performance.locust-load-run |
 | lab.ai-systems.mock-first-testing | TESTED_BY | evidence.ai-systems.mock-lab-execution |
+| lab.chaos-reliability.fault-injection | TESTED_BY | evidence.chaos-reliability.fault-injection-execution |
+| lab.privacy-testing.pii-and-data-subject-rights | TESTED_BY | evidence.privacy-testing.pii-and-rights-execution |
 | lab.database.sql-validation | TESTED_BY | evidence.database.sql-validation-suite |
 | lab.security.owasp-mapping | DOCUMENTED_BY | evidence.security.owasp-mapping-review |
 | lab.cicd.github-actions | IMPLEMENTED_BY | evidence.cicd.github-actions-pipeline |
@@ -283,6 +301,12 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.ai.agent-tool-calling-testing | LEARNING | gap.ai.live-provider-integration |
 | competency.ai.safety-privacy-testing | LEARNING | gap.ai.live-provider-integration |
 | competency.ai.provider-regression-testing | LEARNING | gap.ai.live-provider-integration |
+| competency.reliability.chaos-fault-injection-testing | LEARNING | gap.reliability.real-chaos-infrastructure |
+| competency.reliability.chaos-fault-injection-testing | LEARNING | gap.reliability.professional-exposure |
+| competency.reliability.circuit-breaker-resilience-testing | LEARNING | gap.reliability.professional-exposure |
+| competency.privacy.pii-response-scanning | LEARNING | gap.privacy.professional-exposure |
+| competency.privacy.gdpr-data-subject-rights-testing | LEARNING | gap.privacy.real-data-subject-rights-endpoints |
+| competency.privacy.gdpr-data-subject-rights-testing | LEARNING | gap.privacy.professional-exposure |
 | competency.web.accessibility | LEARNING | gap.accessibility.professional-exposure |
 | competency.security.security-aware-qa | LEARNING | gap.security.professional-exposure |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |

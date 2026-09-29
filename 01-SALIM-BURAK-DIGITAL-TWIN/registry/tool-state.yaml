@@ -13,6 +13,12 @@ tool_categories:
     - { id: tech.rag, label: "Retrieval-Augmented Generation (RAG)", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.ai.structured-output-rag-testing" }
     - { id: tech.llm-agents, label: "LLM Agents / Tool-Calling", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.ai.agent-tool-calling-testing" }
 
+  reliability_and_privacy:
+    - { id: tool.chaos-fault-injection-fixture, label: "Chaos Fault-Injection Fixture (custom-built)", kind: TOOL, owner: "competency-state.yaml#competency.reliability.chaos-fault-injection-testing", note: "TR: Gerçek bir chaos-engineering aracı DEĞİLDİR (Chaos Monkey/Gremlin/Litmus değil) — lab'ın kendi kontrol ettiği deterministik bir HTTP fixture'ıdır (bkz. QA-DEMO-SYSTEM/automation-labs/chaos-reliability/lib/unreliable-server.js)." }
+    - { id: tech.circuit-breaker-pattern, label: "Circuit Breaker Pattern", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.reliability.circuit-breaker-resilience-testing" }
+    - { id: tool.pii-response-scanner, label: "PII/Sensitive-Field Response Scanner (custom-built)", kind: TOOL, owner: "competency-state.yaml#competency.privacy.pii-response-scanning" }
+    - { id: tech.gdpr-data-subject-rights, label: "GDPR Data-Subject-Rights (Access/Erasure/Anonymization/Consent)", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.privacy.gdpr-data-subject-rights-testing" }
+
   api_and_contract:
     - { id: tool.postman, label: "Postman", kind: TOOL, owner: "competency-state.yaml#competency.api.contract-automation" }
     - { id: tool.newman, label: "Newman", kind: TOOL, owner: "competency-state.yaml#competency.api.contract-automation" }

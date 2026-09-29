@@ -63,10 +63,22 @@ not incompleteness; no row implies content that isn't there.
   safety/privacy leakage detection, and provider-regression detection)
   with matching handbook docs at
   [`25-ADVANCED-QA-ENGINEERING/AI-ML-LLM-SYSTEMS-TESTING/`](25-ADVANCED-QA-ENGINEERING/AI-ML-LLM-SYSTEMS-TESTING/).
-  Professional experience for this area is explicitly `NONE` in the
-  Digital Twin registry — this is repository practice only, disclosed
-  as such throughout (see that folder's `README.md` scope-boundary
-  note). Further advanced-QA subtopics are planned but not yet added.
+  Also covers **Reliability, Chaos Engineering & Privacy Testing** —
+  two more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/chaos-reliability/`, 17 passing
+  tests: a real circuit-breaker state machine, bounded-retry/timeout
+  client, and composed failure-recovery scenarios against a
+  deterministic fault-injection fixture; and
+  `QA-DEMO-SYSTEM/automation-labs/privacy-testing/`, 17 passing tests:
+  a recursive sensitive-field/PII response scanner — including real
+  integration against the live backend — plus a disclosed GDPR-style
+  data-subject-rights fixture) with matching handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/RELIABILITY-CHAOS-PRIVACY-TESTING/`](25-ADVANCED-QA-ENGINEERING/RELIABILITY-CHAOS-PRIVACY-TESTING/).
+  Professional experience for this whole area is explicitly `NONE` in
+  the Digital Twin registry — this is repository practice only,
+  disclosed as such throughout (see each folder's `README.md`
+  scope-boundary note). Further advanced-QA subtopics are planned but
+  not yet added.
 
 ## What "meaningful canonical coverage" means here
 

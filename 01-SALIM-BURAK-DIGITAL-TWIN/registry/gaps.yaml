@@ -143,5 +143,25 @@ gaps:
     label: "AI/ML/LLM Testing — real paid-API provider integration (OpenAI/Anthropic/Gemini)"
     note: "TR: ai-systems lab'ı kasıtlı olarak mock-first'tür — hiçbir gerçek, ücretli LLM API çağrısı hiç yapılmadı. AI_TEST_MODE=live EXTERNALLY_BLOCKED raporlar, asla sessizce mock sonucu gerçekmiş gibi sunmaz."
 
+  - id: gap.reliability.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Chaos Engineering / Resilience Testing — professional project exposure"
+    note: "TR: competency.reliability.* alanları için ortak — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.reliability.real-chaos-infrastructure
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Chaos Engineering — real infrastructure-level fault injection (Chaos Monkey/Gremlin/Litmus/Toxiproxy)"
+    note: "TR: chaos-reliability lab'ı kendi kontrol ettiği, deterministik bir fixture sunucusu kullanır — gerçek chaos-engineering altyapısı hiç kullanılmadı."
+
+  - id: gap.privacy.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Privacy / GDPR-Style Testing — professional project exposure"
+    note: "TR: competency.privacy.* alanları için ortak — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.privacy.real-data-subject-rights-endpoints
+    types: [PRACTICE]
+    label: "GDPR Data-Subject-Rights Testing — real backend export/erasure endpoints"
+    note: "TR: QA-DEMO-SYSTEM'in gerçek backend'inde /api/users/:id/export veya /api/users/:id/erase gibi bir route yok — bu alan bilerek İCAT EDİLMEDİ; test edilen teknik, açıkça beyan edilmiş bir bellek-içi fixture'a karşı çalışır."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

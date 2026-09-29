@@ -297,6 +297,51 @@ competencies:
       evidence: "ai-systems/lib/provider-regression.js + live-provider.js — provider-regression.test.js (2) + cost-latency-budget.test.js (3) + live-provider.test.js (2) genuinely passing, verified in GitHub Actions"
     gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
 
+  # Part 2 — Advanced QA Engineering: Reliability, Chaos Engineering &
+  # Privacy Testing (Milestone 2.2). Same discipline as the AI/ML/LLM
+  # competencies above: professional.status is NONE for all four —
+  # genuinely new, never-professionally-used ground. repository.status
+  # is EXECUTED (real, local node --test runs — see chaos-reliability/
+  # EXECUTION.md and privacy-testing/EXECUTION.md), not yet CI_VERIFIED
+  # until the corresponding CI job is added and a real GitHub Actions
+  # run confirms it, mirroring Milestone 2.1's own two-step pattern.
+
+  - id: competency.reliability.chaos-fault-injection-testing
+    label: "Chaos Engineering & Fault-Injection Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "chaos-reliability/lib/unreliable-server.js — unreliable-server.test.js (5) + chaos-scenario.test.js (2) genuinely passing against a deterministic, locally-controlled fault-injection fixture (not real chaos infrastructure)"
+    gaps: [gap.reliability.professional-exposure, gap.reliability.real-chaos-infrastructure]
+
+  - id: competency.reliability.circuit-breaker-resilience-testing
+    label: "Circuit Breaker & Resilience Pattern Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "chaos-reliability/lib/circuit-breaker.js + resilient-client.js — circuit-breaker.test.js (5) + resilient-client.test.js (5) genuinely passing, including a call-count proof that an OPEN circuit stops reaching the dependency"
+    gaps: [gap.reliability.professional-exposure]
+
+  - id: competency.privacy.pii-response-scanning
+    label: "PII / Sensitive-Data Response Scanning"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "privacy-testing/lib/pii-response-scanner.js — pii-scanner-unit.test.js (7) + api-response-privacy.test.js (3, real integration against a running backend) genuinely passing"
+    gaps: [gap.privacy.professional-exposure]
+
+  - id: competency.privacy.gdpr-data-subject-rights-testing
+    label: "GDPR-Style Data-Subject-Rights Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "privacy-testing/lib/data-subject-rights-simulator.js — data-subject-rights.test.js (7) genuinely passing against a disclosed in-memory fixture (QA-DEMO-SYSTEM's real backend has no data-subject-rights endpoints)"
+    gaps: [gap.privacy.professional-exposure, gap.privacy.real-data-subject-rights-endpoints]
+
 related:
   professional_source: "professional-experience.yaml"
   gap_detail: "gaps.yaml"
