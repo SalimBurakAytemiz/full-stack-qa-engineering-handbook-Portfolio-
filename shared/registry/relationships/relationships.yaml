@@ -505,6 +505,18 @@ relationships:
   - from: competency.ai.provider-regression-testing
     predicate: EVIDENCED_BY
     to: evidence.ai-systems.mock-lab-execution
+  - from: competency.reliability.chaos-fault-injection-testing
+    predicate: EVIDENCED_BY
+    to: evidence.chaos-reliability.fault-injection-execution
+  - from: competency.reliability.circuit-breaker-resilience-testing
+    predicate: EVIDENCED_BY
+    to: evidence.chaos-reliability.fault-injection-execution
+  - from: competency.privacy.pii-response-scanning
+    predicate: EVIDENCED_BY
+    to: evidence.privacy-testing.pii-and-rights-execution
+  - from: competency.privacy.gdpr-data-subject-rights-testing
+    predicate: EVIDENCED_BY
+    to: evidence.privacy-testing.pii-and-rights-execution
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite

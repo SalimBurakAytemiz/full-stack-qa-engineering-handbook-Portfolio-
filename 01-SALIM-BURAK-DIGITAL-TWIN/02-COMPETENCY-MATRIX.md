@@ -40,10 +40,10 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | AI Agent & Tool-Calling Testing | WORKING | NONE | CI_VERIFIED |
 | AI Safety, Security & Privacy Testing | WORKING | NONE | CI_VERIFIED |
 | AI Provider/Model Regression & Cost-Latency Budget Testing | WORKING | NONE | CI_VERIFIED |
-| Chaos Engineering & Fault-Injection Testing | WORKING | NONE | EXECUTED |
-| Circuit Breaker & Resilience Pattern Testing | WORKING | NONE | EXECUTED |
-| PII / Sensitive-Data Response Scanning | WORKING | NONE | EXECUTED |
-| GDPR-Style Data-Subject-Rights Testing | WORKING | NONE | EXECUTED |
+| Chaos Engineering & Fault-Injection Testing | WORKING | NONE | CI_VERIFIED |
+| Circuit Breaker & Resilience Pattern Testing | WORKING | NONE | CI_VERIFIED |
+| PII / Sensitive-Data Response Scanning | WORKING | NONE | CI_VERIFIED |
+| GDPR-Style Data-Subject-Rights Testing | WORKING | NONE | CI_VERIFIED |
 
 ## Reading this table correctly
 

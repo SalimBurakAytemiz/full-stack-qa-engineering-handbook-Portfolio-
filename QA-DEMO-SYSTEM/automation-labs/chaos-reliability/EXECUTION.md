@@ -60,7 +60,10 @@ wrapping it was itself the bug. **Fix:** `call()` now re-throws a
   `chaos-scenario.test.js` and part of `resilient-client.test.js` do
   use short, bounded real timers (tens of milliseconds) consistent
   with this repository's other real-timer-based tests.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see the Part 2 Milestone 2.2
-  commit history for when this lab's registry maturity was elevated
-  to CI_VERIFIED, mirroring Milestone 2.1's own two-step pattern).
+- **CI-verified.** The `chaos-reliability-lab` job in
+  `.github/workflows/ci.yml` ran this exact suite on GitHub Actions and
+  passed — see
+  `https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36626191865`
+  (commit `70f8358`, job "Chaos/Reliability lab (deterministic fault
+  injection)", conclusion: success). This lab's registry maturity is
+  `L4_CI_VERIFIED` / evidence `E4_CI_VERIFIED` on that basis.

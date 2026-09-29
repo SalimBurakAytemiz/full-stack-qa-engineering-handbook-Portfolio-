@@ -34,10 +34,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | AI Agent & Tool-Calling Testing | WORKING | NONE | CI_VERIFIED |
 | AI Safety, Security & Privacy Testing (Prompt Injection, Secret/PII Leakage) | WORKING | NONE | CI_VERIFIED |
 | AI Provider/Model Regression & Cost-Latency Budget Testing | WORKING | NONE | CI_VERIFIED |
-| Chaos Engineering & Fault-Injection Testing | WORKING | NONE | EXECUTED |
-| Circuit Breaker & Resilience Pattern Testing | WORKING | NONE | EXECUTED |
-| PII / Sensitive-Data Response Scanning | WORKING | NONE | EXECUTED |
-| GDPR-Style Data-Subject-Rights Testing | WORKING | NONE | EXECUTED |
+| Chaos Engineering & Fault-Injection Testing | WORKING | NONE | CI_VERIFIED |
+| Circuit Breaker & Resilience Pattern Testing | WORKING | NONE | CI_VERIFIED |
+| PII / Sensitive-Data Response Scanning | WORKING | NONE | CI_VERIFIED |
+| GDPR-Style Data-Subject-Rights Testing | WORKING | NONE | CI_VERIFIED |
 
 ## Domain Maturity
 
@@ -69,8 +69,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Observability — access-log / RCA investigation | L2_TESTED | `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY` |
 | CI/CD — GitHub Actions pipeline | L4_CI_VERIFIED | `.github/workflows` |
 | AI Systems Testing — mock-first (prompt, golden-eval, structured-output, RAG, agent, safety, provider-regression) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/ai-systems` |
-| Chaos/Reliability — deterministic fault injection (circuit breaker, resilient client) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability` |
-| Privacy Testing — PII/sensitive-field response scanning + GDPR-style data-subject-rights fixture | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` |
+| Chaos/Reliability — deterministic fault injection (circuit breaker, resilient client) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability` |
+| Privacy Testing — PII/sensitive-field response scanning + GDPR-style data-subject-rights fixture | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` |
 
 ## System Patterns
 
@@ -118,14 +118,14 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | JMeter real binary execution — attempted, root cause diagnosed, BLOCKED (not a successful load run) | E1_DOCUMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md` |
 | Locust load test | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md` |
 | AI Systems Testing lab — 35/35 deterministic mock-mode tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/ai-systems/EXECUTION.md` |
-| Chaos/Reliability lab — 17/17 deterministic tests executed | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability/EXECUTION.md` |
-| Privacy Testing lab — 14 unit + 3 real-backend integration tests executed | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md` |
+| Chaos/Reliability lab — 17/17 deterministic tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability/EXECUTION.md` |
+| Privacy Testing lab — 14 unit + 3 real-backend integration tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (275 edges)
+## Relationships (279 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -273,6 +273,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.ai.agent-tool-calling-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
 | competency.ai.safety-privacy-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
 | competency.ai.provider-regression-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
+| competency.reliability.chaos-fault-injection-testing | EVIDENCED_BY | evidence.chaos-reliability.fault-injection-execution |
+| competency.reliability.circuit-breaker-resilience-testing | EVIDENCED_BY | evidence.chaos-reliability.fault-injection-execution |
+| competency.privacy.pii-response-scanning | EVIDENCED_BY | evidence.privacy-testing.pii-and-rights-execution |
+| competency.privacy.gdpr-data-subject-rights-testing | EVIDENCED_BY | evidence.privacy-testing.pii-and-rights-execution |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.public-schema-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.protected-auth-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.orders-payment-suite |

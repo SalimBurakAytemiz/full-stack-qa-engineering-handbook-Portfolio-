@@ -109,19 +109,19 @@ items:
 
   - id: lab.chaos-reliability.fault-injection
     label: "Chaos/Reliability — deterministic fault injection (circuit breaker, resilient client)"
-    maturity: L3_AUTOMATED
+    maturity: L4_CI_VERIFIED
     path: "QA-DEMO-SYSTEM/automation-labs/chaos-reliability"
     evidence_id: evidence.chaos-reliability.fault-injection-execution
     covers_competencies: [competency.reliability.chaos-fault-injection-testing, competency.reliability.circuit-breaker-resilience-testing]
-    note: "TR: L4_CI_VERIFIED DEĞİL — bu lab GitHub Actions'ta henüz doğrulanmadı (yalnızca sandbox'ta node --test + run-chaos-lab.js ile manuel çalıştırıldı, bkz. chaos-reliability/EXECUTION.md). 'Unreliable dependency' lab'ın kendi kontrol ettiği deterministik bir fixture sunucusudur — gerçek chaos-engineering altyapısı değildir."
+    note: "TR: GitHub Actions'ta 'Chaos/Reliability lab (deterministic fault injection)' job'ı olarak gerçekten çalıştırıldı ve PASS aldı (bkz. evidence#produced_by'daki run URL'i). 'Unreliable dependency' lab'ın kendi kontrol ettiği deterministik bir fixture sunucusudur — gerçek chaos-engineering altyapısı değildir."
 
   - id: lab.privacy-testing.pii-and-data-subject-rights
     label: "Privacy Testing — PII/sensitive-field response scanning + GDPR-style data-subject-rights fixture"
-    maturity: L3_AUTOMATED
+    maturity: L4_CI_VERIFIED
     path: "QA-DEMO-SYSTEM/automation-labs/privacy-testing"
     evidence_id: evidence.privacy-testing.pii-and-rights-execution
     covers_competencies: [competency.privacy.pii-response-scanning, competency.privacy.gdpr-data-subject-rights-testing]
-    note: "TR: L4_CI_VERIFIED DEĞİL — bu lab GitHub Actions'ta henüz doğrulanmadı. PII response scanner GERÇEK backend yanıtlarını tarar (gerçek entegrasyon); data-subject-rights kısmı ise açıkça beyan edilmiş bir bellek-içi fixture'dır (gerçek backend'de böyle bir endpoint yok)."
+    note: "TR: GitHub Actions'ta 'Privacy Testing lab' job'ı olarak gerçekten çalıştırıldı ve PASS aldı (bkz. evidence#produced_by'daki run URL'i). PII response scanner GERÇEK backend yanıtlarını tarar (gerçek entegrasyon); data-subject-rights kısmı ise açıkça beyan edilmiş bir bellek-içi fixture'dır (gerçek backend'de böyle bir endpoint yok)."
 
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"

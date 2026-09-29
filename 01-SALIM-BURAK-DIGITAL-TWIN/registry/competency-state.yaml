@@ -301,18 +301,20 @@ competencies:
   # Privacy Testing (Milestone 2.2). Same discipline as the AI/ML/LLM
   # competencies above: professional.status is NONE for all four —
   # genuinely new, never-professionally-used ground. repository.status
-  # is EXECUTED (real, local node --test runs — see chaos-reliability/
-  # EXECUTION.md and privacy-testing/EXECUTION.md), not yet CI_VERIFIED
-  # until the corresponding CI job is added and a real GitHub Actions
-  # run confirms it, mirroring Milestone 2.1's own two-step pattern.
+  # is CI_VERIFIED — GitHub Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36626191865
+  # (commit 70f8358) confirmed both the "Chaos/Reliability lab" and
+  # "Privacy Testing lab" CI jobs pass, in addition to the local
+  # node --test runs (see chaos-reliability/EXECUTION.md and
+  # privacy-testing/EXECUTION.md).
 
   - id: competency.reliability.chaos-fault-injection-testing
     label: "Chaos Engineering & Fault-Injection Testing"
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "chaos-reliability/lib/unreliable-server.js — unreliable-server.test.js (5) + chaos-scenario.test.js (2) genuinely passing against a deterministic, locally-controlled fault-injection fixture (not real chaos infrastructure)"
+      status: CI_VERIFIED
+      evidence: "chaos-reliability/lib/unreliable-server.js — unreliable-server.test.js (5) + chaos-scenario.test.js (2) genuinely passing against a deterministic, locally-controlled fault-injection fixture (not real chaos infrastructure), verified in GitHub Actions"
     gaps: [gap.reliability.professional-exposure, gap.reliability.real-chaos-infrastructure]
 
   - id: competency.reliability.circuit-breaker-resilience-testing
@@ -320,8 +322,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "chaos-reliability/lib/circuit-breaker.js + resilient-client.js — circuit-breaker.test.js (5) + resilient-client.test.js (5) genuinely passing, including a call-count proof that an OPEN circuit stops reaching the dependency"
+      status: CI_VERIFIED
+      evidence: "chaos-reliability/lib/circuit-breaker.js + resilient-client.js — circuit-breaker.test.js (5) + resilient-client.test.js (5) genuinely passing, including a call-count proof that an OPEN circuit stops reaching the dependency, verified in GitHub Actions"
     gaps: [gap.reliability.professional-exposure]
 
   - id: competency.privacy.pii-response-scanning
@@ -329,8 +331,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "privacy-testing/lib/pii-response-scanner.js — pii-scanner-unit.test.js (7) + api-response-privacy.test.js (3, real integration against a running backend) genuinely passing"
+      status: CI_VERIFIED
+      evidence: "privacy-testing/lib/pii-response-scanner.js — pii-scanner-unit.test.js (7) + api-response-privacy.test.js (3, real integration against a running backend) genuinely passing, verified in GitHub Actions"
     gaps: [gap.privacy.professional-exposure]
 
   - id: competency.privacy.gdpr-data-subject-rights-testing
@@ -338,8 +340,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "privacy-testing/lib/data-subject-rights-simulator.js — data-subject-rights.test.js (7) genuinely passing against a disclosed in-memory fixture (QA-DEMO-SYSTEM's real backend has no data-subject-rights endpoints)"
+      status: CI_VERIFIED
+      evidence: "privacy-testing/lib/data-subject-rights-simulator.js — data-subject-rights.test.js (7) genuinely passing against a disclosed in-memory fixture (QA-DEMO-SYSTEM's real backend has no data-subject-rights endpoints), verified in GitHub Actions"
     gaps: [gap.privacy.professional-exposure, gap.privacy.real-data-subject-rights-endpoints]
 
 related:

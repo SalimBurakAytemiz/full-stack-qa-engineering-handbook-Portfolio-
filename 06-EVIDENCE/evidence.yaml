@@ -122,20 +122,20 @@ items:
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (bkz. produced_by'daki run URL'i), sandbox'taki manuel node --test çalıştırmasına ek olarak."
 
   - id: evidence.chaos-reliability.fault-injection-execution
-    label: "Chaos/Reliability lab — 17/17 deterministic tests executed"
-    maturity: E3_EXECUTED
+    label: "Chaos/Reliability lab — 17/17 deterministic tests executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/chaos-reliability/EXECUTION.md"
-    produced_by: "node --test chaos-reliability/tests/*.test.js ; node chaos-reliability/run-chaos-lab.js (local execution only — not yet CI-verified)"
+    produced_by: "npm run chaos:test --workspace automation-labs — GitHub Actions job 'Chaos/Reliability lab (deterministic fault injection)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36626191865, commit 70f8358, conclusion: success"
     related_lab: lab.chaos-reliability.fault-injection
-    note: "TR: E4_CI_VERIFIED DEĞİL — bu GitHub Actions'ta henüz çalıştırılmadı, yalnızca sandbox'ta manuel node --test ile doğrulandı."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (bkz. produced_by'daki run URL'i), sandbox'taki manuel node --test çalıştırmasına ek olarak."
 
   - id: evidence.privacy-testing.pii-and-rights-execution
-    label: "Privacy Testing lab — 14 unit + 3 real-backend integration tests executed"
-    maturity: E3_EXECUTED
+    label: "Privacy Testing lab — 14 unit + 3 real-backend integration tests executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md"
-    produced_by: "node --test privacy-testing/tests/*.test.js against a real running backend (npm run db:seed; node backend/src/server.js) ; node privacy-testing/run-privacy-lab.js — local execution only, not yet CI-verified"
+    produced_by: "npm run privacy:test --workspace automation-labs against a real, CI-seeded backend — GitHub Actions job 'Privacy Testing lab (real-backend PII scan + data-subject-rights fixture)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36626191865, commit 70f8358, conclusion: success"
     related_lab: lab.privacy-testing.pii-and-data-subject-rights
-    note: "TR: E4_CI_VERIFIED DEĞİL — bu GitHub Actions'ta henüz çalıştırılmadı. PII scanner kısmı GERÇEK backend'e karşı çalıştı (fixture değil); data-subject-rights kısmı açıkça beyan edilmiş bir fixture'dır."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (bkz. produced_by'daki run URL'i). PII scanner kısmı GERÇEK backend'e karşı çalıştı (fixture değil); data-subject-rights kısmı açıkça beyan edilmiş bir fixture'dır."
 
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"

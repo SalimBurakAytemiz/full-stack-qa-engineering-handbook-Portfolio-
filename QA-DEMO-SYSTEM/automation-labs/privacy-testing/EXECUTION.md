@@ -64,6 +64,12 @@ the real, seeded backend:
   in-memory fixture — QA-DEMO-SYSTEM's real backend has no GDPR
   data-subject-rights endpoints, and none were invented to inflate this
   lab's evidence. See this lab's `README.md` scope-boundary section.
-- Not yet CI-verified as of this file's writing — CI wiring (including
-  the "start backend server" step other CI jobs already use) is a
-  separate, explicitly tracked step.
+- **CI-verified.** The `privacy-testing-lab` job in
+  `.github/workflows/ci.yml` (using the same seed-and-start-server
+  sequence as the other backend-dependent jobs) ran this exact suite
+  on GitHub Actions and passed — see
+  `https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36626191865`
+  (commit `70f8358`, job "Privacy Testing lab (real-backend PII scan +
+  data-subject-rights fixture)", conclusion: success). This lab's
+  registry maturity is `L4_CI_VERIFIED` / evidence `E4_CI_VERIFIED` on
+  that basis.

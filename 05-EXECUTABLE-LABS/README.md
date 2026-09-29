@@ -49,8 +49,8 @@ lab catalog navigable and machine-checkable (see
 | Security — OWASP mapping | `QA-DEMO-SYSTEM/backend/tests/security.test.js` + `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/` | `lab.security.owasp-mapping` | L1_IMPLEMENTED |
 | CI/CD — GitHub Actions | `.github/workflows/ci.yml` | `lab.cicd.github-actions` | L4_CI_VERIFIED |
 | AI Systems Testing — mock-first | `QA-DEMO-SYSTEM/automation-labs/ai-systems` | `lab.ai-systems.mock-first-testing` | L4_CI_VERIFIED |
-| Chaos/Reliability — fault injection | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability` | `lab.chaos-reliability.fault-injection` | L3_AUTOMATED |
-| Privacy Testing — PII scan + data-subject-rights | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` | `lab.privacy-testing.pii-and-data-subject-rights` | L3_AUTOMATED |
+| Chaos/Reliability — fault injection | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability` | `lab.chaos-reliability.fault-injection` | L4_CI_VERIFIED |
+| Privacy Testing — PII scan + data-subject-rights | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` | `lab.privacy-testing.pii-and-data-subject-rights` | L4_CI_VERIFIED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real
