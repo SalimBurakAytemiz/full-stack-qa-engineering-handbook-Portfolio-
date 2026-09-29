@@ -30,13 +30,13 @@ Repository Practice).
 |---|---|
 | `AI-ML-LLM-SYSTEMS-TESTING/` | Added — real executable mock-first lab, see below |
 | `RELIABILITY-CHAOS-PRIVACY-TESTING/` | Added — real executable chaos/reliability + privacy labs, see below |
+| `SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/` | Added — real executable service-virtualization/contract + property-based/fuzz labs, see below |
 
-Further subtopics (service virtualization, advanced contract testing,
-mutation testing, data-engineering QA, messaging, supply-chain
-security, modern protocols, production verification) are planned but
-not yet added in this pass — this folder grows incrementally, each
-addition backed by real, executed work, never a documentation-only
-placeholder claiming more than exists.
+Further subtopics (mutation testing, data-engineering QA, messaging,
+supply-chain security, modern protocols, production verification) are
+planned but not yet added in this pass — this folder grows
+incrementally, each addition backed by real, executed work, never a
+documentation-only placeholder claiming more than exists.
 
 ## AI/ML/LLM Systems Testing
 
@@ -62,3 +62,22 @@ the scope boundary (a locally-controlled fault-injection fixture, not
 real chaos-engineering infrastructure; a disclosed fixture for
 data-subject-rights testing, since the real backend has no such
 endpoints) that every other document in that subfolder assumes.
+
+## Service Virtualization, Contract, Property-Based & Fuzz Testing
+
+Executable labs: `QA-DEMO-SYSTEM/automation-labs/service-virtualization/`
+(a real WireMock-style stub server + consumer-driven contract testing,
+verified both against a virtualized double and against the real,
+running backend) and
+`QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/` (a real,
+hand-rolled property-based testing framework applied to the backend's
+real service functions, plus structured fuzz testing against the real,
+running API — which found and drove the fix for a real backend bug,
+see that area's `COMMON-MISTAKES.md`).
+
+Read `SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/README.md`
+first — it states the scope boundary (self-built stub server and
+contract verifier rather than WireMock/Pact; a hand-rolled
+property-testing framework rather than fast-check; fixed, disclosed
+fuzz-value sets rather than coverage-guided mutation) that every other
+document in that subfolder assumes.

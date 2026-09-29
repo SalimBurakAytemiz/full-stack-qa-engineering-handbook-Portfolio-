@@ -19,6 +19,12 @@ tool_categories:
     - { id: tool.pii-response-scanner, label: "PII/Sensitive-Field Response Scanner (custom-built)", kind: TOOL, owner: "competency-state.yaml#competency.privacy.pii-response-scanning" }
     - { id: tech.gdpr-data-subject-rights, label: "GDPR Data-Subject-Rights (Access/Erasure/Anonymization/Consent)", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.privacy.gdpr-data-subject-rights-testing" }
 
+  virtualization_and_property_testing:
+    - { id: tool.stub-server, label: "WireMock-Style Stub Server (custom-built)", kind: TOOL, owner: "competency-state.yaml#competency.virtualization.service-virtualization", note: "TR: WireMock DEĞİLDİR — lab'ın kendi yazdığı, gerçek çalışan bir HTTP stub sunucusudur (bkz. QA-DEMO-SYSTEM/automation-labs/service-virtualization/lib/stub-server.js)." }
+    - { id: tool.contract-verifier, label: "Consumer-Driven Contract Verifier (custom-built, ajv-based)", kind: TOOL, owner: "competency-state.yaml#competency.virtualization.consumer-driven-contracts", note: "TR: Pact kütüphanesi DEĞİLDİR — ajv (JSON Schema) üzerine kurulu, minimal, gerçek bir sözleşme doğrulayıcıdır." }
+    - { id: tech.property-based-testing, label: "Property-Based Testing (custom generator/runner/shrinker)", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.property-testing.generative-invariant-testing", note: "TR: fast-check/jsverify DEĞİLDİR — elle yazılmış, seed'li bir PRNG + shrinker (bkz. QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/lib/property-testing.js)." }
+    - { id: tech.fuzz-testing, label: "Structured Fuzz Testing (deterministic hostile-value sets)", kind: TECHNOLOGY, owner: "competency-state.yaml#competency.fuzz-testing.structured-api-fuzzing" }
+
   api_and_contract:
     - { id: tool.postman, label: "Postman", kind: TOOL, owner: "competency-state.yaml#competency.api.contract-automation" }
     - { id: tool.newman, label: "Newman", kind: TOOL, owner: "competency-state.yaml#competency.api.contract-automation" }

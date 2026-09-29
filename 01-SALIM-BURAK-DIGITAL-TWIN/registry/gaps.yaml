@@ -163,5 +163,30 @@ gaps:
     label: "GDPR Data-Subject-Rights Testing — real backend export/erasure endpoints"
     note: "TR: QA-DEMO-SYSTEM'in gerçek backend'inde /api/users/:id/export veya /api/users/:id/erase gibi bir route yok — bu alan bilerek İCAT EDİLMEDİ; test edilen teknik, açıkça beyan edilmiş bir bellek-içi fixture'a karşı çalışır."
 
+  - id: gap.virtualization.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Service Virtualization / Contract Testing — professional project exposure"
+    note: "TR: competency.virtualization.* alanları için ortak — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.virtualization.real-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Service Virtualization / Contract Testing — real WireMock/Pact tooling"
+    note: "TR: service-virtualization lab'ı kendi yazdığı bir stub server ve ajv-tabanlı bir sözleşme doğrulayıcı kullanır — WireMock veya Pact kütüphanesinin kendisi hiç kullanılmadı."
+
+  - id: gap.property-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Property-Based Testing — professional project exposure"
+    note: "TR: competency.property-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.fuzz-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Fuzz Testing — professional project exposure"
+    note: "TR: competency.fuzz-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.fuzz-testing.real-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Fuzz Testing — real coverage-guided fuzzing infrastructure (AFL/libFuzzer)"
+    note: "TR: api-fuzz.test.js sabit, açıkça beyan edilmiş düşman değer kümeleri kullanır — gerçek coverage-guided fuzzing altyapısı (AFL/libFuzzer) hiç kullanılmadı."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

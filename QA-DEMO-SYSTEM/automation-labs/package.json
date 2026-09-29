@@ -2,7 +2,7 @@
   "name": "automation-labs",
   "version": "0.1.0",
   "private": true,
-  "description": "QA Demo System — Phase 10 Automation Learning Labs (Selenium WebDriver; JMeter plans run through a real fail-gate wrapper, see jmeter/scripts/run-jmeter.js); Part 2 AI Systems Testing lab (deterministic mock-first, see ai-systems/README.md); Part 2 Chaos/Reliability lab (deterministic fault injection, see chaos-reliability/README.md); Part 2 Privacy Testing lab (see privacy-testing/README.md)",
+  "description": "QA Demo System — Phase 10 Automation Learning Labs (Selenium WebDriver; JMeter plans run through a real fail-gate wrapper, see jmeter/scripts/run-jmeter.js); Part 2 AI Systems Testing lab (deterministic mock-first, see ai-systems/README.md); Part 2 Chaos/Reliability lab (deterministic fault injection, see chaos-reliability/README.md); Part 2 Privacy Testing lab (see privacy-testing/README.md); Part 2 Property-Based & Fuzz Testing lab (see property-and-fuzz-testing/README.md); Part 2 Service Virtualization & Contract Testing lab (see service-virtualization/README.md)",
   "scripts": {
     "selenium:test": "node selenium/tests/login-flow.test.js",
     "selenium:test:parallel": "node selenium/scripts/run-parallel.js",
@@ -13,7 +13,11 @@
     "chaos:test": "node chaos-reliability/run-chaos-lab.js",
     "chaos:test:unit": "node --test chaos-reliability/tests/*.test.js",
     "privacy:test": "node privacy-testing/run-privacy-lab.js",
-    "privacy:test:unit": "node --test privacy-testing/tests/pii-scanner-unit.test.js privacy-testing/tests/data-subject-rights.test.js"
+    "privacy:test:unit": "node --test privacy-testing/tests/pii-scanner-unit.test.js privacy-testing/tests/data-subject-rights.test.js",
+    "property-fuzz:test": "node property-and-fuzz-testing/run-property-and-fuzz-lab.js",
+    "property-fuzz:test:unit": "node --test property-and-fuzz-testing/tests/property-testing-framework.test.js property-and-fuzz-testing/tests/products-service-properties.test.js",
+    "virtualization:test": "node service-virtualization/run-virtualization-lab.js",
+    "virtualization:test:unit": "node --test service-virtualization/tests/stub-server.test.js service-virtualization/tests/consumer-contract.test.js"
   },
   "devDependencies": {
     "selenium-webdriver": "^4.49.0",

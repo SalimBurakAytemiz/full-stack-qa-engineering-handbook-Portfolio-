@@ -74,6 +74,19 @@ not incompleteness; no row implies content that isn't there.
   integration against the live backend — plus a disclosed GDPR-style
   data-subject-rights fixture) with matching handbook docs at
   [`25-ADVANCED-QA-ENGINEERING/RELIABILITY-CHAOS-PRIVACY-TESTING/`](25-ADVANCED-QA-ENGINEERING/RELIABILITY-CHAOS-PRIVACY-TESTING/).
+  Also covers **Service Virtualization, Contract, Property-Based &
+  Fuzz Testing** — two more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/service-virtualization/`, 11 passing
+  tests: a real WireMock-style stub server plus consumer-driven
+  contract testing verified both against a virtualized double and the
+  real, running backend; and
+  `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/`, 16
+  passing tests: a real hand-rolled property-based testing framework
+  applied to the backend's real service functions, plus fuzz testing
+  against the real, running API that found and drove the fix for a
+  genuine backend bug — an oversized request body was falling through
+  to a raw 500 instead of a proper 413) with matching handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/`](25-ADVANCED-QA-ENGINEERING/SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/).
   Professional experience for this whole area is explicitly `NONE` in
   the Digital Twin registry — this is repository practice only,
   disclosed as such throughout (see each folder's `README.md`

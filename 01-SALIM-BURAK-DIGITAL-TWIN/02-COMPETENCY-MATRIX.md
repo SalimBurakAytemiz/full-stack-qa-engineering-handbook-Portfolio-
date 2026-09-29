@@ -44,6 +44,10 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Circuit Breaker & Resilience Pattern Testing | WORKING | NONE | CI_VERIFIED |
 | PII / Sensitive-Data Response Scanning | WORKING | NONE | CI_VERIFIED |
 | GDPR-Style Data-Subject-Rights Testing | WORKING | NONE | CI_VERIFIED |
+| Service Virtualization (WireMock-Style Stub Servers) | WORKING | NONE | EXECUTED |
+| Consumer-Driven Contract Testing | WORKING | NONE | EXECUTED |
+| Property-Based Testing (Generative/Invariant Testing) | WORKING | NONE | EXECUTED |
+| Structured API Fuzz Testing | WORKING | NONE | EXECUTED |
 
 ## Reading this table correctly
 

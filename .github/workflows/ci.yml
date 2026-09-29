@@ -336,3 +336,63 @@ jobs:
       - run: npm run privacy:test --workspace automation-labs
         env:
           QA_DEMO_BASE_URL: http://127.0.0.1:3000
+
+  service-virtualization-lab:
+    # Part 2 — Advanced QA Engineering: Service Virtualization & Contract
+    # Testing (Milestone 2.3). Consumer-side checks (stub server,
+    # consumer-contract verification) are self-contained; provider-side
+    # contract verification needs a running backend — same
+    # seed-and-start-server sequence as the other backend-dependent jobs.
+    name: Service Virtualization & Contract Testing lab (stub server + real provider verification)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Seed and start backend server
+        run: |
+          rm -f backend/data/qa-demo.db
+          npm run db:seed
+          nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 0.5
+          done
+          echo "Backend did not become healthy in time"; cat /tmp/ci-backend.log; exit 1
+      - run: npm run virtualization:test --workspace automation-labs
+        env:
+          QA_DEMO_BASE_URL: http://127.0.0.1:3000
+
+  property-and-fuzz-testing-lab:
+    # Part 2 — Advanced QA Engineering: Property-Based & Fuzz Testing
+    # (Milestone 2.3). Property tests run against a real in-memory
+    # SQLite db (no server needed); fuzz testing needs a running
+    # backend — same seed-and-start-server sequence as the other
+    # backend-dependent jobs. This exact suite found and drove the fix
+    # for a real backend bug (see backend/src/middleware/errorHandler.js
+    # and this lab's COMMON-MISTAKES.md).
+    name: Property-Based & Fuzz Testing lab (real backend properties + real-API fuzzing)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Seed and start backend server
+        run: |
+          rm -f backend/data/qa-demo.db
+          npm run db:seed
+          nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 0.5
+          done
+          echo "Backend did not become healthy in time"; cat /tmp/ci-backend.log; exit 1
+      - run: npm run property-fuzz:test --workspace automation-labs
+        env:
+          QA_DEMO_BASE_URL: http://127.0.0.1:3000

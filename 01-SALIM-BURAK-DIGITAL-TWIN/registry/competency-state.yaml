@@ -344,6 +344,51 @@ competencies:
       evidence: "privacy-testing/lib/data-subject-rights-simulator.js — data-subject-rights.test.js (7) genuinely passing against a disclosed in-memory fixture (QA-DEMO-SYSTEM's real backend has no data-subject-rights endpoints), verified in GitHub Actions"
     gaps: [gap.privacy.professional-exposure, gap.privacy.real-data-subject-rights-endpoints]
 
+  # Part 2 — Advanced QA Engineering: Service Virtualization, Contract,
+  # Property-Based & Fuzz Testing (Milestone 2.3). Same discipline as
+  # Milestones 2.1/2.2: professional.status NONE for all four —
+  # genuinely new ground. repository.status is EXECUTED (real, local
+  # node --test runs — see service-virtualization/EXECUTION.md and
+  # property-and-fuzz-testing/EXECUTION.md), not yet CI_VERIFIED until
+  # the corresponding CI job is added and a real GitHub Actions run
+  # confirms it.
+
+  - id: competency.virtualization.service-virtualization
+    label: "Service Virtualization (WireMock-Style Stub Servers)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "service-virtualization/lib/stub-server.js — stub-server.test.js (6) genuinely passing: request matching, stateful/sequenced responses, and an unmatched request producing a real, loud 501 failure rather than a silent 200"
+    gaps: [gap.virtualization.professional-exposure, gap.virtualization.real-tooling]
+
+  - id: competency.virtualization.consumer-driven-contracts
+    label: "Consumer-Driven Contract Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "service-virtualization/lib/contract.js + fixtures/contracts.js — consumer-contract.test.js (3) + provider-contract-verification.test.js (2, real integration: the SAME contract verified against the actual running backend) genuinely passing"
+    gaps: [gap.virtualization.professional-exposure, gap.virtualization.real-tooling]
+
+  - id: competency.property-testing.generative-invariant-testing
+    label: "Property-Based Testing (Generative/Invariant Testing)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "property-and-fuzz-testing/lib/property-testing.js — property-testing-framework.test.js (6) + products-service-properties.test.js (6, real property tests against backend's real getProductById/listProducts via an in-memory SQLite db) genuinely passing"
+    gaps: [gap.property-testing.professional-exposure]
+
+  - id: competency.fuzz-testing.structured-api-fuzzing
+    label: "Structured API Fuzz Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "property-and-fuzz-testing/lib/fuzz-generators.js — api-fuzz.test.js (4, real fuzz testing against the live backend) genuinely passing; found and drove the fix for a real backend bug (oversized request bodies returning 500 instead of 413 — see backend/src/middleware/errorHandler.js)"
+    gaps: [gap.fuzz-testing.professional-exposure, gap.fuzz-testing.real-tooling]
+
 related:
   professional_source: "professional-experience.yaml"
   gap_detail: "gaps.yaml"

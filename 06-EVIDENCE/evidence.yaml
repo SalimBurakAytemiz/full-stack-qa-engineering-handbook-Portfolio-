@@ -137,6 +137,22 @@ items:
     related_lab: lab.privacy-testing.pii-and-data-subject-rights
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (bkz. produced_by'daki run URL'i). PII scanner kısmı GERÇEK backend'e karşı çalıştı (fixture değil); data-subject-rights kısmı açıkça beyan edilmiş bir fixture'dır."
 
+  - id: evidence.service-virtualization.stub-and-contract-execution
+    label: "Service Virtualization & Contract Testing lab — 11/11 tests executed (6 stub-server + 3 consumer-contract + 2 real provider-verification)"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/service-virtualization/EXECUTION.md"
+    produced_by: "node --test service-virtualization/tests/*.test.js ; node service-virtualization/run-virtualization-lab.js (local execution only — not yet CI-verified)"
+    related_lab: lab.service-virtualization.stub-and-contract-testing
+    note: "TR: E4_CI_VERIFIED DEĞİL — bu GitHub Actions'ta henüz çalıştırılmadı. Provider-side doğrulama GERÇEK, çalışan backend'e karşı çalıştı (fixture değil)."
+
+  - id: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
+    label: "Property-Based & Fuzz Testing lab — 16/16 tests executed (12 property + 4 real-API fuzz), including a real backend bug found and fixed"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/EXECUTION.md"
+    produced_by: "node --test property-and-fuzz-testing/tests/*.test.js against a real running backend ; node property-and-fuzz-testing/run-property-and-fuzz-lab.js — local execution only, not yet CI-verified"
+    related_lab: lab.property-and-fuzz-testing.generative-and-api-fuzzing
+    note: "TR: E4_CI_VERIFIED DEĞİL — bu GitHub Actions'ta henüz çalıştırılmadı. Bu lab'ın fuzz testi backend/src/middleware/errorHandler.js'de GERÇEK bir hatayı buldu (413 yerine 500 dönen büyük istek gövdesi) ve düzeltilmesini sağladı — bkz. artifact ve COMMON-MISTAKES.md."
+
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
     maturity: E3_EXECUTED

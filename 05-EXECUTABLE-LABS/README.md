@@ -51,6 +51,8 @@ lab catalog navigable and machine-checkable (see
 | AI Systems Testing — mock-first | `QA-DEMO-SYSTEM/automation-labs/ai-systems` | `lab.ai-systems.mock-first-testing` | L4_CI_VERIFIED |
 | Chaos/Reliability — fault injection | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability` | `lab.chaos-reliability.fault-injection` | L4_CI_VERIFIED |
 | Privacy Testing — PII scan + data-subject-rights | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` | `lab.privacy-testing.pii-and-data-subject-rights` | L4_CI_VERIFIED |
+| Service Virtualization & Contract Testing | `QA-DEMO-SYSTEM/automation-labs/service-virtualization` | `lab.service-virtualization.stub-and-contract-testing` | L3_AUTOMATED |
+| Property-Based & Fuzz Testing | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing` | `lab.property-and-fuzz-testing.generative-and-api-fuzzing` | L3_AUTOMATED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real
@@ -68,6 +70,19 @@ data-subject-rights testing, since QA-DEMO-SYSTEM's real backend has no
 such endpoints) and `02-FULL-STACK-QA-HANDBOOK/25-ADVANCED-QA-ENGINEERING/RELIABILITY-CHAOS-PRIVACY-TESTING/`
 for the matching handbook content. All 4 covered competencies have
 `professional: {status: NONE}` in the Digital Twin registry.
+
+The Service Virtualization/Contract and Property-Based/Fuzz Testing
+labs are Part 2 Milestone 2.3's addition — see each lab's own
+`README.md` for its scope boundary (a self-built stub server and
+ajv-based contract verifier rather than WireMock/Pact; a hand-rolled
+property-testing framework rather than fast-check; fixed, disclosed
+fuzz-value sets rather than coverage-guided mutation) and
+`02-FULL-STACK-QA-HANDBOOK/25-ADVANCED-QA-ENGINEERING/SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/`
+for the matching handbook content. The fuzz-testing lab found and drove
+the fix for a real bug in `backend/src/middleware/errorHandler.js`
+(oversized request bodies returning 500 instead of 413). All 4 covered
+competencies have `professional: {status: NONE}` in the Digital Twin
+registry.
 
 Mobile (Appium) has no lab entry: there is no real device/emulator
 infrastructure in this repository, and Section 47's anti-placeholder
