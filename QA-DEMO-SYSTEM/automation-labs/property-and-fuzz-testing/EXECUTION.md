@@ -70,5 +70,11 @@ handbook docs for the full narrative.
   production, not a reimplementation.
 - `api-fuzz.test.js` is genuine integration testing against the real,
   running backend — the 413 finding above is real, not staged.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step.
+- **CI-verified.** The `property-and-fuzz-testing-lab` job in
+  `.github/workflows/ci.yml` ran this exact suite on GitHub Actions and
+  passed — see
+  `https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36629081710`
+  (commit `2879d06`, job "Property-Based & Fuzz Testing lab (real
+  backend properties + real-API fuzzing)", conclusion: success).
+  This lab's registry maturity is `L4_CI_VERIFIED` / evidence
+  `E4_CI_VERIFIED` on that basis.

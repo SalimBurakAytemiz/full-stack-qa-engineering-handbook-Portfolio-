@@ -347,19 +347,22 @@ competencies:
   # Part 2 — Advanced QA Engineering: Service Virtualization, Contract,
   # Property-Based & Fuzz Testing (Milestone 2.3). Same discipline as
   # Milestones 2.1/2.2: professional.status NONE for all four —
-  # genuinely new ground. repository.status is EXECUTED (real, local
-  # node --test runs — see service-virtualization/EXECUTION.md and
-  # property-and-fuzz-testing/EXECUTION.md), not yet CI_VERIFIED until
-  # the corresponding CI job is added and a real GitHub Actions run
-  # confirms it.
+  # genuinely new ground. repository.status is CI_VERIFIED — GitHub
+  # Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36629081710
+  # (commit 2879d06) confirmed both the "Service Virtualization &
+  # Contract Testing lab" and "Property-Based & Fuzz Testing lab" CI
+  # jobs pass, in addition to the local node --test runs (see
+  # service-virtualization/EXECUTION.md and
+  # property-and-fuzz-testing/EXECUTION.md).
 
   - id: competency.virtualization.service-virtualization
     label: "Service Virtualization (WireMock-Style Stub Servers)"
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "service-virtualization/lib/stub-server.js — stub-server.test.js (6) genuinely passing: request matching, stateful/sequenced responses, and an unmatched request producing a real, loud 501 failure rather than a silent 200"
+      status: CI_VERIFIED
+      evidence: "service-virtualization/lib/stub-server.js — stub-server.test.js (6) genuinely passing: request matching, stateful/sequenced responses, and an unmatched request producing a real, loud 501 failure rather than a silent 200, verified in GitHub Actions"
     gaps: [gap.virtualization.professional-exposure, gap.virtualization.real-tooling]
 
   - id: competency.virtualization.consumer-driven-contracts
@@ -367,8 +370,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "service-virtualization/lib/contract.js + fixtures/contracts.js — consumer-contract.test.js (3) + provider-contract-verification.test.js (2, real integration: the SAME contract verified against the actual running backend) genuinely passing"
+      status: CI_VERIFIED
+      evidence: "service-virtualization/lib/contract.js + fixtures/contracts.js — consumer-contract.test.js (3) + provider-contract-verification.test.js (2, real integration: the SAME contract verified against the actual running backend) genuinely passing, verified in GitHub Actions"
     gaps: [gap.virtualization.professional-exposure, gap.virtualization.real-tooling]
 
   - id: competency.property-testing.generative-invariant-testing
@@ -376,8 +379,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "property-and-fuzz-testing/lib/property-testing.js — property-testing-framework.test.js (6) + products-service-properties.test.js (6, real property tests against backend's real getProductById/listProducts via an in-memory SQLite db) genuinely passing"
+      status: CI_VERIFIED
+      evidence: "property-and-fuzz-testing/lib/property-testing.js — property-testing-framework.test.js (6) + products-service-properties.test.js (6, real property tests against backend's real getProductById/listProducts via an in-memory SQLite db) genuinely passing, verified in GitHub Actions"
     gaps: [gap.property-testing.professional-exposure]
 
   - id: competency.fuzz-testing.structured-api-fuzzing
@@ -385,8 +388,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "property-and-fuzz-testing/lib/fuzz-generators.js — api-fuzz.test.js (4, real fuzz testing against the live backend) genuinely passing; found and drove the fix for a real backend bug (oversized request bodies returning 500 instead of 413 — see backend/src/middleware/errorHandler.js)"
+      status: CI_VERIFIED
+      evidence: "property-and-fuzz-testing/lib/fuzz-generators.js — api-fuzz.test.js (4, real fuzz testing against the live backend) genuinely passing, verified in GitHub Actions; found and drove the fix for a real backend bug (oversized request bodies returning 500 instead of 413 — see backend/src/middleware/errorHandler.js)"
     gaps: [gap.fuzz-testing.professional-exposure, gap.fuzz-testing.real-tooling]
 
 related:

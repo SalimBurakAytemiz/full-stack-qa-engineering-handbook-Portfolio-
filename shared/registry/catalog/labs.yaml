@@ -125,19 +125,19 @@ items:
 
   - id: lab.service-virtualization.stub-and-contract-testing
     label: "Service Virtualization & Consumer-Driven Contract Testing (WireMock-style stub server + ajv contracts)"
-    maturity: L3_AUTOMATED
+    maturity: L4_CI_VERIFIED
     path: "QA-DEMO-SYSTEM/automation-labs/service-virtualization"
     evidence_id: evidence.service-virtualization.stub-and-contract-execution
     covers_competencies: [competency.virtualization.service-virtualization, competency.virtualization.consumer-driven-contracts]
-    note: "TR: L4_CI_VERIFIED DEĞİL — bu lab GitHub Actions'ta henüz doğrulanmadı. Stub server ve sözleşme doğrulayıcı lab'ın kendi yazdığı, gerçek çalışan bileşenlerdir — WireMock veya Pact kütüphanesi değildir. Provider-side doğrulama GERÇEK backend'e karşı çalışır."
+    note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı. Stub server ve sözleşme doğrulayıcı lab'ın kendi yazdığı, gerçek çalışan bileşenlerdir — WireMock veya Pact kütüphanesi değildir. Provider-side doğrulama GERÇEK backend'e karşı çalışır."
 
   - id: lab.property-and-fuzz-testing.generative-and-api-fuzzing
     label: "Property-Based & Fuzz Testing (hand-rolled framework + real-API fuzzing)"
-    maturity: L3_AUTOMATED
+    maturity: L4_CI_VERIFIED
     path: "QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing"
     evidence_id: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
     covers_competencies: [competency.property-testing.generative-invariant-testing, competency.fuzz-testing.structured-api-fuzzing]
-    note: "TR: L4_CI_VERIFIED DEĞİL — bu lab GitHub Actions'ta henüz doğrulanmadı. Property-based test framework'ü elle yazılmıştır (fast-check değildir) ve backend'in GERÇEK servis fonksiyonlarına karşı çalışır; fuzz testi GERÇEK, çalışan backend'e karşı çalışır ve gerçek bir backend hatasını bulup düzeltilmesini sağladı (bkz. evidence notu)."
+    note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı. Property-based test framework'ü elle yazılmıştır (fast-check değildir) ve backend'in GERÇEK servis fonksiyonlarına karşı çalışır; fuzz testi GERÇEK, çalışan backend'e karşı çalışır ve gerçek bir backend hatasını bulup düzeltilmesini sağladı (bkz. evidence notu)."
 
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"

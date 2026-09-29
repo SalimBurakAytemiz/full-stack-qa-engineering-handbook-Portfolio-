@@ -550,6 +550,18 @@ relationships:
   - from: competency.privacy.gdpr-data-subject-rights-testing
     predicate: EVIDENCED_BY
     to: evidence.privacy-testing.pii-and-rights-execution
+  - from: competency.virtualization.service-virtualization
+    predicate: EVIDENCED_BY
+    to: evidence.service-virtualization.stub-and-contract-execution
+  - from: competency.virtualization.consumer-driven-contracts
+    predicate: EVIDENCED_BY
+    to: evidence.service-virtualization.stub-and-contract-execution
+  - from: competency.property-testing.generative-invariant-testing
+    predicate: EVIDENCED_BY
+    to: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
+  - from: competency.fuzz-testing.structured-api-fuzzing
+    predicate: EVIDENCED_BY
+    to: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite

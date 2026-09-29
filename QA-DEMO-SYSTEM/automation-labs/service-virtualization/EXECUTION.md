@@ -45,5 +45,11 @@ real consumer-driven contract testing, both directions.
 - `lib/contract.js` is a real, minimal contract verifier built on ajv,
   not the Pact library — a deliberate scope/dependency choice,
   disclosed as such.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step.
+- **CI-verified.** The `service-virtualization-lab` job in
+  `.github/workflows/ci.yml` ran this exact suite on GitHub Actions and
+  passed — see
+  `https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36629081710`
+  (commit `2879d06`, job "Service Virtualization & Contract Testing lab
+  (stub server + real provider verification)", conclusion: success).
+  This lab's registry maturity is `L4_CI_VERIFIED` / evidence
+  `E4_CI_VERIFIED` on that basis.

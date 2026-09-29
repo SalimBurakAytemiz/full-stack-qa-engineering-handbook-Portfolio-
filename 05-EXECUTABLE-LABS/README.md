@@ -51,8 +51,8 @@ lab catalog navigable and machine-checkable (see
 | AI Systems Testing — mock-first | `QA-DEMO-SYSTEM/automation-labs/ai-systems` | `lab.ai-systems.mock-first-testing` | L4_CI_VERIFIED |
 | Chaos/Reliability — fault injection | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability` | `lab.chaos-reliability.fault-injection` | L4_CI_VERIFIED |
 | Privacy Testing — PII scan + data-subject-rights | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` | `lab.privacy-testing.pii-and-data-subject-rights` | L4_CI_VERIFIED |
-| Service Virtualization & Contract Testing | `QA-DEMO-SYSTEM/automation-labs/service-virtualization` | `lab.service-virtualization.stub-and-contract-testing` | L3_AUTOMATED |
-| Property-Based & Fuzz Testing | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing` | `lab.property-and-fuzz-testing.generative-and-api-fuzzing` | L3_AUTOMATED |
+| Service Virtualization & Contract Testing | `QA-DEMO-SYSTEM/automation-labs/service-virtualization` | `lab.service-virtualization.stub-and-contract-testing` | L4_CI_VERIFIED |
+| Property-Based & Fuzz Testing | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing` | `lab.property-and-fuzz-testing.generative-and-api-fuzzing` | L4_CI_VERIFIED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real
