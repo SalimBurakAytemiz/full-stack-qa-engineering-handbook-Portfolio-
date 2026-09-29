@@ -1,4 +1,27 @@
-# QA Competency Map
+# QA Competency Map (SUPERSEDED)
+
+> **This file is no longer the source of truth.** The competency model it
+> introduced (EXPERIENCE / PARTICIPATED / AWARE, etc.) has been replaced
+> by the three-independent-dimension model — knowledge / professional /
+> repository — in
+> [`01-SALIM-BURAK-DIGITAL-TWIN/02-COMPETENCY-MATRIX.md`](01-SALIM-BURAK-DIGITAL-TWIN/02-COMPETENCY-MATRIX.md)
+> and its machine-readable registry at
+> [`01-SALIM-BURAK-DIGITAL-TWIN/registry/competency-state.yaml`](01-SALIM-BURAK-DIGITAL-TWIN/registry/competency-state.yaml).
+>
+> This file is kept in place (not deleted) because many existing
+> Handbook docs reference its old EXPERIENCE/PARTICIPATED labels by name
+> as historical context for why a topic was written a certain way — those
+> references remain accurate as history. For any current competency
+> claim, use the Digital Twin, not this file.
+>
+> TR: Bu dosya artık gerçek kaynak (source of truth) DEĞİLDİR — güncel
+> yetkinlik iddiaları için Digital Twin'e bakınız. Dosya, eski
+> EXPERIENCE/PARTICIPATED etiketlerine yapılan tarihsel referansları
+> kırmamak için silinmeden, bu uyarıyla birlikte saklanmıştır.
+
+---
+
+# QA Competency Map (original, historical — see notice above)
 
 Bu doküman repository sahibinin gerçek profesyonel deneyimini,
 katılım sağladığı teknik süreçleri ve geliştirilmesi gereken alanları

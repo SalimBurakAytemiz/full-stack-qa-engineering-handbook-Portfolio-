@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/competency.schema.json",
+  "title": "Competency entry",
+  "description": "One entry in a personal competency-state.yaml's `competencies` array. Enforces the three-independent-dimension model (Section 9 of the transformation spec) — knowledge, professional, and repository must never be collapsed into a single field.",
+  "type": "object",
+  "required": ["id", "label", "knowledge", "professional", "repository"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^competency\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$",
+      "description": "Stable semantic ID, e.g. competency.mobile.appium — independent of file path."
+    },
+    "label": { "type": "string", "minLength": 1 },
+    "knowledge": {
+      "enum": ["AWARE", "WORKING", "INDEPENDENT", "ADVANCED", "UNKNOWN"]
+    },
+    "professional": {
+      "type": "object",
+      "description": "Either a flat {status} or a multi-facet breakdown (execution/planning/framework_development/etc.) — at least one professional-status-shaped field is required.",
+      "minProperties": 1
+    },
+    "repository": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "enum": ["NOT_PRACTICED", "DOCUMENTED", "IMPLEMENTED", "EXECUTED", "CI_VERIFIED", "AUDITED"]
+        },
+        "evidence": { "type": "string" },
+        "note": { "type": "string" }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^gap\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$" }
+    }
+  },
+  "additionalProperties": true
+}

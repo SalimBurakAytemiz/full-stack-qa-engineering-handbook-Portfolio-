@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/relationship.schema.json",
+  "title": "Relationship registry entry",
+  "description": "One edge in shared/registry/relationships/relationships.yaml, connecting two catalog entries by their stable IDs. Controlled vocabulary keeps the graph queryable instead of free-text cross-references (Section 41).",
+  "type": "object",
+  "required": ["from", "predicate", "to"],
+  "properties": {
+    "from": {
+      "type": "string",
+      "pattern": "^(competency|domain|tool|tech|platform|protocol|lab|evidence|gap|profile|pro|pattern|interview)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "predicate": {
+      "description": "Controlled relation vocabulary (Section 41, extended per the graph-integrity pass). RELATED_TO is a fallback of last resort — prefer a specific predicate.",
+      "enum": [
+        "REQUIRES",
+        "PREREQUISITE_OF",
+        "USES_TOOL",
+        "USES_TECHNOLOGY",
+        "USES_PATTERN",
+        "APPLIES_TO_DOMAIN",
+        "DOCUMENTED_BY",
+        "IMPLEMENTED_BY",
+        "TESTED_BY",
+        "EVIDENCED_BY",
+        "AUDITED_BY",
+        "PROFESSIONAL_EXPERIENCE_IN",
+        "PRACTICED_IN",
+        "LEARNING",
+        "SUPPORTS_COMPETENCY",
+        "VALIDATES_FLOW",
+        "RELATED_TO"
+      ]
+    },
+    "to": {
+      "type": "string",
+      "pattern": "^(competency|domain|tool|tech|platform|protocol|lab|evidence|gap|profile|pro|pattern|interview)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": false
+}

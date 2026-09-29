@@ -1,0 +1,18 @@
+schema_version: 1
+last_updated: "2026-09-25"
+source: src.master-transformation-prompt.2026-09-25
+
+# TR: Section 39 — sertifika, knowledge seviyesinden AYRI bir boyuttur.
+# Doğrulanmış hiçbir tamamlanmış sertifika kaynak veride YOKTUR; bu
+# yüzden CERTIFIED olarak işaretlenen hiçbir kayıt bulunmamaktadır.
+
+completed_certifications: []
+
+planned_certifications:
+  - id: cert.istqb
+    label: "ISTQB"
+    status: PLANNED
+    note: "TR: Gelecek hedef olarak kaydedildi — tamamlanmış sertifika iddia edilmiyor."
+
+related:
+  narrative_doc: "10-CERTIFICATIONS.md"

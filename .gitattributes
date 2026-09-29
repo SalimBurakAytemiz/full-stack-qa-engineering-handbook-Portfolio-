@@ -1,0 +1,8 @@
+# Codex post-audit fix (P2-02): enforce LF line endings for text files this
+# repository generates and/or diffs byte-for-byte, so a Windows checkout
+# (or any CRLF-normalizing git config) cannot introduce a line-ending-only
+# difference into content that scripts/registry/validate-registry.mjs and
+# the GraphQL contract-drift test compare against a committed snapshot.
+# The comparison logic itself is ALSO EOL-normalized (defense in depth) —
+# this file prevents the drift from being introduced in the first place.
+* text=auto eol=lf

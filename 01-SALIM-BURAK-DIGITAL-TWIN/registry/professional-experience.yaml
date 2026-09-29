@@ -1,0 +1,150 @@
+schema_version: 1
+last_updated: "2026-09-25"
+source: src.master-transformation-prompt.2026-09-25
+
+# TR: Her giriş "sanitized: true/false" alanı taşır. false yalnızca
+# kullanıcının kaynak mesajda GERÇEK şirket adını doğrudan verdiği
+# durumdadır (Skechers). Diğerleri kullanıcı tarafından bilerek
+# "-LIKE" ifadesiyle sanitize edilmiştir — bu sanitizasyon KORUNUR,
+# gerçek şirket adı uydurulmaz veya tahmin edilmez.
+
+professional_cases:
+  - id: pro.ecommerce.skechers-turkey
+    label: "E-Commerce / Mobile QA — Skechers Turkey"
+    sanitized: false
+    domain: "E-Commerce"
+    what_i_did:
+      - "E-Commerce and Mobile QA"
+      - "V1 stabilization work"
+      - "Functional and integration issue investigation"
+      - "GraphQL API -> Mobile frontend data mapping validation"
+      - "React Native V2 QA"
+      - "\"My Orders\" / Order module business-flow and system analysis"
+      - "OMS issue investigation"
+      - "GraphQL revisions"
+      - "API response-time improvement validation"
+      - "AJV API automation"
+      - "Newman"
+      - "JSON Schema"
+      - "API response validation"
+      - "Integration testing"
+    technologies: [graphql, react-native, rest, ajv, newman, json-schema]
+    related_domains: [domain.commerce.ecommerce, domain.commerce.oms]
+
+  - id: pro.fintech.stablex-like
+    label: "FinTech Professional Context (sanitized)"
+    sanitized: true
+    domain: "FinTech"
+    what_i_did:
+      - "Web, Mobile, Admin, CMS end-to-end QA"
+      - "React V1 stabilization"
+      - "React Native V2 QA"
+      - "REST (Postman, Swagger)"
+      - "WebSocket / realtime flow QA"
+      - "Firebase / notifications / inbound events QA"
+      - "SQL database testing"
+      - "Appium automated tests — local execution"
+      - "Appium automated tests — Jenkins execution"
+      - "Failure/result analysis"
+      - "Elastic log analysis / RCA contribution"
+      - "Load/performance process participation"
+      - "Azure DevOps defect lifecycle (retest, regression, UAT)"
+      - "Business/software analysis contribution"
+      - "Test environment server/application recycle where required"
+      - "Release and production validation"
+    technologies: [rest, postman, swagger, websocket, firebase, sql, appium, jenkins, elastic, azure-devops]
+    related_domains: [domain.financial.fintech]
+
+  - id: pro.mobile.defacto-like
+    label: "Multi-Country Mobile Context (sanitized)"
+    sanitized: true
+    domain: "Multi-Country Mobile / Retail"
+    what_i_did:
+      - "Flutter -> React Native migration QA"
+      - "Feature parity validation"
+      - "Five-country QA context"
+      - "Country-specific behavior validation"
+      - "Language/localization validation"
+      - "Payment methods validation (country-specific)"
+      - "OMS integrations (country-specific OMS flows)"
+      - "Figma comparison"
+      - "Python Pixel Perfect / screenshot comparison / difference visualization"
+    technologies: [flutter, react-native, figma, python-visual-comparison]
+    related_domains: [domain.commerce.ecommerce, domain.mobile.multi-country]
+
+  - id: pro.streaming.sdk-context
+    label: "Streaming / SDK Context (sanitized)"
+    sanitized: true
+    domain: "Media / Streaming"
+    what_i_did:
+      - "Mobile SDK / Live Streaming platform QA"
+      - "Mobile / Backend / Integration QA"
+      - "Admin Panel QA"
+      - "AWS/MUX/Agora-related config/key/provider flow QA and integration exposure"
+      - "REST"
+      - "WebSocket"
+      - "Provider flow validation"
+      - "Stream creation and Live Stream end-to-end testing"
+      - "REST API automation"
+    technologies: [rest, websocket, aws, mux, agora]
+    related_domains: [domain.media.streaming]
+    # TR: AWS/MUX/Agora exposure burada QA/entegrasyon bağlamıdır — bu
+    # "Cloud Engineer" veya "Provider Engineer" deneyimine ÇEVRİLMEZ
+    # (Section 4, madde: AWS / MUX / AGORA).
+
+other_professional_project_exposure:
+  # TR: Bu liste, tam vaka detayına dönüştürülmemiş ama profesyonel
+  # kaynakta ADI GEÇEN diğer proje/domain exposure'larıdır — derinlik
+  # iddia edilmez, yalnızca varlık kaydedilir.
+  - "B2B Wholesale Textile E-Commerce QA"
+  - "Corporate web QA"
+  - "Shopify-based E-Commerce QA"
+  - "FX / Precious Metals FinTech QA"
+  - "Publisher/Content/Admin Panel QA"
+  - "B2B/B2C Mobile QA"
+  - "Ticketing / Map / Location QA"
+  - "Supplier/B2B platform QA"
+
+professional_domain_tool_knowledge:
+  # TR: Section 3'ün "Professional/domain/tool knowledge also includes"
+  # listesi — bunlar "derin uygulama deneyimi" değil, "bilinen/etkileşimde
+  # bulunulmuş alan" anlamındadır; 09-GAP-AND-LEARNING-MAP.md ile
+  # çelişmeyecek şekilde WORKING/AWARE seviyesinde okunmalıdır.
+  domains:
+    - ecommerce
+    - b2b
+    - b2c
+    - marketplace
+    - crm
+    - erp
+    - oms
+    - wms
+    - tms
+    - pim
+    - srm
+    - supplier-management
+    - order-fulfillment
+    - returns-refund
+    - cms
+    - notification-systems
+    - event-analytics-systems
+    - iam-sso-concepts
+    - api-gateway-concepts
+    - third-party-integrations
+    - live-streaming-media
+    - sdk-integrations
+    - multi-country
+    - localization
+    - ticketing
+    - map-location
+    - bi-reporting
+    - publisher-content-management
+    - cryptocurrency
+    - precious-metals-trading
+    - payment-systems
+    - billing
+    - digital-wallet
+    - savings-investment-accounts
+    - kyc
+    - aml
+    - banking-regulatory-systems

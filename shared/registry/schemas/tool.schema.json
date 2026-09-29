@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/tool.schema.json",
+  "title": "Tool catalog entry",
+  "description": "One entry in a tool-state.yaml category list. Enforces the TOOL/TECHNOLOGY/PLATFORM/PROTOCOL distinction (Section 20) — everything must not be dumped into a generic 'tool' bucket.",
+  "type": "object",
+  "required": ["id", "label", "kind"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(tool|tech|platform|protocol)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "label": { "type": "string", "minLength": 1 },
+    "kind": { "enum": ["TOOL", "TECHNOLOGY", "PLATFORM", "PROTOCOL"] },
+    "owner": {
+      "type": "string",
+      "description": "Pointer to the competency-state.yaml entry that owns this tool's actual state (one fact, one owner)."
+    },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/contracts/websocket/notification-push-message.schema.json",
+  "title": "WebSocket notification push message",
+  "description": "The real message shape sent over /ws by QA-DEMO-SYSTEM/backend/src/realtime/websocketServer.js#pushNotificationToUser. Deliberately narrower than the REST GET /api/notifications response shape (shared/schemas/notifications/) — the live push omits `created_at` because it is sent at creation time, before that column's DEFAULT CURRENT_TIMESTAMP would be re-read; a consumer must not assume push and REST-fetch payloads are identical.",
+  "type": "object",
+  "required": ["type", "notification"],
+  "properties": {
+    "type": { "const": "notification" },
+    "notification": {
+      "type": "object",
+      "required": ["id", "user_id", "type", "message", "order_id", "is_read"],
+      "properties": {
+        "id": { "type": "integer" },
+        "user_id": { "type": "integer" },
+        "type": { "type": "string" },
+        "message": { "type": "string" },
+        "order_id": { "type": "integer" },
+        "is_read": { "enum": [0, 1] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

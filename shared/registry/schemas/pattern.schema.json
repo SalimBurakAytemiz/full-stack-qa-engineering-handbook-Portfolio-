@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.internal/pattern.schema.json",
+  "title": "System pattern catalog entry",
+  "description": "One entry per canonical pattern documented in 02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/ (Section 13). Gives each pattern a stable id so USES_PATTERN/VALIDATES_FLOW relationship edges can point at it.",
+  "type": "object",
+  "required": ["id", "label", "status", "path"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^pattern\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "label": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": ["DOCUMENTED_ONLY", "IMPLEMENTED", "NOT_IMPLEMENTED", "NOT_APPLICABLE"],
+      "description": "Whether QA-DEMO-SYSTEM actually implements the pattern, per the pattern doc's own stated scope. NOT_APPLICABLE is for a pattern with no real dependency/scenario to implement against in this repository (e.g. Timeout, with no outbound third-party call)."
+    },
+    "path": { "type": "string" },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,69 @@
+schema_version: 1
+last_updated: "2026-09-25"
+source: src.master-transformation-prompt.2026-09-25
+
+# TR: Bu dosya "one fact, one owner" ilkesini uygular (Section 37) —
+# tam profesyonel vaka detayı professional-experience.yaml'da YAŞAR,
+# burada yalnızca domain başına PERSONAL EXPOSURE seviyesi ve o
+# gerçeğin sahibine referans bulunur. Domain'in kendi evrensel
+# olgunluğu (D0-D5, Section 15) BU dosyanın konusu DEĞİLDİR — o,
+# 03-DOMAINS/ altındaki domain registry'sine aittir (gelecek increment).
+
+personal_domain_exposure:
+  # exposure: NONE | LEARNING | PROFESSIONAL_PARTICIPATED | PROFESSIONAL_EXECUTED
+  - domain_id: domain.commerce.ecommerce
+    label: "E-Commerce"
+    exposure: PROFESSIONAL_EXECUTED
+    owner_fact: "professional-experience.yaml#pro.ecommerce.skechers-turkey"
+    repository_practice: "QA-DEMO-SYSTEM products/orders/payment flow"
+
+  - domain_id: domain.commerce.oms
+    label: "OMS (Order Management System)"
+    exposure: PROFESSIONAL_EXECUTED
+    owner_fact: "professional-experience.yaml#pro.ecommerce.skechers-turkey"
+
+  - domain_id: domain.financial.fintech
+    label: "FinTech (sanitized professional context)"
+    exposure: PROFESSIONAL_EXECUTED
+    owner_fact: "professional-experience.yaml#pro.fintech.stablex-like"
+    repository_practice: "QA-DEMO-SYSTEM order-concurrency, payment.service — synthetic, not a recreation of the professional system"
+
+  - domain_id: domain.mobile.multi-country
+    label: "Multi-Country Mobile / Localization"
+    exposure: PROFESSIONAL_EXECUTED
+    owner_fact: "professional-experience.yaml#pro.mobile.defacto-like"
+
+  - domain_id: domain.media.streaming
+    label: "Media / Live Streaming"
+    exposure: PROFESSIONAL_EXECUTED
+    owner_fact: "professional-experience.yaml#pro.streaming.sdk-context"
+    note: "TR: Codex post-audit correction — owner_fact'in kendi what_i_did içeriği (REST API automation, end-to-end testing, provider flow validation) execution-seviyesinde ifade ediliyor; önceki PROFESSIONAL_PARTICIPATED etiketi kendi kaynağını eksik yansıtıyordu. Bkz. source-provenance.yaml#conflict_log (internal derivation correction, tekil kaynağa karşı)."
+
+  - domain_id: domain.financial.crypto
+    label: "Cryptocurrency"
+    exposure: LEARNING
+    note: "TR: Section 3'te 'professional/domain/tool knowledge' listesinde geçer — derin profesyonel vaka DEĞİLDİR, WORKING/AWARE seviyesinde okunmalıdır."
+
+  - domain_id: domain.financial.trading-precious-metals
+    label: "Trading / Precious Metals"
+    exposure: PROFESSIONAL_PARTICIPATED
+    owner_fact: "professional-experience.yaml#other_professional_project_exposure (\"FX / Precious Metals FinTech QA\")"
+    note: "TR: Codex post-audit correction — bu domain aynı zamanda other_professional_project_exposure'da 'FX / Precious Metals FinTech QA' olarak adlandırılmıştır (professional_domain_tool_knowledge'daki genel 'precious-metals-trading' girdisinden AYRI ve daha güçlü bir olgu kategorisidir — bkz. professional-experience.yaml'ın kendi TR açıklaması). Önceki LEARNING etiketi yalnızca zayıf kategoriyi yansıtıyor, var olan daha güçlü kaynağı görmezden geliyordu. Vaka derinliği (professional_cases seviyesinde ayrı bir dosya) hâlâ YOKTUR — bu nedenle PROFESSIONAL_EXECUTED değil, PROFESSIONAL_PARTICIPATED."
+
+  - domain_id: domain.insurance
+    label: "Insurance"
+    exposure: NONE
+    note: "TR: Section 19 gereği profesyonel deneyim İDDİA EDİLMEZ — yalnızca domain-öğrenme/transferable-methodology örneği olarak kullanılabilir."
+
+  - domain_id: domain.healthcare
+    label: "Healthcare"
+    exposure: NONE
+
+  - domain_id: domain.telecom
+    label: "Telecom"
+    exposure: NONE
+
+related:
+  full_case_detail: "professional-experience.yaml"
+  narrative_docs:
+    - "05-DOMAIN-EXPERIENCE.md"

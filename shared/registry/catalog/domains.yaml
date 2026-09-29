@@ -1,0 +1,81 @@
+# Universal domain catalog — the domain's OWN maturity (D0-D5, Section 15),
+# independent of any one person's exposure. This is a different fact from
+# 01-SALIM-BURAK-DIGITAL-TWIN/registry/domain-state.yaml (Salim's personal
+# exposure level), which points back here by domain_id.
+#
+# Codex post-audit fix (P2-01): this file previously carried an `exposure`
+# field using personal-exposure vocabulary (NONE/LEARNING/PROFESSIONAL_*),
+# in direct contradiction of this file's own header comment ("the domain's
+# OWN maturity... independent of any one person's exposure"). It now uses
+# domain-catalog.schema.json (a maturity: D0-D5 field only) instead of
+# reusing domain.schema.json (personal exposure entries) — the universal
+# catalog no longer owns any personal-exposure fact.
+#
+# TR: Codex post-audit düzeltmesi (P2-01) — bu dosya önceden `exposure`
+# alanında KİŞİSEL exposure sözlüğünü (NONE/LEARNING/PROFESSIONAL_*)
+# taşıyordu; bu, dosyanın kendi başlık yorumuyla ("kişinin exposure'ından
+# BAĞIMSIZ") doğrudan çelişiyordu. Artık domain.schema.json (kişisel
+# exposure şeması) yerine domain-catalog.schema.json (yalnızca
+# maturity: D0-D5) kullanıyor — evrensel katalog artık hiçbir kişisel
+# exposure olgusuna sahip değil.
+#
+# Every personal domain_id in 01-SALIM-BURAK-DIGITAL-TWIN/registry/
+# domain-state.yaml must resolve to a real domain_id here (foreign-key
+# check enforced by scripts/registry/validate-registry.mjs) — this file
+# is the canonical id space personal exposure entries point into.
+schema_version: 1
+last_updated: "2026-09-25"
+
+items:
+  - domain_id: domain.commerce.ecommerce
+    label: "E-Commerce"
+    maturity: D4_EXECUTABLE
+    path: "03-DOMAINS/02-COMMERCE-RETAIL/E-COMMERCE/README.md"
+
+  - domain_id: domain.commerce.oms
+    label: "OMS (Order Management System)"
+    maturity: D0_INDEXED
+    note: "Codex post-audit fix (P2-01): added — this domain_id was already referenced by 01-SALIM-BURAK-DIGITAL-TWIN/registry/domain-state.yaml (personal exposure PROFESSIONAL_EXECUTED) but had no universal catalog entry, which the new foreign-key check now requires. No standalone 03-DOMAINS/ page exists yet; OMS content currently lives embedded within the E-Commerce domain page (see 03-DOMAINS/README.md's 'Indexed only' list). Repository maturity is D0 (indexed, not yet a standalone documented page) — this is a REPOSITORY-CONTENT-DEPTH fact, unrelated to and not lowering Salim's own PROFESSIONAL_EXECUTED personal exposure, which is a separate, personal fact owned by domain-state.yaml."
+
+  - domain_id: domain.financial.fintech
+    label: "FinTech"
+    maturity: D3_CASE_DESIGNED
+    path: "03-DOMAINS/01-FINANCIAL-SERVICES/FINTECH/README.md"
+
+  - domain_id: domain.financial.crypto
+    label: "Cryptocurrency"
+    maturity: D0_INDEXED
+    note: "Codex post-audit fix (P2-01): added — see domain.commerce.oms note above for the same reasoning. Listed in 03-DOMAINS/README.md's 'Indexed only' set; no standalone page yet."
+
+  - domain_id: domain.financial.trading-precious-metals
+    label: "Trading / Precious Metals"
+    maturity: D0_INDEXED
+    note: "Codex post-audit fix (P2-01): added — see domain.commerce.oms note above for the same reasoning."
+
+  - domain_id: domain.media.streaming
+    label: "Media / Live Streaming"
+    maturity: D2_QA_MAPPED
+    path: "03-DOMAINS/03-MEDIA-STREAMING/README.md"
+    note: "Codex post-audit fix (P2-03, applied here too): corrected from a stale D1_DOCUMENTED — the page's own header (03-DOMAINS/03-MEDIA-STREAMING/README.md line 3) states D2 QA_MAPPED, matching .ai/ARCHITECTURE-STATE.md's record of this domain's deep-dive round. See also 03-DOMAINS/README.md, fixed in the same pass."
+
+  - domain_id: domain.mobile.multi-country
+    label: "Multi-Country Mobile / Localization"
+    maturity: D2_QA_MAPPED
+    path: "03-DOMAINS/04-MOBILE-DIGITAL-PLATFORMS/README.md"
+    note: "Codex post-audit fix (P2-03, applied here too): corrected from a stale D1_DOCUMENTED — same reasoning as domain.media.streaming above."
+
+  - domain_id: domain.insurance
+    label: "Insurance"
+    maturity: D2_QA_MAPPED
+    path: "03-DOMAINS/01-FINANCIAL-SERVICES/INSURANCE/README.md"
+    note: "Codex post-audit fix (P2-03, applied here too): corrected from a stale D0_INDEXED — the page's own header (03-DOMAINS/01-FINANCIAL-SERVICES/INSURANCE/README.md line 3) states D2 QA_MAPPED (deep learning/transferable-methodology content, explicitly zero professional or repository-execution grounding — maturity reflects documentation depth, not practiced experience, per the page's own line 5)."
+
+  - domain_id: domain.healthcare
+    label: "Healthcare"
+    maturity: D0_INDEXED
+    note: "Codex post-audit fix (P2-01): added — see domain.commerce.oms note above for the same reasoning."
+
+  - domain_id: domain.telecom
+    label: "Telecom"
+    maturity: D0_INDEXED
+    note: "Codex post-audit fix (P2-01): added — see domain.commerce.oms note above for the same reasoning."

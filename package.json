@@ -1,0 +1,15 @@
+{
+  "name": "qa-engineering-handbook-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Repository-root tooling for the Digital Twin / QA Knowledge System registry (validation, index generation). QA-DEMO-SYSTEM is its own separate workspace, untouched by this file.",
+  "type": "module",
+  "scripts": {
+    "registry:validate": "node scripts/registry/validate-registry.mjs",
+    "registry:build-indexes": "node scripts/registry/build-indexes.mjs"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "js-yaml": "^4.1.0"
+  }
+}

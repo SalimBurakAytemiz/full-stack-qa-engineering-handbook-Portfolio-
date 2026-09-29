@@ -53,7 +53,7 @@
 REST API'sini (7 endpoint + WebSocket auth), Postman/Newman/AJV ile
 fonksiyonel, contract, authorization ve regression açısından
 doğrulamak. Detaylı metodoloji ve kapsam kararı için bkz.
-[`07-API-TESTING/README.md`](../../07-API-TESTING/README.md).
+[`07-API-TESTING/README.md`](../../02-FULL-STACK-QA-HANDBOOK/07-API-TESTING/README.md).
 
 ---
 
@@ -1182,7 +1182,7 @@ netleştirilecektir (Phase 4'te uygulanan pattern).
 
 ## İlgili Repository Dokümanları
 
-- [../../07-API-TESTING/README.md](../../07-API-TESTING/README.md)
+- [../../07-API-TESTING/README.md](../../02-FULL-STACK-QA-HANDBOOK/07-API-TESTING/README.md)
 - [../ARCHITECTURE.md](../ARCHITECTURE.md)
 - [../PHASE-4-CLOSEOUT.md](../PHASE-4-CLOSEOUT.md)
 - [../../shared/schemas/](../../shared/schemas/)

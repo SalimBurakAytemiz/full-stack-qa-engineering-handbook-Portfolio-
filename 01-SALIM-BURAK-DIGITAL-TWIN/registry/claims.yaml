@@ -1,0 +1,420 @@
+# TR: Post-Codex fix (P1-05) — "the most important integrity fix." Öncesinde
+# validator yalnızca professional-experience.yaml DOSYASI için bir kaynağın
+# VAR OLDUĞUNU kontrol ediyordu (source-provenance.yaml#sources, "covers:
+# professional-experience"). Codex bunun yetersiz olduğunu kanıtladı: dosya
+# seviyesinde bir kaynak beyanı varken, professional-experience.yaml içine
+# UYDURMA bir what_i_did maddesi eklense bile registry validation hâlâ PASS
+# ediyordu — çünkü hiçbir kontrol tek tek MADDE seviyesinde çalışmıyordu.
+#
+# Bu dosya, professional-experience.yaml içindeki HER what_i_did maddesini ve
+# HER other_professional_project_exposure maddesini birebir (text eşleşmesi)
+# olarak bu claims.yaml'da bir karşılığa bağlar. scripts/registry/validate-registry.mjs
+# artık iki yönü de kontrol eder:
+#   1) professional-experience.yaml'daki HER madde -> burada eşleşen bir claim
+#      kaydı OLMALI (yoksa: "unsourced professional claim", FAIL).
+#   2) Bu dosyadaki claim'lerin source_id'si source-provenance.yaml'da gerçekten
+#      var olan bir kaynağa çözümlenmeli.
+#
+# Bu, dosya-seviyesi "bir kaynak var" kontrolünü GEÇERSİZ KILMAZ — onu
+# TAMAMLAR. Section 42 "NO CLAIM WITHOUT SOURCE" kuralının madde seviyesinde
+# uygulanmasıdır.
+schema_version: 1
+last_updated: "2026-09-25"
+
+claims:
+  - claim_id: claim.ecommerce.skechers-turkey.01
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "E-Commerce and Mobile QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.02
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "V1 stabilization work"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.03
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "Functional and integration issue investigation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.04
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "GraphQL API -> Mobile frontend data mapping validation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.05
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "React Native V2 QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.06
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "\"My Orders\" / Order module business-flow and system analysis"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.07
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "OMS issue investigation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.08
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "GraphQL revisions"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.09
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "API response-time improvement validation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.10
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "AJV API automation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.11
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "Newman"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.12
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "JSON Schema"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.13
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "API response validation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.ecommerce.skechers-turkey.14
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.ecommerce.skechers-turkey
+    text: "Integration testing"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.01
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Web, Mobile, Admin, CMS end-to-end QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.02
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "React V1 stabilization"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.03
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "React Native V2 QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.04
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "REST (Postman, Swagger)"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.05
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "WebSocket / realtime flow QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.06
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Firebase / notifications / inbound events QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.07
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "SQL database testing"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.08
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Appium automated tests — local execution"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.09
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Appium automated tests — Jenkins execution"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.10
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Failure/result analysis"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.11
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Elastic log analysis / RCA contribution"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.12
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Load/performance process participation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.13
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Azure DevOps defect lifecycle (retest, regression, UAT)"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.14
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Business/software analysis contribution"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.15
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Test environment server/application recycle where required"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.fintech.stablex-like.16
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.fintech.stablex-like
+    text: "Release and production validation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.mobile.defacto-like.01
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.mobile.defacto-like
+    text: "Flutter -> React Native migration QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.mobile.defacto-like.02
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.mobile.defacto-like
+    text: "Feature parity validation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.mobile.defacto-like.03
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.mobile.defacto-like
+    text: "Five-country QA context"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.mobile.defacto-like.04
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.mobile.defacto-like
+    text: "Country-specific behavior validation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.mobile.defacto-like.05
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.mobile.defacto-like
+    text: "Language/localization validation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.mobile.defacto-like.06
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.mobile.defacto-like
+    text: "Payment methods validation (country-specific)"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.mobile.defacto-like.07
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.mobile.defacto-like
+    text: "OMS integrations (country-specific OMS flows)"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.mobile.defacto-like.08
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.mobile.defacto-like
+    text: "Figma comparison"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.mobile.defacto-like.09
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.mobile.defacto-like
+    text: "Python Pixel Perfect / screenshot comparison / difference visualization"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.streaming.sdk-context.01
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.streaming.sdk-context
+    text: "Mobile SDK / Live Streaming platform QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.streaming.sdk-context.02
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.streaming.sdk-context
+    text: "Mobile / Backend / Integration QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.streaming.sdk-context.03
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.streaming.sdk-context
+    text: "Admin Panel QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.streaming.sdk-context.04
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.streaming.sdk-context
+    text: "AWS/MUX/Agora-related config/key/provider flow QA and integration exposure"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.streaming.sdk-context.05
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.streaming.sdk-context
+    text: "REST"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.streaming.sdk-context.06
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.streaming.sdk-context
+    text: "WebSocket"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.streaming.sdk-context.07
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.streaming.sdk-context
+    text: "Provider flow validation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.streaming.sdk-context.08
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.streaming.sdk-context
+    text: "Stream creation and Live Stream end-to-end testing"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.streaming.sdk-context.09
+    claim_type: WHAT_I_DID
+    professional_case_id: pro.streaming.sdk-context
+    text: "REST API automation"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.other-exposure.01
+    claim_type: OTHER_PROFESSIONAL_PROJECT_EXPOSURE
+    professional_case_id: null
+    text: "B2B Wholesale Textile E-Commerce QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.other-exposure.02
+    claim_type: OTHER_PROFESSIONAL_PROJECT_EXPOSURE
+    professional_case_id: null
+    text: "Corporate web QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.other-exposure.03
+    claim_type: OTHER_PROFESSIONAL_PROJECT_EXPOSURE
+    professional_case_id: null
+    text: "Shopify-based E-Commerce QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.other-exposure.04
+    claim_type: OTHER_PROFESSIONAL_PROJECT_EXPOSURE
+    professional_case_id: null
+    text: "FX / Precious Metals FinTech QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.other-exposure.05
+    claim_type: OTHER_PROFESSIONAL_PROJECT_EXPOSURE
+    professional_case_id: null
+    text: "Publisher/Content/Admin Panel QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.other-exposure.06
+    claim_type: OTHER_PROFESSIONAL_PROJECT_EXPOSURE
+    professional_case_id: null
+    text: "B2B/B2C Mobile QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.other-exposure.07
+    claim_type: OTHER_PROFESSIONAL_PROJECT_EXPOSURE
+    professional_case_id: null
+    text: "Ticketing / Map / Location QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+  - claim_id: claim.other-exposure.08
+    claim_type: OTHER_PROFESSIONAL_PROJECT_EXPOSURE
+    professional_case_id: null
+    text: "Supplier/B2B platform QA"
+    source_id: src.master-transformation-prompt.2026-09-25
+    verification_state: SOURCED
+
+related:
+  owner_fact: "professional-experience.yaml"
+  schema: "../../shared/registry/schemas/claim.schema.json"
+  validator: "scripts/registry/validate-registry.mjs"

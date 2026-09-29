@@ -1,0 +1,47 @@
+schema_version: 1
+id: profile.salim-burak-aytemiz
+last_updated: "2026-09-25"
+source: src.master-transformation-prompt.2026-09-25
+
+identity:
+  name: "Salim Burak Aytemiz"
+  role: "Software QA Engineer"
+  years_of_experience: "5+"
+
+summary: >
+  Full stack Software QA Engineer with 5+ years of experience across web,
+  mobile, backend, database, and admin-panel/CMS systems. Functional,
+  end-to-end, regression, integration, and UAT testing across REST,
+  GraphQL, and WebSocket/socket-based systems, with SQL-based data
+  validation and mobile automation execution (Appium). API automation
+  practice with AJV/Newman, Jenkins-based automated execution, Elastic
+  log analysis for root-cause investigation, and Python-based
+  pixel-perfect/visual comparison work.
+
+coverage_stack:
+  # TR: "Full stack" burada bir yazılım geliştirme iddiası değil, bir QA
+  # mühendisinin kapsadığı KATMAN çeşitliliğini ifade eder (Section 4 —
+  # React/React Native/Flutter exposure "frontend developer" deneyimine
+  # DÖNÜŞTÜRÜLMEZ).
+  - web
+  - mobile
+  - backend
+  - database
+  - admin_panel
+  - cms
+
+testing_types_practiced_professionally:
+  - functional_testing
+  - end_to_end_testing
+  - regression_testing
+  - integration_testing
+  - load_performance_participation_and_validation
+  - user_acceptance_testing
+
+related:
+  digital_twin_docs:
+    - "01-EXECUTIVE-TECHNICAL-PROFILE.md"
+    - "12-DEEP-TECHNICAL-PROFILE.md"
+  registries:
+    - "competency-state.yaml"
+    - "professional-experience.yaml"
