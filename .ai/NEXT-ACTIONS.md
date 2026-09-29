@@ -47,5 +47,26 @@ transformation's own completion.
 
 ## Branch note
 
-Unchanged from prior rounds — see `.ai/DECISIONS.md` D5. Work continues
-on `feat/qa-digital-twin-full-stack-transformation`.
+Unchanged from prior rounds — see `.ai/DECISIONS.md` D5. Work continued
+on `feat/qa-digital-twin-full-stack-transformation` through PR #25 (see
+below), which is now merged; there is no remaining work on that branch.
+
+## PART 1 CLOSEOUT (this section, not the above, is current)
+
+PR #25 ("Final Review: QA Digital Twin & Full Stack QA Transformation")
+received Codex's independent final verification: **FINAL DECISION:
+CLEAN, READY_TO_MERGE: YES** (P0:0 P1:0 P2:0 P3:0), at approved source
+SHA `048dbc02316a8cffd94ed9639d222ae9612e270f`. The PR was merged into
+`main` (merge commit `2849d973651508fd59845b8703f1af76552fe24e`); the
+post-merge CI run on `main` (run #49) completed with all 9 required job
+families green, and a post-merge registry smoke check (canonical
+validator + regression suite) also passed. See
+`.ai/MASTER-STATE.yaml#part_1_closeout` for the full record.
+
+**PART 1 is COMPLETE.** The next phase is **PART 2 — Advanced /
+Next-Generation QA Engineering** (AI/ML/LLM testing, reliability/chaos
+engineering, privacy/compliance QA, service virtualization, advanced
+contract testing, property-based/fuzz testing, mutation testing,
+testcontainers/ephemeral environments, and related areas) — scope only;
+no Part 2 implementation exists yet, and none was started as part of
+this closeout.

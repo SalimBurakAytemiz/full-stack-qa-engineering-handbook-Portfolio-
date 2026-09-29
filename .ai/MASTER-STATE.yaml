@@ -70,6 +70,25 @@ branch_note:
   actual_work_branch: "feat/qa-digital-twin-full-stack-transformation"
   reason: "see .ai/DECISIONS.md D5 — the designated branch has none of this transformation's history; work continued on the branch that actually contains it, per the user's explicit repeated instruction"
 
+part_1_closeout:
+  status: "COMPLETED"
+  pr: 25
+  merge_status: "MERGED"
+  approved_source_sha: "048dbc02316a8cffd94ed9639d222ae9612e270f"
+  merge_commit_sha: "2849d973651508fd59845b8703f1af76552fe24e"
+  merge_method: "merge"
+  codex_final_decision: "CLEAN"
+  ready_to_merge: "YES"
+  final_qualifying_defect_counts: { p0: 0, p1: 0, p2: 0, p3: 0 }
+  post_merge_ci_on_main: "run #49 (id 36618867851), head_sha 2849d97..., status completed, conclusion success — all 9 required job families green (registry-integrity, backend-tests, web-tests, api-schema-validation, api-auth-tests, api-orders-payment-tests, api-notifications-tests, api-db-validation, selenium-lab)"
+  post_merge_registry_smoke_on_main: "canonical validator 0 errors; regression suite 26/26 PASS"
+  preserved_known_truth_not_reopened_by_this_merge:
+    - "Native JMeter: NOT_EXECUTED locally where runtime unavailable — never claimed PASS"
+    - "Historical orders/payment root cause: UNRESOLVED (current re-runs remain NOT_REPRODUCED, not a fix)"
+    - "Windows Playwright visual baselines: intentionally absent, not a false PASS"
+    - "Dependency advisories: 21 affected-package entries (9 moderate/11 high/1 critical), all dev-only, 0 under --omit=dev — disclosed, not eliminated"
+  next_phase: "PART 2 — Advanced / Next-Generation QA Engineering (not started; scope only, no implementation in this closeout)"
+
 pointers:
   digital_twin: "01-SALIM-BURAK-DIGITAL-TWIN/"
   codex_handoff: ".ai/CODEX-FULL-AUDIT-HANDOFF.md"
