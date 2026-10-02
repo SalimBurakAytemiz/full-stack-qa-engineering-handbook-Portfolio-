@@ -607,6 +607,18 @@ relationships:
   - from: competency.fuzz-testing.structured-api-fuzzing
     predicate: EVIDENCED_BY
     to: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
+  - from: competency.mutation-testing.mutation-based-test-adequacy
+    predicate: EVIDENCED_BY
+    to: evidence.mutation-testing.real-mutation-run
+  - from: competency.testcontainers.container-based-integration-testing
+    predicate: EVIDENCED_BY
+    to: evidence.testcontainers.real-lab-run
+  - from: competency.data-engineering.etl-pipeline-testing
+    predicate: EVIDENCED_BY
+    to: evidence.data-engineering.real-etl-and-quality-run
+  - from: competency.data-engineering.data-quality-validation
+    predicate: EVIDENCED_BY
+    to: evidence.data-engineering.real-etl-and-quality-run
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite

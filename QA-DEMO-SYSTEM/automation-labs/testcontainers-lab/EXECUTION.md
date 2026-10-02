@@ -33,14 +33,30 @@ real message against `lib/classify-docker-error.js`'s pattern list
 
 ## Run 3 — CI (GitHub Actions `ubuntu-latest`, real Docker daemon)
 
-Pending: the `testcontainers-lab` CI job runs this exact same script
-unmodified. `ubuntu-latest` GitHub-hosted runners ship a running Docker
-daemon, so the same code path that reported `EXTERNALLY_BLOCKED` here is
-expected to genuinely start the container, serve a real HTTP response, and
-report `EXECUTED`. This section will be updated with the real run URL and
-output once that job's first green run is confirmed (see
-`.github/workflows/ci.yml`), mirroring every other CI_VERIFIED elevation in
-this campaign (M2.1/M2.2/M2.3) — never self-declared ahead of a real run.
+**Command:** the `testcontainers-lab` job in `.github/workflows/ci.yml`
+ran this exact same script unmodified —
+`https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997`
+(commit `97da16f`, job "Testcontainers lab (real container lifecycle via
+the real testcontainers library)", conclusion: success).
+
+**Actual observed output (from the real CI job log):**
+```
+TESTCONTAINERS_LAB: attempting to start a real container (nginx:alpine) via testcontainers ...
+TESTCONTAINERS_LAB: GET http://localhost:32769/ -> status 200, body contains 'nginx': true
+TESTCONTAINERS_LAB_STATUS: EXECUTED — real container started, real mapped port, real HTTP response verified, real teardown follows.
+```
+Exit code `0`.
+
+This confirms the exact prediction this file made in Run 2: `ubuntu-latest`
+GitHub-hosted runners ship a real, running Docker daemon, so the same code
+path that reported `EXTERNALLY_BLOCKED` in this sandbox genuinely started
+the container, got a real mapped port, made a real HTTP request, and got a
+real `200` response with the real nginx welcome page — in CI, this is
+`EXECUTED`, not a fake pass and not a simulation. This lab's registry
+maturity is `L4_CI_VERIFIED` / evidence `E4_CI_VERIFIED` on that basis,
+mirroring every other CI_VERIFIED elevation in this campaign
+(M2.1/M2.2/M2.3) — confirmed from the real run, never self-declared ahead
+of one.
 
 ## Scope and honesty notes
 

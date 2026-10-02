@@ -395,19 +395,21 @@ competencies:
   # Part 2 — Advanced QA Engineering: Mutation Testing, Testcontainers &
   # Data Engineering (Milestone 2.4). Same discipline as Milestones
   # 2.1/2.2/2.3: professional.status NONE for all four — genuinely new
-  # ground. repository.status is EXECUTED as of this commit (real,
-  # locally-run node --test passes) — not yet CI_VERIFIED; see the
-  # immediately following elevation commit once
-  # mutation-testing-lab/testcontainers-lab/data-engineering-lab CI jobs
-  # are confirmed green on GitHub Actions.
+  # ground. repository.status is CI_VERIFIED — GitHub Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997
+  # (commit 97da16f) confirmed the "Mutation Testing lab", "Testcontainers
+  # lab", and "Data Engineering lab" CI jobs all pass — including the
+  # Testcontainers lab genuinely executing a real container against
+  # GitHub Actions' real Docker daemon (this sandbox has none, so its
+  # local run reports EXTERNALLY_BLOCKED, exactly as disclosed).
 
   - id: competency.mutation-testing.mutation-based-test-adequacy
     label: "Mutation Testing (Mutation-Based Test Adequacy)"
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "mutation-testing/lib/mutate.js — mutation-engine.test.js (5) + a real mutation run against backend's real, unmodified products.service.js (5/6 mutants killed; the survivor investigated and confirmed a genuine equivalent mutant, not a test gap — see EXECUTION.md)"
+      status: CI_VERIFIED
+      evidence: "mutation-testing/lib/mutate.js — mutation-engine.test.js (5) + a real mutation run against backend's real, unmodified products.service.js (5/6 mutants killed; the survivor investigated and confirmed a genuine equivalent mutant, not a test gap), verified in GitHub Actions"
     gaps: [gap.mutation-testing.professional-exposure, gap.mutation-testing.real-tooling]
 
   - id: competency.testcontainers.container-based-integration-testing
@@ -415,8 +417,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "testcontainers-lab/run-testcontainers-lab.js — classify-docker-error.test.js (5) genuinely passing; the real lab run reports EXTERNALLY_BLOCKED in this no-Docker-daemon sandbox (a real, observed testcontainers error, not simulated) — see EXECUTION.md for the real local result and the pending CI result"
+      status: CI_VERIFIED
+      evidence: "testcontainers-lab/run-testcontainers-lab.js — classify-docker-error.test.js (5) genuinely passing; the real lab run genuinely EXECUTED against GitHub Actions' real Docker daemon (real container, real mapped port, real 200 response), verified in GitHub Actions"
     gaps: [gap.testcontainers.professional-exposure, gap.testcontainers.docker-daemon-unavailable-locally]
 
   - id: competency.data-engineering.etl-pipeline-testing
@@ -424,8 +426,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "data-engineering/lib/etl.js — etl.test.js (4, real extraction from a real in-memory SQLite db + real aggregate transforms) genuinely passing"
+      status: CI_VERIFIED
+      evidence: "data-engineering/lib/etl.js — etl.test.js (4, real extraction from a real in-memory SQLite db + real aggregate transforms) genuinely passing, verified in GitHub Actions"
     gaps: [gap.data-engineering.professional-exposure]
 
   - id: competency.data-engineering.data-quality-validation
@@ -433,8 +435,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "data-engineering/lib/data-quality.js — data-quality.test.js (9) genuinely passing; every one of the four checks proven against both real clean data (zero violations) and deliberately corrupted synthetic data (the exact injected violation caught) — see EXECUTION.md"
+      status: CI_VERIFIED
+      evidence: "data-engineering/lib/data-quality.js — data-quality.test.js (9) genuinely passing; every one of the four checks proven against both real clean data (zero violations) and deliberately corrupted synthetic data (the exact injected violation caught), verified in GitHub Actions"
     gaps: [gap.data-engineering.professional-exposure]
 
 related:

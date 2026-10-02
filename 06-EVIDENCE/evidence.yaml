@@ -154,28 +154,28 @@ items:
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Bu lab'ın fuzz testi backend/src/middleware/errorHandler.js'de GERÇEK bir hatayı buldu (413 yerine 500 dönen büyük istek gövdesi) ve düzeltilmesini sağladı — bkz. artifact ve COMMON-MISTAKES.md."
 
   - id: evidence.mutation-testing.real-mutation-run
-    label: "Mutation Testing lab — 5 unit tests + a real mutation run (5/6 killed, 1 confirmed equivalent mutant) executed locally"
-    maturity: E3_EXECUTED
+    label: "Mutation Testing lab — 5 unit tests + a real mutation run (5/6 killed, 1 confirmed equivalent mutant) executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/mutation-testing/EXECUTION.md"
-    produced_by: "npm run mutation:test --workspace automation-labs (local run, this commit) — not yet CI-verified"
+    produced_by: "npm run mutation:test --workspace automation-labs — GitHub Actions job 'Mutation Testing lab (real mutants vs real products.service tests)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997, commit 97da16f, conclusion: success"
     related_lab: lab.mutation-testing.real-mutants-vs-real-tests
-    note: "TR: E3_EXECUTED — yerel olarak gerçekten çalıştırıldı ve PASS aldı (5/6 mutant öldürüldü, hayatta kalan mutant gerçek bir eşdeğer mutant olarak araştırılıp doğrulandı). Henüz GitHub Actions'ta doğrulanmadı — bkz. artifact."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (5/6 mutant öldürüldü, hayatta kalan mutant gerçek bir eşdeğer mutant olarak araştırılıp doğrulandı)."
 
   - id: evidence.testcontainers.real-lab-run
-    label: "Testcontainers lab — 5 unit tests executed locally; real lab run reports EXTERNALLY_BLOCKED (no Docker daemon in this sandbox)"
-    maturity: E3_EXECUTED
+    label: "Testcontainers lab — 5 unit tests + a real container lifecycle run (genuinely EXECUTED on GitHub Actions' real Docker daemon) executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/EXECUTION.md"
-    produced_by: "npm run testcontainers:test --workspace automation-labs (local run, this commit) — not yet CI-verified"
+    produced_by: "npm run testcontainers:test --workspace automation-labs — GitHub Actions job 'Testcontainers lab (real container lifecycle via the real testcontainers library)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997, commit 97da16f, conclusion: success"
     related_lab: lab.testcontainers.real-container-lifecycle
-    note: "TR: E3_EXECUTED — yerel olarak gerçekten çalıştırıldı; gerçek testcontainers çağrısı bu sandbox'ta Docker daemon bulunmadığı için GERÇEKTEN EXTERNALLY_BLOCKED döndü (sahte PASS değil). GitHub Actions ubuntu-latest runner'ında gerçek bir Docker daemon vardır — bkz. artifact."
+    note: "TR: E4_CI_VERIFIED — bu sandbox'ta Docker daemon olmadığı için EXTERNALLY_BLOCKED idi, ancak GitHub Actions ubuntu-latest runner'ında GERÇEK bir Docker daemon bulundu ve lab GERÇEKTEN EXECUTED oldu (gerçek container, gerçek mapped port, gerçek 200 yanıtı, gerçek teardown) — bkz. artifact ve produced_by'daki run URL'i."
 
   - id: evidence.data-engineering.real-etl-and-quality-run
-    label: "Data Engineering lab — 13 unit tests + a real ETL/data-quality run (zero real violations, all 4 negative-path proofs confirmed) executed locally"
-    maturity: E3_EXECUTED
+    label: "Data Engineering lab — 13 unit tests + a real ETL/data-quality run (zero real violations, all 4 negative-path proofs confirmed) executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/data-engineering/EXECUTION.md"
-    produced_by: "npm run data-eng:test --workspace automation-labs (local run, this commit) — not yet CI-verified"
+    produced_by: "npm run data-eng:test --workspace automation-labs — GitHub Actions job 'Data Engineering lab (real ETL + data-quality checks)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997, commit 97da16f, conclusion: success"
     related_lab: lab.data-engineering.etl-and-data-quality
-    note: "TR: E3_EXECUTED — yerel olarak gerçekten çalıştırıldı ve PASS aldı. Dört veri-kalitesi kontrolünün HER BİRİ hem gerçek temiz veriye hem de kasıtlı olarak bozulmuş veriye karşı kanıtlandı. Henüz GitHub Actions'ta doğrulanmadı — bkz. artifact."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Dört veri-kalitesi kontrolünün HER BİRİ hem gerçek temiz veriye hem de kasıtlı olarak bozulmuş veriye karşı kanıtlandı."
 
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"

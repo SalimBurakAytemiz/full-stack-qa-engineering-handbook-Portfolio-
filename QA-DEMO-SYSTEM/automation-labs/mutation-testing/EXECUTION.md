@@ -82,6 +82,10 @@ Exit code `0`.
   "mutating the real target file does not mutate the file on disk" case,
   and by every mutant being written only to a `fs.mkdtempSync` scratch
   directory that is removed in a `finally` block.
-- Not yet CI-verified as of this file's writing — CI wiring is a separate,
-  explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `mutation-testing-lab` job once added).
+- **CI-verified.** The `mutation-testing-lab` job in
+  `.github/workflows/ci.yml` ran this exact suite on GitHub Actions and
+  passed — see
+  `https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997`
+  (commit `97da16f`, job "Mutation Testing lab (real mutants vs real
+  products.service tests)", conclusion: success). This lab's registry
+  maturity is `L4_CI_VERIFIED` / evidence `E4_CI_VERIFIED` on that basis.

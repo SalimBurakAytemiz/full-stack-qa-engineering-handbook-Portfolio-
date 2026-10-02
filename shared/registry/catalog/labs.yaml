@@ -141,27 +141,27 @@ items:
 
   - id: lab.mutation-testing.real-mutants-vs-real-tests
     label: "Mutation Testing (hand-rolled text-based generator vs. real backend module)"
-    maturity: L3_AUTOMATED
+    maturity: L4_CI_VERIFIED
     path: "QA-DEMO-SYSTEM/automation-labs/mutation-testing"
     evidence_id: evidence.mutation-testing.real-mutation-run
     covers_competencies: [competency.mutation-testing.mutation-based-test-adequacy]
-    note: "TR: Yerel olarak gerçekten çalıştırıldı ve PASS aldı (5/6 mutant öldürüldü; hayatta kalan mutant GERÇEK bir eşdeğer mutant olarak araştırılıp doğrulandı — test boşluğu değil). Henüz CI'da doğrulanmadı (bkz. EXECUTION.md)."
+    note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı (5/6 mutant öldürüldü; hayatta kalan mutant GERÇEK bir eşdeğer mutant olarak araştırılıp doğrulandı — test boşluğu değil)."
 
   - id: lab.testcontainers.real-container-lifecycle
     label: "Testcontainers (real Docker container lifecycle via the real testcontainers library)"
-    maturity: L3_AUTOMATED
+    maturity: L4_CI_VERIFIED
     path: "QA-DEMO-SYSTEM/automation-labs/testcontainers-lab"
     evidence_id: evidence.testcontainers.real-lab-run
     covers_competencies: [competency.testcontainers.container-based-integration-testing]
-    note: "TR: Bu sandbox'ta Docker daemon'a erişilemediği için dürüstçe EXTERNALLY_BLOCKED raporlanır (sahte bir PASS değil) — GitHub Actions ubuntu-latest runner'ında gerçek bir daemon vardır, bu yüzden CI'da gerçekten EXECUTED olması beklenir. Henüz CI'da doğrulanmadı (bkz. EXECUTION.md)."
+    note: "TR: Bu sandbox'ta Docker daemon'a erişilemediği için EXTERNALLY_BLOCKED idi — GitHub Actions ubuntu-latest runner'ında GERÇEK bir Docker daemon bulundu ve lab GERÇEKTEN EXECUTED oldu (gerçek container, gerçek mapped port, gerçek 200 yanıtı)."
 
   - id: lab.data-engineering.etl-and-data-quality
     label: "Data Engineering — ETL + data-quality checks (referential integrity, uniqueness, reconciliation, schema drift)"
-    maturity: L3_AUTOMATED
+    maturity: L4_CI_VERIFIED
     path: "QA-DEMO-SYSTEM/automation-labs/data-engineering"
     evidence_id: evidence.data-engineering.real-etl-and-quality-run
     covers_competencies: [competency.data-engineering.etl-pipeline-testing, competency.data-engineering.data-quality-validation]
-    note: "TR: Yerel olarak gerçekten çalıştırıldı ve PASS aldı. Dört veri-kalitesi kontrolünün HER BİRİ hem gerçek temiz veriye (sıfır ihlal) hem de kasıtlı olarak bozulmuş sentetik veriye (gerçek yakalama) karşı kanıtlandı. Henüz CI'da doğrulanmadı (bkz. EXECUTION.md)."
+    note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı. Dört veri-kalitesi kontrolünün HER BİRİ hem gerçek temiz veriye (sıfır ihlal) hem de kasıtlı olarak bozulmuş sentetik veriye (gerçek yakalama) karşı kanıtlandı."
 
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"

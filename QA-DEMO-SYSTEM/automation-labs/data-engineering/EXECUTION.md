@@ -67,6 +67,10 @@ Exit code `0`.
 - `lib/expected-schema.js` is hand-maintained, not auto-generated from the
   live schema — see README.md's "A real finding" section for why that
   matters.
-- Not yet CI-verified as of this file's writing — CI wiring is a separate,
-  explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `data-engineering-lab` job once added).
+- **CI-verified.** The `data-engineering-lab` job in
+  `.github/workflows/ci.yml` ran this exact suite on GitHub Actions and
+  passed — see
+  `https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997`
+  (commit `97da16f`, job "Data Engineering lab (real ETL + data-quality
+  checks)", conclusion: success). This lab's registry maturity is
+  `L4_CI_VERIFIED` / evidence `E4_CI_VERIFIED` on that basis.

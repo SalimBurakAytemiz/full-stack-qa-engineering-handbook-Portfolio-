@@ -42,10 +42,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Consumer-Driven Contract Testing | WORKING | NONE | CI_VERIFIED |
 | Property-Based Testing (Generative/Invariant Testing) | WORKING | NONE | CI_VERIFIED |
 | Structured API Fuzz Testing | WORKING | NONE | CI_VERIFIED |
-| Mutation Testing (Mutation-Based Test Adequacy) | WORKING | NONE | EXECUTED |
-| Testcontainers-Style Container-Based Integration Testing | WORKING | NONE | EXECUTED |
-| ETL Pipeline Testing | WORKING | NONE | EXECUTED |
-| Data Quality Validation (Referential Integrity, Reconciliation, Schema Drift) | WORKING | NONE | EXECUTED |
+| Mutation Testing (Mutation-Based Test Adequacy) | WORKING | NONE | CI_VERIFIED |
+| Testcontainers-Style Container-Based Integration Testing | WORKING | NONE | CI_VERIFIED |
+| ETL Pipeline Testing | WORKING | NONE | CI_VERIFIED |
+| Data Quality Validation (Referential Integrity, Reconciliation, Schema Drift) | WORKING | NONE | CI_VERIFIED |
 
 ## Domain Maturity
 
@@ -81,9 +81,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Privacy Testing — PII/sensitive-field response scanning + GDPR-style data-subject-rights fixture | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` |
 | Service Virtualization & Consumer-Driven Contract Testing (WireMock-style stub server + ajv contracts) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/service-virtualization` |
 | Property-Based & Fuzz Testing (hand-rolled framework + real-API fuzzing) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing` |
-| Mutation Testing (hand-rolled text-based generator vs. real backend module) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing` |
-| Testcontainers (real Docker container lifecycle via the real testcontainers library) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab` |
-| Data Engineering — ETL + data-quality checks (referential integrity, uniqueness, reconciliation, schema drift) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/data-engineering` |
+| Mutation Testing (hand-rolled text-based generator vs. real backend module) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing` |
+| Testcontainers (real Docker container lifecycle via the real testcontainers library) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab` |
+| Data Engineering — ETL + data-quality checks (referential integrity, uniqueness, reconciliation, schema drift) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/data-engineering` |
 
 ## System Patterns
 
@@ -135,15 +135,15 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Privacy Testing lab — 14 unit + 3 real-backend integration tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md` |
 | Service Virtualization & Contract Testing lab — 11/11 tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/service-virtualization/EXECUTION.md` |
 | Property-Based & Fuzz Testing lab — 16/16 tests executed (local + CI), including a real backend bug found and fixed | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/EXECUTION.md` |
-| Mutation Testing lab — 5 unit tests + a real mutation run (5/6 killed, 1 confirmed equivalent mutant) executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing/EXECUTION.md` |
-| Testcontainers lab — 5 unit tests executed locally; real lab run reports EXTERNALLY_BLOCKED (no Docker daemon in this sandbox) | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/EXECUTION.md` |
-| Data Engineering lab — 13 unit tests + a real ETL/data-quality run (zero real violations, all 4 negative-path proofs confirmed) executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/data-engineering/EXECUTION.md` |
+| Mutation Testing lab — 5 unit tests + a real mutation run (5/6 killed, 1 confirmed equivalent mutant) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing/EXECUTION.md` |
+| Testcontainers lab — 5 unit tests + a real container lifecycle run (genuinely EXECUTED on GitHub Actions' real Docker daemon) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/EXECUTION.md` |
+| Data Engineering lab — 13 unit tests + a real ETL/data-quality run (zero real violations, all 4 negative-path proofs confirmed) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/data-engineering/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (321 edges)
+## Relationships (325 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -325,6 +325,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.virtualization.consumer-driven-contracts | EVIDENCED_BY | evidence.service-virtualization.stub-and-contract-execution |
 | competency.property-testing.generative-invariant-testing | EVIDENCED_BY | evidence.property-and-fuzz-testing.generative-and-fuzz-execution |
 | competency.fuzz-testing.structured-api-fuzzing | EVIDENCED_BY | evidence.property-and-fuzz-testing.generative-and-fuzz-execution |
+| competency.mutation-testing.mutation-based-test-adequacy | EVIDENCED_BY | evidence.mutation-testing.real-mutation-run |
+| competency.testcontainers.container-based-integration-testing | EVIDENCED_BY | evidence.testcontainers.real-lab-run |
+| competency.data-engineering.etl-pipeline-testing | EVIDENCED_BY | evidence.data-engineering.real-etl-and-quality-run |
+| competency.data-engineering.data-quality-validation | EVIDENCED_BY | evidence.data-engineering.real-etl-and-quality-run |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.public-schema-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.protected-auth-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.orders-payment-suite |

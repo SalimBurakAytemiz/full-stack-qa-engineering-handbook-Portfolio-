@@ -53,9 +53,9 @@ lab catalog navigable and machine-checkable (see
 | Privacy Testing — PII scan + data-subject-rights | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` | `lab.privacy-testing.pii-and-data-subject-rights` | L4_CI_VERIFIED |
 | Service Virtualization & Contract Testing | `QA-DEMO-SYSTEM/automation-labs/service-virtualization` | `lab.service-virtualization.stub-and-contract-testing` | L4_CI_VERIFIED |
 | Property-Based & Fuzz Testing | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing` | `lab.property-and-fuzz-testing.generative-and-api-fuzzing` | L4_CI_VERIFIED |
-| Mutation Testing | `QA-DEMO-SYSTEM/automation-labs/mutation-testing` | `lab.mutation-testing.real-mutants-vs-real-tests` | L3_AUTOMATED |
-| Testcontainers | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab` | `lab.testcontainers.real-container-lifecycle` | L3_AUTOMATED |
-| Data Engineering — ETL & Data Quality | `QA-DEMO-SYSTEM/automation-labs/data-engineering` | `lab.data-engineering.etl-and-data-quality` | L3_AUTOMATED |
+| Mutation Testing | `QA-DEMO-SYSTEM/automation-labs/mutation-testing` | `lab.mutation-testing.real-mutants-vs-real-tests` | L4_CI_VERIFIED |
+| Testcontainers | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab` | `lab.testcontainers.real-container-lifecycle` | L4_CI_VERIFIED |
+| Data Engineering — ETL & Data Quality | `QA-DEMO-SYSTEM/automation-labs/data-engineering` | `lab.data-engineering.etl-and-data-quality` | L4_CI_VERIFIED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real
@@ -97,10 +97,11 @@ in-process ETL/data-quality check set rather than Airflow/dbt/Great
 Expectations) and
 `02-FULL-STACK-QA-HANDBOOK/25-ADVANCED-QA-ENGINEERING/MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/`
 for the matching handbook content. The Testcontainers lab reports
-`EXTERNALLY_BLOCKED` in this sandbox (no reachable Docker daemon) and is
-expected to report `EXECUTED` once its CI job runs on a GitHub Actions
-`ubuntu-latest` runner, which does have one. All competencies these three
-labs cover have `professional: {status: NONE}` in the Digital Twin
+`EXTERNALLY_BLOCKED` in this sandbox (no reachable Docker daemon) but
+genuinely reported `EXECUTED` in its GitHub Actions `ubuntu-latest` CI
+run, which does have one (real container, real mapped port, real `200`
+response — see the lab's own `EXECUTION.md`). All competencies these
+three labs cover have `professional: {status: NONE}` in the Digital Twin
 registry.
 
 Mobile (Appium) has no lab entry: there is no real device/emulator
