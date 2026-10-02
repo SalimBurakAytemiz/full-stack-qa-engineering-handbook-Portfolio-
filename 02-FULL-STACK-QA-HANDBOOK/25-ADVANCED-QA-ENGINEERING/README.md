@@ -31,12 +31,12 @@ Repository Practice).
 | `AI-ML-LLM-SYSTEMS-TESTING/` | Added — real executable mock-first lab, see below |
 | `RELIABILITY-CHAOS-PRIVACY-TESTING/` | Added — real executable chaos/reliability + privacy labs, see below |
 | `SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/` | Added — real executable service-virtualization/contract + property-based/fuzz labs, see below |
+| `MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/` | Added — real executable mutation-testing, Testcontainers, and data-engineering labs, see below |
 
-Further subtopics (mutation testing, data-engineering QA, messaging,
-supply-chain security, modern protocols, production verification) are
-planned but not yet added in this pass — this folder grows
-incrementally, each addition backed by real, executed work, never a
-documentation-only placeholder claiming more than exists.
+Further subtopics (messaging, supply-chain security, modern protocols,
+production verification) are planned but not yet added in this pass —
+this folder grows incrementally, each addition backed by real, executed
+work, never a documentation-only placeholder claiming more than exists.
 
 ## AI/ML/LLM Systems Testing
 
@@ -81,3 +81,24 @@ contract verifier rather than WireMock/Pact; a hand-rolled
 property-testing framework rather than fast-check; fixed, disclosed
 fuzz-value sets rather than coverage-guided mutation) that every other
 document in that subfolder assumes.
+
+## Mutation Testing, Testcontainers & Data Engineering
+
+Executable labs: `QA-DEMO-SYSTEM/automation-labs/mutation-testing/` (a
+real, hand-rolled mutation generator run against the backend's real,
+unmodified `products.service.js` — including a genuine equivalent-mutant
+finding), `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/` (the real
+`testcontainers` npm package starting a real Docker container — honestly
+`EXTERNALLY_BLOCKED` in this no-daemon sandbox, expected `EXECUTED` on
+GitHub Actions), and `QA-DEMO-SYSTEM/automation-labs/data-engineering/`
+(real ETL + four real data-quality checks — referential integrity,
+uniqueness, reconciliation, schema drift — against a real in-memory
+database, each proven to actually detect what it claims to).
+
+Read `MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/README.md` first —
+it states the scope boundary (a minimal, text-based mutation generator
+rather than Stryker/PIT; the real Testcontainers library, deliberately,
+since no reasonable minimal substitute exists for real container
+lifecycle management; a minimal in-process ETL/data-quality check set
+rather than Airflow/dbt/Great Expectations) that every other document in
+that subfolder assumes.

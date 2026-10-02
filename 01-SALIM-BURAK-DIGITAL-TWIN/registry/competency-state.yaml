@@ -392,6 +392,51 @@ competencies:
       evidence: "property-and-fuzz-testing/lib/fuzz-generators.js — api-fuzz.test.js (4, real fuzz testing against the live backend) genuinely passing, verified in GitHub Actions; found and drove the fix for a real backend bug (oversized request bodies returning 500 instead of 413 — see backend/src/middleware/errorHandler.js)"
     gaps: [gap.fuzz-testing.professional-exposure, gap.fuzz-testing.real-tooling]
 
+  # Part 2 — Advanced QA Engineering: Mutation Testing, Testcontainers &
+  # Data Engineering (Milestone 2.4). Same discipline as Milestones
+  # 2.1/2.2/2.3: professional.status NONE for all four — genuinely new
+  # ground. repository.status is EXECUTED as of this commit (real,
+  # locally-run node --test passes) — not yet CI_VERIFIED; see the
+  # immediately following elevation commit once
+  # mutation-testing-lab/testcontainers-lab/data-engineering-lab CI jobs
+  # are confirmed green on GitHub Actions.
+
+  - id: competency.mutation-testing.mutation-based-test-adequacy
+    label: "Mutation Testing (Mutation-Based Test Adequacy)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "mutation-testing/lib/mutate.js — mutation-engine.test.js (5) + a real mutation run against backend's real, unmodified products.service.js (5/6 mutants killed; the survivor investigated and confirmed a genuine equivalent mutant, not a test gap — see EXECUTION.md)"
+    gaps: [gap.mutation-testing.professional-exposure, gap.mutation-testing.real-tooling]
+
+  - id: competency.testcontainers.container-based-integration-testing
+    label: "Testcontainers-Style Container-Based Integration Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "testcontainers-lab/run-testcontainers-lab.js — classify-docker-error.test.js (5) genuinely passing; the real lab run reports EXTERNALLY_BLOCKED in this no-Docker-daemon sandbox (a real, observed testcontainers error, not simulated) — see EXECUTION.md for the real local result and the pending CI result"
+    gaps: [gap.testcontainers.professional-exposure, gap.testcontainers.docker-daemon-unavailable-locally]
+
+  - id: competency.data-engineering.etl-pipeline-testing
+    label: "ETL Pipeline Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "data-engineering/lib/etl.js — etl.test.js (4, real extraction from a real in-memory SQLite db + real aggregate transforms) genuinely passing"
+    gaps: [gap.data-engineering.professional-exposure]
+
+  - id: competency.data-engineering.data-quality-validation
+    label: "Data Quality Validation (Referential Integrity, Reconciliation, Schema Drift)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "data-engineering/lib/data-quality.js — data-quality.test.js (9) genuinely passing; every one of the four checks proven against both real clean data (zero violations) and deliberately corrupted synthetic data (the exact injected violation caught) — see EXECUTION.md"
+    gaps: [gap.data-engineering.professional-exposure]
+
 related:
   professional_source: "professional-experience.yaml"
   gap_detail: "gaps.yaml"

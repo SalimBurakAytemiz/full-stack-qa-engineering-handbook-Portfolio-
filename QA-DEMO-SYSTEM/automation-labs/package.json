@@ -17,10 +17,17 @@
     "property-fuzz:test": "node property-and-fuzz-testing/run-property-and-fuzz-lab.js",
     "property-fuzz:test:unit": "node --test property-and-fuzz-testing/tests/property-testing-framework.test.js property-and-fuzz-testing/tests/products-service-properties.test.js",
     "virtualization:test": "node service-virtualization/run-virtualization-lab.js",
-    "virtualization:test:unit": "node --test service-virtualization/tests/stub-server.test.js service-virtualization/tests/consumer-contract.test.js"
+    "virtualization:test:unit": "node --test service-virtualization/tests/stub-server.test.js service-virtualization/tests/consumer-contract.test.js",
+    "mutation:test": "node mutation-testing/run-mutation-lab.js",
+    "mutation:test:unit": "node --test mutation-testing/tests/mutation-engine.test.js",
+    "testcontainers:test": "node testcontainers-lab/run-testcontainers-lab.js",
+    "testcontainers:test:unit": "node --test testcontainers-lab/tests/classify-docker-error.test.js",
+    "data-eng:test": "node data-engineering/run-data-engineering-lab.js",
+    "data-eng:test:unit": "node --test data-engineering/tests/*.test.js"
   },
   "devDependencies": {
     "selenium-webdriver": "^4.49.0",
-    "ajv": "^8.20.0"
+    "ajv": "^8.20.0",
+    "testcontainers": "^10.13.0"
   }
 }

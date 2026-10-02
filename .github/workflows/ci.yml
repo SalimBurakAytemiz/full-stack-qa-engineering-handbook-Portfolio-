@@ -396,3 +396,54 @@ jobs:
       - run: npm run property-fuzz:test --workspace automation-labs
         env:
           QA_DEMO_BASE_URL: http://127.0.0.1:3000
+
+  mutation-testing-lab:
+    # Part 2 — Advanced QA Engineering: Mutation Testing (Milestone 2.4).
+    # Self-contained: mutates the real products.service.js in-memory
+    # (via a scratch temp file, never touching the real file) and runs
+    # real assertions against a real in-memory SQLite db — no server
+    # needed.
+    name: Mutation Testing lab (real mutants vs real products.service tests)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run mutation:test --workspace automation-labs
+
+  testcontainers-lab:
+    # Part 2 — Advanced QA Engineering: Testcontainers (Milestone 2.4).
+    # GitHub Actions ubuntu-latest runners ship a real, running Docker
+    # daemon by default, so this job is expected to genuinely start a
+    # real container (unlike the local sandbox this was developed in,
+    # which has no reachable daemon and reports EXTERNALLY_BLOCKED — see
+    # the lab's own EXECUTION.md).
+    name: Testcontainers lab (real container lifecycle via the real testcontainers library)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run testcontainers:test --workspace automation-labs
+
+  data-engineering-lab:
+    # Part 2 — Advanced QA Engineering: Data Engineering QA (Milestone
+    # 2.4). Self-contained: seeds a real in-memory SQLite db via the
+    # backend's own getDatabase() and runs real ETL + data-quality
+    # checks against it — no server needed.
+    name: Data Engineering lab (real ETL + data-quality checks)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run data-eng:test --workspace automation-labs

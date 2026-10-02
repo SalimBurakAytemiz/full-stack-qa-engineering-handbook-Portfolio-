@@ -188,5 +188,30 @@ gaps:
     label: "Fuzz Testing — real coverage-guided fuzzing infrastructure (AFL/libFuzzer)"
     note: "TR: api-fuzz.test.js sabit, açıkça beyan edilmiş düşman değer kümeleri kullanır — gerçek coverage-guided fuzzing altyapısı (AFL/libFuzzer) hiç kullanılmadı."
 
+  - id: gap.mutation-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Mutation Testing — professional project exposure"
+    note: "TR: competency.mutation-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.mutation-testing.real-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Mutation Testing — real AST-based mutation engine (Stryker/PIT/mutmut)"
+    note: "TR: mutation-testing lab'ı elle yazılmış, metin-tabanlı bir find/replace üretici kullanır — Stryker, PIT veya mutmut gibi gerçek bir AST-tabanlı mutation engine hiç kullanılmadı."
+
+  - id: gap.testcontainers.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Testcontainers / Container-Based Integration Testing — professional project exposure"
+    note: "TR: competency.testcontainers.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.testcontainers.docker-daemon-unavailable-locally
+    types: [ENVIRONMENT_LIMITATION]
+    label: "Testcontainers lab — no reachable Docker daemon in this sandbox"
+    note: "TR: Bu sandbox'ta docker CLI mevcut ama erişilebilir bir Docker daemon YOK (doğrulandı: docker info /var/run/docker.sock üzerinde başarısız oluyor) — lab bunu dürüstçe EXTERNALLY_BLOCKED olarak raporluyor; GitHub Actions ubuntu-latest runner'larında gerçek bir daemon vardır, bu yüzden CI_VERIFIED elevation o gerçek CI çalışmasına dayanacaktır."
+
+  - id: gap.data-engineering.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Data Engineering QA (ETL / Data Quality) — professional project exposure"
+    note: "TR: competency.data-engineering.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

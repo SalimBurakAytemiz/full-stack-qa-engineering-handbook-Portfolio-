@@ -87,6 +87,19 @@ not incompleteness; no row implies content that isn't there.
   genuine backend bug — an oversized request body was falling through
   to a raw 500 instead of a proper 413) with matching handbook docs at
   [`25-ADVANCED-QA-ENGINEERING/SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/`](25-ADVANCED-QA-ENGINEERING/SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/).
+  Also covers **Mutation Testing, Testcontainers & Data Engineering** —
+  three more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/mutation-testing/`: a real, hand-rolled
+  mutation generator run against the backend's real, unmodified
+  `products.service.js`, including a genuine equivalent-mutant finding;
+  `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/`: the real
+  `testcontainers` npm package starting a real Docker container,
+  honestly `EXTERNALLY_BLOCKED` in this no-daemon sandbox; and
+  `QA-DEMO-SYSTEM/automation-labs/data-engineering/`: real ETL plus four
+  real data-quality checks — referential integrity, uniqueness,
+  reconciliation, schema drift — each proven to actually detect what it
+  claims to) with matching handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/`](25-ADVANCED-QA-ENGINEERING/MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/).
   Professional experience for this whole area is explicitly `NONE` in
   the Digital Twin registry — this is repository practice only,
   disclosed as such throughout (see each folder's `README.md`

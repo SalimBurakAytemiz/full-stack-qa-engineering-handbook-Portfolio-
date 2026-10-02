@@ -48,6 +48,10 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Consumer-Driven Contract Testing | WORKING | NONE | CI_VERIFIED |
 | Property-Based Testing (Generative/Invariant Testing) | WORKING | NONE | CI_VERIFIED |
 | Structured API Fuzz Testing | WORKING | NONE | CI_VERIFIED |
+| Mutation Testing (Mutation-Based Test Adequacy) | WORKING | NONE | EXECUTED |
+| Testcontainers-Style Container-Based Integration Testing | WORKING | NONE | EXECUTED |
+| ETL Pipeline Testing | WORKING | NONE | EXECUTED |
+| Data Quality Validation (Referential Integrity, Reconciliation, Schema Drift) | WORKING | NONE | EXECUTED |
 
 ## Reading this table correctly
 

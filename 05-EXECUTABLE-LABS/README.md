@@ -53,6 +53,9 @@ lab catalog navigable and machine-checkable (see
 | Privacy Testing — PII scan + data-subject-rights | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` | `lab.privacy-testing.pii-and-data-subject-rights` | L4_CI_VERIFIED |
 | Service Virtualization & Contract Testing | `QA-DEMO-SYSTEM/automation-labs/service-virtualization` | `lab.service-virtualization.stub-and-contract-testing` | L4_CI_VERIFIED |
 | Property-Based & Fuzz Testing | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing` | `lab.property-and-fuzz-testing.generative-and-api-fuzzing` | L4_CI_VERIFIED |
+| Mutation Testing | `QA-DEMO-SYSTEM/automation-labs/mutation-testing` | `lab.mutation-testing.real-mutants-vs-real-tests` | L3_AUTOMATED |
+| Testcontainers | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab` | `lab.testcontainers.real-container-lifecycle` | L3_AUTOMATED |
+| Data Engineering — ETL & Data Quality | `QA-DEMO-SYSTEM/automation-labs/data-engineering` | `lab.data-engineering.etl-and-data-quality` | L3_AUTOMATED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real
@@ -82,6 +85,22 @@ for the matching handbook content. The fuzz-testing lab found and drove
 the fix for a real bug in `backend/src/middleware/errorHandler.js`
 (oversized request bodies returning 500 instead of 413). All 4 covered
 competencies have `professional: {status: NONE}` in the Digital Twin
+registry.
+
+The Mutation Testing, Testcontainers, and Data Engineering labs are Part
+2 Milestone 2.4's addition — see each lab's own `README.md` for its
+scope boundary (a minimal, text-based mutation generator rather than
+Stryker/PIT, including a genuine equivalent-mutant finding documented
+honestly rather than hidden; the real `testcontainers` library,
+deliberately, since no reasonable minimal substitute exists; a minimal
+in-process ETL/data-quality check set rather than Airflow/dbt/Great
+Expectations) and
+`02-FULL-STACK-QA-HANDBOOK/25-ADVANCED-QA-ENGINEERING/MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/`
+for the matching handbook content. The Testcontainers lab reports
+`EXTERNALLY_BLOCKED` in this sandbox (no reachable Docker daemon) and is
+expected to report `EXECUTED` once its CI job runs on a GitHub Actions
+`ubuntu-latest` runner, which does have one. All competencies these three
+labs cover have `professional: {status: NONE}` in the Digital Twin
 registry.
 
 Mobile (Appium) has no lab entry: there is no real device/emulator

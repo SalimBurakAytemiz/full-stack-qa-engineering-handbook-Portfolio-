@@ -42,6 +42,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Consumer-Driven Contract Testing | WORKING | NONE | CI_VERIFIED |
 | Property-Based Testing (Generative/Invariant Testing) | WORKING | NONE | CI_VERIFIED |
 | Structured API Fuzz Testing | WORKING | NONE | CI_VERIFIED |
+| Mutation Testing (Mutation-Based Test Adequacy) | WORKING | NONE | EXECUTED |
+| Testcontainers-Style Container-Based Integration Testing | WORKING | NONE | EXECUTED |
+| ETL Pipeline Testing | WORKING | NONE | EXECUTED |
+| Data Quality Validation (Referential Integrity, Reconciliation, Schema Drift) | WORKING | NONE | EXECUTED |
 
 ## Domain Maturity
 
@@ -77,6 +81,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Privacy Testing — PII/sensitive-field response scanning + GDPR-style data-subject-rights fixture | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` |
 | Service Virtualization & Consumer-Driven Contract Testing (WireMock-style stub server + ajv contracts) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/service-virtualization` |
 | Property-Based & Fuzz Testing (hand-rolled framework + real-API fuzzing) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing` |
+| Mutation Testing (hand-rolled text-based generator vs. real backend module) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing` |
+| Testcontainers (real Docker container lifecycle via the real testcontainers library) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab` |
+| Data Engineering — ETL + data-quality checks (referential integrity, uniqueness, reconciliation, schema drift) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/data-engineering` |
 
 ## System Patterns
 
@@ -128,12 +135,15 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Privacy Testing lab — 14 unit + 3 real-backend integration tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md` |
 | Service Virtualization & Contract Testing lab — 11/11 tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/service-virtualization/EXECUTION.md` |
 | Property-Based & Fuzz Testing lab — 16/16 tests executed (local + CI), including a real backend bug found and fixed | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/EXECUTION.md` |
+| Mutation Testing lab — 5 unit tests + a real mutation run (5/6 killed, 1 confirmed equivalent mutant) executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing/EXECUTION.md` |
+| Testcontainers lab — 5 unit tests executed locally; real lab run reports EXTERNALLY_BLOCKED (no Docker daemon in this sandbox) | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/EXECUTION.md` |
+| Data Engineering lab — 13 unit tests + a real ETL/data-quality run (zero real violations, all 4 negative-path proofs confirmed) executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/data-engineering/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (300 edges)
+## Relationships (321 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -212,6 +222,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.virtualization.consumer-driven-contracts | USES_TOOL | tool.ajv |
 | competency.property-testing.generative-invariant-testing | USES_TECHNOLOGY | tech.property-based-testing |
 | competency.fuzz-testing.structured-api-fuzzing | USES_TECHNOLOGY | tech.fuzz-testing |
+| competency.mutation-testing.mutation-based-test-adequacy | USES_TOOL | tool.mutation-generator |
+| competency.testcontainers.container-based-integration-testing | USES_TOOL | tool.testcontainers |
+| competency.data-engineering.etl-pipeline-testing | USES_TECHNOLOGY | tech.etl-pipeline |
+| competency.data-engineering.data-quality-validation | USES_TECHNOLOGY | tech.data-quality-checks |
 | competency.api.graphql | USES_TECHNOLOGY | protocol.graphql |
 | competency.api.rest | USES_TECHNOLOGY | protocol.rest |
 | competency.integration.websocket | USES_TECHNOLOGY | protocol.websocket |
@@ -231,6 +245,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.database.sql-validation | USES_TECHNOLOGY | tech.sql |
 | lab.database.sql-validation | USES_TOOL | tool.sqlite |
 | lab.cicd.github-actions | USES_TOOL | platform.github-actions |
+| lab.mutation-testing.real-mutants-vs-real-tests | USES_TOOL | tool.mutation-generator |
+| lab.testcontainers.real-container-lifecycle | USES_TOOL | tool.testcontainers |
+| lab.data-engineering.etl-and-data-quality | USES_TECHNOLOGY | tech.etl-pipeline |
+| lab.data-engineering.etl-and-data-quality | USES_TECHNOLOGY | tech.data-quality-checks |
 | competency.api.rest | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.api.graphql | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.integration.websocket | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
@@ -255,6 +273,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.virtualization.consumer-driven-contracts | PRACTICED_IN | lab.service-virtualization.stub-and-contract-testing |
 | competency.property-testing.generative-invariant-testing | PRACTICED_IN | lab.property-and-fuzz-testing.generative-and-api-fuzzing |
 | competency.fuzz-testing.structured-api-fuzzing | PRACTICED_IN | lab.property-and-fuzz-testing.generative-and-api-fuzzing |
+| competency.mutation-testing.mutation-based-test-adequacy | PRACTICED_IN | lab.mutation-testing.real-mutants-vs-real-tests |
+| competency.testcontainers.container-based-integration-testing | PRACTICED_IN | lab.testcontainers.real-container-lifecycle |
+| competency.data-engineering.etl-pipeline-testing | PRACTICED_IN | lab.data-engineering.etl-and-data-quality |
+| competency.data-engineering.data-quality-validation | PRACTICED_IN | lab.data-engineering.etl-and-data-quality |
 | competency.security.security-aware-qa | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.correlation-logging | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.elastic-log-analysis | RELATED_TO | lab.observability.elastic-log-analysis |
@@ -277,6 +299,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.privacy-testing.pii-and-data-subject-rights | TESTED_BY | evidence.privacy-testing.pii-and-rights-execution |
 | lab.service-virtualization.stub-and-contract-testing | TESTED_BY | evidence.service-virtualization.stub-and-contract-execution |
 | lab.property-and-fuzz-testing.generative-and-api-fuzzing | TESTED_BY | evidence.property-and-fuzz-testing.generative-and-fuzz-execution |
+| lab.mutation-testing.real-mutants-vs-real-tests | TESTED_BY | evidence.mutation-testing.real-mutation-run |
+| lab.testcontainers.real-container-lifecycle | TESTED_BY | evidence.testcontainers.real-lab-run |
+| lab.data-engineering.etl-and-data-quality | TESTED_BY | evidence.data-engineering.real-etl-and-quality-run |
 | lab.database.sql-validation | TESTED_BY | evidence.database.sql-validation-suite |
 | lab.security.owasp-mapping | DOCUMENTED_BY | evidence.security.owasp-mapping-review |
 | lab.cicd.github-actions | IMPLEMENTED_BY | evidence.cicd.github-actions-pipeline |
@@ -340,6 +365,12 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.property-testing.generative-invariant-testing | LEARNING | gap.property-testing.professional-exposure |
 | competency.fuzz-testing.structured-api-fuzzing | LEARNING | gap.fuzz-testing.real-tooling |
 | competency.fuzz-testing.structured-api-fuzzing | LEARNING | gap.fuzz-testing.professional-exposure |
+| competency.mutation-testing.mutation-based-test-adequacy | LEARNING | gap.mutation-testing.real-tooling |
+| competency.mutation-testing.mutation-based-test-adequacy | LEARNING | gap.mutation-testing.professional-exposure |
+| competency.testcontainers.container-based-integration-testing | LEARNING | gap.testcontainers.docker-daemon-unavailable-locally |
+| competency.testcontainers.container-based-integration-testing | LEARNING | gap.testcontainers.professional-exposure |
+| competency.data-engineering.etl-pipeline-testing | LEARNING | gap.data-engineering.professional-exposure |
+| competency.data-engineering.data-quality-validation | LEARNING | gap.data-engineering.professional-exposure |
 | competency.web.accessibility | LEARNING | gap.accessibility.professional-exposure |
 | competency.security.security-aware-qa | LEARNING | gap.security.professional-exposure |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |

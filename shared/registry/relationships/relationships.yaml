@@ -274,6 +274,18 @@ relationships:
   - from: competency.fuzz-testing.structured-api-fuzzing
     predicate: USES_TECHNOLOGY
     to: tech.fuzz-testing
+  - from: competency.mutation-testing.mutation-based-test-adequacy
+    predicate: USES_TOOL
+    to: tool.mutation-generator
+  - from: competency.testcontainers.container-based-integration-testing
+    predicate: USES_TOOL
+    to: tool.testcontainers
+  - from: competency.data-engineering.etl-pipeline-testing
+    predicate: USES_TECHNOLOGY
+    to: tech.etl-pipeline
+  - from: competency.data-engineering.data-quality-validation
+    predicate: USES_TECHNOLOGY
+    to: tech.data-quality-checks
   - from: competency.api.graphql
     predicate: USES_TECHNOLOGY
     to: protocol.graphql
@@ -335,6 +347,18 @@ relationships:
   - from: lab.cicd.github-actions
     predicate: USES_TOOL
     to: platform.github-actions
+  - from: lab.mutation-testing.real-mutants-vs-real-tests
+    predicate: USES_TOOL
+    to: tool.mutation-generator
+  - from: lab.testcontainers.real-container-lifecycle
+    predicate: USES_TOOL
+    to: tool.testcontainers
+  - from: lab.data-engineering.etl-and-data-quality
+    predicate: USES_TECHNOLOGY
+    to: tech.etl-pipeline
+  - from: lab.data-engineering.etl-and-data-quality
+    predicate: USES_TECHNOLOGY
+    to: tech.data-quality-checks
 
   # ============================================================
   # COMPETENCY -> LAB (repository practice location — PRACTICED_IN)
@@ -411,6 +435,18 @@ relationships:
   - from: competency.fuzz-testing.structured-api-fuzzing
     predicate: PRACTICED_IN
     to: lab.property-and-fuzz-testing.generative-and-api-fuzzing
+  - from: competency.mutation-testing.mutation-based-test-adequacy
+    predicate: PRACTICED_IN
+    to: lab.mutation-testing.real-mutants-vs-real-tests
+  - from: competency.testcontainers.container-based-integration-testing
+    predicate: PRACTICED_IN
+    to: lab.testcontainers.real-container-lifecycle
+  - from: competency.data-engineering.etl-pipeline-testing
+    predicate: PRACTICED_IN
+    to: lab.data-engineering.etl-and-data-quality
+  - from: competency.data-engineering.data-quality-validation
+    predicate: PRACTICED_IN
+    to: lab.data-engineering.etl-and-data-quality
   - from: competency.security.security-aware-qa
     predicate: PRACTICED_IN
     to: lab.backend-api.rest-graphql-websocket
@@ -488,6 +524,15 @@ relationships:
   - from: lab.property-and-fuzz-testing.generative-and-api-fuzzing
     predicate: TESTED_BY
     to: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
+  - from: lab.mutation-testing.real-mutants-vs-real-tests
+    predicate: TESTED_BY
+    to: evidence.mutation-testing.real-mutation-run
+  - from: lab.testcontainers.real-container-lifecycle
+    predicate: TESTED_BY
+    to: evidence.testcontainers.real-lab-run
+  - from: lab.data-engineering.etl-and-data-quality
+    predicate: TESTED_BY
+    to: evidence.data-engineering.real-etl-and-quality-run
   - from: lab.database.sql-validation
     predicate: TESTED_BY
     to: evidence.database.sql-validation-suite
@@ -690,6 +735,24 @@ relationships:
   - from: competency.fuzz-testing.structured-api-fuzzing
     predicate: LEARNING
     to: gap.fuzz-testing.professional-exposure
+  - from: competency.mutation-testing.mutation-based-test-adequacy
+    predicate: LEARNING
+    to: gap.mutation-testing.real-tooling
+  - from: competency.mutation-testing.mutation-based-test-adequacy
+    predicate: LEARNING
+    to: gap.mutation-testing.professional-exposure
+  - from: competency.testcontainers.container-based-integration-testing
+    predicate: LEARNING
+    to: gap.testcontainers.docker-daemon-unavailable-locally
+  - from: competency.testcontainers.container-based-integration-testing
+    predicate: LEARNING
+    to: gap.testcontainers.professional-exposure
+  - from: competency.data-engineering.etl-pipeline-testing
+    predicate: LEARNING
+    to: gap.data-engineering.professional-exposure
+  - from: competency.data-engineering.data-quality-validation
+    predicate: LEARNING
+    to: gap.data-engineering.professional-exposure
   - from: competency.web.accessibility
     predicate: LEARNING
     to: gap.accessibility.professional-exposure
