@@ -65,6 +65,13 @@ surfaced it immediately. See `README.md`'s "A real finding" section and
 
 - Not a UI RTL/LTR layout test, pluralization-rule library, or
   translation-key coverage scanner — see `README.md`'s "Scope boundary".
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `i18n-testing-lab` job once added).
+
+## Run 3 — CI-verified
+
+GitHub Actions run
+[`37082016580`](https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37082016580)
+(commit `ef228cd`), job **"i18n Testing lab (Intl locale formatting +
+Unicode round-trip)"** — `conclusion: success`. The same
+`npm run i18n:test --workspace automation-labs` command confirmed above
+ran against GitHub Actions' real `ubuntu-latest` runner with the same
+observed output.

@@ -739,6 +739,18 @@ relationships:
   - from: competency.compatibility-testing.breaking-change-detection
     predicate: EVIDENCED_BY
     to: evidence.compatibility-testing.real-lab-run
+  - from: competency.i18n-testing.locale-aware-formatting
+    predicate: EVIDENCED_BY
+    to: evidence.i18n-testing.real-lab-run
+  - from: competency.i18n-testing.unicode-data-integrity
+    predicate: EVIDENCED_BY
+    to: evidence.i18n-testing.real-lab-run
+  - from: competency.modern-protocols.server-sent-events
+    predicate: EVIDENCED_BY
+    to: evidence.modern-protocols.real-lab-run
+  - from: competency.production-verification.synthetic-monitoring
+    predicate: EVIDENCED_BY
+    to: evidence.production-verification.real-lab-run
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite

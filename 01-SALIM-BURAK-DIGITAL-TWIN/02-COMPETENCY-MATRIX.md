@@ -57,10 +57,10 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | SBOM Generation & Vulnerability Auditing | WORKING | NONE | CI_VERIFIED |
 | Lockfile Integrity Verification (SRI Hash Coverage) | WORKING | NONE | CI_VERIFIED |
 | API Backward-Compatibility & Breaking-Change Detection | WORKING | NONE | CI_VERIFIED |
-| Locale-Aware Formatting (Intl Number/Date/Currency) | WORKING | NONE | EXECUTED |
-| Unicode Data Integrity (Multi-Byte Round-Trip) | WORKING | NONE | EXECUTED |
-| Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | EXECUTED |
-| Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | EXECUTED |
+| Locale-Aware Formatting (Intl Number/Date/Currency) | WORKING | NONE | CI_VERIFIED |
+| Unicode Data Integrity (Multi-Byte Round-Trip) | WORKING | NONE | CI_VERIFIED |
+| Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | CI_VERIFIED |
+| Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | CI_VERIFIED |
 
 ## Reading this table correctly
 

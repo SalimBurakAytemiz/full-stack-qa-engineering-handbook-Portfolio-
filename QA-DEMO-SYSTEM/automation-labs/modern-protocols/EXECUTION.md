@@ -52,6 +52,13 @@ Exit code `0`.
   client reconnection timer or `retry:` field handling. See `README.md`'s
   "Scope boundary" section.
 - Never modifies the real backend (`backend/src/`) — fully self-contained.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `modern-protocols-lab` job once added).
+
+## Run 3 — CI-verified
+
+GitHub Actions run
+[`37082016580`](https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37082016580)
+(commit `ef228cd`), job **"Modern Protocols lab (real Server-Sent Events
+server + client)"** — `conclusion: success`. The same
+`npm run modern-protocols:test --workspace automation-labs` command
+confirmed above ran against GitHub Actions' real `ubuntu-latest` runner
+with the same observed output.

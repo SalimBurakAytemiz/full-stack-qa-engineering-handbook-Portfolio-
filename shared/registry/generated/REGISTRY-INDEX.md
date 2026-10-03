@@ -51,10 +51,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | SBOM Generation & Vulnerability Auditing | WORKING | NONE | CI_VERIFIED |
 | Lockfile Integrity Verification (SRI Hash Coverage) | WORKING | NONE | CI_VERIFIED |
 | API Backward-Compatibility & Breaking-Change Detection | WORKING | NONE | CI_VERIFIED |
-| Locale-Aware Formatting (Intl Number/Date/Currency) | WORKING | NONE | EXECUTED |
-| Unicode Data Integrity (Multi-Byte Round-Trip) | WORKING | NONE | EXECUTED |
-| Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | EXECUTED |
-| Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | EXECUTED |
+| Locale-Aware Formatting (Intl Number/Date/Currency) | WORKING | NONE | CI_VERIFIED |
+| Unicode Data Integrity (Multi-Byte Round-Trip) | WORKING | NONE | CI_VERIFIED |
+| Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | CI_VERIFIED |
+| Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | CI_VERIFIED |
 
 ## Domain Maturity
 
@@ -96,9 +96,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Distributed Messaging (hand-rolled in-process broker — ordering, DLQ, idempotent consumer) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging` |
 | Supply Chain Security (real npm sbom + npm audit + lockfile integrity) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security` |
 | Compatibility Testing (frozen baseline contract vs. real backend response shape) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing` |
-| i18n Testing (Intl locale formatting + Unicode multi-byte round-trip) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing` |
-| Modern Protocols (hand-rolled real Server-Sent Events server + client) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols` |
-| Production Verification (real synthetic smoke-test monitor against a real backend) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/production-verification` |
+| i18n Testing (Intl locale formatting + Unicode multi-byte round-trip) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing` |
+| Modern Protocols (hand-rolled real Server-Sent Events server + client) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols` |
+| Production Verification (real synthetic smoke-test monitor against a real backend) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification` |
 
 ## System Patterns
 
@@ -156,15 +156,15 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Distributed Messaging lab — 8 unit tests + a real aggregate run (ordering, DLQ routing, non-idempotent double-apply vs. idempotent single-apply) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging/EXECUTION.md` |
 | Supply Chain Security lab — 14 unit tests + a real npm sbom/npm audit/lockfile-integrity run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security/EXECUTION.md` |
 | Compatibility Testing lab — 4 unit tests + a real baseline-vs-current-response run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing/EXECUTION.md` |
-| i18n Testing lab — 7 unit tests + a real Intl-formatting/Unicode-roundtrip run executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing/EXECUTION.md` |
-| Modern Protocols lab — 3 unit tests + a real SSE server/client run executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md` |
-| Production Verification lab — 15 unit tests + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md` |
+| i18n Testing lab — 7 unit tests + a real Intl-formatting/Unicode-roundtrip run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing/EXECUTION.md` |
+| Modern Protocols lab — 3 unit tests + a real SSE server/client run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md` |
+| Production Verification lab — 15 unit tests + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (380 edges)
+## Relationships (384 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -390,6 +390,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.supply-chain-security.sbom-and-vulnerability-auditing | EVIDENCED_BY | evidence.supply-chain-security.real-lab-run |
 | competency.supply-chain-security.lockfile-integrity-verification | EVIDENCED_BY | evidence.supply-chain-security.real-lab-run |
 | competency.compatibility-testing.breaking-change-detection | EVIDENCED_BY | evidence.compatibility-testing.real-lab-run |
+| competency.i18n-testing.locale-aware-formatting | EVIDENCED_BY | evidence.i18n-testing.real-lab-run |
+| competency.i18n-testing.unicode-data-integrity | EVIDENCED_BY | evidence.i18n-testing.real-lab-run |
+| competency.modern-protocols.server-sent-events | EVIDENCED_BY | evidence.modern-protocols.real-lab-run |
+| competency.production-verification.synthetic-monitoring | EVIDENCED_BY | evidence.production-verification.real-lab-run |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.public-schema-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.protected-auth-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.orders-payment-suite |

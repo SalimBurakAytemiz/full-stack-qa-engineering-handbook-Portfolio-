@@ -72,6 +72,15 @@ Exit code `0`.
 
 - Not a commercial synthetic-monitoring platform — see `README.md`'s
   "Scope boundary" section.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `production-verification-lab` job once added).
+
+## Run 4 — CI-verified
+
+GitHub Actions run
+[`37082016580`](https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37082016580)
+(commit `ef228cd`), job **"Production Verification lab (real synthetic
+smoke-test monitor)"** — `conclusion: success`. The job's "Seed and
+start backend server" step seeded and started a real backend on GitHub
+Actions' `ubuntu-latest` runner (same pattern as the Privacy Testing lab
+job), then `npm run production-verification:test --workspace
+automation-labs` ran against it, producing the same real `GO` verdict
+pattern confirmed in Run 3 above.

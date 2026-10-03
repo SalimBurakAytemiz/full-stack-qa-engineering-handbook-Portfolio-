@@ -202,28 +202,28 @@ items:
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (gerçek mevcut yanıt şekli NO_CHANGE; kaldırılan alan ve tip değişikliği BREAKING, yeni eklenen alan SAFE_ADDITIVE olarak doğru sınıflandırıldı)."
 
   - id: evidence.i18n-testing.real-lab-run
-    label: "i18n Testing lab — 7 unit tests + a real Intl-formatting/Unicode-roundtrip run executed locally"
-    maturity: E3_EXECUTED
+    label: "i18n Testing lab — 7 unit tests + a real Intl-formatting/Unicode-roundtrip run executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/i18n-testing/EXECUTION.md"
-    produced_by: "npm run i18n:test --workspace automation-labs + npm run i18n:test:unit --workspace automation-labs, run locally in this sandbox"
+    produced_by: "npm run i18n:test --workspace automation-labs — GitHub Actions job 'i18n Testing lab (Intl locale formatting + Unicode round-trip)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37082016580, commit ef228cd, conclusion: success"
     related_lab: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
-    note: "TR: E3_EXECUTED — lokal olarak gerçekten çalıştırılıp PASS aldı. Node'un gerçek Intl API'si birden fazla locale'de gerçekten farklı cikti uretti; dört gercek cok-baytli string backend'in gercek products tablosuna karsi bayt-bayt degismeden gidip-geldi. CI_VERIFIED elevation henüz yapılmadı."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Node'un gerçek Intl API'si birden fazla locale'de gerçekten farklı cikti uretti; dört gercek cok-baytli string backend'in gercek products tablosuna karsi bayt-bayt degismeden gidip-geldi."
 
   - id: evidence.modern-protocols.real-lab-run
-    label: "Modern Protocols lab — 3 unit tests + a real SSE server/client run executed locally"
-    maturity: E3_EXECUTED
+    label: "Modern Protocols lab — 3 unit tests + a real SSE server/client run executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md"
-    produced_by: "npm run modern-protocols:test --workspace automation-labs + npm run modern-protocols:test:unit --workspace automation-labs, run locally in this sandbox"
+    produced_by: "npm run modern-protocols:test --workspace automation-labs — GitHub Actions job 'Modern Protocols lab (real Server-Sent Events server + client)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37082016580, commit ef228cd, conclusion: success"
     related_lab: lab.modern-protocols.server-sent-events
-    note: "TR: E3_EXECUTED — lokal olarak gerçekten çalıştırılıp PASS aldı (gercek olay zamanlamalari ilerlemeli teslimati kanitladi; Last-Event-ID yeniden baglanma semantigi dogrulandi). CI_VERIFIED elevation henüz yapılmadı."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (gercek olay zamanlamalari ilerlemeli teslimati kanitladi; Last-Event-ID yeniden baglanma semantigi dogrulandi)."
 
   - id: evidence.production-verification.real-lab-run
-    label: "Production Verification lab — 15 unit tests + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) executed locally"
-    maturity: E3_EXECUTED
+    label: "Production Verification lab — 15 unit tests + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md"
-    produced_by: "npm run production-verification:test --workspace automation-labs + npm run production-verification:test:unit --workspace automation-labs, run locally in this sandbox"
+    produced_by: "npm run production-verification:test --workspace automation-labs — GitHub Actions job 'Production Verification lab (real synthetic smoke-test monitor)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37082016580, commit ef228cd, conclusion: success"
     related_lab: lab.production-verification.synthetic-smoke-monitor
-    note: "TR: E3_EXECUTED — lokal olarak gerçekten çalıştırılıp PASS aldı. Sunucu yokken dürüstçe NOT_EXECUTED raporlandi; gercek bir backend baslatilinca gercek bir GO sonucu gercek milisaniye gecikmeleriyle uretildi. CI_VERIFIED elevation henüz yapılmadı."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Sunucu yokken dürüstçe NOT_EXECUTED raporlandi; gercek bir backend baslatilinca gercek bir GO sonucu gercek milisaniye gecikmeleriyle uretildi."
 
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
