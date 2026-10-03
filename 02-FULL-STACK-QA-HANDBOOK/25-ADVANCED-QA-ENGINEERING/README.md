@@ -32,11 +32,12 @@ Repository Practice).
 | `RELIABILITY-CHAOS-PRIVACY-TESTING/` | Added — real executable chaos/reliability + privacy labs, see below |
 | `SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/` | Added — real executable service-virtualization/contract + property-based/fuzz labs, see below |
 | `MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/` | Added — real executable mutation-testing, Testcontainers, and data-engineering labs, see below |
+| `DISTRIBUTED-MESSAGING-SUPPLY-CHAIN-COMPATIBILITY/` | Added — real executable distributed-messaging, supply-chain-security, and compatibility-testing labs, see below |
 
-Further subtopics (messaging, supply-chain security, modern protocols,
-production verification) are planned but not yet added in this pass —
-this folder grows incrementally, each addition backed by real, executed
-work, never a documentation-only placeholder claiming more than exists.
+Further subtopics (modern protocols, production verification) are
+planned but not yet added in this pass — this folder grows incrementally,
+each addition backed by real, executed work, never a documentation-only
+placeholder claiming more than exists.
 
 ## AI/ML/LLM Systems Testing
 
@@ -102,3 +103,27 @@ since no reasonable minimal substitute exists for real container
 lifecycle management; a minimal in-process ETL/data-quality check set
 rather than Airflow/dbt/Great Expectations) that every other document in
 that subfolder assumes.
+
+## Distributed Messaging, Supply Chain Security & Compatibility Testing
+
+Executable labs: `QA-DEMO-SYSTEM/automation-labs/distributed-messaging/`
+(a real, hand-rolled in-process pub/sub broker proving ordering,
+dead-letter routing, and — side by side on the exact same simulated
+failure — a non-idempotent consumer's real double-application bug versus
+an idempotent consumer's real single-application fix),
+`QA-DEMO-SYSTEM/automation-labs/supply-chain-security/` (npm's own
+built-in `npm sbom` and `npm audit` run for real against this actual
+repository — 76 real SBOM components, 24 full-graph vs. 0 production-only
+vulnerabilities, both disclosed — plus a lockfile-integrity checker that
+correctly excludes this repo's own local workspace packages), and
+`QA-DEMO-SYSTEM/automation-labs/compatibility-testing/` (a frozen
+baseline JSON Schema contract validated against the backend's real
+current response shape, with breaking-vs-additive classification proven
+against three deliberately constructed candidates).
+
+Read `DISTRIBUTED-MESSAGING-SUPPLY-CHAIN-COMPATIBILITY/README.md` first —
+it states the scope boundary (a minimal in-process broker rather than
+Kafka/RabbitMQ/SQS; npm's own built-in SBOM/audit tooling rather than a
+commercial SCA product; one real endpoint's frozen contract rather than a
+generic OpenAPI-diffing engine) that every other document in that
+subfolder assumes.

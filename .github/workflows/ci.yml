@@ -447,3 +447,50 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm run data-eng:test --workspace automation-labs
+
+  distributed-messaging-lab:
+    # Part 2 — Advanced QA Engineering: Distributed Messaging (Milestone
+    # 2.5). Self-contained: a hand-rolled, in-process pub/sub broker — no
+    # server, no network, no real broker infrastructure needed.
+    name: Distributed Messaging lab (broker ordering, DLQ, idempotent consumer)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run messaging:test --workspace automation-labs
+
+  supply-chain-security-lab:
+    # Part 2 — Advanced QA Engineering: Supply Chain Security (Milestone
+    # 2.5). Self-contained: shells out to npm's own built-in `npm sbom`
+    # and `npm audit` against this actual repository and checks the real
+    # package-lock.json — no server needed.
+    name: Supply Chain Security lab (real npm sbom + npm audit + lockfile integrity)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run supply-chain:test --workspace automation-labs
+
+  compatibility-testing-lab:
+    # Part 2 — Advanced QA Engineering: Compatibility Testing (Milestone
+    # 2.5). Self-contained: gets the real current response shape from the
+    # backend's real service function against a real in-memory SQLite db
+    # (via the backend's own getDatabase()) — no server needed.
+    name: Compatibility Testing lab (frozen baseline vs real backend response shape)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run compatibility:test --workspace automation-labs

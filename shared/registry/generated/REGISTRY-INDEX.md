@@ -46,6 +46,11 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Testcontainers-Style Container-Based Integration Testing | WORKING | NONE | CI_VERIFIED |
 | ETL Pipeline Testing | WORKING | NONE | CI_VERIFIED |
 | Data Quality Validation (Referential Integrity, Reconciliation, Schema Drift) | WORKING | NONE | CI_VERIFIED |
+| Distributed Messaging — Delivery Semantics, Ordering & Dead-Letter Queues | WORKING | NONE | EXECUTED |
+| Idempotent Consumer Design Under At-Least-Once Delivery | WORKING | NONE | EXECUTED |
+| SBOM Generation & Vulnerability Auditing | WORKING | NONE | EXECUTED |
+| Lockfile Integrity Verification (SRI Hash Coverage) | WORKING | NONE | EXECUTED |
+| API Backward-Compatibility & Breaking-Change Detection | WORKING | NONE | EXECUTED |
 
 ## Domain Maturity
 
@@ -84,6 +89,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Mutation Testing (hand-rolled text-based generator vs. real backend module) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing` |
 | Testcontainers (real Docker container lifecycle via the real testcontainers library) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab` |
 | Data Engineering — ETL + data-quality checks (referential integrity, uniqueness, reconciliation, schema drift) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/data-engineering` |
+| Distributed Messaging (hand-rolled in-process broker — ordering, DLQ, idempotent consumer) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging` |
+| Supply Chain Security (real npm sbom + npm audit + lockfile integrity) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security` |
+| Compatibility Testing (frozen baseline contract vs. real backend response shape) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing` |
 
 ## System Patterns
 
@@ -138,12 +146,15 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Mutation Testing lab — 5 unit tests + a real mutation run (5/6 killed, 1 confirmed equivalent mutant) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing/EXECUTION.md` |
 | Testcontainers lab — 5 unit tests + a real container lifecycle run (genuinely EXECUTED on GitHub Actions' real Docker daemon) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/EXECUTION.md` |
 | Data Engineering lab — 13 unit tests + a real ETL/data-quality run (zero real violations, all 4 negative-path proofs confirmed) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/data-engineering/EXECUTION.md` |
+| Distributed Messaging lab — 8 unit tests + a real aggregate run (ordering, DLQ routing, non-idempotent double-apply vs. idempotent single-apply) executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging/EXECUTION.md` |
+| Supply Chain Security lab — 14 unit tests + a real npm sbom/npm audit/lockfile-integrity run executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security/EXECUTION.md` |
+| Compatibility Testing lab — 4 unit tests + a real baseline-vs-current-response run executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (325 edges)
+## Relationships (353 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -226,6 +237,12 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.testcontainers.container-based-integration-testing | USES_TOOL | tool.testcontainers |
 | competency.data-engineering.etl-pipeline-testing | USES_TECHNOLOGY | tech.etl-pipeline |
 | competency.data-engineering.data-quality-validation | USES_TECHNOLOGY | tech.data-quality-checks |
+| competency.distributed-messaging.delivery-semantics-and-dead-lettering | USES_TECHNOLOGY | tech.in-process-message-broker |
+| competency.distributed-messaging.idempotent-consumer-design | USES_TECHNOLOGY | tech.idempotent-consumer-pattern |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | USES_TOOL | tool.npm-sbom |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | USES_TOOL | tool.npm-audit |
+| competency.supply-chain-security.lockfile-integrity-verification | USES_TECHNOLOGY | tech.lockfile-integrity-check |
+| competency.compatibility-testing.breaking-change-detection | USES_TECHNOLOGY | tech.json-schema-compatibility-contract |
 | competency.api.graphql | USES_TECHNOLOGY | protocol.graphql |
 | competency.api.rest | USES_TECHNOLOGY | protocol.rest |
 | competency.integration.websocket | USES_TECHNOLOGY | protocol.websocket |
@@ -249,6 +266,12 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.testcontainers.real-container-lifecycle | USES_TOOL | tool.testcontainers |
 | lab.data-engineering.etl-and-data-quality | USES_TECHNOLOGY | tech.etl-pipeline |
 | lab.data-engineering.etl-and-data-quality | USES_TECHNOLOGY | tech.data-quality-checks |
+| lab.distributed-messaging.broker-and-idempotent-consumer | USES_TECHNOLOGY | tech.in-process-message-broker |
+| lab.distributed-messaging.broker-and-idempotent-consumer | USES_TECHNOLOGY | tech.idempotent-consumer-pattern |
+| lab.supply-chain-security.sbom-audit-lockfile | USES_TOOL | tool.npm-sbom |
+| lab.supply-chain-security.sbom-audit-lockfile | USES_TOOL | tool.npm-audit |
+| lab.supply-chain-security.sbom-audit-lockfile | USES_TECHNOLOGY | tech.lockfile-integrity-check |
+| lab.compatibility-testing.breaking-change-detection | USES_TECHNOLOGY | tech.json-schema-compatibility-contract |
 | competency.api.rest | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.api.graphql | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.integration.websocket | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
@@ -277,6 +300,11 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.testcontainers.container-based-integration-testing | PRACTICED_IN | lab.testcontainers.real-container-lifecycle |
 | competency.data-engineering.etl-pipeline-testing | PRACTICED_IN | lab.data-engineering.etl-and-data-quality |
 | competency.data-engineering.data-quality-validation | PRACTICED_IN | lab.data-engineering.etl-and-data-quality |
+| competency.distributed-messaging.delivery-semantics-and-dead-lettering | PRACTICED_IN | lab.distributed-messaging.broker-and-idempotent-consumer |
+| competency.distributed-messaging.idempotent-consumer-design | PRACTICED_IN | lab.distributed-messaging.broker-and-idempotent-consumer |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | PRACTICED_IN | lab.supply-chain-security.sbom-audit-lockfile |
+| competency.supply-chain-security.lockfile-integrity-verification | PRACTICED_IN | lab.supply-chain-security.sbom-audit-lockfile |
+| competency.compatibility-testing.breaking-change-detection | PRACTICED_IN | lab.compatibility-testing.breaking-change-detection |
 | competency.security.security-aware-qa | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.correlation-logging | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.elastic-log-analysis | RELATED_TO | lab.observability.elastic-log-analysis |
@@ -302,6 +330,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.mutation-testing.real-mutants-vs-real-tests | TESTED_BY | evidence.mutation-testing.real-mutation-run |
 | lab.testcontainers.real-container-lifecycle | TESTED_BY | evidence.testcontainers.real-lab-run |
 | lab.data-engineering.etl-and-data-quality | TESTED_BY | evidence.data-engineering.real-etl-and-quality-run |
+| lab.distributed-messaging.broker-and-idempotent-consumer | TESTED_BY | evidence.distributed-messaging.real-lab-run |
+| lab.supply-chain-security.sbom-audit-lockfile | TESTED_BY | evidence.supply-chain-security.real-lab-run |
+| lab.compatibility-testing.breaking-change-detection | TESTED_BY | evidence.compatibility-testing.real-lab-run |
 | lab.database.sql-validation | TESTED_BY | evidence.database.sql-validation-suite |
 | lab.security.owasp-mapping | DOCUMENTED_BY | evidence.security.owasp-mapping-review |
 | lab.cicd.github-actions | IMPLEMENTED_BY | evidence.cicd.github-actions-pipeline |
@@ -375,6 +406,14 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.testcontainers.container-based-integration-testing | LEARNING | gap.testcontainers.professional-exposure |
 | competency.data-engineering.etl-pipeline-testing | LEARNING | gap.data-engineering.professional-exposure |
 | competency.data-engineering.data-quality-validation | LEARNING | gap.data-engineering.professional-exposure |
+| competency.distributed-messaging.delivery-semantics-and-dead-lettering | LEARNING | gap.distributed-messaging.real-broker-infrastructure |
+| competency.distributed-messaging.delivery-semantics-and-dead-lettering | LEARNING | gap.distributed-messaging.professional-exposure |
+| competency.distributed-messaging.idempotent-consumer-design | LEARNING | gap.distributed-messaging.professional-exposure |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | LEARNING | gap.supply-chain-security.commercial-sca-tooling |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | LEARNING | gap.supply-chain-security.professional-exposure |
+| competency.supply-chain-security.lockfile-integrity-verification | LEARNING | gap.supply-chain-security.professional-exposure |
+| competency.compatibility-testing.breaking-change-detection | LEARNING | gap.compatibility-testing.generic-openapi-diffing |
+| competency.compatibility-testing.breaking-change-detection | LEARNING | gap.compatibility-testing.professional-exposure |
 | competency.web.accessibility | LEARNING | gap.accessibility.professional-exposure |
 | competency.security.security-aware-qa | LEARNING | gap.security.professional-exposure |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |

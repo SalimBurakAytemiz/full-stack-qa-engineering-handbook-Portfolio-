@@ -100,6 +100,24 @@ not incompleteness; no row implies content that isn't there.
   reconciliation, schema drift — each proven to actually detect what it
   claims to) with matching handbook docs at
   [`25-ADVANCED-QA-ENGINEERING/MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/`](25-ADVANCED-QA-ENGINEERING/MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/).
+  Also covers **Distributed Messaging, Supply Chain Security &
+  Compatibility Testing** — three more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/distributed-messaging/`: a real,
+  hand-rolled in-process pub/sub broker proving ordering, dead-letter
+  routing, and a real observed non-idempotent-consumer double-application
+  bug versus an idempotent fix on the same simulated failure;
+  `QA-DEMO-SYSTEM/automation-labs/supply-chain-security/`: npm's own
+  built-in `npm sbom` and `npm audit` run for real against this actual
+  repository — 76 real SBOM components, 24 full-graph vs. 0
+  production-only vulnerabilities, both disclosed, plus a
+  lockfile-integrity checker that correctly excludes this repo's own
+  local workspace packages; and
+  `QA-DEMO-SYSTEM/automation-labs/compatibility-testing/`: a frozen
+  baseline JSON Schema contract validated against the backend's real
+  current response shape, with breaking-vs-additive classification
+  proven against deliberately constructed candidates) with matching
+  handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/DISTRIBUTED-MESSAGING-SUPPLY-CHAIN-COMPATIBILITY/`](25-ADVANCED-QA-ENGINEERING/DISTRIBUTED-MESSAGING-SUPPLY-CHAIN-COMPATIBILITY/).
   Professional experience for this whole area is explicitly `NONE` in
   the Digital Twin registry — this is repository practice only,
   disclosed as such throughout (see each folder's `README.md`

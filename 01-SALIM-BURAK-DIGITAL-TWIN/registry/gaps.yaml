@@ -213,5 +213,35 @@ gaps:
     label: "Data Engineering QA (ETL / Data Quality) — professional project exposure"
     note: "TR: competency.data-engineering.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
 
+  - id: gap.distributed-messaging.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Distributed Messaging QA — professional project exposure"
+    note: "TR: competency.distributed-messaging.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.distributed-messaging.real-broker-infrastructure
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Distributed Messaging — real broker infrastructure (Kafka/RabbitMQ/SQS)"
+    note: "TR: distributed-messaging lab'ı elle yazılmış, bellek-içi bir pub/sub broker kullanır — kalıcılık, ağ, partition'lama veya consumer-group rebalancing olmadan; gerçek bir Kafka/RabbitMQ/SQS broker'ı hiç kullanılmadı."
+
+  - id: gap.supply-chain-security.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Supply Chain Security QA — professional project exposure"
+    note: "TR: competency.supply-chain-security.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.supply-chain-security.commercial-sca-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Supply Chain Security — commercial SCA tooling (Snyk/Dependabot/Sonatype)"
+    note: "TR: supply-chain-security lab'ı npm'in kendi yerleşik `npm sbom` ve `npm audit` komutlarını kullanır — lisans uyumluluğu kontrolü veya typosquatting tespiti yapan ticari bir SCA aracı (Snyk, Dependabot, Sonatype vb.) hiç kullanılmadı."
+
+  - id: gap.compatibility-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Compatibility (Backward-Compatibility) Testing — professional project exposure"
+    note: "TR: competency.compatibility-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.compatibility-testing.generic-openapi-diffing
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Compatibility Testing — generic OpenAPI-diffing engine (openapi-diff/oasdiff)"
+    note: "TR: compatibility-testing lab'ı tek bir gerçek endpoint şekli için dondurulmuş bir JSON Schema baseline'ı kullanır — gelişmiş JSON Schema anahtar kelimelerini (enum, oneOf, $ref) ele alan genel bir OpenAPI-diffing motoru (openapi-diff, oasdiff vb.) hiç kullanılmadı."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

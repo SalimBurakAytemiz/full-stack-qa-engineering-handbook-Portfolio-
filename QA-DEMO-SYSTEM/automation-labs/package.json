@@ -2,7 +2,7 @@
   "name": "automation-labs",
   "version": "0.1.0",
   "private": true,
-  "description": "QA Demo System — Phase 10 Automation Learning Labs (Selenium WebDriver; JMeter plans run through a real fail-gate wrapper, see jmeter/scripts/run-jmeter.js); Part 2 AI Systems Testing lab (deterministic mock-first, see ai-systems/README.md); Part 2 Chaos/Reliability lab (deterministic fault injection, see chaos-reliability/README.md); Part 2 Privacy Testing lab (see privacy-testing/README.md); Part 2 Property-Based & Fuzz Testing lab (see property-and-fuzz-testing/README.md); Part 2 Service Virtualization & Contract Testing lab (see service-virtualization/README.md)",
+  "description": "QA Demo System — Phase 10 Automation Learning Labs (Selenium WebDriver; JMeter plans run through a real fail-gate wrapper, see jmeter/scripts/run-jmeter.js); Part 2 AI Systems Testing lab (deterministic mock-first, see ai-systems/README.md); Part 2 Chaos/Reliability lab (deterministic fault injection, see chaos-reliability/README.md); Part 2 Privacy Testing lab (see privacy-testing/README.md); Part 2 Property-Based & Fuzz Testing lab (see property-and-fuzz-testing/README.md); Part 2 Service Virtualization & Contract Testing lab (see service-virtualization/README.md); Part 2 Mutation Testing lab (see mutation-testing/README.md); Part 2 Testcontainers lab (see testcontainers-lab/README.md); Part 2 Data Engineering lab (see data-engineering/README.md); Part 2 Distributed Messaging lab (see distributed-messaging/README.md); Part 2 Supply Chain Security lab (see supply-chain-security/README.md); Part 2 Compatibility Testing lab (see compatibility-testing/README.md)",
   "scripts": {
     "selenium:test": "node selenium/tests/login-flow.test.js",
     "selenium:test:parallel": "node selenium/scripts/run-parallel.js",
@@ -23,7 +23,13 @@
     "testcontainers:test": "node testcontainers-lab/run-testcontainers-lab.js",
     "testcontainers:test:unit": "node --test testcontainers-lab/tests/classify-docker-error.test.js",
     "data-eng:test": "node data-engineering/run-data-engineering-lab.js",
-    "data-eng:test:unit": "node --test data-engineering/tests/*.test.js"
+    "data-eng:test:unit": "node --test data-engineering/tests/*.test.js",
+    "messaging:test": "node distributed-messaging/run-distributed-messaging-lab.js",
+    "messaging:test:unit": "node --test distributed-messaging/tests/broker.test.js distributed-messaging/tests/idempotent-consumer.test.js",
+    "supply-chain:test": "node supply-chain-security/run-supply-chain-security-lab.js",
+    "supply-chain:test:unit": "node --test supply-chain-security/tests/*.test.js",
+    "compatibility:test": "node compatibility-testing/run-compatibility-lab.js",
+    "compatibility:test:unit": "node --test compatibility-testing/tests/compatibility-check.test.js"
   },
   "devDependencies": {
     "selenium-webdriver": "^4.49.0",

@@ -56,6 +56,9 @@ lab catalog navigable and machine-checkable (see
 | Mutation Testing | `QA-DEMO-SYSTEM/automation-labs/mutation-testing` | `lab.mutation-testing.real-mutants-vs-real-tests` | L4_CI_VERIFIED |
 | Testcontainers | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab` | `lab.testcontainers.real-container-lifecycle` | L4_CI_VERIFIED |
 | Data Engineering — ETL & Data Quality | `QA-DEMO-SYSTEM/automation-labs/data-engineering` | `lab.data-engineering.etl-and-data-quality` | L4_CI_VERIFIED |
+| Distributed Messaging — broker + idempotent consumer | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging` | `lab.distributed-messaging.broker-and-idempotent-consumer` | L3_AUTOMATED |
+| Supply Chain Security — SBOM + audit + lockfile integrity | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security` | `lab.supply-chain-security.sbom-audit-lockfile` | L3_AUTOMATED |
+| Compatibility Testing — breaking-change detection | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing` | `lab.compatibility-testing.breaking-change-detection` | L3_AUTOMATED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real

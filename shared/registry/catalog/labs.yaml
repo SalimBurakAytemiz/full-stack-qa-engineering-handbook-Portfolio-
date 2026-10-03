@@ -163,6 +163,30 @@ items:
     covers_competencies: [competency.data-engineering.etl-pipeline-testing, competency.data-engineering.data-quality-validation]
     note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı. Dört veri-kalitesi kontrolünün HER BİRİ hem gerçek temiz veriye (sıfır ihlal) hem de kasıtlı olarak bozulmuş sentetik veriye (gerçek yakalama) karşı kanıtlandı."
 
+  - id: lab.distributed-messaging.broker-and-idempotent-consumer
+    label: "Distributed Messaging (hand-rolled in-process broker — ordering, DLQ, idempotent consumer)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/distributed-messaging"
+    evidence_id: evidence.distributed-messaging.real-lab-run
+    covers_competencies: [competency.distributed-messaging.delivery-semantics-and-dead-lettering, competency.distributed-messaging.idempotent-consumer-design]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (8/8 unit test + 4/4 agregat kontrol). Aynı simüle edilmiş hata senaryosu non-idempotent (appliedCount=2, gerçek double-apply hatası) ve idempotent (appliedCount=1) consumer'lar üzerinden GERÇEKTEN karşılaştırıldı. CI_VERIFIED elevation henüz yapılmadı — CI wiring ayrı, izlenen bir adımdır."
+
+  - id: lab.supply-chain-security.sbom-audit-lockfile
+    label: "Supply Chain Security (real npm sbom + npm audit + lockfile integrity)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/supply-chain-security"
+    evidence_id: evidence.supply-chain-security.real-lab-run
+    covers_competencies: [competency.supply-chain-security.sbom-and-vulnerability-auditing, competency.supply-chain-security.lockfile-integrity-verification]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (14/14 unit test + 4/4 agregat kontrol). npm'in kendi `npm sbom`/`npm audit` komutları bu repoya karşı GERÇEKTEN çalıştırıldı (76 bileşenli gerçek SBOM; 24 full-graph'a karşı 0 production-only zafiyet). Lockfile-integrity kontrolcüsü 4 yerel workspace sembolik bağlantısını false-positive olarak İŞARETLEMEDİĞİNİ kanıtladı. CI_VERIFIED elevation henüz yapılmadı."
+
+  - id: lab.compatibility-testing.breaking-change-detection
+    label: "Compatibility Testing (frozen baseline contract vs. real backend response shape)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/compatibility-testing"
+    evidence_id: evidence.compatibility-testing.real-lab-run
+    covers_competencies: [competency.compatibility-testing.breaking-change-detection]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (4/4 unit test + 4/4 agregat kontrol). Backend'in GERÇEK mevcut yanıt şekli dondurulmuş bir baseline'a karşı doğrulandı (NO_CHANGE); kaldırılan alan ve tip değişikliği BREAKING, yeni eklenen alan SAFE_ADDITIVE olarak doğru sınıflandırıldı. CI_VERIFIED elevation henüz yapılmadı."
+
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"
   narrative_docs:

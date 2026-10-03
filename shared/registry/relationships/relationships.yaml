@@ -286,6 +286,24 @@ relationships:
   - from: competency.data-engineering.data-quality-validation
     predicate: USES_TECHNOLOGY
     to: tech.data-quality-checks
+  - from: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    predicate: USES_TECHNOLOGY
+    to: tech.in-process-message-broker
+  - from: competency.distributed-messaging.idempotent-consumer-design
+    predicate: USES_TECHNOLOGY
+    to: tech.idempotent-consumer-pattern
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: USES_TOOL
+    to: tool.npm-sbom
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: USES_TOOL
+    to: tool.npm-audit
+  - from: competency.supply-chain-security.lockfile-integrity-verification
+    predicate: USES_TECHNOLOGY
+    to: tech.lockfile-integrity-check
+  - from: competency.compatibility-testing.breaking-change-detection
+    predicate: USES_TECHNOLOGY
+    to: tech.json-schema-compatibility-contract
   - from: competency.api.graphql
     predicate: USES_TECHNOLOGY
     to: protocol.graphql
@@ -359,6 +377,24 @@ relationships:
   - from: lab.data-engineering.etl-and-data-quality
     predicate: USES_TECHNOLOGY
     to: tech.data-quality-checks
+  - from: lab.distributed-messaging.broker-and-idempotent-consumer
+    predicate: USES_TECHNOLOGY
+    to: tech.in-process-message-broker
+  - from: lab.distributed-messaging.broker-and-idempotent-consumer
+    predicate: USES_TECHNOLOGY
+    to: tech.idempotent-consumer-pattern
+  - from: lab.supply-chain-security.sbom-audit-lockfile
+    predicate: USES_TOOL
+    to: tool.npm-sbom
+  - from: lab.supply-chain-security.sbom-audit-lockfile
+    predicate: USES_TOOL
+    to: tool.npm-audit
+  - from: lab.supply-chain-security.sbom-audit-lockfile
+    predicate: USES_TECHNOLOGY
+    to: tech.lockfile-integrity-check
+  - from: lab.compatibility-testing.breaking-change-detection
+    predicate: USES_TECHNOLOGY
+    to: tech.json-schema-compatibility-contract
 
   # ============================================================
   # COMPETENCY -> LAB (repository practice location — PRACTICED_IN)
@@ -447,6 +483,21 @@ relationships:
   - from: competency.data-engineering.data-quality-validation
     predicate: PRACTICED_IN
     to: lab.data-engineering.etl-and-data-quality
+  - from: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    predicate: PRACTICED_IN
+    to: lab.distributed-messaging.broker-and-idempotent-consumer
+  - from: competency.distributed-messaging.idempotent-consumer-design
+    predicate: PRACTICED_IN
+    to: lab.distributed-messaging.broker-and-idempotent-consumer
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: PRACTICED_IN
+    to: lab.supply-chain-security.sbom-audit-lockfile
+  - from: competency.supply-chain-security.lockfile-integrity-verification
+    predicate: PRACTICED_IN
+    to: lab.supply-chain-security.sbom-audit-lockfile
+  - from: competency.compatibility-testing.breaking-change-detection
+    predicate: PRACTICED_IN
+    to: lab.compatibility-testing.breaking-change-detection
   - from: competency.security.security-aware-qa
     predicate: PRACTICED_IN
     to: lab.backend-api.rest-graphql-websocket
@@ -533,6 +584,15 @@ relationships:
   - from: lab.data-engineering.etl-and-data-quality
     predicate: TESTED_BY
     to: evidence.data-engineering.real-etl-and-quality-run
+  - from: lab.distributed-messaging.broker-and-idempotent-consumer
+    predicate: TESTED_BY
+    to: evidence.distributed-messaging.real-lab-run
+  - from: lab.supply-chain-security.sbom-audit-lockfile
+    predicate: TESTED_BY
+    to: evidence.supply-chain-security.real-lab-run
+  - from: lab.compatibility-testing.breaking-change-detection
+    predicate: TESTED_BY
+    to: evidence.compatibility-testing.real-lab-run
   - from: lab.database.sql-validation
     predicate: TESTED_BY
     to: evidence.database.sql-validation-suite
@@ -765,6 +825,30 @@ relationships:
   - from: competency.data-engineering.data-quality-validation
     predicate: LEARNING
     to: gap.data-engineering.professional-exposure
+  - from: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    predicate: LEARNING
+    to: gap.distributed-messaging.real-broker-infrastructure
+  - from: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    predicate: LEARNING
+    to: gap.distributed-messaging.professional-exposure
+  - from: competency.distributed-messaging.idempotent-consumer-design
+    predicate: LEARNING
+    to: gap.distributed-messaging.professional-exposure
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: LEARNING
+    to: gap.supply-chain-security.commercial-sca-tooling
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: LEARNING
+    to: gap.supply-chain-security.professional-exposure
+  - from: competency.supply-chain-security.lockfile-integrity-verification
+    predicate: LEARNING
+    to: gap.supply-chain-security.professional-exposure
+  - from: competency.compatibility-testing.breaking-change-detection
+    predicate: LEARNING
+    to: gap.compatibility-testing.generic-openapi-diffing
+  - from: competency.compatibility-testing.breaking-change-detection
+    predicate: LEARNING
+    to: gap.compatibility-testing.professional-exposure
   - from: competency.web.accessibility
     predicate: LEARNING
     to: gap.accessibility.professional-exposure
