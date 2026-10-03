@@ -213,11 +213,11 @@ items:
 
   - id: lab.release-engineering.semver-changelog-and-canary-rollout
     label: "Release Engineering (hand-rolled semver/changelog integrity checks + canary rollout state machine)"
-    maturity: L3_AUTOMATED
+    maturity: L4_CI_VERIFIED
     path: "QA-DEMO-SYSTEM/automation-labs/release-engineering"
     evidence_id: evidence.release-engineering.real-lab-run
     covers_competencies: [competency.release-engineering.semver-and-changelog-integrity, competency.release-engineering.canary-rollout-and-automatic-rollback]
-    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (21/21 unit test + 11/11 agregat kontrol). Bu reponun KENDİ gerçek CHANGELOG.md ve 6 gerçek workspace package.json dosyası dogrulandi; canary rollout durum makinesi hem tam basarili hem de 50% asamasinda gercek bir enjekte edilmis hatayla otomatik rollback senaryolarinda kanitlandi. CI_VERIFIED elevation henüz yapılmadı."
+    note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı (21/21 unit test + 11/11 agregat kontrol). Bu reponun KENDİ gerçek CHANGELOG.md ve 6 gerçek workspace package.json dosyası dogrulandi; canary rollout durum makinesi hem tam basarili hem de 50% asamasinda gercek bir enjekte edilmis hatayla otomatik rollback senaryolarinda kanitlandi."
 
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"

@@ -781,6 +781,12 @@ relationships:
   - from: competency.production-verification.synthetic-monitoring
     predicate: EVIDENCED_BY
     to: evidence.production-verification.real-lab-run
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: EVIDENCED_BY
+    to: evidence.release-engineering.real-lab-run
+  - from: competency.release-engineering.canary-rollout-and-automatic-rollback
+    predicate: EVIDENCED_BY
+    to: evidence.release-engineering.real-lab-run
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite

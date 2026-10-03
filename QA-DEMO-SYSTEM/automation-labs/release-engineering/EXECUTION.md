@@ -81,6 +81,13 @@ workspace in this repository is still `0.1.0`). See
   "Scope boundary" section.
 - `lib/changelog-check.js` checks this repository's own real
   CHANGELOG.md's structure; it is not a general-purpose linter.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `release-engineering-lab` job once added).
+
+## Run 3 — CI-verified
+
+GitHub Actions run
+[`37085881867`](https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37085881867)
+(commit `131c685`), job **"Release Engineering lab (semver/changelog
+integrity + canary rollout)"** — `conclusion: success`. The same
+`npm run release-eng:test --workspace automation-labs` command
+confirmed above ran against GitHub Actions' real `ubuntu-latest`
+runner with the same observed output.

@@ -56,8 +56,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | CI_VERIFIED |
 | Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | CI_VERIFIED |
 | Desktop QA — Cross-Platform Native UI Automation Concepts | WORKING | NONE | DOCUMENTED |
-| Release Versioning & Changelog Integrity Testing | WORKING | NONE | EXECUTED |
-| Canary Rollout & Automatic Rollback Testing | WORKING | NONE | EXECUTED |
+| Release Versioning & Changelog Integrity Testing | WORKING | NONE | CI_VERIFIED |
+| Canary Rollout & Automatic Rollback Testing | WORKING | NONE | CI_VERIFIED |
 
 ## Domain Maturity
 
@@ -102,7 +102,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | i18n Testing (Intl locale formatting + Unicode multi-byte round-trip) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing` |
 | Modern Protocols (hand-rolled real Server-Sent Events server + client) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols` |
 | Production Verification (real synthetic smoke-test monitor against a real backend) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification` |
-| Release Engineering (hand-rolled semver/changelog integrity checks + canary rollout state machine) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/release-engineering` |
+| Release Engineering (hand-rolled semver/changelog integrity checks + canary rollout state machine) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering` |
 
 ## System Patterns
 
@@ -163,13 +163,13 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | i18n Testing lab — 7 unit tests + a real Intl-formatting/Unicode-roundtrip run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing/EXECUTION.md` |
 | Modern Protocols lab — 3 unit tests + a real SSE server/client run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md` |
 | Production Verification lab — 15 unit tests + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md` |
-| Release Engineering lab — 21 unit tests + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md` |
+| Release Engineering lab — 21 unit tests + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (400 edges)
+## Relationships (402 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -409,6 +409,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.i18n-testing.unicode-data-integrity | EVIDENCED_BY | evidence.i18n-testing.real-lab-run |
 | competency.modern-protocols.server-sent-events | EVIDENCED_BY | evidence.modern-protocols.real-lab-run |
 | competency.production-verification.synthetic-monitoring | EVIDENCED_BY | evidence.production-verification.real-lab-run |
+| competency.release-engineering.semver-and-changelog-integrity | EVIDENCED_BY | evidence.release-engineering.real-lab-run |
+| competency.release-engineering.canary-rollout-and-automatic-rollback | EVIDENCED_BY | evidence.release-engineering.real-lab-run |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.public-schema-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.protected-auth-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.orders-payment-suite |

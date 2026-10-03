@@ -543,14 +543,13 @@ competencies:
   # application or OS-level UI-automation target exists in this
   # repository) — repository.status DOCUMENTED, not NOT_PRACTICED,
   # because a real, substantive LEARNING doc now exists (mirrors
-  # competency.mobile.appium's own DOCUMENTED precedent). Release
-  # engineering gets a full executable lab. professional.status NONE
-  # for all three — genuinely new ground. repository.status on the
-  # two release-engineering competencies is EXECUTED (real local run,
-  # not yet CI_VERIFIED as of this entry's writing) — CI wiring and
-  # the CI_VERIFIED elevation are a separate, explicitly tracked
-  # follow-up step, exactly as done for every Part 2 milestone before
-  # this one.
+  # competency.mobile.appium's own DOCUMENTED precedent). professional.status
+  # NONE for all three — genuinely new ground. repository.status on
+  # the two release-engineering competencies is CI_VERIFIED — GitHub
+  # Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37085881867
+  # (commit 131c685) confirmed the "Release Engineering lab" CI job
+  # passes.
 
   - id: competency.desktop-qa.cross-platform-automation-concepts
     label: "Desktop QA — Cross-Platform Native UI Automation Concepts"
@@ -566,8 +565,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "release-engineering/lib/semver.js + lib/changelog-check.js — semver.test.js (9) + changelog-check.test.js (7) genuinely passing; a real run validated all 6 real workspace package.json versions and this repository's own real CHANGELOG.md structure (3 headings, 0 violations), including a real finding that an invented pre-1.0 bump category had to be replaced with a correctly-scoped isUnstableApi() check"
+      status: CI_VERIFIED
+      evidence: "release-engineering/lib/semver.js + lib/changelog-check.js — semver.test.js (9) + changelog-check.test.js (7) genuinely passing; a real run validated all 6 real workspace package.json versions and this repository's own real CHANGELOG.md structure (3 headings, 0 violations), including a real finding that an invented pre-1.0 bump category had to be replaced with a correctly-scoped isUnstableApi() check, verified in GitHub Actions"
     gaps: [gap.release-engineering.professional-exposure, gap.release-engineering.commit-convention-automation]
 
   - id: competency.release-engineering.canary-rollout-and-automatic-rollback
@@ -575,8 +574,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "release-engineering/lib/rollout-manager.js — rollout-manager.test.js (5) genuinely passing; the exact same unmodified state machine was proven against two opposite real scenarios, an all-healthy run reaching COMPLETE at 100% traffic and a real injected failure at the 50% stage producing an automatic rollback to 0% traffic with a correct ordered event history"
+      status: CI_VERIFIED
+      evidence: "release-engineering/lib/rollout-manager.js — rollout-manager.test.js (5) genuinely passing; the exact same unmodified state machine was proven against two opposite real scenarios, an all-healthy run reaching COMPLETE at 100% traffic and a real injected failure at the 50% stage producing an automatic rollback to 0% traffic with a correct ordered event history, verified in GitHub Actions"
     gaps: [gap.release-engineering.professional-exposure, gap.release-engineering.real-traffic-shifting-infrastructure]
 
 related:

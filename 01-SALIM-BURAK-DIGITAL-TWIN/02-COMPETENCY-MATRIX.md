@@ -62,8 +62,8 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | CI_VERIFIED |
 | Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | CI_VERIFIED |
 | Desktop QA — Cross-Platform Native UI Automation Concepts | WORKING | NONE | DOCUMENTED |
-| Release Versioning & Changelog Integrity Testing | WORKING | NONE | EXECUTED |
-| Canary Rollout & Automatic Rollback Testing | WORKING | NONE | EXECUTED |
+| Release Versioning & Changelog Integrity Testing | WORKING | NONE | CI_VERIFIED |
+| Canary Rollout & Automatic Rollback Testing | WORKING | NONE | CI_VERIFIED |
 
 ## Reading this table correctly
 

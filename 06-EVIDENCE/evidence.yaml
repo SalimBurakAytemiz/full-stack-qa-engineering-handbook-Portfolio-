@@ -226,12 +226,12 @@ items:
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Sunucu yokken dürüstçe NOT_EXECUTED raporlandi; gercek bir backend baslatilinca gercek bir GO sonucu gercek milisaniye gecikmeleriyle uretildi."
 
   - id: evidence.release-engineering.real-lab-run
-    label: "Release Engineering lab — 21 unit tests + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof executed locally"
-    maturity: E3_EXECUTED
+    label: "Release Engineering lab — 21 unit tests + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md"
-    produced_by: "npm run release-eng:test --workspace automation-labs + npm run release-eng:test:unit --workspace automation-labs, run locally in this sandbox"
+    produced_by: "npm run release-eng:test --workspace automation-labs — GitHub Actions job 'Release Engineering lab (semver/changelog integrity + canary rollout)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37085881867, commit 131c685, conclusion: success"
     related_lab: lab.release-engineering.semver-changelog-and-canary-rollout
-    note: "TR: E3_EXECUTED — lokal olarak gerçekten çalıştırılıp PASS aldı. Bu reponun KENDİ gerçek CHANGELOG.md ve 6 gerçek workspace package.json dosyası dogrulandi (0 ihlal); canary rollout durum makinesi hem basarili hem de otomatik-rollback senaryolarinda kanitlandi. CI_VERIFIED elevation henüz yapılmadı."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Bu reponun KENDİ gerçek CHANGELOG.md ve 6 gerçek workspace package.json dosyası dogrulandi (0 ihlal); canary rollout durum makinesi hem basarili hem de otomatik-rollback senaryolarinda kanitlandi."
 
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
