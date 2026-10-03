@@ -1,5 +1,5 @@
 schema_version: 1
-last_updated: "2026-09-25"
+last_updated: "2026-10-03"
 
 repository:
   main_branch_head: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
@@ -87,9 +87,54 @@ part_1_closeout:
     - "Historical orders/payment root cause: UNRESOLVED (current re-runs remain NOT_REPRODUCED, not a fix)"
     - "Windows Playwright visual baselines: intentionally absent, not a false PASS"
     - "Dependency advisories: 21 affected-package entries (9 moderate/11 high/1 critical), all dev-only, 0 under --omit=dev — disclosed, not eliminated"
-  next_phase: "PART 2 — Advanced / Next-Generation QA Engineering (not started; scope only, no implementation in this closeout)"
+  next_phase: "PART 2 — Advanced / Next-Generation QA Engineering: see part_2_advanced_qa_engineering below (Milestones 2.1-2.7 complete, not merged to main)"
+
+part_2_advanced_qa_engineering:
+  status: "MILESTONES 2.1-2.7 COMPLETE — not merged to main, pending independent review"
+  branch: "feat/part-2-advanced-qa-engineering"
+  base_sha: "7051c2b (chore: close Part 1 after verified PR #25 merge)"
+  final_sha: "ed7136a4d20a81258c1ee199654ea5f0d139b61d"
+  commit_count: 14
+  diff_stat: "187 files changed (173 added, 14 modified), 16283 insertions(+), 13 deletions(-)"
+  two_commit_pattern: "every milestone shipped as a feature commit (real local run, repository.status EXECUTED) followed by a chore elevation commit citing the real GitHub Actions run URL (repository.status CI_VERIFIED) — applied identically across all 7 milestones"
+  milestones:
+    - "2.1 AI/ML/LLM Systems Testing (mock-first, deterministic) — ai-systems lab"
+    - "2.2 Reliability, Chaos Engineering & Privacy Testing — chaos-reliability + privacy-testing labs"
+    - "2.3 Service Virtualization, Contract, Property-Based & Fuzz Testing — service-virtualization + property-and-fuzz-testing labs"
+    - "2.4 Mutation Testing, Testcontainers & Data Engineering — mutation-testing + testcontainers-lab + data-engineering labs"
+    - "2.5 Distributed Messaging, Supply Chain Security & Compatibility Testing — distributed-messaging + supply-chain-security + compatibility-testing labs"
+    - "2.6 i18n, Modern Protocols & Production Verification — i18n-testing + modern-protocols + production-verification labs"
+    - "2.7 Desktop QA & Advanced Release Engineering — release-engineering lab; Desktop QA documented LEARNING-only (infrastructure gap, same class as Appium/Mobile)"
+  digital_twin_deltas_vs_part_1_base:
+    competencies: "22 -> 51 (+29)"
+    tools_tech_protocols: "34 -> 66 (+32)"
+    labs: "10 -> 25 (+15)"
+    evidence: "17 -> 32 (+15)"
+    relationships: "236 -> 402 (+166)"
+    gaps: "30 -> 63 (+33)"
+    ci_jobs: "9 -> 24 (+15, one per new executable lab)"
+  professional_experience_changes: "NONE — professional-experience.yaml and claims.yaml have a zero-line diff across the entire Part 2 range (git diff 7051c2b..HEAD); every new competency's professional.status is NONE unless pre-existing source data already proved otherwise"
+  repository_practice_changes: "+15 real executable labs (CI_VERIFIED except the Desktop QA LEARNING-only area, which has no lab by design), +29 competencies with real repository evidence, 15 new self-contained CI jobs, all independently proven green"
+  knowledge_changes: "Knowledge column set to WORKING on every new competency (documented, hands-on-in-this-repo depth) — never claimed INDEPENDENT/ADVANCED without a backing professional source"
+  part_1_regression_result: "Backend unit/integration tests: 160/160 PASS, unchanged from Part 1 baseline (confirmed by local re-run at Part 2 final_sha, and by every one of the 14 Part 2 CI runs' backend-tests job, all success). web-tests/api-tests jobs likewise green on every Part 2 CI run. Part 2 never modifies backend/src, web-tests, or api-tests — every new lab lives under QA-DEMO-SYSTEM/automation-labs/<lab-name>/, self-contained."
+  registry_result: "0 errors (node scripts/registry/validate-registry.mjs) — 51/51 competencies, 66/66 tools, 63 gaps, 25/25 labs, 32/32 evidence, 402/402 relationships, 0 orphans. Validator's own regression suite: 26/26 PASS (node --test scripts/registry/validate-registry.regression.test.mjs)."
+  generated_output_result: "shared/registry/generated/REGISTRY-INDEX.md matches a fresh regeneration (EOL-normalized) — part of the same validate-registry.mjs run above, 0 drift."
+  broken_links_result: "0 broken relative links found across every Markdown file changed or added in the Part 2 diff (manual resolve-and-check of every ](path) reference against the filesystem)."
+  security_secret_result: "0 real secrets found in the Part 2 diff (git diff 7051c2b..HEAD scanned for common key/token patterns) — the only matches are the privacy-testing lab's own test fixtures proving its secret-redaction logic against a deliberately fake AWS-key-shaped string, not a real credential."
+  dependency_result: "npm audit --omit=dev: 0 vulnerabilities (both repo root and QA-DEMO-SYSTEM workspace). Full npm audit (incl. dev): 27 vulnerabilities (10 moderate/16 high/1 critical), all dev-only — consistent with the already-disclosed pattern from Part 1 closeout and the supply-chain-security lab's own real findings (M2.5); no new production-path exposure introduced by Part 2."
+  known_limitations:
+    - "Desktop QA: LEARNING-only by design — no real native desktop application or OS-level UI-automation target exists in this repository (same infrastructure-gap class as Mobile/Appium)."
+    - "release-engineering/lib/rollout-manager.js is a hand-rolled in-process state machine — never shifts real network traffic; not a substitute for a real service mesh/load balancer/cloud canary feature."
+    - "modern-protocols' SSE implementation is minimal and hand-rolled — no automatic client reconnection timer, no retry: field handling."
+    - "production-verification's synthetic monitor is a minimal custom script — not a commercial synthetic-monitoring platform (no geographic probes, no alerting integration)."
+    - "supply-chain-security's lab uses npm's own built-in sbom/audit tooling — not a commercial SCA product."
+    - "None of these are blockers; each is disclosed in its own lab's README.md Scope boundary section and was a deliberate, honest scoping choice, not an oversight."
+  defect_counts: { p0: 0, p1: 0, p2: 0, p3: 0 }
+  merge_status: "NOT MERGED — stays on feat/part-2-advanced-qa-engineering pending independent (Codex) review, per standing instruction"
+  final_report: ".ai/PART-2-FINAL-REPORT.md"
 
 pointers:
+  part_2_final_report: ".ai/PART-2-FINAL-REPORT.md"
   digital_twin: "01-SALIM-BURAK-DIGITAL-TWIN/"
   codex_handoff: ".ai/CODEX-FULL-AUDIT-HANDOFF.md"
   post_codex_closure_matrix: ".ai/CODEX-POST-FIX-CLOSURE-MATRIX.md"
