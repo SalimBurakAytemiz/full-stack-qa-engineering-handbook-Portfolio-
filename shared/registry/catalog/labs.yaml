@@ -187,6 +187,30 @@ items:
     covers_competencies: [competency.compatibility-testing.breaking-change-detection]
     note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı (4/4 unit test + 4/4 agregat kontrol). Backend'in GERÇEK mevcut yanıt şekli dondurulmuş bir baseline'a karşı doğrulandı (NO_CHANGE); kaldırılan alan ve tip değişikliği BREAKING, yeni eklenen alan SAFE_ADDITIVE olarak doğru sınıflandırıldı."
 
+  - id: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+    label: "i18n Testing (Intl locale formatting + Unicode multi-byte round-trip)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/i18n-testing"
+    evidence_id: evidence.i18n-testing.real-lab-run
+    covers_competencies: [competency.i18n-testing.locale-aware-formatting, competency.i18n-testing.unicode-data-integrity]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (7/7 unit test + 7/7 agregat kontrol). Node'un kendi GERÇEK Intl API'si birkaç gerçek locale'de farklı cikti uretti; dört gercek cok-baytli string (Turkce, Japonca, emoji, Arapca) backend'in gercek products tablosuna karsi bayt-bayt degismeden gidip-geldi. CI_VERIFIED elevation henüz yapılmadı."
+
+  - id: lab.modern-protocols.server-sent-events
+    label: "Modern Protocols (hand-rolled real Server-Sent Events server + client)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/modern-protocols"
+    evidence_id: evidence.modern-protocols.real-lab-run
+    covers_competencies: [competency.modern-protocols.server-sent-events]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (3/3 unit test + 3/3 agregat kontrol). Gercek olay zamanlamalari (timestamp) GERCEKTEN ilerlemeli teslimati kanitladi; Last-Event-ID yeniden baglanma semantigi dogrulandi. CI_VERIFIED elevation henüz yapılmadı."
+
+  - id: lab.production-verification.synthetic-smoke-monitor
+    label: "Production Verification (real synthetic smoke-test monitor against a real backend)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/production-verification"
+    evidence_id: evidence.production-verification.real-lab-run
+    covers_competencies: [competency.production-verification.synthetic-monitoring]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (15/15 unit test). Sunucu yokken dürüstçe NOT_EXECUTED raporlandı; gerçek bir backend başlatılınca GERÇEK bir GO sonucu gerçek milisaniye gecikmeleriyle üretildi. CI_VERIFIED elevation henüz yapılmadı."
+
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"
   narrative_docs:

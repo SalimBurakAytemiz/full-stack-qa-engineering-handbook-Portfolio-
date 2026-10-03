@@ -59,6 +59,9 @@ lab catalog navigable and machine-checkable (see
 | Distributed Messaging — broker + idempotent consumer | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging` | `lab.distributed-messaging.broker-and-idempotent-consumer` | L4_CI_VERIFIED |
 | Supply Chain Security — SBOM + audit + lockfile integrity | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security` | `lab.supply-chain-security.sbom-audit-lockfile` | L4_CI_VERIFIED |
 | Compatibility Testing — breaking-change detection | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing` | `lab.compatibility-testing.breaking-change-detection` | L4_CI_VERIFIED |
+| i18n Testing — Intl locale formatting + Unicode round-trip | `QA-DEMO-SYSTEM/automation-labs/i18n-testing` | `lab.i18n-testing.locale-formatting-and-unicode-roundtrip` | L3_AUTOMATED |
+| Modern Protocols — Server-Sent Events | `QA-DEMO-SYSTEM/automation-labs/modern-protocols` | `lab.modern-protocols.server-sent-events` | L3_AUTOMATED |
+| Production Verification — synthetic smoke-test monitor | `QA-DEMO-SYSTEM/automation-labs/production-verification` | `lab.production-verification.synthetic-smoke-monitor` | L3_AUTOMATED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real

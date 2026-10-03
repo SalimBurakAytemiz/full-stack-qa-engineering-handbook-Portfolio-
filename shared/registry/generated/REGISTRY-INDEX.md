@@ -51,6 +51,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | SBOM Generation & Vulnerability Auditing | WORKING | NONE | CI_VERIFIED |
 | Lockfile Integrity Verification (SRI Hash Coverage) | WORKING | NONE | CI_VERIFIED |
 | API Backward-Compatibility & Breaking-Change Detection | WORKING | NONE | CI_VERIFIED |
+| Locale-Aware Formatting (Intl Number/Date/Currency) | WORKING | NONE | EXECUTED |
+| Unicode Data Integrity (Multi-Byte Round-Trip) | WORKING | NONE | EXECUTED |
+| Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | EXECUTED |
+| Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | EXECUTED |
 
 ## Domain Maturity
 
@@ -92,6 +96,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Distributed Messaging (hand-rolled in-process broker — ordering, DLQ, idempotent consumer) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging` |
 | Supply Chain Security (real npm sbom + npm audit + lockfile integrity) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security` |
 | Compatibility Testing (frozen baseline contract vs. real backend response shape) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing` |
+| i18n Testing (Intl locale formatting + Unicode multi-byte round-trip) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing` |
+| Modern Protocols (hand-rolled real Server-Sent Events server + client) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols` |
+| Production Verification (real synthetic smoke-test monitor against a real backend) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/production-verification` |
 
 ## System Patterns
 
@@ -149,12 +156,15 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Distributed Messaging lab — 8 unit tests + a real aggregate run (ordering, DLQ routing, non-idempotent double-apply vs. idempotent single-apply) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging/EXECUTION.md` |
 | Supply Chain Security lab — 14 unit tests + a real npm sbom/npm audit/lockfile-integrity run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security/EXECUTION.md` |
 | Compatibility Testing lab — 4 unit tests + a real baseline-vs-current-response run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing/EXECUTION.md` |
+| i18n Testing lab — 7 unit tests + a real Intl-formatting/Unicode-roundtrip run executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing/EXECUTION.md` |
+| Modern Protocols lab — 3 unit tests + a real SSE server/client run executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md` |
+| Production Verification lab — 15 unit tests + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (358 edges)
+## Relationships (380 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -243,6 +253,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.supply-chain-security.sbom-and-vulnerability-auditing | USES_TOOL | tool.npm-audit |
 | competency.supply-chain-security.lockfile-integrity-verification | USES_TECHNOLOGY | tech.lockfile-integrity-check |
 | competency.compatibility-testing.breaking-change-detection | USES_TECHNOLOGY | tech.json-schema-compatibility-contract |
+| competency.i18n-testing.locale-aware-formatting | USES_TOOL | tool.intl-api |
+| competency.i18n-testing.unicode-data-integrity | USES_TECHNOLOGY | tech.unicode-roundtrip-check |
+| competency.modern-protocols.server-sent-events | USES_TECHNOLOGY | protocol.server-sent-events |
+| competency.production-verification.synthetic-monitoring | USES_TECHNOLOGY | tech.synthetic-monitoring |
 | competency.api.graphql | USES_TECHNOLOGY | protocol.graphql |
 | competency.api.rest | USES_TECHNOLOGY | protocol.rest |
 | competency.integration.websocket | USES_TECHNOLOGY | protocol.websocket |
@@ -272,6 +286,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.supply-chain-security.sbom-audit-lockfile | USES_TOOL | tool.npm-audit |
 | lab.supply-chain-security.sbom-audit-lockfile | USES_TECHNOLOGY | tech.lockfile-integrity-check |
 | lab.compatibility-testing.breaking-change-detection | USES_TECHNOLOGY | tech.json-schema-compatibility-contract |
+| lab.i18n-testing.locale-formatting-and-unicode-roundtrip | USES_TOOL | tool.intl-api |
+| lab.i18n-testing.locale-formatting-and-unicode-roundtrip | USES_TECHNOLOGY | tech.unicode-roundtrip-check |
+| lab.modern-protocols.server-sent-events | USES_TECHNOLOGY | protocol.server-sent-events |
+| lab.production-verification.synthetic-smoke-monitor | USES_TECHNOLOGY | tech.synthetic-monitoring |
 | competency.api.rest | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.api.graphql | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.integration.websocket | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
@@ -305,6 +323,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.supply-chain-security.sbom-and-vulnerability-auditing | PRACTICED_IN | lab.supply-chain-security.sbom-audit-lockfile |
 | competency.supply-chain-security.lockfile-integrity-verification | PRACTICED_IN | lab.supply-chain-security.sbom-audit-lockfile |
 | competency.compatibility-testing.breaking-change-detection | PRACTICED_IN | lab.compatibility-testing.breaking-change-detection |
+| competency.i18n-testing.locale-aware-formatting | PRACTICED_IN | lab.i18n-testing.locale-formatting-and-unicode-roundtrip |
+| competency.i18n-testing.unicode-data-integrity | PRACTICED_IN | lab.i18n-testing.locale-formatting-and-unicode-roundtrip |
+| competency.modern-protocols.server-sent-events | PRACTICED_IN | lab.modern-protocols.server-sent-events |
+| competency.production-verification.synthetic-monitoring | PRACTICED_IN | lab.production-verification.synthetic-smoke-monitor |
 | competency.security.security-aware-qa | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.correlation-logging | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.elastic-log-analysis | RELATED_TO | lab.observability.elastic-log-analysis |
@@ -333,6 +355,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.distributed-messaging.broker-and-idempotent-consumer | TESTED_BY | evidence.distributed-messaging.real-lab-run |
 | lab.supply-chain-security.sbom-audit-lockfile | TESTED_BY | evidence.supply-chain-security.real-lab-run |
 | lab.compatibility-testing.breaking-change-detection | TESTED_BY | evidence.compatibility-testing.real-lab-run |
+| lab.i18n-testing.locale-formatting-and-unicode-roundtrip | TESTED_BY | evidence.i18n-testing.real-lab-run |
+| lab.modern-protocols.server-sent-events | TESTED_BY | evidence.modern-protocols.real-lab-run |
+| lab.production-verification.synthetic-smoke-monitor | TESTED_BY | evidence.production-verification.real-lab-run |
 | lab.database.sql-validation | TESTED_BY | evidence.database.sql-validation-suite |
 | lab.security.owasp-mapping | DOCUMENTED_BY | evidence.security.owasp-mapping-review |
 | lab.cicd.github-actions | IMPLEMENTED_BY | evidence.cicd.github-actions-pipeline |
@@ -419,6 +444,13 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.supply-chain-security.lockfile-integrity-verification | LEARNING | gap.supply-chain-security.professional-exposure |
 | competency.compatibility-testing.breaking-change-detection | LEARNING | gap.compatibility-testing.generic-openapi-diffing |
 | competency.compatibility-testing.breaking-change-detection | LEARNING | gap.compatibility-testing.professional-exposure |
+| competency.i18n-testing.locale-aware-formatting | LEARNING | gap.i18n-testing.ui-rtl-and-translation-coverage |
+| competency.i18n-testing.locale-aware-formatting | LEARNING | gap.i18n-testing.professional-exposure |
+| competency.i18n-testing.unicode-data-integrity | LEARNING | gap.i18n-testing.professional-exposure |
+| competency.modern-protocols.server-sent-events | LEARNING | gap.modern-protocols.grpc-http2-webrtc |
+| competency.modern-protocols.server-sent-events | LEARNING | gap.modern-protocols.professional-exposure |
+| competency.production-verification.synthetic-monitoring | LEARNING | gap.production-verification.commercial-monitoring-platform |
+| competency.production-verification.synthetic-monitoring | LEARNING | gap.production-verification.professional-exposure |
 | competency.web.accessibility | LEARNING | gap.accessibility.professional-exposure |
 | competency.security.security-aware-qa | LEARNING | gap.security.professional-exposure |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |

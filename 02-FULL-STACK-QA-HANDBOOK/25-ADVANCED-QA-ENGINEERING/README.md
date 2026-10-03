@@ -33,11 +33,12 @@ Repository Practice).
 | `SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/` | Added — real executable service-virtualization/contract + property-based/fuzz labs, see below |
 | `MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/` | Added — real executable mutation-testing, Testcontainers, and data-engineering labs, see below |
 | `DISTRIBUTED-MESSAGING-SUPPLY-CHAIN-COMPATIBILITY/` | Added — real executable distributed-messaging, supply-chain-security, and compatibility-testing labs, see below |
+| `I18N-MODERN-PROTOCOLS-PRODUCTION-VERIFICATION/` | Added — real executable i18n-testing, modern-protocols (SSE), and production-verification labs, see below |
 
-Further subtopics (modern protocols, production verification) are
-planned but not yet added in this pass — this folder grows incrementally,
-each addition backed by real, executed work, never a documentation-only
-placeholder claiming more than exists.
+Further advanced-QA subtopics (desktop QA, advanced release engineering)
+are planned but not yet added in this pass — this folder grows
+incrementally, each addition backed by real, executed work, never a
+documentation-only placeholder claiming more than exists.
 
 ## AI/ML/LLM Systems Testing
 
@@ -126,4 +127,28 @@ it states the scope boundary (a minimal in-process broker rather than
 Kafka/RabbitMQ/SQS; npm's own built-in SBOM/audit tooling rather than a
 commercial SCA product; one real endpoint's frozen contract rather than a
 generic OpenAPI-diffing engine) that every other document in that
+subfolder assumes.
+
+## i18n, Modern Protocols & Production Verification
+
+Executable labs: `QA-DEMO-SYSTEM/automation-labs/i18n-testing/` (real
+locale-distinct formatting via Node's own `Intl` API across several real
+locales, plus a real Unicode round-trip — Turkish, Japanese, an emoji
+outside the Basic Multilingual Plane, and right-to-left Arabic — through
+the backend's real database and service layer),
+`QA-DEMO-SYSTEM/automation-labs/modern-protocols/` (a real, hand-rolled
+Server-Sent Events server and client proving correct event framing,
+genuine progressive delivery timed against real wall-clock gaps, and
+correct `Last-Event-ID` reconnection semantics), and
+`QA-DEMO-SYSTEM/automation-labs/production-verification/` (a real
+synthetic-monitoring smoke-test runner against a real running backend,
+classifying each check as PASS/SLOW/FAIL rather than a single boolean,
+with an honest `NOT_EXECUTED` result when no backend is reachable).
+
+Read `I18N-MODERN-PROTOCOLS-PRODUCTION-VERIFICATION/README.md` first —
+it states the scope boundary (two specific i18n mechanisms rather than a
+full RTL/pluralization/translation-coverage suite; a minimal hand-rolled
+SSE implementation rather than gRPC/HTTP2-push/WebRTC, never touching
+the real backend; a real smoke-test monitor rather than a commercial
+synthetic-monitoring platform) that every other document in that
 subfolder assumes.

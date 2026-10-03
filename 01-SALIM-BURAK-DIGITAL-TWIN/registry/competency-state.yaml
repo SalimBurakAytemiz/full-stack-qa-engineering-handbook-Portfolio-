@@ -493,6 +493,50 @@ competencies:
       evidence: "compatibility-testing/lib/compatibility-check.js — compatibility-check.test.js (4) genuinely passing; a real run validated the backend's real current GET /api/products response against a frozen baseline JSON Schema contract (NO_CHANGE), then proved the checker correctly classifies a removed required field and a changed field type as BREAKING and a newly added field as SAFE_ADDITIVE, each against a deliberately constructed candidate built from that same real response, verified in GitHub Actions"
     gaps: [gap.compatibility-testing.professional-exposure, gap.compatibility-testing.generic-openapi-diffing]
 
+  # Part 2 — Advanced QA Engineering: i18n, Modern Protocols &
+  # Production Verification (Milestone 2.6). Same discipline as every
+  # prior milestone: professional.status NONE for all four — genuinely
+  # new ground. repository.status is EXECUTED (real local run, not yet
+  # CI_VERIFIED as of this entry's writing) — CI wiring and the
+  # CI_VERIFIED elevation are a separate, explicitly tracked follow-up
+  # step, exactly as done for every Part 2 milestone before this one.
+
+  - id: competency.i18n-testing.locale-aware-formatting
+    label: "Locale-Aware Formatting (Intl Number/Date/Currency)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "i18n-testing/lib/locale-formatting.js — locale-formatting.test.js (3) genuinely passing against Node's real built-in Intl API; a real run confirmed currency/date/number formatting genuinely differs between real locales (tr-TR, de-DE, ja-JP, en-US), including a real finding that German ICU currency formatting uses a non-breaking space the first test draft missed"
+    gaps: [gap.i18n-testing.professional-exposure, gap.i18n-testing.ui-rtl-and-translation-coverage]
+
+  - id: competency.i18n-testing.unicode-data-integrity
+    label: "Unicode Data Integrity (Multi-Byte Round-Trip)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "i18n-testing/lib/unicode-roundtrip.js — unicode-roundtrip.test.js (4) genuinely passing; a real run inserted and read back Turkish, Japanese, emoji (non-BMP, 4-byte UTF-8), and Arabic (RTL) strings through the backend's real products table and real service functions, each confirmed byte-for-byte unchanged"
+    gaps: [gap.i18n-testing.professional-exposure, gap.i18n-testing.ui-rtl-and-translation-coverage]
+
+  - id: competency.modern-protocols.server-sent-events
+    label: "Modern Protocols — Server-Sent Events (Streaming, Reconnection)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "modern-protocols/lib/sse-server.js + lib/sse-client.js — sse.test.js (3) genuinely passing; a real run proved correct event framing/ordering, genuine progressive delivery timed against real wall-clock gaps between consecutively-received events, and correct Last-Event-ID reconnection semantics (no replay of already-seen events)"
+    gaps: [gap.modern-protocols.professional-exposure, gap.modern-protocols.grpc-http2-webrtc]
+
+  - id: competency.production-verification.synthetic-monitoring
+    label: "Production Verification — Synthetic Monitoring / Smoke Tests"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "production-verification/lib/synthetic-monitor.js + lib/smoke-checks.js — synthetic-monitor.test.js (8) + smoke-checks.test.js (6) genuinely passing; a real run against a real running backend (health, real seeded-user login, products list) produced a real GO verdict with real observed millisecond latencies, and the same unmodified script honestly reported NOT_EXECUTED with no backend reachable"
+    gaps: [gap.production-verification.professional-exposure, gap.production-verification.commercial-monitoring-platform]
+
 related:
   professional_source: "professional-experience.yaml"
   gap_detail: "gaps.yaml"

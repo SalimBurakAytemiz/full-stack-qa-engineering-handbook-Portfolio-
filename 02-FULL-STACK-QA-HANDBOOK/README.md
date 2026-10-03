@@ -118,6 +118,25 @@ not incompleteness; no row implies content that isn't there.
   proven against deliberately constructed candidates) with matching
   handbook docs at
   [`25-ADVANCED-QA-ENGINEERING/DISTRIBUTED-MESSAGING-SUPPLY-CHAIN-COMPATIBILITY/`](25-ADVANCED-QA-ENGINEERING/DISTRIBUTED-MESSAGING-SUPPLY-CHAIN-COMPATIBILITY/).
+  Also covers **i18n, Modern Protocols & Production Verification** —
+  three more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/i18n-testing/`: real locale-distinct
+  formatting via Node's own `Intl` API plus a real Unicode round-trip —
+  Turkish, Japanese, an emoji outside the Basic Multilingual Plane, and
+  right-to-left Arabic — through the backend's real database and
+  service layer, including a real finding that German ICU currency
+  formatting uses a non-breaking space the lab's first test draft
+  missed;
+  `QA-DEMO-SYSTEM/automation-labs/modern-protocols/`: a real,
+  hand-rolled Server-Sent Events server and client proving genuine
+  progressive delivery timed against real wall-clock gaps and correct
+  `Last-Event-ID` reconnection semantics; and
+  `QA-DEMO-SYSTEM/automation-labs/production-verification/`: a real
+  synthetic-monitoring smoke-test runner against a real running
+  backend, classifying each check as PASS/SLOW/FAIL rather than a
+  single boolean, with an honest `NOT_EXECUTED` result when no backend
+  is reachable) with matching handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/I18N-MODERN-PROTOCOLS-PRODUCTION-VERIFICATION/`](25-ADVANCED-QA-ENGINEERING/I18N-MODERN-PROTOCOLS-PRODUCTION-VERIFICATION/).
   Professional experience for this whole area is explicitly `NONE` in
   the Digital Twin registry — this is repository practice only,
   disclosed as such throughout (see each folder's `README.md`

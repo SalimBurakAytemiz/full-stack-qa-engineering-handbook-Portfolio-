@@ -304,6 +304,18 @@ relationships:
   - from: competency.compatibility-testing.breaking-change-detection
     predicate: USES_TECHNOLOGY
     to: tech.json-schema-compatibility-contract
+  - from: competency.i18n-testing.locale-aware-formatting
+    predicate: USES_TOOL
+    to: tool.intl-api
+  - from: competency.i18n-testing.unicode-data-integrity
+    predicate: USES_TECHNOLOGY
+    to: tech.unicode-roundtrip-check
+  - from: competency.modern-protocols.server-sent-events
+    predicate: USES_TECHNOLOGY
+    to: protocol.server-sent-events
+  - from: competency.production-verification.synthetic-monitoring
+    predicate: USES_TECHNOLOGY
+    to: tech.synthetic-monitoring
   - from: competency.api.graphql
     predicate: USES_TECHNOLOGY
     to: protocol.graphql
@@ -395,6 +407,18 @@ relationships:
   - from: lab.compatibility-testing.breaking-change-detection
     predicate: USES_TECHNOLOGY
     to: tech.json-schema-compatibility-contract
+  - from: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+    predicate: USES_TOOL
+    to: tool.intl-api
+  - from: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+    predicate: USES_TECHNOLOGY
+    to: tech.unicode-roundtrip-check
+  - from: lab.modern-protocols.server-sent-events
+    predicate: USES_TECHNOLOGY
+    to: protocol.server-sent-events
+  - from: lab.production-verification.synthetic-smoke-monitor
+    predicate: USES_TECHNOLOGY
+    to: tech.synthetic-monitoring
 
   # ============================================================
   # COMPETENCY -> LAB (repository practice location — PRACTICED_IN)
@@ -498,6 +522,18 @@ relationships:
   - from: competency.compatibility-testing.breaking-change-detection
     predicate: PRACTICED_IN
     to: lab.compatibility-testing.breaking-change-detection
+  - from: competency.i18n-testing.locale-aware-formatting
+    predicate: PRACTICED_IN
+    to: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+  - from: competency.i18n-testing.unicode-data-integrity
+    predicate: PRACTICED_IN
+    to: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+  - from: competency.modern-protocols.server-sent-events
+    predicate: PRACTICED_IN
+    to: lab.modern-protocols.server-sent-events
+  - from: competency.production-verification.synthetic-monitoring
+    predicate: PRACTICED_IN
+    to: lab.production-verification.synthetic-smoke-monitor
   - from: competency.security.security-aware-qa
     predicate: PRACTICED_IN
     to: lab.backend-api.rest-graphql-websocket
@@ -593,6 +629,15 @@ relationships:
   - from: lab.compatibility-testing.breaking-change-detection
     predicate: TESTED_BY
     to: evidence.compatibility-testing.real-lab-run
+  - from: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+    predicate: TESTED_BY
+    to: evidence.i18n-testing.real-lab-run
+  - from: lab.modern-protocols.server-sent-events
+    predicate: TESTED_BY
+    to: evidence.modern-protocols.real-lab-run
+  - from: lab.production-verification.synthetic-smoke-monitor
+    predicate: TESTED_BY
+    to: evidence.production-verification.real-lab-run
   - from: lab.database.sql-validation
     predicate: TESTED_BY
     to: evidence.database.sql-validation-suite
@@ -864,6 +909,27 @@ relationships:
   - from: competency.compatibility-testing.breaking-change-detection
     predicate: LEARNING
     to: gap.compatibility-testing.professional-exposure
+  - from: competency.i18n-testing.locale-aware-formatting
+    predicate: LEARNING
+    to: gap.i18n-testing.ui-rtl-and-translation-coverage
+  - from: competency.i18n-testing.locale-aware-formatting
+    predicate: LEARNING
+    to: gap.i18n-testing.professional-exposure
+  - from: competency.i18n-testing.unicode-data-integrity
+    predicate: LEARNING
+    to: gap.i18n-testing.professional-exposure
+  - from: competency.modern-protocols.server-sent-events
+    predicate: LEARNING
+    to: gap.modern-protocols.grpc-http2-webrtc
+  - from: competency.modern-protocols.server-sent-events
+    predicate: LEARNING
+    to: gap.modern-protocols.professional-exposure
+  - from: competency.production-verification.synthetic-monitoring
+    predicate: LEARNING
+    to: gap.production-verification.commercial-monitoring-platform
+  - from: competency.production-verification.synthetic-monitoring
+    predicate: LEARNING
+    to: gap.production-verification.professional-exposure
   - from: competency.web.accessibility
     predicate: LEARNING
     to: gap.accessibility.professional-exposure

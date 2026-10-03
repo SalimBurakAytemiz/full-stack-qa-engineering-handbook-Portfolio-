@@ -494,3 +494,60 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm run compatibility:test --workspace automation-labs
+
+  i18n-testing-lab:
+    # Part 2 — Advanced QA Engineering: i18n Testing (Milestone 2.6).
+    # Self-contained: Node's own built-in Intl API plus a real in-memory
+    # SQLite db via the backend's own getDatabase() — no server needed.
+    name: i18n Testing lab (Intl locale formatting + Unicode round-trip)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run i18n:test --workspace automation-labs
+
+  modern-protocols-lab:
+    # Part 2 — Advanced QA Engineering: Modern Protocols (Milestone 2.6).
+    # Self-contained: a hand-rolled Server-Sent Events server and client
+    # over Node's own http module — no real backend needed.
+    name: Modern Protocols lab (real Server-Sent Events server + client)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run modern-protocols:test --workspace automation-labs
+
+  production-verification-lab:
+    # Part 2 — Advanced QA Engineering: Production Verification
+    # (Milestone 2.6). Needs a real running backend — same
+    # seed-and-start-server sequence as the other backend-dependent jobs.
+    name: Production Verification lab (real synthetic smoke-test monitor)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Seed and start backend server
+        run: |
+          rm -f backend/data/qa-demo.db
+          npm run db:seed
+          nohup node backend/src/server.js > /tmp/ci-backend.log 2>&1 &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000/api/health && exit 0
+            sleep 0.5
+          done
+          echo "Backend did not become healthy in time"; cat /tmp/ci-backend.log; exit 1
+      - run: npm run production-verification:test --workspace automation-labs
+        env:
+          QA_DEMO_BASE_URL: http://127.0.0.1:3000

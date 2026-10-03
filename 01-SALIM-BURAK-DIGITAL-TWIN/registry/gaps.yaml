@@ -243,5 +243,35 @@ gaps:
     label: "Compatibility Testing — generic OpenAPI-diffing engine (openapi-diff/oasdiff)"
     note: "TR: compatibility-testing lab'ı tek bir gerçek endpoint şekli için dondurulmuş bir JSON Schema baseline'ı kullanır — gelişmiş JSON Schema anahtar kelimelerini (enum, oneOf, $ref) ele alan genel bir OpenAPI-diffing motoru (openapi-diff, oasdiff vb.) hiç kullanılmadı."
 
+  - id: gap.i18n-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "i18n Testing — professional project exposure"
+    note: "TR: competency.i18n-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.i18n-testing.ui-rtl-and-translation-coverage
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "i18n Testing — UI RTL/LTR layout testing and translation-key coverage scanning"
+    note: "TR: i18n-testing lab'ı yalnızca Intl tabanlı biçimlendirme ve Unicode veri bütünlüğünü kapsar — gerçek bir UI'nin RTL/LTR duzen testi veya bir ceviri-anahtarı kapsama tarayıcısı hiç uygulanmadı."
+
+  - id: gap.modern-protocols.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Modern Protocols (SSE) — professional project exposure"
+    note: "TR: competency.modern-protocols.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.modern-protocols.grpc-http2-webrtc
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Modern Protocols — gRPC, HTTP/2 server push, WebRTC"
+    note: "TR: modern-protocols lab'ı yalnızca elle yazılmış bir Server-Sent Events implementasyonunu kapsar — gRPC, HTTP/2 server push veya WebRTC hiç uygulanmadı."
+
+  - id: gap.production-verification.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Production Verification (Synthetic Monitoring) — professional project exposure"
+    note: "TR: competency.production-verification.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.production-verification.commercial-monitoring-platform
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Production Verification — commercial synthetic-monitoring platform (Pingdom/Datadog Synthetics/New Relic)"
+    note: "TR: production-verification lab'ı elle yazılmış, minimal bir sentetik-izleme calistiricisi kullanır — cografi olarak dagitilmis prob'lari, uyari (alerting) entegrasyonu veya tarihsel trend panolari olan ticari bir platform (Pingdom, Datadog Synthetics, New Relic vb.) hiç kullanılmadı."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

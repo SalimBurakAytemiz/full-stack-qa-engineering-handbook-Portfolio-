@@ -29,7 +29,13 @@
     "supply-chain:test": "node supply-chain-security/run-supply-chain-security-lab.js",
     "supply-chain:test:unit": "node --test supply-chain-security/tests/*.test.js",
     "compatibility:test": "node compatibility-testing/run-compatibility-lab.js",
-    "compatibility:test:unit": "node --test compatibility-testing/tests/compatibility-check.test.js"
+    "compatibility:test:unit": "node --test compatibility-testing/tests/compatibility-check.test.js",
+    "i18n:test": "node i18n-testing/run-i18n-lab.js",
+    "i18n:test:unit": "node --test i18n-testing/tests/*.test.js",
+    "modern-protocols:test": "node modern-protocols/run-modern-protocols-lab.js",
+    "modern-protocols:test:unit": "node --test modern-protocols/tests/sse.test.js",
+    "production-verification:test": "node production-verification/run-production-verification-lab.js",
+    "production-verification:test:unit": "node --test production-verification/tests/*.test.js"
   },
   "devDependencies": {
     "selenium-webdriver": "^4.49.0",
