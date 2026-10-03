@@ -62,6 +62,7 @@ lab catalog navigable and machine-checkable (see
 | i18n Testing — Intl locale formatting + Unicode round-trip | `QA-DEMO-SYSTEM/automation-labs/i18n-testing` | `lab.i18n-testing.locale-formatting-and-unicode-roundtrip` | L4_CI_VERIFIED |
 | Modern Protocols — Server-Sent Events | `QA-DEMO-SYSTEM/automation-labs/modern-protocols` | `lab.modern-protocols.server-sent-events` | L4_CI_VERIFIED |
 | Production Verification — synthetic smoke-test monitor | `QA-DEMO-SYSTEM/automation-labs/production-verification` | `lab.production-verification.synthetic-smoke-monitor` | L4_CI_VERIFIED |
+| Release Engineering — semver/changelog integrity + canary rollout | `QA-DEMO-SYSTEM/automation-labs/release-engineering` | `lab.release-engineering.semver-changelog-and-canary-rollout` | L3_AUTOMATED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real

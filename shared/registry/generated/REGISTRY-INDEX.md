@@ -55,6 +55,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Unicode Data Integrity (Multi-Byte Round-Trip) | WORKING | NONE | CI_VERIFIED |
 | Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | CI_VERIFIED |
 | Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | CI_VERIFIED |
+| Desktop QA — Cross-Platform Native UI Automation Concepts | WORKING | NONE | DOCUMENTED |
+| Release Versioning & Changelog Integrity Testing | WORKING | NONE | EXECUTED |
+| Canary Rollout & Automatic Rollback Testing | WORKING | NONE | EXECUTED |
 
 ## Domain Maturity
 
@@ -99,6 +102,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | i18n Testing (Intl locale formatting + Unicode multi-byte round-trip) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing` |
 | Modern Protocols (hand-rolled real Server-Sent Events server + client) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols` |
 | Production Verification (real synthetic smoke-test monitor against a real backend) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification` |
+| Release Engineering (hand-rolled semver/changelog integrity checks + canary rollout state machine) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/release-engineering` |
 
 ## System Patterns
 
@@ -159,12 +163,13 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | i18n Testing lab — 7 unit tests + a real Intl-formatting/Unicode-roundtrip run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing/EXECUTION.md` |
 | Modern Protocols lab — 3 unit tests + a real SSE server/client run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md` |
 | Production Verification lab — 15 unit tests + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md` |
+| Release Engineering lab — 21 unit tests + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (384 edges)
+## Relationships (400 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -257,6 +262,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.i18n-testing.unicode-data-integrity | USES_TECHNOLOGY | tech.unicode-roundtrip-check |
 | competency.modern-protocols.server-sent-events | USES_TECHNOLOGY | protocol.server-sent-events |
 | competency.production-verification.synthetic-monitoring | USES_TECHNOLOGY | tech.synthetic-monitoring |
+| competency.desktop-qa.cross-platform-automation-concepts | USES_TOOL | tool.winappdriver-concept |
+| competency.release-engineering.semver-and-changelog-integrity | USES_TECHNOLOGY | tech.semver-parser |
+| competency.release-engineering.semver-and-changelog-integrity | USES_TECHNOLOGY | tech.changelog-structural-checker |
+| competency.release-engineering.canary-rollout-and-automatic-rollback | USES_TECHNOLOGY | tech.canary-rollout-state-machine |
 | competency.api.graphql | USES_TECHNOLOGY | protocol.graphql |
 | competency.api.rest | USES_TECHNOLOGY | protocol.rest |
 | competency.integration.websocket | USES_TECHNOLOGY | protocol.websocket |
@@ -290,6 +299,9 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.i18n-testing.locale-formatting-and-unicode-roundtrip | USES_TECHNOLOGY | tech.unicode-roundtrip-check |
 | lab.modern-protocols.server-sent-events | USES_TECHNOLOGY | protocol.server-sent-events |
 | lab.production-verification.synthetic-smoke-monitor | USES_TECHNOLOGY | tech.synthetic-monitoring |
+| lab.release-engineering.semver-changelog-and-canary-rollout | USES_TECHNOLOGY | tech.semver-parser |
+| lab.release-engineering.semver-changelog-and-canary-rollout | USES_TECHNOLOGY | tech.changelog-structural-checker |
+| lab.release-engineering.semver-changelog-and-canary-rollout | USES_TECHNOLOGY | tech.canary-rollout-state-machine |
 | competency.api.rest | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.api.graphql | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.integration.websocket | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
@@ -327,6 +339,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.i18n-testing.unicode-data-integrity | PRACTICED_IN | lab.i18n-testing.locale-formatting-and-unicode-roundtrip |
 | competency.modern-protocols.server-sent-events | PRACTICED_IN | lab.modern-protocols.server-sent-events |
 | competency.production-verification.synthetic-monitoring | PRACTICED_IN | lab.production-verification.synthetic-smoke-monitor |
+| competency.release-engineering.semver-and-changelog-integrity | PRACTICED_IN | lab.release-engineering.semver-changelog-and-canary-rollout |
+| competency.release-engineering.canary-rollout-and-automatic-rollback | PRACTICED_IN | lab.release-engineering.semver-changelog-and-canary-rollout |
 | competency.security.security-aware-qa | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.correlation-logging | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.elastic-log-analysis | RELATED_TO | lab.observability.elastic-log-analysis |
@@ -358,6 +372,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.i18n-testing.locale-formatting-and-unicode-roundtrip | TESTED_BY | evidence.i18n-testing.real-lab-run |
 | lab.modern-protocols.server-sent-events | TESTED_BY | evidence.modern-protocols.real-lab-run |
 | lab.production-verification.synthetic-smoke-monitor | TESTED_BY | evidence.production-verification.real-lab-run |
+| lab.release-engineering.semver-changelog-and-canary-rollout | TESTED_BY | evidence.release-engineering.real-lab-run |
 | lab.database.sql-validation | TESTED_BY | evidence.database.sql-validation-suite |
 | lab.security.owasp-mapping | DOCUMENTED_BY | evidence.security.owasp-mapping-review |
 | lab.cicd.github-actions | IMPLEMENTED_BY | evidence.cicd.github-actions-pipeline |
@@ -455,6 +470,12 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.modern-protocols.server-sent-events | LEARNING | gap.modern-protocols.professional-exposure |
 | competency.production-verification.synthetic-monitoring | LEARNING | gap.production-verification.commercial-monitoring-platform |
 | competency.production-verification.synthetic-monitoring | LEARNING | gap.production-verification.professional-exposure |
+| competency.desktop-qa.cross-platform-automation-concepts | LEARNING | gap.desktop-qa.repo-desktop-app-evidence |
+| competency.desktop-qa.cross-platform-automation-concepts | LEARNING | gap.desktop-qa.professional-exposure |
+| competency.release-engineering.semver-and-changelog-integrity | LEARNING | gap.release-engineering.commit-convention-automation |
+| competency.release-engineering.semver-and-changelog-integrity | LEARNING | gap.release-engineering.professional-exposure |
+| competency.release-engineering.canary-rollout-and-automatic-rollback | LEARNING | gap.release-engineering.real-traffic-shifting-infrastructure |
+| competency.release-engineering.canary-rollout-and-automatic-rollback | LEARNING | gap.release-engineering.professional-exposure |
 | competency.web.accessibility | LEARNING | gap.accessibility.professional-exposure |
 | competency.security.security-aware-qa | LEARNING | gap.security.professional-exposure |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |

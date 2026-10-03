@@ -273,5 +273,30 @@ gaps:
     label: "Production Verification — commercial synthetic-monitoring platform (Pingdom/Datadog Synthetics/New Relic)"
     note: "TR: production-verification lab'ı elle yazılmış, minimal bir sentetik-izleme calistiricisi kullanır — cografi olarak dagitilmis prob'lari, uyari (alerting) entegrasyonu veya tarihsel trend panolari olan ticari bir platform (Pingdom, Datadog Synthetics, New Relic vb.) hiç kullanılmadı."
 
+  - id: gap.desktop-qa.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Desktop QA — professional project exposure"
+    note: "TR: competency.desktop-qa.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.desktop-qa.repo-desktop-app-evidence
+    types: [EVIDENCE]
+    label: "Desktop QA — real native desktop application repository-executable evidence"
+    note: "TR: Bu repoda gerçek bir native masaüstü uygulaması (Electron/WPF/.NET MAUI/Qt) veya OS-seviyesi UI-otomasyon hedefi (WinAppDriver/Accessibility API için) hiç mevcut olmadı; icat edilmedi. Appium/Mobile ile birebir aynı altyapı-eksikliği sınıfı."
+
+  - id: gap.release-engineering.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Release Engineering — professional project exposure"
+    note: "TR: competency.release-engineering.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.release-engineering.commit-convention-automation
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Release Engineering — commit-convention-driven automation (Conventional Commits / semantic-release)"
+    note: "TR: release-engineering lab'ı mevcut bir CHANGELOG.md'nin yapısını dogrular ve iki gerçek sürüm dizisi arasındaki semver farkını sınıflandırır; commit mesajı kurallarından (Conventional Commits) otomatik changelog/sürüm üretimi (semantic-release vb.) hiç uygulanmadı."
+
+  - id: gap.release-engineering.real-traffic-shifting-infrastructure
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Release Engineering — real traffic-shifting infrastructure (service mesh / load balancer / cloud canary feature)"
+    note: "TR: rollout-manager.js elle yazılmış, process-içi bir durum makinesidir — gerçek ağ trafiği hiç kaydırılmadı; gerçek bir service mesh, load balancer veya bulut sağlayıcısının native canary/weighted-routing özelliği hiç kullanılmadı."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

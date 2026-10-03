@@ -316,6 +316,18 @@ relationships:
   - from: competency.production-verification.synthetic-monitoring
     predicate: USES_TECHNOLOGY
     to: tech.synthetic-monitoring
+  - from: competency.desktop-qa.cross-platform-automation-concepts
+    predicate: USES_TOOL
+    to: tool.winappdriver-concept
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: USES_TECHNOLOGY
+    to: tech.semver-parser
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: USES_TECHNOLOGY
+    to: tech.changelog-structural-checker
+  - from: competency.release-engineering.canary-rollout-and-automatic-rollback
+    predicate: USES_TECHNOLOGY
+    to: tech.canary-rollout-state-machine
   - from: competency.api.graphql
     predicate: USES_TECHNOLOGY
     to: protocol.graphql
@@ -419,6 +431,15 @@ relationships:
   - from: lab.production-verification.synthetic-smoke-monitor
     predicate: USES_TECHNOLOGY
     to: tech.synthetic-monitoring
+  - from: lab.release-engineering.semver-changelog-and-canary-rollout
+    predicate: USES_TECHNOLOGY
+    to: tech.semver-parser
+  - from: lab.release-engineering.semver-changelog-and-canary-rollout
+    predicate: USES_TECHNOLOGY
+    to: tech.changelog-structural-checker
+  - from: lab.release-engineering.semver-changelog-and-canary-rollout
+    predicate: USES_TECHNOLOGY
+    to: tech.canary-rollout-state-machine
 
   # ============================================================
   # COMPETENCY -> LAB (repository practice location — PRACTICED_IN)
@@ -534,6 +555,12 @@ relationships:
   - from: competency.production-verification.synthetic-monitoring
     predicate: PRACTICED_IN
     to: lab.production-verification.synthetic-smoke-monitor
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: PRACTICED_IN
+    to: lab.release-engineering.semver-changelog-and-canary-rollout
+  - from: competency.release-engineering.canary-rollout-and-automatic-rollback
+    predicate: PRACTICED_IN
+    to: lab.release-engineering.semver-changelog-and-canary-rollout
   - from: competency.security.security-aware-qa
     predicate: PRACTICED_IN
     to: lab.backend-api.rest-graphql-websocket
@@ -638,6 +665,9 @@ relationships:
   - from: lab.production-verification.synthetic-smoke-monitor
     predicate: TESTED_BY
     to: evidence.production-verification.real-lab-run
+  - from: lab.release-engineering.semver-changelog-and-canary-rollout
+    predicate: TESTED_BY
+    to: evidence.release-engineering.real-lab-run
   - from: lab.database.sql-validation
     predicate: TESTED_BY
     to: evidence.database.sql-validation-suite
@@ -942,6 +972,25 @@ relationships:
   - from: competency.production-verification.synthetic-monitoring
     predicate: LEARNING
     to: gap.production-verification.professional-exposure
+  - from: competency.desktop-qa.cross-platform-automation-concepts
+    predicate: LEARNING
+    to: gap.desktop-qa.repo-desktop-app-evidence
+    note: "No repository lab exists for Desktop QA — same infrastructure-gap class as Appium's own equivalent edge."
+  - from: competency.desktop-qa.cross-platform-automation-concepts
+    predicate: LEARNING
+    to: gap.desktop-qa.professional-exposure
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: LEARNING
+    to: gap.release-engineering.commit-convention-automation
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: LEARNING
+    to: gap.release-engineering.professional-exposure
+  - from: competency.release-engineering.canary-rollout-and-automatic-rollback
+    predicate: LEARNING
+    to: gap.release-engineering.real-traffic-shifting-infrastructure
+  - from: competency.release-engineering.canary-rollout-and-automatic-rollback
+    predicate: LEARNING
+    to: gap.release-engineering.professional-exposure
   - from: competency.web.accessibility
     predicate: LEARNING
     to: gap.accessibility.professional-exposure

@@ -34,11 +34,10 @@ Repository Practice).
 | `MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/` | Added — real executable mutation-testing, Testcontainers, and data-engineering labs, see below |
 | `DISTRIBUTED-MESSAGING-SUPPLY-CHAIN-COMPATIBILITY/` | Added — real executable distributed-messaging, supply-chain-security, and compatibility-testing labs, see below |
 | `I18N-MODERN-PROTOCOLS-PRODUCTION-VERIFICATION/` | Added — real executable i18n-testing, modern-protocols (SSE), and production-verification labs, see below |
+| `DESKTOP-QA-RELEASE-ENGINEERING/` | Added — real executable release-engineering lab (semver/changelog integrity + canary rollout); Desktop QA is LEARNING-only (infrastructure gap), see below |
 
-Further advanced-QA subtopics (desktop QA, advanced release engineering)
-are planned but not yet added in this pass — this folder grows
-incrementally, each addition backed by real, executed work, never a
-documentation-only placeholder claiming more than exists.
+This folder grows incrementally, each addition backed by real, executed
+work, never a documentation-only placeholder claiming more than exists.
 
 ## AI/ML/LLM Systems Testing
 
@@ -152,3 +151,21 @@ SSE implementation rather than gRPC/HTTP2-push/WebRTC, never touching
 the real backend; a real smoke-test monitor rather than a commercial
 synthetic-monitoring platform) that every other document in that
 subfolder assumes.
+
+## Desktop QA & Advanced Release Engineering
+
+Executable lab: `QA-DEMO-SYSTEM/automation-labs/release-engineering/`
+(a real hand-rolled semver 2.0.0 parser/comparator and Keep-a-Changelog
+structural checker, run against this repository's own real
+`CHANGELOG.md` and all 6 real workspace `package.json` files, plus a
+real canary-rollout state machine proving both pass-through-to-100%
+and automatic-rollback-on-failure with the same unmodified code).
+Desktop QA is LEARNING-only — this repository has no real native
+desktop application or OS-level UI-automation target, the same
+infrastructure-gap class already documented for Mobile and Appium.
+
+Read `DESKTOP-QA-RELEASE-ENGINEERING/README.md` first — it states the
+scope boundary (why Desktop QA is documentation-only here; a
+hand-rolled in-process rollout state machine rather than a real
+traffic-shifting proxy or deployment-orchestration platform) that
+every other document in that subfolder assumes.

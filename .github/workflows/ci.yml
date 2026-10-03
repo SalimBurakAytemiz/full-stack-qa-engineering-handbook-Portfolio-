@@ -551,3 +551,19 @@ jobs:
       - run: npm run production-verification:test --workspace automation-labs
         env:
           QA_DEMO_BASE_URL: http://127.0.0.1:3000
+
+  release-engineering-lab:
+    # Part 2 — Advanced QA Engineering: Release Engineering (Milestone
+    # 2.7). Self-contained: reads this repo's own real CHANGELOG.md and
+    # package.json files from the checkout, and the canary rollout is a
+    # hand-rolled in-process state machine — no real backend needed.
+    name: Release Engineering lab (semver/changelog integrity + canary rollout)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run release-eng:test --workspace automation-labs

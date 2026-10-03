@@ -61,6 +61,9 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Unicode Data Integrity (Multi-Byte Round-Trip) | WORKING | NONE | CI_VERIFIED |
 | Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | CI_VERIFIED |
 | Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | CI_VERIFIED |
+| Desktop QA — Cross-Platform Native UI Automation Concepts | WORKING | NONE | DOCUMENTED |
+| Release Versioning & Changelog Integrity Testing | WORKING | NONE | EXECUTED |
+| Canary Rollout & Automatic Rollback Testing | WORKING | NONE | EXECUTED |
 
 ## Reading this table correctly
 

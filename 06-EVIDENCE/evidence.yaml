@@ -225,6 +225,14 @@ items:
     related_lab: lab.production-verification.synthetic-smoke-monitor
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Sunucu yokken dürüstçe NOT_EXECUTED raporlandi; gercek bir backend baslatilinca gercek bir GO sonucu gercek milisaniye gecikmeleriyle uretildi."
 
+  - id: evidence.release-engineering.real-lab-run
+    label: "Release Engineering lab — 21 unit tests + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof executed locally"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md"
+    produced_by: "npm run release-eng:test --workspace automation-labs + npm run release-eng:test:unit --workspace automation-labs, run locally in this sandbox"
+    related_lab: lab.release-engineering.semver-changelog-and-canary-rollout
+    note: "TR: E3_EXECUTED — lokal olarak gerçekten çalıştırılıp PASS aldı. Bu reponun KENDİ gerçek CHANGELOG.md ve 6 gerçek workspace package.json dosyası dogrulandi (0 ihlal); canary rollout durum makinesi hem basarili hem de otomatik-rollback senaryolarinda kanitlandi. CI_VERIFIED elevation henüz yapılmadı."
+
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
     maturity: E3_EXECUTED

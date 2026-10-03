@@ -137,6 +137,19 @@ not incompleteness; no row implies content that isn't there.
   single boolean, with an honest `NOT_EXECUTED` result when no backend
   is reachable) with matching handbook docs at
   [`25-ADVANCED-QA-ENGINEERING/I18N-MODERN-PROTOCOLS-PRODUCTION-VERIFICATION/`](25-ADVANCED-QA-ENGINEERING/I18N-MODERN-PROTOCOLS-PRODUCTION-VERIFICATION/).
+  Also covers **Desktop QA & Advanced Release Engineering** — one more
+  genuine, executable lab
+  (`QA-DEMO-SYSTEM/automation-labs/release-engineering/`: a real
+  hand-rolled semver 2.0.0 parser/comparator and Keep-a-Changelog
+  structural checker, run against this repository's own real
+  `CHANGELOG.md` and all 6 real workspace `package.json` files, plus a
+  real canary-rollout state machine proving both pass-through-to-100%
+  and automatic-rollback-on-a-real-injected-failure with the same
+  unmodified code), with Desktop QA documented LEARNING-only (the same
+  infrastructure-gap class as Mobile/Appium — no real desktop
+  application exists in this repository to automate), and matching
+  handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/DESKTOP-QA-RELEASE-ENGINEERING/`](25-ADVANCED-QA-ENGINEERING/DESKTOP-QA-RELEASE-ENGINEERING/).
   Professional experience for this whole area is explicitly `NONE` in
   the Digital Twin registry — this is repository practice only,
   disclosed as such throughout (see each folder's `README.md`
