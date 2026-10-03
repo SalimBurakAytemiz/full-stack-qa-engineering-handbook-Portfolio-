@@ -54,6 +54,13 @@ stderr from the backend's real SQLite module — expected, not an error.)
 - Covers exactly one real endpoint shape (`GET /api/products`); see
   `README.md`'s "Scope boundary" section for what is deliberately out of
   scope (arbitrary OpenAPI diffing, advanced JSON Schema keywords).
-- Not yet CI-verified as of this file's writing — CI wiring is a separate,
-  explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `compatibility-testing-lab` job once added).
+
+## Run 3 — CI-verified
+
+GitHub Actions run
+[`37080426518`](https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37080426518)
+(commit `e573ddf`), job **"Compatibility Testing lab (frozen baseline vs
+real backend response shape)"** — `conclusion: success`. The same
+`npm run compatibility:test --workspace automation-labs` command
+confirmed above ran against GitHub Actions' real `ubuntu-latest` runner
+with the same observed output.

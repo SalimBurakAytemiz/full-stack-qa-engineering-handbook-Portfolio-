@@ -441,19 +441,20 @@ competencies:
 
   # Part 2 — Advanced QA Engineering: Distributed Messaging, Supply Chain
   # Security & Compatibility Testing (Milestone 2.5). Same discipline as
-  # every prior milestone: professional.status NONE for all six —
-  # genuinely new ground. repository.status is EXECUTED (real local run,
-  # not yet CI_VERIFIED as of this entry's writing) — CI wiring and the
-  # CI_VERIFIED elevation are a separate, explicitly tracked follow-up
-  # step, exactly as done for every Part 2 milestone before this one.
+  # every prior milestone: professional.status NONE for all five —
+  # genuinely new ground. repository.status is CI_VERIFIED — GitHub
+  # Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37080426518
+  # (commit e573ddf) confirmed the "Distributed Messaging lab", "Supply
+  # Chain Security lab", and "Compatibility Testing lab" CI jobs all pass.
 
   - id: competency.distributed-messaging.delivery-semantics-and-dead-lettering
     label: "Distributed Messaging — Delivery Semantics, Ordering & Dead-Letter Queues"
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "distributed-messaging/lib/broker.js — broker.test.js (5) genuinely passing; a real aggregate run proved same-key ordering is preserved and a permanently-failing message is routed to the dead-letter queue with the real error and attempt count attached, after exhausting a configured retry budget"
+      status: CI_VERIFIED
+      evidence: "distributed-messaging/lib/broker.js — broker.test.js (5) genuinely passing; a real aggregate run proved same-key ordering is preserved and a permanently-failing message is routed to the dead-letter queue with the real error and attempt count attached, after exhausting a configured retry budget, verified in GitHub Actions"
     gaps: [gap.distributed-messaging.professional-exposure, gap.distributed-messaging.real-broker-infrastructure]
 
   - id: competency.distributed-messaging.idempotent-consumer-design
@@ -461,8 +462,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "distributed-messaging/lib/idempotent-consumer.js — idempotent-consumer.test.js (3) genuinely passing; the exact same simulated redelivery was run through a non-idempotent consumer (observed appliedCount=2, a real double-application bug) and an idempotent consumer (observed appliedCount=1), differing only by one dedup check"
+      status: CI_VERIFIED
+      evidence: "distributed-messaging/lib/idempotent-consumer.js — idempotent-consumer.test.js (3) genuinely passing; the exact same simulated redelivery was run through a non-idempotent consumer (observed appliedCount=2, a real double-application bug) and an idempotent consumer (observed appliedCount=1), differing only by one dedup check, verified in GitHub Actions"
     gaps: [gap.distributed-messaging.professional-exposure, gap.distributed-messaging.real-broker-infrastructure]
 
   - id: competency.supply-chain-security.sbom-and-vulnerability-auditing
@@ -470,8 +471,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "supply-chain-security/lib/sbom.js + lib/audit.js — sbom.test.js (2) + audit.test.js (3) genuinely passing; a real run of npm's own `npm sbom`/`npm audit` against this repository produced a real 76-component CycloneDX SBOM and a real audit (24 full-graph advisories, all dev-only, vs. 0 production-only), cross-referenced for SBOM visibility via cross-reference.test.js (4)"
+      status: CI_VERIFIED
+      evidence: "supply-chain-security/lib/sbom.js + lib/audit.js — sbom.test.js (2) + audit.test.js (3) genuinely passing; a real run of npm's own `npm sbom`/`npm audit` against this repository produced a real 76-component CycloneDX SBOM and a real audit (24 full-graph advisories, all dev-only, vs. 0 production-only), cross-referenced for SBOM visibility via cross-reference.test.js (4), verified in GitHub Actions"
     gaps: [gap.supply-chain-security.professional-exposure, gap.supply-chain-security.commercial-sca-tooling]
 
   - id: competency.supply-chain-security.lockfile-integrity-verification
@@ -479,8 +480,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "supply-chain-security/lib/lockfile-integrity.js — lockfile-integrity.test.js (5, including a direct check against this repository's own real package-lock.json) genuinely passing; a real run found zero integrity violations among 415 real registry-resolved entries, correctly excluding 4 legitimate local workspace symlinks from being false-positive-flagged"
+      status: CI_VERIFIED
+      evidence: "supply-chain-security/lib/lockfile-integrity.js — lockfile-integrity.test.js (5, including a direct check against this repository's own real package-lock.json) genuinely passing; a real run found zero integrity violations among 415 real registry-resolved entries, correctly excluding 4 legitimate local workspace symlinks from being false-positive-flagged, verified in GitHub Actions"
     gaps: [gap.supply-chain-security.professional-exposure, gap.supply-chain-security.commercial-sca-tooling]
 
   - id: competency.compatibility-testing.breaking-change-detection
@@ -488,8 +489,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "compatibility-testing/lib/compatibility-check.js — compatibility-check.test.js (4) genuinely passing; a real run validated the backend's real current GET /api/products response against a frozen baseline JSON Schema contract (NO_CHANGE), then proved the checker correctly classifies a removed required field and a changed field type as BREAKING and a newly added field as SAFE_ADDITIVE, each against a deliberately constructed candidate built from that same real response"
+      status: CI_VERIFIED
+      evidence: "compatibility-testing/lib/compatibility-check.js — compatibility-check.test.js (4) genuinely passing; a real run validated the backend's real current GET /api/products response against a frozen baseline JSON Schema contract (NO_CHANGE), then proved the checker correctly classifies a removed required field and a changed field type as BREAKING and a newly added field as SAFE_ADDITIVE, each against a deliberately constructed candidate built from that same real response, verified in GitHub Actions"
     gaps: [gap.compatibility-testing.professional-exposure, gap.compatibility-testing.generic-openapi-diffing]
 
 related:

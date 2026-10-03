@@ -679,6 +679,21 @@ relationships:
   - from: competency.data-engineering.data-quality-validation
     predicate: EVIDENCED_BY
     to: evidence.data-engineering.real-etl-and-quality-run
+  - from: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    predicate: EVIDENCED_BY
+    to: evidence.distributed-messaging.real-lab-run
+  - from: competency.distributed-messaging.idempotent-consumer-design
+    predicate: EVIDENCED_BY
+    to: evidence.distributed-messaging.real-lab-run
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: EVIDENCED_BY
+    to: evidence.supply-chain-security.real-lab-run
+  - from: competency.supply-chain-security.lockfile-integrity-verification
+    predicate: EVIDENCED_BY
+    to: evidence.supply-chain-security.real-lab-run
+  - from: competency.compatibility-testing.breaking-change-detection
+    predicate: EVIDENCED_BY
+    to: evidence.compatibility-testing.real-lab-run
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite

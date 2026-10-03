@@ -73,6 +73,14 @@ have been a false positive. The checker excludes any entry with
 ## Scope and honesty notes
 
 - Not a commercial SCA tool — see `README.md`'s "Scope boundary" section.
-- Not yet CI-verified as of this file's writing — CI wiring is a separate,
-  explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `supply-chain-security-lab` job once added).
+
+## Run 3 — CI-verified
+
+GitHub Actions run
+[`37080426518`](https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37080426518)
+(commit `e573ddf`), job **"Supply Chain Security lab (real npm sbom +
+npm audit + lockfile integrity)"** — `conclusion: success`. The same
+`npm run supply-chain:test --workspace automation-labs` command confirmed
+above ran against GitHub Actions' real `ubuntu-latest` runner with the
+same observed output (76 components, 24 full-graph vs. 0 production-only
+vulnerabilities, 415 checked with 0 violations).

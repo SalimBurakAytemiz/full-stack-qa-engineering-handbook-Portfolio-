@@ -52,11 +52,11 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Testcontainers-Style Container-Based Integration Testing | WORKING | NONE | CI_VERIFIED |
 | ETL Pipeline Testing | WORKING | NONE | CI_VERIFIED |
 | Data Quality Validation (Referential Integrity, Reconciliation, Schema Drift) | WORKING | NONE | CI_VERIFIED |
-| Distributed Messaging — Delivery Semantics, Ordering & Dead-Letter Queues | WORKING | NONE | EXECUTED |
-| Idempotent Consumer Design Under At-Least-Once Delivery | WORKING | NONE | EXECUTED |
-| SBOM Generation & Vulnerability Auditing | WORKING | NONE | EXECUTED |
-| Lockfile Integrity Verification (SRI Hash Coverage) | WORKING | NONE | EXECUTED |
-| API Backward-Compatibility & Breaking-Change Detection | WORKING | NONE | EXECUTED |
+| Distributed Messaging — Delivery Semantics, Ordering & Dead-Letter Queues | WORKING | NONE | CI_VERIFIED |
+| Idempotent Consumer Design Under At-Least-Once Delivery | WORKING | NONE | CI_VERIFIED |
+| SBOM Generation & Vulnerability Auditing | WORKING | NONE | CI_VERIFIED |
+| Lockfile Integrity Verification (SRI Hash Coverage) | WORKING | NONE | CI_VERIFIED |
+| API Backward-Compatibility & Breaking-Change Detection | WORKING | NONE | CI_VERIFIED |
 
 ## Reading this table correctly
 

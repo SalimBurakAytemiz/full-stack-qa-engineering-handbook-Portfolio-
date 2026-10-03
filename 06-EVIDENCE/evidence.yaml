@@ -178,28 +178,28 @@ items:
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Dört veri-kalitesi kontrolünün HER BİRİ hem gerçek temiz veriye hem de kasıtlı olarak bozulmuş veriye karşı kanıtlandı."
 
   - id: evidence.distributed-messaging.real-lab-run
-    label: "Distributed Messaging lab — 8 unit tests + a real aggregate run (ordering, DLQ routing, non-idempotent double-apply vs. idempotent single-apply) executed locally"
-    maturity: E3_EXECUTED
+    label: "Distributed Messaging lab — 8 unit tests + a real aggregate run (ordering, DLQ routing, non-idempotent double-apply vs. idempotent single-apply) executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/distributed-messaging/EXECUTION.md"
-    produced_by: "npm run messaging:test --workspace automation-labs + npm run messaging:test:unit --workspace automation-labs, run locally in this sandbox"
+    produced_by: "npm run messaging:test --workspace automation-labs — GitHub Actions job 'Distributed Messaging lab (broker ordering, DLQ, idempotent consumer)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37080426518, commit e573ddf, conclusion: success"
     related_lab: lab.distributed-messaging.broker-and-idempotent-consumer
-    note: "TR: E3_EXECUTED — lokal olarak gerçekten çalıştırılıp PASS aldı. CI_VERIFIED elevation henüz yapılmadı; CI wiring ayrı, izlenen bir adımdır (bkz. task #193)."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı."
 
   - id: evidence.supply-chain-security.real-lab-run
-    label: "Supply Chain Security lab — 14 unit tests + a real npm sbom/npm audit/lockfile-integrity run executed locally"
-    maturity: E3_EXECUTED
+    label: "Supply Chain Security lab — 14 unit tests + a real npm sbom/npm audit/lockfile-integrity run executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/supply-chain-security/EXECUTION.md"
-    produced_by: "npm run supply-chain:test --workspace automation-labs + npm run supply-chain:test:unit --workspace automation-labs, run locally in this sandbox"
+    produced_by: "npm run supply-chain:test --workspace automation-labs — GitHub Actions job 'Supply Chain Security lab (real npm sbom + npm audit + lockfile integrity)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37080426518, commit e573ddf, conclusion: success"
     related_lab: lab.supply-chain-security.sbom-audit-lockfile
-    note: "TR: E3_EXECUTED — lokal olarak gerçekten çalıştırılıp PASS aldı (76 bileşenli gerçek SBOM; 24 full-graph'a karşı 0 production-only zafiyet; 415 gerçek registry girdisinde sıfır integrity ihlali, 4 yerel workspace doğru şekilde hariç tutuldu). CI_VERIFIED elevation henüz yapılmadı."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (76 bileşenli gerçek SBOM; 24 full-graph'a karşı 0 production-only zafiyet; 415 gerçek registry girdisinde sıfır integrity ihlali, 4 yerel workspace doğru şekilde hariç tutuldu)."
 
   - id: evidence.compatibility-testing.real-lab-run
-    label: "Compatibility Testing lab — 4 unit tests + a real baseline-vs-current-response run executed locally"
-    maturity: E3_EXECUTED
+    label: "Compatibility Testing lab — 4 unit tests + a real baseline-vs-current-response run executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/compatibility-testing/EXECUTION.md"
-    produced_by: "npm run compatibility:test --workspace automation-labs + npm run compatibility:test:unit --workspace automation-labs, run locally in this sandbox"
+    produced_by: "npm run compatibility:test --workspace automation-labs — GitHub Actions job 'Compatibility Testing lab (frozen baseline vs real backend response shape)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37080426518, commit e573ddf, conclusion: success"
     related_lab: lab.compatibility-testing.breaking-change-detection
-    note: "TR: E3_EXECUTED — lokal olarak gerçekten çalıştırılıp PASS aldı (gerçek mevcut yanıt şekli NO_CHANGE; kaldırılan alan ve tip değişikliği BREAKING, yeni eklenen alan SAFE_ADDITIVE olarak doğru sınıflandırıldı). CI_VERIFIED elevation henüz yapılmadı."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (gerçek mevcut yanıt şekli NO_CHANGE; kaldırılan alan ve tip değişikliği BREAKING, yeni eklenen alan SAFE_ADDITIVE olarak doğru sınıflandırıldı)."
 
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
