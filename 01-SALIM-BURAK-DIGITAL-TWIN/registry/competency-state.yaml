@@ -605,6 +605,31 @@ competencies:
       evidence: "multi-tenancy-isolation/lib/tenant-scoped-repository.js — tenant-isolation.test.js (6) genuinely passing; a real run seeded two real tenants' rows in one real SQLite database and proved the scoped repository's full CRUD isolation (getById/list/update/remove), plus a deliberately unsafe comparison repository that genuinely leaked another tenant's real row — the negative-path proof that makes the positive-path proof meaningful, verified in GitHub Actions"
     gaps: [gap.multi-tenancy-isolation.professional-exposure, gap.multi-tenancy-isolation.database-level-isolation-mechanisms]
 
+  # Part 3 — Platform Engineering & Quality Gates: API Idempotency-Key
+  # Replay-Safety & Rate Limiting (Milestone 3.2). Same discipline:
+  # professional.status NONE for both. repository.status is EXECUTED
+  # (real unit tests + real aggregate run passing locally) — not yet
+  # CI_VERIFIED; CI wiring and the CI-verification run are a separate,
+  # explicitly tracked next step.
+
+  - id: competency.idempotency-testing.replay-safety
+    label: "API Idempotency-Key Replay-Safety Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "idempotency-testing/lib/idempotency-store.js + lib/idempotent-server.js — idempotency-store.test.js (4) + idempotent-server.test.js (5) genuinely passing (9/9); a real run proved a request with no Idempotency-Key header gets a real 400, a replayed key returns the identical cached order with no duplicate side effect, and 10 real concurrent HTTP requests with the same key (fired via Promise.all) produced exactly one real order and exactly one real side-effect increment — not yet verified in GitHub Actions"
+    gaps: [gap.idempotency-testing.professional-exposure, gap.idempotency-testing.persistent-distributed-store]
+
+  - id: competency.rate-limiting.token-bucket-abuse-prevention
+    label: "Rate Limiting & Abuse Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "rate-limiting/lib/token-bucket.js + lib/rate-limited-server.js — token-bucket.test.js (5) + rate-limited-server.test.js (3) genuinely passing (8/8); a real run proved requests within capacity succeed with a real 200, a request over capacity gets a real 429 checked against the server's own real accepted/rejected counters, and advancing a real injected fake clock makes the next request succeed once a token has genuinely refilled — including a real validation bug (refillRatePerMs > 0 wrongly rejecting the legitimate refillRatePerMs: 0 case) caught by a real failing test run and fixed — not yet verified in GitHub Actions"
+    gaps: [gap.rate-limiting.professional-exposure, gap.rate-limiting.per-client-limiting]
+
 related:
   professional_source: "professional-experience.yaml"
   gap_detail: "gaps.yaml"

@@ -599,3 +599,35 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm run multi-tenancy:test --workspace automation-labs
+
+  idempotency-testing-lab:
+    # Part 3 — Platform Engineering & Quality Gates: API
+    # Idempotency-Key Replay-Safety Testing (Milestone 3.2).
+    # Self-contained: a real hand-rolled HTTP server over Node's own
+    # http module on a real loopback port — no backend server needed.
+    name: Idempotency Testing lab (Idempotency-Key HTTP server + in-flight-promise store)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run idempotency:test --workspace automation-labs
+
+  rate-limiting-lab:
+    # Part 3 — Platform Engineering & Quality Gates: Rate Limiting &
+    # Abuse Testing (Milestone 3.2). Self-contained: a real
+    # hand-rolled HTTP server over Node's own http module on a real
+    # loopback port — no backend server needed.
+    name: Rate Limiting lab (token-bucket limiter + HTTP server)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run rate-limiting:test --workspace automation-labs

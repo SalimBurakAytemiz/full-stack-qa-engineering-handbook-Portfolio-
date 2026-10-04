@@ -172,6 +172,18 @@ not incompleteness; no row implies content that isn't there.
   cross-tenant leak the safe one prevents) with matching handbook docs
   at
   [`26-PLATFORM-ENGINEERING-QUALITY-GATES/DATABASE-MIGRATION-MULTI-TENANCY/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/DATABASE-MIGRATION-MULTI-TENANCY/).
+  Also covers **API Idempotency-Key Replay-Safety & Rate Limiting** —
+  two more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/idempotency-testing/`: a real,
+  hand-rolled HTTP server implementing Stripe's own real
+  `Idempotency-Key` convention, backed by an in-flight-promise store
+  proven safe under a genuine 10-way concurrent race; and
+  `QA-DEMO-SYSTEM/automation-labs/rate-limiting/`: a real hand-rolled
+  token-bucket limiter backing a real HTTP server, proven to accept
+  within capacity, reject over capacity with a real `429`, and refill
+  correctly over real elapsed time via an injected fake clock) with
+  matching handbook docs at
+  [`26-PLATFORM-ENGINEERING-QUALITY-GATES/API-IDEMPOTENCY-RATE-LIMITING/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/API-IDEMPOTENCY-RATE-LIMITING/).
   Professional experience for this area is explicitly `NONE` in the
   Digital Twin registry — repository practice only. Further
   platform-engineering subtopics are planned but not yet added.

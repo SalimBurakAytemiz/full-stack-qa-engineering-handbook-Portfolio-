@@ -235,6 +235,22 @@ items:
     covers_competencies: [competency.multi-tenancy-isolation.tenant-scoped-data-access]
     note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı (6/6 unit test + 5/5 agregat kontrol). İki gerçek tenant'ın verisi tek bir gerçek SQLite veritabanına tohumlandı; scoped repository'nin tam CRUD izolasyonu kanıtlandı, kasıtlı olarak güvensiz bir karşılaştırma repository'si ise GERÇEKTEN başka bir tenant'ın satırını sızdırdı."
 
+  - id: lab.idempotency-testing.in-flight-promise-store
+    label: "API Idempotency-Key Replay-Safety (in-flight-promise store backing a real Idempotency-Key HTTP server)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/idempotency-testing"
+    evidence_id: evidence.idempotency-testing.real-lab-run
+    covers_competencies: [competency.idempotency-testing.replay-safety]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (9/9 unit test + 4/4 agregat kontrol) — henüz GitHub Actions'ta doğrulanmadı (CI bağlama ayrı, açıkça takip edilen bir sonraki adımdır). Eksik Idempotency-Key başlığı gerçek bir 400 ile reddedildi; aynı anahtarla 10 gerçek eşzamanlı HTTP isteği (Promise.all ile ateşlendi) tam olarak bir gerçek sipariş ve bir gerçek yan-etki artışı ürettiği GERÇEKTEN kanıtlandı."
+
+  - id: lab.rate-limiting.token-bucket-limiter
+    label: "Rate Limiting & Abuse Testing (hand-rolled token-bucket limiter backing a real HTTP server)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/rate-limiting"
+    evidence_id: evidence.rate-limiting.real-lab-run
+    covers_competencies: [competency.rate-limiting.token-bucket-abuse-prevention]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (8/8 unit test + 3/3 agregat kontrol) — henüz GitHub Actions'ta doğrulanmadı (CI bağlama ayrı, açıkça takip edilen bir sonraki adımdır). Kapasite içindeki istekler gerçek 200 ile kabul edildi, kapasiteyi aşan istek gerçek 429 aldı, ve enjekte edilmiş gerçek bir sahte saat ilerletildiğinde bir sonraki istek GERÇEKTEN başarılı oldu — ayrıca gerçek bir doğrulama hatası (refillRatePerMs > 0, geçerli refillRatePerMs: 0 durumunu hatalı şekilde reddediyordu) gerçek bir başarısız test çalışmasıyla yakalandı ve düzeltildi."
+
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"
   narrative_docs:

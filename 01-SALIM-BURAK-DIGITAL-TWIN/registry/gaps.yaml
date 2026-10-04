@@ -318,5 +318,25 @@ gaps:
     label: "Multi-Tenancy Isolation Testing — database-level isolation mechanisms (separate schemas/databases per tenant, PostgreSQL RLS)"
     note: "TR: multi-tenancy-isolation lab'ı satır-seviyesi, sorgu-koşullu (query-predicate) tenant izolasyonu kanıtlar — tenant başına ayrı şema/veritabanı veya PostgreSQL row-level security gibi veritabanı motoru seviyesinde izolasyon mekanizmaları (SQLite'ta zaten mevcut değil) hiç uygulanmadı."
 
+  - id: gap.idempotency-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "API Idempotency-Key Replay-Safety Testing — professional project exposure"
+    note: "TR: competency.idempotency-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.idempotency-testing.persistent-distributed-store
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "API Idempotency-Key Replay-Safety Testing — persistent/distributed idempotency store (Redis, unique-constrained DB table)"
+    note: "TR: idempotency-testing lab'ındaki store tek bir process içinde bellekte (in-memory) tutulur — birden fazla sunucu örneği arasında paylaşılan veya process yeniden başlatıldığında hayatta kalan gerçek, kalıcı/dağıtık bir idempotency store (Redis SETNX, benzersiz kısıtlamalı bir veritabanı tablosu) hiç uygulanmadı."
+
+  - id: gap.rate-limiting.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Rate Limiting & Abuse Testing — professional project exposure"
+    note: "TR: competency.rate-limiting.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.rate-limiting.per-client-limiting
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Rate Limiting & Abuse Testing — per-client/per-API-key/per-IP rate limiting middleware"
+    note: "TR: rate-limiting lab'ı tek, paylaşılan bir token-bucket algoritmasını kanıtlar — gerçek çok-kiracılı (multi-tenant) bir API'nin ihtiyaç duyacağı, istemci/API-anahtarı/IP başına ayrı bucket tutan bir rate-limiting middleware'i hiç uygulanmadı."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

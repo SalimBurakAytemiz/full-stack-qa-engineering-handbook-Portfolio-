@@ -334,6 +334,12 @@ relationships:
   - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
     predicate: USES_TECHNOLOGY
     to: tech.tenant-scoped-repository
+  - from: competency.idempotency-testing.replay-safety
+    predicate: USES_TECHNOLOGY
+    to: tech.idempotency-store
+  - from: competency.rate-limiting.token-bucket-abuse-prevention
+    predicate: USES_TECHNOLOGY
+    to: tech.token-bucket-rate-limiter
   - from: competency.api.graphql
     predicate: USES_TECHNOLOGY
     to: protocol.graphql
@@ -452,6 +458,12 @@ relationships:
   - from: lab.multi-tenancy-isolation.tenant-scoped-repository
     predicate: USES_TECHNOLOGY
     to: tech.tenant-scoped-repository
+  - from: lab.idempotency-testing.in-flight-promise-store
+    predicate: USES_TECHNOLOGY
+    to: tech.idempotency-store
+  - from: lab.rate-limiting.token-bucket-limiter
+    predicate: USES_TECHNOLOGY
+    to: tech.token-bucket-rate-limiter
 
   # ============================================================
   # COMPETENCY -> LAB (repository practice location — PRACTICED_IN)
@@ -579,6 +591,12 @@ relationships:
   - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
     predicate: PRACTICED_IN
     to: lab.multi-tenancy-isolation.tenant-scoped-repository
+  - from: competency.idempotency-testing.replay-safety
+    predicate: PRACTICED_IN
+    to: lab.idempotency-testing.in-flight-promise-store
+  - from: competency.rate-limiting.token-bucket-abuse-prevention
+    predicate: PRACTICED_IN
+    to: lab.rate-limiting.token-bucket-limiter
   - from: competency.security.security-aware-qa
     predicate: PRACTICED_IN
     to: lab.backend-api.rest-graphql-websocket
@@ -692,6 +710,12 @@ relationships:
   - from: lab.multi-tenancy-isolation.tenant-scoped-repository
     predicate: TESTED_BY
     to: evidence.multi-tenancy-isolation.real-lab-run
+  - from: lab.idempotency-testing.in-flight-promise-store
+    predicate: TESTED_BY
+    to: evidence.idempotency-testing.real-lab-run
+  - from: lab.rate-limiting.token-bucket-limiter
+    predicate: TESTED_BY
+    to: evidence.rate-limiting.real-lab-run
   - from: lab.database.sql-validation
     predicate: TESTED_BY
     to: evidence.database.sql-validation-suite
@@ -1039,6 +1063,18 @@ relationships:
   - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
     predicate: LEARNING
     to: gap.multi-tenancy-isolation.professional-exposure
+  - from: competency.idempotency-testing.replay-safety
+    predicate: LEARNING
+    to: gap.idempotency-testing.persistent-distributed-store
+  - from: competency.idempotency-testing.replay-safety
+    predicate: LEARNING
+    to: gap.idempotency-testing.professional-exposure
+  - from: competency.rate-limiting.token-bucket-abuse-prevention
+    predicate: LEARNING
+    to: gap.rate-limiting.per-client-limiting
+  - from: competency.rate-limiting.token-bucket-abuse-prevention
+    predicate: LEARNING
+    to: gap.rate-limiting.professional-exposure
   - from: competency.web.accessibility
     predicate: LEARNING
     to: gap.accessibility.professional-exposure

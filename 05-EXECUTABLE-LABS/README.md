@@ -65,6 +65,8 @@ lab catalog navigable and machine-checkable (see
 | Release Engineering — semver/changelog integrity + canary rollout | `QA-DEMO-SYSTEM/automation-labs/release-engineering` | `lab.release-engineering.semver-changelog-and-canary-rollout` | L4_CI_VERIFIED |
 | Database Migration & Schema Evolution Testing | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing` | `lab.db-migration-testing.real-sqlite-migration-runner` | L4_CI_VERIFIED |
 | Multi-Tenancy Data Isolation Testing | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation` | `lab.multi-tenancy-isolation.tenant-scoped-repository` | L4_CI_VERIFIED |
+| API Idempotency-Key Replay-Safety Testing | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing` | `lab.idempotency-testing.in-flight-promise-store` | L3_AUTOMATED |
+| Rate Limiting & Abuse Testing — token bucket | `QA-DEMO-SYSTEM/automation-labs/rate-limiting` | `lab.rate-limiting.token-bucket-limiter` | L3_AUTOMATED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real

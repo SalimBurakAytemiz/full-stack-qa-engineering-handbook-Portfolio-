@@ -249,6 +249,22 @@ items:
     related_lab: lab.multi-tenancy-isolation.tenant-scoped-repository
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. İki gerçek tenant'ın verisiyle tam CRUD izolasyonu ve kasıtlı güvensiz repository'nin gerçek sızıntısı kanıtlandı."
 
+  - id: evidence.idempotency-testing.real-lab-run
+    label: "Idempotency Testing lab — 9 unit tests + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race executed (local only)"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/idempotency-testing/EXECUTION.md"
+    produced_by: "npm run idempotency:test --workspace automation-labs (local run, see EXECUTION.md for actual observed output)"
+    related_lab: lab.idempotency-testing.in-flight-promise-store
+    note: "TR: E3_EXECUTED — şu an sadece lokal olarak gerçekten çalıştırılıp PASS aldı, henüz GitHub Actions'ta doğrulanmadı. Eksik Idempotency-Key başlığı reddedildi; aynı anahtarla 10 gerçek eşzamanlı HTTP isteği tam olarak bir gerçek sipariş ürettiği kanıtlandı. CI job eklendikten ve gerçekten PASS aldığında E4_CI_VERIFIED'e yükseltilecek."
+
+  - id: evidence.rate-limiting.real-lab-run
+    label: "Rate Limiting lab — 8 unit tests + a real aggregate run proving accept/reject/refill behavior against a real HTTP server executed (local only)"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/rate-limiting/EXECUTION.md"
+    produced_by: "npm run rate-limiting:test --workspace automation-labs (local run, see EXECUTION.md for actual observed output)"
+    related_lab: lab.rate-limiting.token-bucket-limiter
+    note: "TR: E3_EXECUTED — şu an sadece lokal olarak gerçekten çalıştırılıp PASS aldı, henüz GitHub Actions'ta doğrulanmadı. Kapasite içindeki istekler kabul edildi, aşan istek gerçek 429 aldı, enjekte edilmiş sahte saat ilerletildiğinde gerçek refill kanıtlandı. CI job eklendikten ve gerçekten PASS aldığında E4_CI_VERIFIED'e yükseltilecek."
+
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
     maturity: E3_EXECUTED

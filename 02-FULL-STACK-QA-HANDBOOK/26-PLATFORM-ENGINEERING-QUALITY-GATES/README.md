@@ -24,6 +24,7 @@ for the full three-dimension model.
 | Folder | Status |
 |---|---|
 | `DATABASE-MIGRATION-MULTI-TENANCY/` | Added — real executable db-migration-testing + multi-tenancy-isolation labs, see below |
+| `API-IDEMPOTENCY-RATE-LIMITING/` | Added — real executable idempotency-testing + rate-limiting labs, see below |
 
 This folder grows incrementally, each addition backed by real,
 executed work, never a documentation-only placeholder claiming more
@@ -48,6 +49,24 @@ scope boundary (a migration runner, not a migration generator; row-level
 query-predicate tenant isolation, not database-level mechanisms like
 separate schemas or RLS policies) that every other document in that
 subfolder assumes.
+
+## API Idempotency-Key Replay-Safety & Rate Limiting
+
+Executable labs:
+`QA-DEMO-SYSTEM/automation-labs/idempotency-testing/` (a real,
+hand-rolled HTTP server implementing Stripe's own real
+`Idempotency-Key` convention, backed by an in-flight-promise store
+proven safe under a genuine 10-way concurrent race, not just
+sequential replay) and `QA-DEMO-SYSTEM/automation-labs/rate-limiting/`
+(a real hand-rolled token-bucket limiter backing a real HTTP server,
+proven to accept within capacity, reject over capacity with a real
+`429`, and refill correctly over real elapsed time via an injected
+fake clock).
+
+Read `API-IDEMPOTENCY-RATE-LIMITING/README.md` first — it states the
+scope boundary (an in-memory idempotency store, not a persistent
+distributed one; a single shared rate-limit bucket, not per-client
+limiting) that every other document in that subfolder assumes.
 
 ## Digital Twin linkage
 

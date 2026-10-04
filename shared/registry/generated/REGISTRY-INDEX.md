@@ -60,6 +60,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Canary Rollout & Automatic Rollback Testing | WORKING | NONE | CI_VERIFIED |
 | Database Migration & Schema Evolution Testing | WORKING | NONE | CI_VERIFIED |
 | Multi-Tenancy Data Isolation Testing | WORKING | NONE | CI_VERIFIED |
+| API Idempotency-Key Replay-Safety Testing | WORKING | NONE | EXECUTED |
+| Rate Limiting & Abuse Testing | WORKING | NONE | EXECUTED |
 
 ## Domain Maturity
 
@@ -107,6 +109,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Release Engineering (hand-rolled semver/changelog integrity checks + canary rollout state machine) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering` |
 | Database Migration Testing (hand-rolled migration runner against a real in-memory SQLite database) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing` |
 | Multi-Tenancy Isolation (tenant-scoped data access layer + deliberately unsafe negative-path proof) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation` |
+| API Idempotency-Key Replay-Safety (in-flight-promise store backing a real Idempotency-Key HTTP server) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing` |
+| Rate Limiting & Abuse Testing (hand-rolled token-bucket limiter backing a real HTTP server) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting` |
 
 ## System Patterns
 
@@ -170,12 +174,14 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Release Engineering lab — 21 unit tests + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md` |
 | DB Migration Testing lab — 6 unit tests + a real aggregate run against a real in-memory SQLite database executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing/EXECUTION.md` |
 | Multi-Tenancy Isolation lab — 6 unit tests + a real aggregate run proving tenant CRUD isolation and a real negative-path leak proof executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/EXECUTION.md` |
+| Idempotency Testing lab — 9 unit tests + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race executed (local only) | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing/EXECUTION.md` |
+| Rate Limiting lab — 8 unit tests + a real aggregate run proving accept/reject/refill behavior against a real HTTP server executed (local only) | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (416 edges)
+## Relationships (428 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -274,6 +280,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.release-engineering.canary-rollout-and-automatic-rollback | USES_TECHNOLOGY | tech.canary-rollout-state-machine |
 | competency.db-migration-testing.schema-evolution-and-rollback | USES_TECHNOLOGY | tech.sqlite-migration-runner |
 | competency.multi-tenancy-isolation.tenant-scoped-data-access | USES_TECHNOLOGY | tech.tenant-scoped-repository |
+| competency.idempotency-testing.replay-safety | USES_TECHNOLOGY | tech.idempotency-store |
+| competency.rate-limiting.token-bucket-abuse-prevention | USES_TECHNOLOGY | tech.token-bucket-rate-limiter |
 | competency.api.graphql | USES_TECHNOLOGY | protocol.graphql |
 | competency.api.rest | USES_TECHNOLOGY | protocol.rest |
 | competency.integration.websocket | USES_TECHNOLOGY | protocol.websocket |
@@ -312,6 +320,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.release-engineering.semver-changelog-and-canary-rollout | USES_TECHNOLOGY | tech.canary-rollout-state-machine |
 | lab.db-migration-testing.real-sqlite-migration-runner | USES_TECHNOLOGY | tech.sqlite-migration-runner |
 | lab.multi-tenancy-isolation.tenant-scoped-repository | USES_TECHNOLOGY | tech.tenant-scoped-repository |
+| lab.idempotency-testing.in-flight-promise-store | USES_TECHNOLOGY | tech.idempotency-store |
+| lab.rate-limiting.token-bucket-limiter | USES_TECHNOLOGY | tech.token-bucket-rate-limiter |
 | competency.api.rest | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.api.graphql | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.integration.websocket | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
@@ -353,6 +363,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.release-engineering.canary-rollout-and-automatic-rollback | PRACTICED_IN | lab.release-engineering.semver-changelog-and-canary-rollout |
 | competency.db-migration-testing.schema-evolution-and-rollback | PRACTICED_IN | lab.db-migration-testing.real-sqlite-migration-runner |
 | competency.multi-tenancy-isolation.tenant-scoped-data-access | PRACTICED_IN | lab.multi-tenancy-isolation.tenant-scoped-repository |
+| competency.idempotency-testing.replay-safety | PRACTICED_IN | lab.idempotency-testing.in-flight-promise-store |
+| competency.rate-limiting.token-bucket-abuse-prevention | PRACTICED_IN | lab.rate-limiting.token-bucket-limiter |
 | competency.security.security-aware-qa | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.correlation-logging | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.elastic-log-analysis | RELATED_TO | lab.observability.elastic-log-analysis |
@@ -387,6 +399,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.release-engineering.semver-changelog-and-canary-rollout | TESTED_BY | evidence.release-engineering.real-lab-run |
 | lab.db-migration-testing.real-sqlite-migration-runner | TESTED_BY | evidence.db-migration-testing.real-lab-run |
 | lab.multi-tenancy-isolation.tenant-scoped-repository | TESTED_BY | evidence.multi-tenancy-isolation.real-lab-run |
+| lab.idempotency-testing.in-flight-promise-store | TESTED_BY | evidence.idempotency-testing.real-lab-run |
+| lab.rate-limiting.token-bucket-limiter | TESTED_BY | evidence.rate-limiting.real-lab-run |
 | lab.database.sql-validation | TESTED_BY | evidence.database.sql-validation-suite |
 | lab.security.owasp-mapping | DOCUMENTED_BY | evidence.security.owasp-mapping-review |
 | lab.cicd.github-actions | IMPLEMENTED_BY | evidence.cicd.github-actions-pipeline |
@@ -498,6 +512,10 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.db-migration-testing.schema-evolution-and-rollback | LEARNING | gap.db-migration-testing.professional-exposure |
 | competency.multi-tenancy-isolation.tenant-scoped-data-access | LEARNING | gap.multi-tenancy-isolation.database-level-isolation-mechanisms |
 | competency.multi-tenancy-isolation.tenant-scoped-data-access | LEARNING | gap.multi-tenancy-isolation.professional-exposure |
+| competency.idempotency-testing.replay-safety | LEARNING | gap.idempotency-testing.persistent-distributed-store |
+| competency.idempotency-testing.replay-safety | LEARNING | gap.idempotency-testing.professional-exposure |
+| competency.rate-limiting.token-bucket-abuse-prevention | LEARNING | gap.rate-limiting.per-client-limiting |
+| competency.rate-limiting.token-bucket-abuse-prevention | LEARNING | gap.rate-limiting.professional-exposure |
 | competency.web.accessibility | LEARNING | gap.accessibility.professional-exposure |
 | competency.security.security-aware-qa | LEARNING | gap.security.professional-exposure |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |
