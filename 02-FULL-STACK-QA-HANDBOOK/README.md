@@ -153,8 +153,28 @@ not incompleteness; no row implies content that isn't there.
   Professional experience for this whole area is explicitly `NONE` in
   the Digital Twin registry — this is repository practice only,
   disclosed as such throughout (see each folder's `README.md`
-  scope-boundary note). Further advanced-QA subtopics are planned but
-  not yet added.
+  scope-boundary note). This completes Part 2 (Milestones 2.1-2.7, all
+  CI-verified — see `.ai/PART-2-FINAL-REPORT.md`).
+
+- **Platform Engineering & Quality Gates** — [`26-PLATFORM-ENGINEERING-QUALITY-GATES/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/).
+  Part 3 — platform-level QA concerns beneath or around individual
+  features. Currently covers **Database Migration & Multi-Tenancy
+  Data Isolation** — two genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/db-migration-testing/`: a real,
+  hand-rolled migration runner driving a real in-memory SQLite
+  database through 3 real migrations, proving forward application,
+  zero-downtime column-addition backfill, idempotent re-apply, and
+  exact single-step rollback; and
+  `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/`: a real
+  tenant-scoped data-access layer proven against a real SQLite
+  database seeded with two real tenants' rows, including a
+  deliberately unsafe comparison repository that proves the real
+  cross-tenant leak the safe one prevents) with matching handbook docs
+  at
+  [`26-PLATFORM-ENGINEERING-QUALITY-GATES/DATABASE-MIGRATION-MULTI-TENANCY/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/DATABASE-MIGRATION-MULTI-TENANCY/).
+  Professional experience for this area is explicitly `NONE` in the
+  Digital Twin registry — repository practice only. Further
+  platform-engineering subtopics are planned but not yet added.
 
 ## What "meaningful canonical coverage" means here
 

@@ -64,6 +64,8 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Desktop QA — Cross-Platform Native UI Automation Concepts | WORKING | NONE | DOCUMENTED |
 | Release Versioning & Changelog Integrity Testing | WORKING | NONE | CI_VERIFIED |
 | Canary Rollout & Automatic Rollback Testing | WORKING | NONE | CI_VERIFIED |
+| Database Migration & Schema Evolution Testing | WORKING | NONE | EXECUTED |
+| Multi-Tenancy Data Isolation Testing | WORKING | NONE | EXECUTED |
 
 ## Reading this table correctly
 

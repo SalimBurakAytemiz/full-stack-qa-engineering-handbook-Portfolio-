@@ -567,3 +567,35 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm run release-eng:test --workspace automation-labs
+
+  db-migration-testing-lab:
+    # Part 3 — Platform Engineering & Quality Gates: Database
+    # Migration Testing (Milestone 3.1). Self-contained: a real
+    # in-memory SQLite database via Node's own node:sqlite — no
+    # backend server needed.
+    name: DB Migration Testing lab (real SQLite migration runner)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run db-migration:test --workspace automation-labs
+
+  multi-tenancy-isolation-lab:
+    # Part 3 — Platform Engineering & Quality Gates: Multi-Tenancy
+    # Isolation Testing (Milestone 3.1). Self-contained: a real
+    # in-memory SQLite database via Node's own node:sqlite — no
+    # backend server needed.
+    name: Multi-Tenancy Isolation lab (tenant-scoped repository + negative-path leak proof)
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run multi-tenancy:test --workspace automation-labs

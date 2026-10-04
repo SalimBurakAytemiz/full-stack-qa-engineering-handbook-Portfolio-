@@ -219,6 +219,22 @@ items:
     covers_competencies: [competency.release-engineering.semver-and-changelog-integrity, competency.release-engineering.canary-rollout-and-automatic-rollback]
     note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı (21/21 unit test + 11/11 agregat kontrol). Bu reponun KENDİ gerçek CHANGELOG.md ve 6 gerçek workspace package.json dosyası dogrulandi; canary rollout durum makinesi hem tam basarili hem de 50% asamasinda gercek bir enjekte edilmis hatayla otomatik rollback senaryolarinda kanitlandi."
 
+  - id: lab.db-migration-testing.real-sqlite-migration-runner
+    label: "Database Migration Testing (hand-rolled migration runner against a real in-memory SQLite database)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/db-migration-testing"
+    evidence_id: evidence.db-migration-testing.real-lab-run
+    covers_competencies: [competency.db-migration-testing.schema-evolution-and-rollback]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (6/6 unit test + 5/5 agregat kontrol). Gerçek bir in-memory SQLite veritabanı 3 gerçek migration ile sürüldü; ileri uygulama, sıfır-kesintili backfill, idempotent yeniden-uygulama ve tam tersine çevrilebilir rollback GERÇEKTEN kanıtlandı. CI_VERIFIED elevation henüz yapılmadı."
+
+  - id: lab.multi-tenancy-isolation.tenant-scoped-repository
+    label: "Multi-Tenancy Isolation (tenant-scoped data access layer + deliberately unsafe negative-path proof)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation"
+    evidence_id: evidence.multi-tenancy-isolation.real-lab-run
+    covers_competencies: [competency.multi-tenancy-isolation.tenant-scoped-data-access]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (6/6 unit test + 5/5 agregat kontrol). İki gerçek tenant'ın verisi tek bir gerçek SQLite veritabanına tohumlandı; scoped repository'nin tam CRUD izolasyonu kanıtlandı, kasıtlı olarak güvensiz bir karşılaştırma repository'si ise GERÇEKTEN başka bir tenant'ın satırını sızdırdı. CI_VERIFIED elevation henüz yapılmadı."
+
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"
   narrative_docs:

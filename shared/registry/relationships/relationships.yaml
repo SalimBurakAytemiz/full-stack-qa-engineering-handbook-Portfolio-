@@ -328,6 +328,12 @@ relationships:
   - from: competency.release-engineering.canary-rollout-and-automatic-rollback
     predicate: USES_TECHNOLOGY
     to: tech.canary-rollout-state-machine
+  - from: competency.db-migration-testing.schema-evolution-and-rollback
+    predicate: USES_TECHNOLOGY
+    to: tech.sqlite-migration-runner
+  - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    predicate: USES_TECHNOLOGY
+    to: tech.tenant-scoped-repository
   - from: competency.api.graphql
     predicate: USES_TECHNOLOGY
     to: protocol.graphql
@@ -440,6 +446,12 @@ relationships:
   - from: lab.release-engineering.semver-changelog-and-canary-rollout
     predicate: USES_TECHNOLOGY
     to: tech.canary-rollout-state-machine
+  - from: lab.db-migration-testing.real-sqlite-migration-runner
+    predicate: USES_TECHNOLOGY
+    to: tech.sqlite-migration-runner
+  - from: lab.multi-tenancy-isolation.tenant-scoped-repository
+    predicate: USES_TECHNOLOGY
+    to: tech.tenant-scoped-repository
 
   # ============================================================
   # COMPETENCY -> LAB (repository practice location — PRACTICED_IN)
@@ -561,6 +573,12 @@ relationships:
   - from: competency.release-engineering.canary-rollout-and-automatic-rollback
     predicate: PRACTICED_IN
     to: lab.release-engineering.semver-changelog-and-canary-rollout
+  - from: competency.db-migration-testing.schema-evolution-and-rollback
+    predicate: PRACTICED_IN
+    to: lab.db-migration-testing.real-sqlite-migration-runner
+  - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    predicate: PRACTICED_IN
+    to: lab.multi-tenancy-isolation.tenant-scoped-repository
   - from: competency.security.security-aware-qa
     predicate: PRACTICED_IN
     to: lab.backend-api.rest-graphql-websocket
@@ -668,6 +686,12 @@ relationships:
   - from: lab.release-engineering.semver-changelog-and-canary-rollout
     predicate: TESTED_BY
     to: evidence.release-engineering.real-lab-run
+  - from: lab.db-migration-testing.real-sqlite-migration-runner
+    predicate: TESTED_BY
+    to: evidence.db-migration-testing.real-lab-run
+  - from: lab.multi-tenancy-isolation.tenant-scoped-repository
+    predicate: TESTED_BY
+    to: evidence.multi-tenancy-isolation.real-lab-run
   - from: lab.database.sql-validation
     predicate: TESTED_BY
     to: evidence.database.sql-validation-suite
@@ -997,6 +1021,18 @@ relationships:
   - from: competency.release-engineering.canary-rollout-and-automatic-rollback
     predicate: LEARNING
     to: gap.release-engineering.professional-exposure
+  - from: competency.db-migration-testing.schema-evolution-and-rollback
+    predicate: LEARNING
+    to: gap.db-migration-testing.migration-generator-tooling
+  - from: competency.db-migration-testing.schema-evolution-and-rollback
+    predicate: LEARNING
+    to: gap.db-migration-testing.professional-exposure
+  - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    predicate: LEARNING
+    to: gap.multi-tenancy-isolation.database-level-isolation-mechanisms
+  - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    predicate: LEARNING
+    to: gap.multi-tenancy-isolation.professional-exposure
   - from: competency.web.accessibility
     predicate: LEARNING
     to: gap.accessibility.professional-exposure

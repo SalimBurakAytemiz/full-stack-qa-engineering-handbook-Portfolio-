@@ -578,6 +578,32 @@ competencies:
       evidence: "release-engineering/lib/rollout-manager.js — rollout-manager.test.js (5) genuinely passing; the exact same unmodified state machine was proven against two opposite real scenarios, an all-healthy run reaching COMPLETE at 100% traffic and a real injected failure at the 50% stage producing an automatic rollback to 0% traffic with a correct ordered event history, verified in GitHub Actions"
     gaps: [gap.release-engineering.professional-exposure, gap.release-engineering.real-traffic-shifting-infrastructure]
 
+  # Part 3 — Platform Engineering & Quality Gates: Database Migration
+  # & Multi-Tenancy Data Isolation (Milestone 3.1). Same discipline as
+  # every Part 2 milestone: professional.status NONE for both —
+  # genuinely new ground. repository.status is EXECUTED (real local
+  # run, not yet CI_VERIFIED as of this entry's writing) — CI wiring
+  # and the CI_VERIFIED elevation are a separate, explicitly tracked
+  # follow-up step, exactly as done for every Part 2 milestone.
+
+  - id: competency.db-migration-testing.schema-evolution-and-rollback
+    label: "Database Migration & Schema Evolution Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "db-migration-testing/lib/migration-runner.js — migration-runner.test.js (6) genuinely passing; a real run drove a real in-memory SQLite database through 3 real migrations, proving forward application, zero-downtime column-addition backfill, idempotent re-apply, and exact single-step rollback (verified against real PRAGMA table_info output), including a real SQLite-version check run before relying on ALTER TABLE RENAME/DROP COLUMN"
+    gaps: [gap.db-migration-testing.professional-exposure, gap.db-migration-testing.migration-generator-tooling]
+
+  - id: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    label: "Multi-Tenancy Data Isolation Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "multi-tenancy-isolation/lib/tenant-scoped-repository.js — tenant-isolation.test.js (6) genuinely passing; a real run seeded two real tenants' rows in one real SQLite database and proved the scoped repository's full CRUD isolation (getById/list/update/remove), plus a deliberately unsafe comparison repository that genuinely leaked another tenant's real row — the negative-path proof that makes the positive-path proof meaningful"
+    gaps: [gap.multi-tenancy-isolation.professional-exposure, gap.multi-tenancy-isolation.database-level-isolation-mechanisms]
+
 related:
   professional_source: "professional-experience.yaml"
   gap_detail: "gaps.yaml"

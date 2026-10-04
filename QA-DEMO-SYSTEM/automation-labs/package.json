@@ -2,7 +2,7 @@
   "name": "automation-labs",
   "version": "0.1.0",
   "private": true,
-  "description": "QA Demo System — Phase 10 Automation Learning Labs (Selenium WebDriver; JMeter plans run through a real fail-gate wrapper, see jmeter/scripts/run-jmeter.js); Part 2 AI Systems Testing lab (deterministic mock-first, see ai-systems/README.md); Part 2 Chaos/Reliability lab (deterministic fault injection, see chaos-reliability/README.md); Part 2 Privacy Testing lab (see privacy-testing/README.md); Part 2 Property-Based & Fuzz Testing lab (see property-and-fuzz-testing/README.md); Part 2 Service Virtualization & Contract Testing lab (see service-virtualization/README.md); Part 2 Mutation Testing lab (see mutation-testing/README.md); Part 2 Testcontainers lab (see testcontainers-lab/README.md); Part 2 Data Engineering lab (see data-engineering/README.md); Part 2 Distributed Messaging lab (see distributed-messaging/README.md); Part 2 Supply Chain Security lab (see supply-chain-security/README.md); Part 2 Compatibility Testing lab (see compatibility-testing/README.md); Part 2 i18n Testing lab (see i18n-testing/README.md); Part 2 Modern Protocols lab (see modern-protocols/README.md); Part 2 Production Verification lab (see production-verification/README.md); Part 2 Release Engineering lab (see release-engineering/README.md)",
+  "description": "QA Demo System — Phase 10 Automation Learning Labs (Selenium WebDriver; JMeter plans run through a real fail-gate wrapper, see jmeter/scripts/run-jmeter.js); Part 2 AI Systems Testing lab (deterministic mock-first, see ai-systems/README.md); Part 2 Chaos/Reliability lab (deterministic fault injection, see chaos-reliability/README.md); Part 2 Privacy Testing lab (see privacy-testing/README.md); Part 2 Property-Based & Fuzz Testing lab (see property-and-fuzz-testing/README.md); Part 2 Service Virtualization & Contract Testing lab (see service-virtualization/README.md); Part 2 Mutation Testing lab (see mutation-testing/README.md); Part 2 Testcontainers lab (see testcontainers-lab/README.md); Part 2 Data Engineering lab (see data-engineering/README.md); Part 2 Distributed Messaging lab (see distributed-messaging/README.md); Part 2 Supply Chain Security lab (see supply-chain-security/README.md); Part 2 Compatibility Testing lab (see compatibility-testing/README.md); Part 2 i18n Testing lab (see i18n-testing/README.md); Part 2 Modern Protocols lab (see modern-protocols/README.md); Part 2 Production Verification lab (see production-verification/README.md); Part 2 Release Engineering lab (see release-engineering/README.md); Part 3 Database Migration & Schema Evolution lab (see db-migration-testing/README.md); Part 3 Multi-Tenancy Isolation lab (see multi-tenancy-isolation/README.md)",
   "scripts": {
     "selenium:test": "node selenium/tests/login-flow.test.js",
     "selenium:test:parallel": "node selenium/scripts/run-parallel.js",
@@ -37,7 +37,11 @@
     "production-verification:test": "node production-verification/run-production-verification-lab.js",
     "production-verification:test:unit": "node --test production-verification/tests/*.test.js",
     "release-eng:test": "node release-engineering/run-release-engineering-lab.js",
-    "release-eng:test:unit": "node --test release-engineering/tests/*.test.js"
+    "release-eng:test:unit": "node --test release-engineering/tests/*.test.js",
+    "db-migration:test": "node db-migration-testing/run-db-migration-lab.js",
+    "db-migration:test:unit": "node --test db-migration-testing/tests/*.test.js",
+    "multi-tenancy:test": "node multi-tenancy-isolation/run-multi-tenancy-lab.js",
+    "multi-tenancy:test:unit": "node --test multi-tenancy-isolation/tests/*.test.js"
   },
   "devDependencies": {
     "selenium-webdriver": "^4.49.0",

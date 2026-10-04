@@ -63,6 +63,8 @@ lab catalog navigable and machine-checkable (see
 | Modern Protocols — Server-Sent Events | `QA-DEMO-SYSTEM/automation-labs/modern-protocols` | `lab.modern-protocols.server-sent-events` | L4_CI_VERIFIED |
 | Production Verification — synthetic smoke-test monitor | `QA-DEMO-SYSTEM/automation-labs/production-verification` | `lab.production-verification.synthetic-smoke-monitor` | L4_CI_VERIFIED |
 | Release Engineering — semver/changelog integrity + canary rollout | `QA-DEMO-SYSTEM/automation-labs/release-engineering` | `lab.release-engineering.semver-changelog-and-canary-rollout` | L4_CI_VERIFIED |
+| Database Migration & Schema Evolution Testing | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing` | `lab.db-migration-testing.real-sqlite-migration-runner` | L3_AUTOMATED |
+| Multi-Tenancy Data Isolation Testing | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation` | `lab.multi-tenancy-isolation.tenant-scoped-repository` | L3_AUTOMATED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real

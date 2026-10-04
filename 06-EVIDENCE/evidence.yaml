@@ -233,6 +233,22 @@ items:
     related_lab: lab.release-engineering.semver-changelog-and-canary-rollout
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Bu reponun KENDİ gerçek CHANGELOG.md ve 6 gerçek workspace package.json dosyası dogrulandi (0 ihlal); canary rollout durum makinesi hem basarili hem de otomatik-rollback senaryolarinda kanitlandi."
 
+  - id: evidence.db-migration-testing.real-lab-run
+    label: "DB Migration Testing lab — 6 unit tests + a real aggregate run against a real in-memory SQLite database executed locally"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/db-migration-testing/EXECUTION.md"
+    produced_by: "npm run db-migration:test --workspace automation-labs + npm run db-migration:test:unit --workspace automation-labs, run locally in this sandbox"
+    related_lab: lab.db-migration-testing.real-sqlite-migration-runner
+    note: "TR: E3_EXECUTED — lokal olarak gerçekten çalıştırılıp PASS aldı. Gerçek bir in-memory SQLite veritabanı 3 gerçek migration ile sürüldü; ileri uygulama, backfill, idempotent yeniden-uygulama ve tam rollback kanıtlandı. CI_VERIFIED elevation henüz yapılmadı."
+
+  - id: evidence.multi-tenancy-isolation.real-lab-run
+    label: "Multi-Tenancy Isolation lab — 6 unit tests + a real aggregate run proving tenant CRUD isolation and a real negative-path leak proof executed locally"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/EXECUTION.md"
+    produced_by: "npm run multi-tenancy:test --workspace automation-labs + npm run multi-tenancy:test:unit --workspace automation-labs, run locally in this sandbox"
+    related_lab: lab.multi-tenancy-isolation.tenant-scoped-repository
+    note: "TR: E3_EXECUTED — lokal olarak gerçekten çalıştırılıp PASS aldı. İki gerçek tenant'ın verisiyle tam CRUD izolasyonu ve kasıtlı güvensiz repository'nin gerçek sızıntısı kanıtlandı. CI_VERIFIED elevation henüz yapılmadı."
+
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
     maturity: E3_EXECUTED

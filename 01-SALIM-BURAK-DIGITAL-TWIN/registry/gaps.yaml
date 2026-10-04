@@ -298,5 +298,25 @@ gaps:
     label: "Release Engineering — real traffic-shifting infrastructure (service mesh / load balancer / cloud canary feature)"
     note: "TR: rollout-manager.js elle yazılmış, process-içi bir durum makinesidir — gerçek ağ trafiği hiç kaydırılmadı; gerçek bir service mesh, load balancer veya bulut sağlayıcısının native canary/weighted-routing özelliği hiç kullanılmadı."
 
+  - id: gap.db-migration-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Database Migration Testing — professional project exposure"
+    note: "TR: competency.db-migration-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.db-migration-testing.migration-generator-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Database Migration Testing — schema-diff migration generator tooling (Prisma Migrate / Django makemigrations-style)"
+    note: "TR: db-migration-testing lab'ı bir migration RUNNER'dır (elle yazılmış up/down fonksiyonlarını uygular/geri alır) — mevcut şema ile hedef şemayı karşılaştırıp migration dosyası ÜRETEN bir araç (Prisma Migrate, Django makemigrations vb.) hiç uygulanmadı."
+
+  - id: gap.multi-tenancy-isolation.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Multi-Tenancy Isolation Testing — professional project exposure"
+    note: "TR: competency.multi-tenancy-isolation.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.multi-tenancy-isolation.database-level-isolation-mechanisms
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Multi-Tenancy Isolation Testing — database-level isolation mechanisms (separate schemas/databases per tenant, PostgreSQL RLS)"
+    note: "TR: multi-tenancy-isolation lab'ı satır-seviyesi, sorgu-koşullu (query-predicate) tenant izolasyonu kanıtlar — tenant başına ayrı şema/veritabanı veya PostgreSQL row-level security gibi veritabanı motoru seviyesinde izolasyon mekanizmaları (SQLite'ta zaten mevcut değil) hiç uygulanmadı."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"
