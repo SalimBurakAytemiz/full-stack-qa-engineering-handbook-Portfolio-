@@ -69,6 +69,13 @@ rename) that pre-3.25/pre-3.35 SQLite would have required.
 
 - Migration runner only — does not diff schemas or generate migration
   files automatically. See `README.md`'s "Scope boundary" section.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `db-migration-testing-lab` job once added).
+
+## Run 3 — CI-verified
+
+GitHub Actions run
+[`37165865596`](https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37165865596)
+(commit `36a01d5`), job **"DB Migration Testing lab (real SQLite
+migration runner)"** — `conclusion: success`. The same
+`npm run db-migration:test --workspace automation-labs` command
+confirmed above ran against GitHub Actions' real `ubuntu-latest`
+runner with the same observed output.

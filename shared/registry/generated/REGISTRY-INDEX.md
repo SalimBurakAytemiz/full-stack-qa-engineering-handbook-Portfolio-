@@ -58,8 +58,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Desktop QA — Cross-Platform Native UI Automation Concepts | WORKING | NONE | DOCUMENTED |
 | Release Versioning & Changelog Integrity Testing | WORKING | NONE | CI_VERIFIED |
 | Canary Rollout & Automatic Rollback Testing | WORKING | NONE | CI_VERIFIED |
-| Database Migration & Schema Evolution Testing | WORKING | NONE | EXECUTED |
-| Multi-Tenancy Data Isolation Testing | WORKING | NONE | EXECUTED |
+| Database Migration & Schema Evolution Testing | WORKING | NONE | CI_VERIFIED |
+| Multi-Tenancy Data Isolation Testing | WORKING | NONE | CI_VERIFIED |
 
 ## Domain Maturity
 
@@ -105,8 +105,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Modern Protocols (hand-rolled real Server-Sent Events server + client) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols` |
 | Production Verification (real synthetic smoke-test monitor against a real backend) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification` |
 | Release Engineering (hand-rolled semver/changelog integrity checks + canary rollout state machine) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering` |
-| Database Migration Testing (hand-rolled migration runner against a real in-memory SQLite database) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing` |
-| Multi-Tenancy Isolation (tenant-scoped data access layer + deliberately unsafe negative-path proof) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation` |
+| Database Migration Testing (hand-rolled migration runner against a real in-memory SQLite database) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing` |
+| Multi-Tenancy Isolation (tenant-scoped data access layer + deliberately unsafe negative-path proof) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation` |
 
 ## System Patterns
 
@@ -168,14 +168,14 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Modern Protocols lab — 3 unit tests + a real SSE server/client run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md` |
 | Production Verification lab — 15 unit tests + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md` |
 | Release Engineering lab — 21 unit tests + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md` |
-| DB Migration Testing lab — 6 unit tests + a real aggregate run against a real in-memory SQLite database executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing/EXECUTION.md` |
-| Multi-Tenancy Isolation lab — 6 unit tests + a real aggregate run proving tenant CRUD isolation and a real negative-path leak proof executed locally | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/EXECUTION.md` |
+| DB Migration Testing lab — 6 unit tests + a real aggregate run against a real in-memory SQLite database executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing/EXECUTION.md` |
+| Multi-Tenancy Isolation lab — 6 unit tests + a real aggregate run proving tenant CRUD isolation and a real negative-path leak proof executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (414 edges)
+## Relationships (416 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -425,6 +425,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.production-verification.synthetic-monitoring | EVIDENCED_BY | evidence.production-verification.real-lab-run |
 | competency.release-engineering.semver-and-changelog-integrity | EVIDENCED_BY | evidence.release-engineering.real-lab-run |
 | competency.release-engineering.canary-rollout-and-automatic-rollback | EVIDENCED_BY | evidence.release-engineering.real-lab-run |
+| competency.db-migration-testing.schema-evolution-and-rollback | EVIDENCED_BY | evidence.db-migration-testing.real-lab-run |
+| competency.multi-tenancy-isolation.tenant-scoped-data-access | EVIDENCED_BY | evidence.multi-tenancy-isolation.real-lab-run |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.public-schema-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.protected-auth-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.orders-payment-suite |

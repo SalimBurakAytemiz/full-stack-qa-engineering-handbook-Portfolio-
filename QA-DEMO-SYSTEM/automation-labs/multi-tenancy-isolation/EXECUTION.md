@@ -51,6 +51,13 @@ Exit code `0`.
   See `README.md`'s "Scope boundary" section.
 - `lib/unsafe-repository.js` is test-only scaffolding, never used by
   real application code.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `multi-tenancy-isolation-lab` job once added).
+
+## Run 3 — CI-verified
+
+GitHub Actions run
+[`37165865596`](https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37165865596)
+(commit `36a01d5`), job **"Multi-Tenancy Isolation lab (tenant-scoped
+repository + negative-path leak proof)"** — `conclusion: success`. The
+same `npm run multi-tenancy:test --workspace automation-labs` command
+confirmed above ran against GitHub Actions' real `ubuntu-latest`
+runner with the same observed output.

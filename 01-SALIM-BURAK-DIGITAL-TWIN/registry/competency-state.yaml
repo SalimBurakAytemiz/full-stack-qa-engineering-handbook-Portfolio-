@@ -581,18 +581,19 @@ competencies:
   # Part 3 — Platform Engineering & Quality Gates: Database Migration
   # & Multi-Tenancy Data Isolation (Milestone 3.1). Same discipline as
   # every Part 2 milestone: professional.status NONE for both —
-  # genuinely new ground. repository.status is EXECUTED (real local
-  # run, not yet CI_VERIFIED as of this entry's writing) — CI wiring
-  # and the CI_VERIFIED elevation are a separate, explicitly tracked
-  # follow-up step, exactly as done for every Part 2 milestone.
+  # genuinely new ground. repository.status is CI_VERIFIED — GitHub
+  # Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37165865596
+  # (commit 36a01d5) confirmed the "DB Migration Testing lab" and
+  # "Multi-Tenancy Isolation lab" CI jobs both pass.
 
   - id: competency.db-migration-testing.schema-evolution-and-rollback
     label: "Database Migration & Schema Evolution Testing"
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "db-migration-testing/lib/migration-runner.js — migration-runner.test.js (6) genuinely passing; a real run drove a real in-memory SQLite database through 3 real migrations, proving forward application, zero-downtime column-addition backfill, idempotent re-apply, and exact single-step rollback (verified against real PRAGMA table_info output), including a real SQLite-version check run before relying on ALTER TABLE RENAME/DROP COLUMN"
+      status: CI_VERIFIED
+      evidence: "db-migration-testing/lib/migration-runner.js — migration-runner.test.js (6) genuinely passing; a real run drove a real in-memory SQLite database through 3 real migrations, proving forward application, zero-downtime column-addition backfill, idempotent re-apply, and exact single-step rollback (verified against real PRAGMA table_info output), including a real SQLite-version check run before relying on ALTER TABLE RENAME/DROP COLUMN, verified in GitHub Actions"
     gaps: [gap.db-migration-testing.professional-exposure, gap.db-migration-testing.migration-generator-tooling]
 
   - id: competency.multi-tenancy-isolation.tenant-scoped-data-access
@@ -600,8 +601,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "multi-tenancy-isolation/lib/tenant-scoped-repository.js — tenant-isolation.test.js (6) genuinely passing; a real run seeded two real tenants' rows in one real SQLite database and proved the scoped repository's full CRUD isolation (getById/list/update/remove), plus a deliberately unsafe comparison repository that genuinely leaked another tenant's real row — the negative-path proof that makes the positive-path proof meaningful"
+      status: CI_VERIFIED
+      evidence: "multi-tenancy-isolation/lib/tenant-scoped-repository.js — tenant-isolation.test.js (6) genuinely passing; a real run seeded two real tenants' rows in one real SQLite database and proved the scoped repository's full CRUD isolation (getById/list/update/remove), plus a deliberately unsafe comparison repository that genuinely leaked another tenant's real row — the negative-path proof that makes the positive-path proof meaningful, verified in GitHub Actions"
     gaps: [gap.multi-tenancy-isolation.professional-exposure, gap.multi-tenancy-isolation.database-level-isolation-mechanisms]
 
 related:

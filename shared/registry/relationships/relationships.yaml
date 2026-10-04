@@ -811,6 +811,12 @@ relationships:
   - from: competency.release-engineering.canary-rollout-and-automatic-rollback
     predicate: EVIDENCED_BY
     to: evidence.release-engineering.real-lab-run
+  - from: competency.db-migration-testing.schema-evolution-and-rollback
+    predicate: EVIDENCED_BY
+    to: evidence.db-migration-testing.real-lab-run
+  - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    predicate: EVIDENCED_BY
+    to: evidence.multi-tenancy-isolation.real-lab-run
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite
