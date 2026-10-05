@@ -2,7 +2,7 @@
   "name": "automation-labs",
   "version": "0.1.0",
   "private": true,
-  "description": "QA Demo System — Phase 10 Automation Learning Labs (Selenium WebDriver; JMeter plans run through a real fail-gate wrapper, see jmeter/scripts/run-jmeter.js); Part 2 AI Systems Testing lab (deterministic mock-first, see ai-systems/README.md); Part 2 Chaos/Reliability lab (deterministic fault injection, see chaos-reliability/README.md); Part 2 Privacy Testing lab (see privacy-testing/README.md); Part 2 Property-Based & Fuzz Testing lab (see property-and-fuzz-testing/README.md); Part 2 Service Virtualization & Contract Testing lab (see service-virtualization/README.md); Part 2 Mutation Testing lab (see mutation-testing/README.md); Part 2 Testcontainers lab (see testcontainers-lab/README.md); Part 2 Data Engineering lab (see data-engineering/README.md); Part 2 Distributed Messaging lab (see distributed-messaging/README.md); Part 2 Supply Chain Security lab (see supply-chain-security/README.md); Part 2 Compatibility Testing lab (see compatibility-testing/README.md); Part 2 i18n Testing lab (see i18n-testing/README.md); Part 2 Modern Protocols lab (see modern-protocols/README.md); Part 2 Production Verification lab (see production-verification/README.md); Part 2 Release Engineering lab (see release-engineering/README.md); Part 3 Database Migration & Schema Evolution lab (see db-migration-testing/README.md); Part 3 Multi-Tenancy Isolation lab (see multi-tenancy-isolation/README.md); Part 3 API Idempotency-Key Replay-Safety lab (see idempotency-testing/README.md); Part 3 Rate Limiting & Abuse Testing lab (see rate-limiting/README.md)",
+  "description": "QA Demo System — Phase 10 Automation Learning Labs (Selenium WebDriver; JMeter plans run through a real fail-gate wrapper, see jmeter/scripts/run-jmeter.js); Part 2 AI Systems Testing lab (deterministic mock-first, see ai-systems/README.md); Part 2 Chaos/Reliability lab (deterministic fault injection, see chaos-reliability/README.md); Part 2 Privacy Testing lab (see privacy-testing/README.md); Part 2 Property-Based & Fuzz Testing lab (see property-and-fuzz-testing/README.md); Part 2 Service Virtualization & Contract Testing lab (see service-virtualization/README.md); Part 2 Mutation Testing lab (see mutation-testing/README.md); Part 2 Testcontainers lab (see testcontainers-lab/README.md); Part 2 Data Engineering lab (see data-engineering/README.md); Part 2 Distributed Messaging lab (see distributed-messaging/README.md); Part 2 Supply Chain Security lab (see supply-chain-security/README.md); Part 2 Compatibility Testing lab (see compatibility-testing/README.md); Part 2 i18n Testing lab (see i18n-testing/README.md); Part 2 Modern Protocols lab (see modern-protocols/README.md); Part 2 Production Verification lab (see production-verification/README.md); Part 2 Release Engineering lab (see release-engineering/README.md); Part 3 Database Migration & Schema Evolution lab (see db-migration-testing/README.md); Part 3 Multi-Tenancy Isolation lab (see multi-tenancy-isolation/README.md); Part 3 API Idempotency-Key Replay-Safety lab (see idempotency-testing/README.md); Part 3 Rate Limiting & Abuse Testing lab (see rate-limiting/README.md); Part 3 Feature Flags & Progressive Targeting lab (see feature-flags/README.md); Part 3 Distributed Tracing lab (see distributed-tracing/README.md)",
   "scripts": {
     "selenium:test": "node selenium/tests/login-flow.test.js",
     "selenium:test:parallel": "node selenium/scripts/run-parallel.js",
@@ -45,7 +45,11 @@
     "idempotency:test": "node idempotency-testing/run-idempotency-lab.js",
     "idempotency:test:unit": "node --test idempotency-testing/tests/*.test.js",
     "rate-limiting:test": "node rate-limiting/run-rate-limiting-lab.js",
-    "rate-limiting:test:unit": "node --test rate-limiting/tests/*.test.js"
+    "rate-limiting:test:unit": "node --test rate-limiting/tests/*.test.js",
+    "feature-flags:test": "node feature-flags/run-feature-flags-lab.js",
+    "feature-flags:test:unit": "node --test feature-flags/tests/*.test.js",
+    "distributed-tracing:test": "node distributed-tracing/run-distributed-tracing-lab.js",
+    "distributed-tracing:test:unit": "node --test distributed-tracing/tests/*.test.js"
   },
   "devDependencies": {
     "selenium-webdriver": "^4.49.0",

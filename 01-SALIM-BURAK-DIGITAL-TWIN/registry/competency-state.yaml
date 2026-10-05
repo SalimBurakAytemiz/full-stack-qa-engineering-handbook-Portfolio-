@@ -631,6 +631,31 @@ competencies:
       evidence: "rate-limiting/lib/token-bucket.js + lib/rate-limited-server.js — token-bucket.test.js (5) + rate-limited-server.test.js (3) genuinely passing (8/8); a real run proved requests within capacity succeed with a real 200, a request over capacity gets a real 429 checked against the server's own real accepted/rejected counters, and advancing a real injected fake clock makes the next request succeed once a token has genuinely refilled — including a real validation bug (refillRatePerMs > 0 wrongly rejecting the legitimate refillRatePerMs: 0 case) caught by a real failing test run and fixed, verified in GitHub Actions"
     gaps: [gap.rate-limiting.professional-exposure, gap.rate-limiting.per-client-limiting]
 
+  # Part 3 — Platform Engineering & Quality Gates: Feature Flags &
+  # Progressive Targeting / Distributed Tracing (Milestone 3.3). Same
+  # discipline: professional.status NONE for both. repository.status
+  # is EXECUTED (real unit tests + real aggregate run passing
+  # locally) — not yet CI_VERIFIED; CI wiring and the CI-verification
+  # run are a separate, explicitly tracked next step.
+
+  - id: competency.feature-flags.deterministic-hash-rollout
+    label: "Feature Flags & Progressive Targeting"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "feature-flags/lib/flag-evaluator.js — flag-evaluator.test.js (8) genuinely passing; a real run proved deterministic repeated evaluation, a 25% rollout landing within a real statistical tolerance of its target over 2000 real distinct synthetic user ids, allowList/denyList override precedence (including the adversarial case of a denyList entry also matching a 100% rollout), and segment-based targeting at 0% rollout — not yet verified in GitHub Actions"
+    gaps: [gap.feature-flags.professional-exposure, gap.feature-flags.flag-management-platform-tooling]
+
+  - id: competency.distributed-tracing.cross-service-span-propagation
+    label: "Distributed Tracing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: EXECUTED
+      evidence: "distributed-tracing/lib/tracer.js + lib/trace-context.js + lib/traced-service.js — trace-context.test.js (3) + tracer.test.js (5) + traced-service.test.js (4) genuinely passing (12/12); a real run proved a traceparent-shaped header genuinely crosses a real HTTP hop between two separate node:http servers, with the resulting span tree (one root, one child, correct parentSpanId linkage) read back from a shared in-memory collector both services independently wrote to — not yet verified in GitHub Actions"
+    gaps: [gap.distributed-tracing.professional-exposure, gap.distributed-tracing.real-tracing-backend-export]
+
 related:
   professional_source: "professional-experience.yaml"
   gap_detail: "gaps.yaml"

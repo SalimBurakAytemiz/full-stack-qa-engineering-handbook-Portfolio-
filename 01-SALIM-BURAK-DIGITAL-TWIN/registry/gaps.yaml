@@ -338,5 +338,25 @@ gaps:
     label: "Rate Limiting & Abuse Testing — per-client/per-API-key/per-IP rate limiting middleware"
     note: "TR: rate-limiting lab'ı tek, paylaşılan bir token-bucket algoritmasını kanıtlar — gerçek çok-kiracılı (multi-tenant) bir API'nin ihtiyaç duyacağı, istemci/API-anahtarı/IP başına ayrı bucket tutan bir rate-limiting middleware'i hiç uygulanmadı."
 
+  - id: gap.feature-flags.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Feature Flags & Progressive Targeting — professional project exposure"
+    note: "TR: competency.feature-flags.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.feature-flags.flag-management-platform-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Feature Flags & Progressive Targeting — real flag-management platform tooling (LaunchDarkly, Split, admin UI, audit trail)"
+    note: "TR: feature-flags lab'ı bir flag-SDK'sının çalıştıracağı gerçek DEĞERLENDİRME algoritmasını (hash tabanlı yüzde dağıtımı, allow/deny-list, segment hedefleme) kanıtlar — gerçek bir flag-yönetim platformu (LaunchDarkly, Split, veritabanı destekli bir admin arayüzü, değişiklik denetim izi, kill-switch yayılımı) hiç uygulanmadı."
+
+  - id: gap.distributed-tracing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Distributed Tracing — professional project exposure"
+    note: "TR: competency.distributed-tracing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.distributed-tracing.real-tracing-backend-export
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Distributed Tracing — real tracing-backend export (Jaeger, Zipkin, OTLP collector) and full W3C Trace Context conformance"
+    note: "TR: distributed-tracing lab'ı trace-bağlamı yayılımını ve span-ağacı şeklini bellek-içi bir kolektöre kanıtlar — gerçek bir tracing backend'ine (Jaeger, Zipkin, bir OTLP collector) export hiç yapılmadı, ve traceparent başlığı W3C Trace Context spesifikasyonuna (tracestate, tam örnekleme semantiği) tam uyumlu değildir — sadece şekli ödünç alır."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

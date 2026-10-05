@@ -67,6 +67,8 @@ lab catalog navigable and machine-checkable (see
 | Multi-Tenancy Data Isolation Testing | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation` | `lab.multi-tenancy-isolation.tenant-scoped-repository` | L4_CI_VERIFIED |
 | API Idempotency-Key Replay-Safety Testing | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing` | `lab.idempotency-testing.in-flight-promise-store` | L4_CI_VERIFIED |
 | Rate Limiting & Abuse Testing — token bucket | `QA-DEMO-SYSTEM/automation-labs/rate-limiting` | `lab.rate-limiting.token-bucket-limiter` | L4_CI_VERIFIED |
+| Feature Flags & Progressive Targeting | `QA-DEMO-SYSTEM/automation-labs/feature-flags` | `lab.feature-flags.deterministic-hash-rollout` | L3_AUTOMATED |
+| Distributed Tracing — trace-context propagation | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing` | `lab.distributed-tracing.cross-service-span-propagation` | L3_AUTOMATED |
 
 The AI Systems Testing lab is Part 2's first addition —
 `AI_TEST_MODE=mock` is its default and only canonical-CI mode: no real

@@ -68,6 +68,8 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Multi-Tenancy Data Isolation Testing | WORKING | NONE | CI_VERIFIED |
 | API Idempotency-Key Replay-Safety Testing | WORKING | NONE | CI_VERIFIED |
 | Rate Limiting & Abuse Testing | WORKING | NONE | CI_VERIFIED |
+| Feature Flags & Progressive Targeting | WORKING | NONE | EXECUTED |
+| Distributed Tracing | WORKING | NONE | EXECUTED |
 
 ## Reading this table correctly
 

@@ -265,6 +265,22 @@ items:
     related_lab: lab.rate-limiting.token-bucket-limiter
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Kapasite içindeki istekler kabul edildi, aşan istek gerçek 429 aldı, enjekte edilmiş sahte saat ilerletildiğinde gerçek refill kanıtlandı — ayrıca gerçek bir doğrulama hatası (refillRatePerMs > 0, geçerli refillRatePerMs: 0 durumunu hatalı şekilde reddediyordu) gerçek bir başarısız test çalışmasıyla yakalandı ve düzeltildi."
 
+  - id: evidence.feature-flags.real-lab-run
+    label: "Feature Flags lab — 8 unit tests + a real aggregate run proving deterministic hash-based rollout, override precedence, and segment targeting executed (local only)"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/feature-flags/EXECUTION.md"
+    produced_by: "npm run feature-flags:test --workspace automation-labs (local run, see EXECUTION.md for actual observed output)"
+    related_lab: lab.feature-flags.deterministic-hash-rollout
+    note: "TR: E3_EXECUTED — şu an sadece lokal olarak gerçekten çalıştırılıp PASS aldı, henüz GitHub Actions'ta doğrulanmadı. 2000 gerçek kullanıcı üzerinde %25 dağıtımın istatistiksel olarak doğru olduğu ve allowList/denyList/segment önceliğinin doğru çalıştığı kanıtlandı. CI job eklendikten ve gerçekten PASS aldığında E4_CI_VERIFIED'e yükseltilecek."
+
+  - id: evidence.distributed-tracing.real-lab-run
+    label: "Distributed Tracing lab — 12 unit tests + a real aggregate run proving trace-context propagation across a real HTTP hop executed (local only)"
+    maturity: E3_EXECUTED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/distributed-tracing/EXECUTION.md"
+    produced_by: "npm run distributed-tracing:test --workspace automation-labs (local run, see EXECUTION.md for actual observed output)"
+    related_lab: lab.distributed-tracing.cross-service-span-propagation
+    note: "TR: E3_EXECUTED — şu an sadece lokal olarak gerçekten çalıştırılıp PASS aldı, henüz GitHub Actions'ta doğrulanmadı. Gerçek bir traceparent başlığının iki ayrı gerçek node:http sunucusu arasındaki gerçek bir ağ sıçramasını aştığı ve sonuçtaki span ağacının doğru şekle sahip olduğu kanıtlandı. CI job eklendikten ve gerçekten PASS aldığında E4_CI_VERIFIED'e yükseltilecek."
+
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
     maturity: E3_EXECUTED

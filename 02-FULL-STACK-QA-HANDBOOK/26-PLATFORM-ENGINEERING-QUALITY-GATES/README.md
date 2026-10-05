@@ -25,6 +25,7 @@ for the full three-dimension model.
 |---|---|
 | `DATABASE-MIGRATION-MULTI-TENANCY/` | Added — real executable db-migration-testing + multi-tenancy-isolation labs, see below |
 | `API-IDEMPOTENCY-RATE-LIMITING/` | Added — real executable idempotency-testing + rate-limiting labs, see below |
+| `FEATURE-FLAGS-DISTRIBUTED-TRACING/` | Added — real executable feature-flags + distributed-tracing labs, see below |
 
 This folder grows incrementally, each addition backed by real,
 executed work, never a documentation-only placeholder claiming more
@@ -67,6 +68,26 @@ Read `API-IDEMPOTENCY-RATE-LIMITING/README.md` first — it states the
 scope boundary (an in-memory idempotency store, not a persistent
 distributed one; a single shared rate-limit bucket, not per-client
 limiting) that every other document in that subfolder assumes.
+
+## Feature Flags & Progressive Targeting / Distributed Tracing
+
+Executable labs:
+`QA-DEMO-SYSTEM/automation-labs/feature-flags/` (a real, hand-rolled
+feature-flag evaluator proving deterministic hash-based percentage
+rollout — checked against a real 2000-sample statistical proof, not
+just a boolean — plus allow/deny-list override precedence and segment
+targeting) and `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/`
+(a real trace-context propagation layer proven across a real network
+hop between two genuinely separate `node:http` services, with the
+resulting span tree's shape read back from a shared in-memory
+collector both services independently write to).
+
+Read `FEATURE-FLAGS-DISTRIBUTED-TRACING/README.md` first — it states
+the scope boundary (the flag-evaluation algorithm, not a
+flag-management platform; trace-context propagation and span-tree
+shape loosely modeled on W3C Trace Context, not full spec conformance
+or a real tracing-backend export) that every other document in that
+subfolder assumes.
 
 ## Digital Twin linkage
 

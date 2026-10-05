@@ -251,6 +251,22 @@ items:
     covers_competencies: [competency.rate-limiting.token-bucket-abuse-prevention]
     note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı (8/8 unit test + 3/3 agregat kontrol). Kapasite içindeki istekler gerçek 200 ile kabul edildi, kapasiteyi aşan istek gerçek 429 aldı, ve enjekte edilmiş gerçek bir sahte saat ilerletildiğinde bir sonraki istek GERÇEKTEN başarılı oldu — ayrıca gerçek bir doğrulama hatası (refillRatePerMs > 0, geçerli refillRatePerMs: 0 durumunu hatalı şekilde reddediyordu) gerçek bir başarısız test çalışmasıyla yakalandı ve düzeltildi."
 
+  - id: lab.feature-flags.deterministic-hash-rollout
+    label: "Feature Flags & Progressive Targeting (hand-rolled deterministic hash-based evaluator)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/feature-flags"
+    evidence_id: evidence.feature-flags.real-lab-run
+    covers_competencies: [competency.feature-flags.deterministic-hash-rollout]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (8/8 unit test + 5/5 agregat kontrol) — henüz GitHub Actions'ta doğrulanmadı (CI bağlama ayrı, açıkça takip edilen bir sonraki adımdır). 25% yüzde dağıtımı 2000 gerçek farklı kullanıcı üzerinde gerçek bir istatistiksel toleransla kanıtlandı; allowList/denyList önceliği ve segment hedefleme GERÇEKTEN doğrulandı."
+
+  - id: lab.distributed-tracing.cross-service-span-propagation
+    label: "Distributed Tracing (trace-context propagation across two real node:http services)"
+    maturity: L3_AUTOMATED
+    path: "QA-DEMO-SYSTEM/automation-labs/distributed-tracing"
+    evidence_id: evidence.distributed-tracing.real-lab-run
+    covers_competencies: [competency.distributed-tracing.cross-service-span-propagation]
+    note: "TR: Lokal olarak gerçekten çalıştırıldı ve PASS aldı (12/12 unit test + 3/3 agregat kontrol) — henüz GitHub Actions'ta doğrulanmadı (CI bağlama ayrı, açıkça takip edilen bir sonraki adımdır). Gerçek bir traceparent başlığı iki ayrı gerçek node:http sunucusu arasındaki gerçek bir ağ sıçramasını GERÇEKTEN aştı; sonuçtaki span ağacının şekli (bir kök, bir çocuk, doğru parentSpanId bağlantısı) paylaşılan bir bellek-içi kolektörden okunarak kanıtlandı."
+
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"
   narrative_docs:

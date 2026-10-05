@@ -184,6 +184,17 @@ not incompleteness; no row implies content that isn't there.
   correctly over real elapsed time via an injected fake clock) with
   matching handbook docs at
   [`26-PLATFORM-ENGINEERING-QUALITY-GATES/API-IDEMPOTENCY-RATE-LIMITING/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/API-IDEMPOTENCY-RATE-LIMITING/).
+  Also covers **Feature Flags & Progressive Targeting / Distributed
+  Tracing** — two more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/feature-flags/`: a real,
+  hand-rolled feature-flag evaluator proving deterministic hash-based
+  percentage rollout — checked against a real 2000-sample statistical
+  proof — plus allow/deny-list override precedence and segment
+  targeting; and `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/`:
+  a real trace-context propagation layer proven across a real network
+  hop between two genuinely separate `node:http` services) with
+  matching handbook docs at
+  [`26-PLATFORM-ENGINEERING-QUALITY-GATES/FEATURE-FLAGS-DISTRIBUTED-TRACING/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/FEATURE-FLAGS-DISTRIBUTED-TRACING/).
   Professional experience for this area is explicitly `NONE` in the
   Digital Twin registry — repository practice only. Further
   platform-engineering subtopics are planned but not yet added.

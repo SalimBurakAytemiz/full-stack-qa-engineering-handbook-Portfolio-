@@ -340,6 +340,12 @@ relationships:
   - from: competency.rate-limiting.token-bucket-abuse-prevention
     predicate: USES_TECHNOLOGY
     to: tech.token-bucket-rate-limiter
+  - from: competency.feature-flags.deterministic-hash-rollout
+    predicate: USES_TECHNOLOGY
+    to: tech.deterministic-flag-evaluator
+  - from: competency.distributed-tracing.cross-service-span-propagation
+    predicate: USES_TECHNOLOGY
+    to: tech.hand-rolled-tracer
   - from: competency.api.graphql
     predicate: USES_TECHNOLOGY
     to: protocol.graphql
@@ -464,6 +470,12 @@ relationships:
   - from: lab.rate-limiting.token-bucket-limiter
     predicate: USES_TECHNOLOGY
     to: tech.token-bucket-rate-limiter
+  - from: lab.feature-flags.deterministic-hash-rollout
+    predicate: USES_TECHNOLOGY
+    to: tech.deterministic-flag-evaluator
+  - from: lab.distributed-tracing.cross-service-span-propagation
+    predicate: USES_TECHNOLOGY
+    to: tech.hand-rolled-tracer
 
   # ============================================================
   # COMPETENCY -> LAB (repository practice location — PRACTICED_IN)
@@ -597,6 +609,12 @@ relationships:
   - from: competency.rate-limiting.token-bucket-abuse-prevention
     predicate: PRACTICED_IN
     to: lab.rate-limiting.token-bucket-limiter
+  - from: competency.feature-flags.deterministic-hash-rollout
+    predicate: PRACTICED_IN
+    to: lab.feature-flags.deterministic-hash-rollout
+  - from: competency.distributed-tracing.cross-service-span-propagation
+    predicate: PRACTICED_IN
+    to: lab.distributed-tracing.cross-service-span-propagation
   - from: competency.security.security-aware-qa
     predicate: PRACTICED_IN
     to: lab.backend-api.rest-graphql-websocket
@@ -716,6 +734,12 @@ relationships:
   - from: lab.rate-limiting.token-bucket-limiter
     predicate: TESTED_BY
     to: evidence.rate-limiting.real-lab-run
+  - from: lab.feature-flags.deterministic-hash-rollout
+    predicate: TESTED_BY
+    to: evidence.feature-flags.real-lab-run
+  - from: lab.distributed-tracing.cross-service-span-propagation
+    predicate: TESTED_BY
+    to: evidence.distributed-tracing.real-lab-run
   - from: lab.database.sql-validation
     predicate: TESTED_BY
     to: evidence.database.sql-validation-suite
@@ -1081,6 +1105,18 @@ relationships:
   - from: competency.rate-limiting.token-bucket-abuse-prevention
     predicate: LEARNING
     to: gap.rate-limiting.professional-exposure
+  - from: competency.feature-flags.deterministic-hash-rollout
+    predicate: LEARNING
+    to: gap.feature-flags.flag-management-platform-tooling
+  - from: competency.feature-flags.deterministic-hash-rollout
+    predicate: LEARNING
+    to: gap.feature-flags.professional-exposure
+  - from: competency.distributed-tracing.cross-service-span-propagation
+    predicate: LEARNING
+    to: gap.distributed-tracing.real-tracing-backend-export
+  - from: competency.distributed-tracing.cross-service-span-propagation
+    predicate: LEARNING
+    to: gap.distributed-tracing.professional-exposure
   - from: competency.web.accessibility
     predicate: LEARNING
     to: gap.accessibility.professional-exposure
