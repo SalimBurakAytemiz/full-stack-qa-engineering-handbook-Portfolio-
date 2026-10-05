@@ -62,8 +62,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Multi-Tenancy Data Isolation Testing | WORKING | NONE | CI_VERIFIED |
 | API Idempotency-Key Replay-Safety Testing | WORKING | NONE | CI_VERIFIED |
 | Rate Limiting & Abuse Testing | WORKING | NONE | CI_VERIFIED |
-| Feature Flags & Progressive Targeting | WORKING | NONE | EXECUTED |
-| Distributed Tracing | WORKING | NONE | EXECUTED |
+| Feature Flags & Progressive Targeting | WORKING | NONE | CI_VERIFIED |
+| Distributed Tracing | WORKING | NONE | CI_VERIFIED |
 
 ## Domain Maturity
 
@@ -113,8 +113,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Multi-Tenancy Isolation (tenant-scoped data access layer + deliberately unsafe negative-path proof) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation` |
 | API Idempotency-Key Replay-Safety (in-flight-promise store backing a real Idempotency-Key HTTP server) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing` |
 | Rate Limiting & Abuse Testing (hand-rolled token-bucket limiter backing a real HTTP server) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting` |
-| Feature Flags & Progressive Targeting (hand-rolled deterministic hash-based evaluator) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/feature-flags` |
-| Distributed Tracing (trace-context propagation across two real node:http services) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing` |
+| Feature Flags & Progressive Targeting (hand-rolled deterministic hash-based evaluator) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/feature-flags` |
+| Distributed Tracing (trace-context propagation across two real node:http services) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing` |
 
 ## System Patterns
 
@@ -180,14 +180,14 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Multi-Tenancy Isolation lab — 6 unit tests + a real aggregate run proving tenant CRUD isolation and a real negative-path leak proof executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/EXECUTION.md` |
 | Idempotency Testing lab — 9 unit tests + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing/EXECUTION.md` |
 | Rate Limiting lab — 8 unit tests + a real aggregate run proving accept/reject/refill behavior against a real HTTP server executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting/EXECUTION.md` |
-| Feature Flags lab — 8 unit tests + a real aggregate run proving deterministic hash-based rollout, override precedence, and segment targeting executed (local only) | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/feature-flags/EXECUTION.md` |
-| Distributed Tracing lab — 12 unit tests + a real aggregate run proving trace-context propagation across a real HTTP hop executed (local only) | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/EXECUTION.md` |
+| Feature Flags lab — 8 unit tests + a real aggregate run proving deterministic hash-based rollout, override precedence, and segment targeting executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/feature-flags/EXECUTION.md` |
+| Distributed Tracing lab — 12 unit tests + a real aggregate run proving trace-context propagation across a real HTTP hop executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (442 edges)
+## Relationships (444 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -457,6 +457,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.multi-tenancy-isolation.tenant-scoped-data-access | EVIDENCED_BY | evidence.multi-tenancy-isolation.real-lab-run |
 | competency.idempotency-testing.replay-safety | EVIDENCED_BY | evidence.idempotency-testing.real-lab-run |
 | competency.rate-limiting.token-bucket-abuse-prevention | EVIDENCED_BY | evidence.rate-limiting.real-lab-run |
+| competency.feature-flags.deterministic-hash-rollout | EVIDENCED_BY | evidence.feature-flags.real-lab-run |
+| competency.distributed-tracing.cross-service-span-propagation | EVIDENCED_BY | evidence.distributed-tracing.real-lab-run |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.public-schema-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.protected-auth-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.orders-payment-suite |

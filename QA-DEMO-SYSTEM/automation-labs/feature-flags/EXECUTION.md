@@ -47,6 +47,23 @@ document.
   take real precedence correctly, including the specific adversarial
   case of a denyList entry that would also match a 100%-rollout flag.
 
+## Run 3 — CI-verified
+
+**GitHub Actions run:**
+https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37255041775
+(commit `e5d2041`), job "Feature Flags lab (deterministic hash-based
+rollout)" — conclusion: `success`. All jobs in that run completed
+successfully.
+
+This confirms the same `npm run feature-flags:test --workspace
+automation-labs` aggregate run (Run 2 above) genuinely passes in the
+CI environment, not just locally. On this basis
+`lab.feature-flags.deterministic-hash-rollout` and
+`evidence.feature-flags.real-lab-run` are elevated to L4_CI_VERIFIED
+/ E4_CI_VERIFIED, and
+`competency.feature-flags.deterministic-hash-rollout`'s repository
+status is elevated to CI_VERIFIED in the Digital Twin registry.
+
 ## Scope and honesty notes
 
 - In-memory flag definitions only — not a remote flag-management
@@ -56,6 +73,3 @@ document.
   tests and the aggregate run passed cleanly on their first real
   execution. This is stated plainly rather than inventing a "mistake"
   for `COMMON-MISTAKES.md` where none occurred.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `feature-flags-lab` job once added).

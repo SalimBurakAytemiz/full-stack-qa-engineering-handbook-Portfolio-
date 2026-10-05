@@ -634,17 +634,18 @@ competencies:
   # Part 3 — Platform Engineering & Quality Gates: Feature Flags &
   # Progressive Targeting / Distributed Tracing (Milestone 3.3). Same
   # discipline: professional.status NONE for both. repository.status
-  # is EXECUTED (real unit tests + real aggregate run passing
-  # locally) — not yet CI_VERIFIED; CI wiring and the CI-verification
-  # run are a separate, explicitly tracked next step.
+  # is CI_VERIFIED — GitHub Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37255041775
+  # (commit e5d2041) confirmed the "Feature Flags lab" and
+  # "Distributed Tracing lab" CI jobs both pass.
 
   - id: competency.feature-flags.deterministic-hash-rollout
     label: "Feature Flags & Progressive Targeting"
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "feature-flags/lib/flag-evaluator.js — flag-evaluator.test.js (8) genuinely passing; a real run proved deterministic repeated evaluation, a 25% rollout landing within a real statistical tolerance of its target over 2000 real distinct synthetic user ids, allowList/denyList override precedence (including the adversarial case of a denyList entry also matching a 100% rollout), and segment-based targeting at 0% rollout — not yet verified in GitHub Actions"
+      status: CI_VERIFIED
+      evidence: "feature-flags/lib/flag-evaluator.js — flag-evaluator.test.js (8) genuinely passing; a real run proved deterministic repeated evaluation, a 25% rollout landing within a real statistical tolerance of its target over 2000 real distinct synthetic user ids, allowList/denyList override precedence (including the adversarial case of a denyList entry also matching a 100% rollout), and segment-based targeting at 0% rollout, verified in GitHub Actions"
     gaps: [gap.feature-flags.professional-exposure, gap.feature-flags.flag-management-platform-tooling]
 
   - id: competency.distributed-tracing.cross-service-span-propagation
@@ -652,8 +653,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "distributed-tracing/lib/tracer.js + lib/trace-context.js + lib/traced-service.js — trace-context.test.js (3) + tracer.test.js (5) + traced-service.test.js (4) genuinely passing (12/12); a real run proved a traceparent-shaped header genuinely crosses a real HTTP hop between two separate node:http servers, with the resulting span tree (one root, one child, correct parentSpanId linkage) read back from a shared in-memory collector both services independently wrote to — not yet verified in GitHub Actions"
+      status: CI_VERIFIED
+      evidence: "distributed-tracing/lib/tracer.js + lib/trace-context.js + lib/traced-service.js — trace-context.test.js (3) + tracer.test.js (5) + traced-service.test.js (4) genuinely passing (12/12); a real run proved a traceparent-shaped header genuinely crosses a real HTTP hop between two separate node:http servers, with the resulting span tree (one root, one child, correct parentSpanId linkage) read back from a shared in-memory collector both services independently wrote to, verified in GitHub Actions"
     gaps: [gap.distributed-tracing.professional-exposure, gap.distributed-tracing.real-tracing-backend-export]
 
 related:

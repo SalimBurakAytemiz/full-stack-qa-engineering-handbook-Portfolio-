@@ -48,6 +48,25 @@ Exit code `0`.
   trace id each time — trace identity isn't accidentally shared
   across requests.
 
+## Run 3 — CI-verified
+
+**GitHub Actions run:**
+https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37255041775
+(commit `e5d2041`), job "Distributed Tracing lab (trace-context
+propagation across two real services)" — conclusion: `success`. All
+jobs in that run completed successfully.
+
+This confirms the same `npm run distributed-tracing:test --workspace
+automation-labs` aggregate run (Run 2 above) genuinely passes in the
+CI environment, not just locally — including the real HTTP hop
+between two separate server processes inside the CI runner. On this
+basis `lab.distributed-tracing.cross-service-span-propagation` and
+`evidence.distributed-tracing.real-lab-run` are elevated to
+L4_CI_VERIFIED / E4_CI_VERIFIED, and
+`competency.distributed-tracing.cross-service-span-propagation`'s
+repository status is elevated to CI_VERIFIED in the Digital Twin
+registry.
+
 ## Scope and honesty notes
 
 - Loosely modeled on the W3C `traceparent` format — not a claim of
@@ -60,6 +79,3 @@ Exit code `0`.
   tests and the aggregate run passed cleanly on their first real
   execution. This is stated plainly rather than inventing a "mistake"
   for `COMMON-MISTAKES.md` where none occurred.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `distributed-tracing-lab` job once added).

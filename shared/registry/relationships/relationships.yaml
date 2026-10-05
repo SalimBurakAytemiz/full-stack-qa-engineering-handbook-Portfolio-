@@ -871,6 +871,12 @@ relationships:
   - from: competency.rate-limiting.token-bucket-abuse-prevention
     predicate: EVIDENCED_BY
     to: evidence.rate-limiting.real-lab-run
+  - from: competency.feature-flags.deterministic-hash-rollout
+    predicate: EVIDENCED_BY
+    to: evidence.feature-flags.real-lab-run
+  - from: competency.distributed-tracing.cross-service-span-propagation
+    predicate: EVIDENCED_BY
+    to: evidence.distributed-tracing.real-lab-run
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite
