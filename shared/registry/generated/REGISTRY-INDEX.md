@@ -60,8 +60,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Canary Rollout & Automatic Rollback Testing | WORKING | NONE | CI_VERIFIED |
 | Database Migration & Schema Evolution Testing | WORKING | NONE | CI_VERIFIED |
 | Multi-Tenancy Data Isolation Testing | WORKING | NONE | CI_VERIFIED |
-| API Idempotency-Key Replay-Safety Testing | WORKING | NONE | EXECUTED |
-| Rate Limiting & Abuse Testing | WORKING | NONE | EXECUTED |
+| API Idempotency-Key Replay-Safety Testing | WORKING | NONE | CI_VERIFIED |
+| Rate Limiting & Abuse Testing | WORKING | NONE | CI_VERIFIED |
 
 ## Domain Maturity
 
@@ -109,8 +109,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Release Engineering (hand-rolled semver/changelog integrity checks + canary rollout state machine) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering` |
 | Database Migration Testing (hand-rolled migration runner against a real in-memory SQLite database) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing` |
 | Multi-Tenancy Isolation (tenant-scoped data access layer + deliberately unsafe negative-path proof) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation` |
-| API Idempotency-Key Replay-Safety (in-flight-promise store backing a real Idempotency-Key HTTP server) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing` |
-| Rate Limiting & Abuse Testing (hand-rolled token-bucket limiter backing a real HTTP server) | L3_AUTOMATED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting` |
+| API Idempotency-Key Replay-Safety (in-flight-promise store backing a real Idempotency-Key HTTP server) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing` |
+| Rate Limiting & Abuse Testing (hand-rolled token-bucket limiter backing a real HTTP server) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting` |
 
 ## System Patterns
 
@@ -174,14 +174,14 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Release Engineering lab — 21 unit tests + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md` |
 | DB Migration Testing lab — 6 unit tests + a real aggregate run against a real in-memory SQLite database executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing/EXECUTION.md` |
 | Multi-Tenancy Isolation lab — 6 unit tests + a real aggregate run proving tenant CRUD isolation and a real negative-path leak proof executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/EXECUTION.md` |
-| Idempotency Testing lab — 9 unit tests + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race executed (local only) | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing/EXECUTION.md` |
-| Rate Limiting lab — 8 unit tests + a real aggregate run proving accept/reject/refill behavior against a real HTTP server executed (local only) | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting/EXECUTION.md` |
+| Idempotency Testing lab — 9 unit tests + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing/EXECUTION.md` |
+| Rate Limiting lab — 8 unit tests + a real aggregate run proving accept/reject/refill behavior against a real HTTP server executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (428 edges)
+## Relationships (430 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -441,6 +441,8 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.release-engineering.canary-rollout-and-automatic-rollback | EVIDENCED_BY | evidence.release-engineering.real-lab-run |
 | competency.db-migration-testing.schema-evolution-and-rollback | EVIDENCED_BY | evidence.db-migration-testing.real-lab-run |
 | competency.multi-tenancy-isolation.tenant-scoped-data-access | EVIDENCED_BY | evidence.multi-tenancy-isolation.real-lab-run |
+| competency.idempotency-testing.replay-safety | EVIDENCED_BY | evidence.idempotency-testing.real-lab-run |
+| competency.rate-limiting.token-bucket-abuse-prevention | EVIDENCED_BY | evidence.rate-limiting.real-lab-run |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.public-schema-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.protected-auth-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.orders-payment-suite |

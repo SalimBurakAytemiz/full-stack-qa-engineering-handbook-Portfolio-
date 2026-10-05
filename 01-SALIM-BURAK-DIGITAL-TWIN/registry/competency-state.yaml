@@ -607,18 +607,19 @@ competencies:
 
   # Part 3 — Platform Engineering & Quality Gates: API Idempotency-Key
   # Replay-Safety & Rate Limiting (Milestone 3.2). Same discipline:
-  # professional.status NONE for both. repository.status is EXECUTED
-  # (real unit tests + real aggregate run passing locally) — not yet
-  # CI_VERIFIED; CI wiring and the CI-verification run are a separate,
-  # explicitly tracked next step.
+  # professional.status NONE for both. repository.status is CI_VERIFIED
+  # — GitHub Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37204986576
+  # (commit 7440151) confirmed the "Idempotency Testing lab" and "Rate
+  # Limiting lab" CI jobs both pass.
 
   - id: competency.idempotency-testing.replay-safety
     label: "API Idempotency-Key Replay-Safety Testing"
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "idempotency-testing/lib/idempotency-store.js + lib/idempotent-server.js — idempotency-store.test.js (4) + idempotent-server.test.js (5) genuinely passing (9/9); a real run proved a request with no Idempotency-Key header gets a real 400, a replayed key returns the identical cached order with no duplicate side effect, and 10 real concurrent HTTP requests with the same key (fired via Promise.all) produced exactly one real order and exactly one real side-effect increment — not yet verified in GitHub Actions"
+      status: CI_VERIFIED
+      evidence: "idempotency-testing/lib/idempotency-store.js + lib/idempotent-server.js — idempotency-store.test.js (4) + idempotent-server.test.js (5) genuinely passing (9/9); a real run proved a request with no Idempotency-Key header gets a real 400, a replayed key returns the identical cached order with no duplicate side effect, and 10 real concurrent HTTP requests with the same key (fired via Promise.all) produced exactly one real order and exactly one real side-effect increment, verified in GitHub Actions"
     gaps: [gap.idempotency-testing.professional-exposure, gap.idempotency-testing.persistent-distributed-store]
 
   - id: competency.rate-limiting.token-bucket-abuse-prevention
@@ -626,8 +627,8 @@ competencies:
     knowledge: WORKING
     professional: { status: NONE }
     repository:
-      status: EXECUTED
-      evidence: "rate-limiting/lib/token-bucket.js + lib/rate-limited-server.js — token-bucket.test.js (5) + rate-limited-server.test.js (3) genuinely passing (8/8); a real run proved requests within capacity succeed with a real 200, a request over capacity gets a real 429 checked against the server's own real accepted/rejected counters, and advancing a real injected fake clock makes the next request succeed once a token has genuinely refilled — including a real validation bug (refillRatePerMs > 0 wrongly rejecting the legitimate refillRatePerMs: 0 case) caught by a real failing test run and fixed — not yet verified in GitHub Actions"
+      status: CI_VERIFIED
+      evidence: "rate-limiting/lib/token-bucket.js + lib/rate-limited-server.js — token-bucket.test.js (5) + rate-limited-server.test.js (3) genuinely passing (8/8); a real run proved requests within capacity succeed with a real 200, a request over capacity gets a real 429 checked against the server's own real accepted/rejected counters, and advancing a real injected fake clock makes the next request succeed once a token has genuinely refilled — including a real validation bug (refillRatePerMs > 0 wrongly rejecting the legitimate refillRatePerMs: 0 case) caught by a real failing test run and fixed, verified in GitHub Actions"
     gaps: [gap.rate-limiting.professional-exposure, gap.rate-limiting.per-client-limiting]
 
 related:

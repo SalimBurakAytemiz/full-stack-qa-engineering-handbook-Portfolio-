@@ -250,20 +250,20 @@ items:
     note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. İki gerçek tenant'ın verisiyle tam CRUD izolasyonu ve kasıtlı güvensiz repository'nin gerçek sızıntısı kanıtlandı."
 
   - id: evidence.idempotency-testing.real-lab-run
-    label: "Idempotency Testing lab — 9 unit tests + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race executed (local only)"
-    maturity: E3_EXECUTED
+    label: "Idempotency Testing lab — 9 unit tests + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/idempotency-testing/EXECUTION.md"
-    produced_by: "npm run idempotency:test --workspace automation-labs (local run, see EXECUTION.md for actual observed output)"
+    produced_by: "npm run idempotency:test --workspace automation-labs — GitHub Actions job 'Idempotency Testing lab (Idempotency-Key HTTP server + in-flight-promise store)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37204986576, commit 7440151, conclusion: success"
     related_lab: lab.idempotency-testing.in-flight-promise-store
-    note: "TR: E3_EXECUTED — şu an sadece lokal olarak gerçekten çalıştırılıp PASS aldı, henüz GitHub Actions'ta doğrulanmadı. Eksik Idempotency-Key başlığı reddedildi; aynı anahtarla 10 gerçek eşzamanlı HTTP isteği tam olarak bir gerçek sipariş ürettiği kanıtlandı. CI job eklendikten ve gerçekten PASS aldığında E4_CI_VERIFIED'e yükseltilecek."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Eksik Idempotency-Key başlığı reddedildi; aynı anahtarla 10 gerçek eşzamanlı HTTP isteği tam olarak bir gerçek sipariş ürettiği kanıtlandı."
 
   - id: evidence.rate-limiting.real-lab-run
-    label: "Rate Limiting lab — 8 unit tests + a real aggregate run proving accept/reject/refill behavior against a real HTTP server executed (local only)"
-    maturity: E3_EXECUTED
+    label: "Rate Limiting lab — 8 unit tests + a real aggregate run proving accept/reject/refill behavior against a real HTTP server executed (local + CI)"
+    maturity: E4_CI_VERIFIED
     artifact: "QA-DEMO-SYSTEM/automation-labs/rate-limiting/EXECUTION.md"
-    produced_by: "npm run rate-limiting:test --workspace automation-labs (local run, see EXECUTION.md for actual observed output)"
+    produced_by: "npm run rate-limiting:test --workspace automation-labs — GitHub Actions job 'Rate Limiting lab (token-bucket limiter + HTTP server)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37204986576, commit 7440151, conclusion: success"
     related_lab: lab.rate-limiting.token-bucket-limiter
-    note: "TR: E3_EXECUTED — şu an sadece lokal olarak gerçekten çalıştırılıp PASS aldı, henüz GitHub Actions'ta doğrulanmadı. Kapasite içindeki istekler kabul edildi, aşan istek gerçek 429 aldı, enjekte edilmiş sahte saat ilerletildiğinde gerçek refill kanıtlandı. CI job eklendikten ve gerçekten PASS aldığında E4_CI_VERIFIED'e yükseltilecek."
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Kapasite içindeki istekler kabul edildi, aşan istek gerçek 429 aldı, enjekte edilmiş sahte saat ilerletildiğinde gerçek refill kanıtlandı — ayrıca gerçek bir doğrulama hatası (refillRatePerMs > 0, geçerli refillRatePerMs: 0 durumunu hatalı şekilde reddediyordu) gerçek bir başarısız test çalışmasıyla yakalandı ve düzeltildi."
 
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"

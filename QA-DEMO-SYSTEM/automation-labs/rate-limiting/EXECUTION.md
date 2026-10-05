@@ -56,10 +56,24 @@ See `COMMON-MISTAKES.md` in the handbook for the general lesson.
   the very next real request succeed — proving the refill math is
   tied to real elapsed time, not a guess.
 
+## Run 3 — CI-verified
+
+**GitHub Actions run:**
+https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37204986576
+(commit `7440151`), job "Rate Limiting lab (token-bucket limiter +
+HTTP server)" — conclusion: `success`. All 28 jobs in that run
+completed successfully.
+
+This confirms the same `npm run rate-limiting:test --workspace
+automation-labs` aggregate run (Run 2 above) genuinely passes in the
+CI environment, not just locally. On this basis
+`lab.rate-limiting.token-bucket-limiter` and
+`evidence.rate-limiting.real-lab-run` are elevated to L4_CI_VERIFIED
+/ E4_CI_VERIFIED, and
+`competency.rate-limiting.token-bucket-abuse-prevention`'s repository
+status is elevated to CI_VERIFIED in the Digital Twin registry.
+
 ## Scope and honesty notes
 
 - Single shared bucket — not per-client/per-API-key limiting. See
   `README.md`'s "Scope boundary" section.
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `rate-limiting-lab` job once added).

@@ -841,6 +841,12 @@ relationships:
   - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
     predicate: EVIDENCED_BY
     to: evidence.multi-tenancy-isolation.real-lab-run
+  - from: competency.idempotency-testing.replay-safety
+    predicate: EVIDENCED_BY
+    to: evidence.idempotency-testing.real-lab-run
+  - from: competency.rate-limiting.token-bucket-abuse-prevention
+    predicate: EVIDENCED_BY
+    to: evidence.rate-limiting.real-lab-run
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite

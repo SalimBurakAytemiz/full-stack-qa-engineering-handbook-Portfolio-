@@ -66,8 +66,8 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Canary Rollout & Automatic Rollback Testing | WORKING | NONE | CI_VERIFIED |
 | Database Migration & Schema Evolution Testing | WORKING | NONE | CI_VERIFIED |
 | Multi-Tenancy Data Isolation Testing | WORKING | NONE | CI_VERIFIED |
-| API Idempotency-Key Replay-Safety Testing | WORKING | NONE | EXECUTED |
-| Rate Limiting & Abuse Testing | WORKING | NONE | EXECUTED |
+| API Idempotency-Key Replay-Safety Testing | WORKING | NONE | CI_VERIFIED |
+| Rate Limiting & Abuse Testing | WORKING | NONE | CI_VERIFIED |
 
 ## Reading this table correctly
 

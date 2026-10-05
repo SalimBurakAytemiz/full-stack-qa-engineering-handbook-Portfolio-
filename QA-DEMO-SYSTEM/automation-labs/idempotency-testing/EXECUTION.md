@@ -47,12 +47,26 @@ Exit code `0`.
   exactly 1 — proving the store's in-flight-promise design correctly
   handles a genuine race, not just sequential replays.
 
+## Run 3 — CI-verified
+
+**GitHub Actions run:**
+https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37204986576
+(commit `7440151`), job "Idempotency Testing lab (Idempotency-Key
+HTTP server + in-flight-promise store)" — conclusion: `success`. All
+28 jobs in that run completed successfully.
+
+This confirms the same `npm run idempotency:test --workspace
+automation-labs` aggregate run (Run 2 above) genuinely passes in the
+CI environment, not just locally. On this basis
+`lab.idempotency-testing.in-flight-promise-store` and
+`evidence.idempotency-testing.real-lab-run` are elevated to
+L4_CI_VERIFIED / E4_CI_VERIFIED, and
+`competency.idempotency-testing.replay-safety`'s repository status is
+elevated to CI_VERIFIED in the Digital Twin registry.
+
 ## Scope and honesty notes
 
 - In-memory store only — not a production-grade distributed store
   (Redis, a unique-constrained database table). See `README.md`'s
   "Scope boundary" section.
 - Self-contained — never touches the real backend (`backend/src/`).
-- Not yet CI-verified as of this file's writing — CI wiring is a
-  separate, explicitly tracked step (see `.github/workflows/ci.yml`'s
-  `idempotency-testing-lab` job once added).
