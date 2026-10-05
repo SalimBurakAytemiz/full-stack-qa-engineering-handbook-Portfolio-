@@ -174,7 +174,14 @@ part_3_platform_engineering_quality_gates:
   merge_status: "NOT MERGED — stays on feat/part-3-platform-engineering-quality-gates pending independent (Codex) review, per standing instruction"
   final_report: ".ai/PART-3-FINAL-REPORT.md"
 
+codex_review_status:
+  status: "DEFERRED_UNTIL_NOW — Parts 2 and 3 implementation is complete; one combined independent review is now ready to begin, per standing instruction to defer review until all planned work finished"
+  handoff: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md"
+  scope: "git diff 7051c2b..5428e26 (the entire feat/part-3-platform-engineering-quality-gates branch, which contains both Part 2 and Part 3 since Part 3 was built on Part 2's unmerged tip)"
+  merge_status: "Neither Part 2 nor Part 3 merged to main — independent review comes first, per standing instruction"
+
 pointers:
+  codex_full_project_review_handoff: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md"
   part_3_final_report: ".ai/PART-3-FINAL-REPORT.md"
   part_2_final_report: ".ai/PART-2-FINAL-REPORT.md"
   digital_twin: "01-SALIM-BURAK-DIGITAL-TWIN/"
