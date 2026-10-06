@@ -1,5 +1,14 @@
 # Codex Full-Project Review Handoff — Parts 1, 2 & 3
 
+> **Post-merge note (current):** this handoff is now a historical
+> review record. Its findings F1–F8 were fixed, and Parts 2 + 3 were
+> merged to `main` via PR #26 (final source SHA `9506d03`, merge
+> commit `dfdec4c`, post-merge `main` CI run #78 30/30 SUCCESS) by
+> explicit user decision. No final independent CLEAN verdict was
+> recorded on the final SHA. The "not merged" statements below describe
+> the state at handoff time. For the current project state see
+> `.ai/MASTER-STATE.yaml#project_final_status`.
+
 **Status: IMPLEMENTATION COMPLETE — ready for ONE independent Codex
 review covering Part 2 and Part 3 together (Part 1 already
 independently reviewed and merged). Codex review for Parts 2/3 was

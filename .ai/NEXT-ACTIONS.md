@@ -1,5 +1,31 @@
 # Next Actions
 
+## PROJECT FINAL CLOSEOUT (current — supersedes every section below)
+
+**PROJECT: COMPLETED.** Part 1, Part 2 and Part 3 are all COMPLETED and
+MERGED to `main`. Parts 2 + 3 were merged via PR #26 (final source SHA
+`9506d030fba76f9fce622c949bf41539b740c7fc`, merge commit
+`dfdec4c24fb070ae7b22fe86e8fa6c286d0a42cf`, merge method: merge
+commit). Post-merge `main` CI (run #78) was 30/30 SUCCESS, and the
+post-merge registry smoke passed (0 errors, regression 26/26, 0 drift).
+The independent reviews' findings F1–F8 were all fixed. No final
+independent CLEAN verdict was recorded on the final SHA; the merge was
+an explicit user decision. See `.ai/MASTER-STATE.yaml#project_final_status`
+for the full record.
+
+**Next action: PUBLIC_PORTFOLIO_READY.** The repository is intended for
+GitHub portfolio presentation, LinkedIn sharing, interview
+demonstration, and future maintenance only. No Part 4 or further
+implementation phase is planned. Disclosed, non-blocking items stay
+documented where they already were: the `proxy-addr` advisory (CASE B,
+see MASTER-STATE `project_final_status.dependency_note`) and the
+environment limits and user-input items in `.ai/KNOWN-ISSUES.md`.
+
+The sections below are preserved as historical records of earlier
+phases and are not current.
+
+---
+
 This file reflects the real, current state of the
 `feat/qa-digital-twin-full-stack-transformation` branch after the
 post-Codex consolidated fix campaign (base `a8f0cd2`, this commit).

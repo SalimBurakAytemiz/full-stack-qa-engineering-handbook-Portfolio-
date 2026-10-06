@@ -79,13 +79,14 @@ fix campaigns, tracked in
 **but that document covers only this merged Part 1 scope (Phases
 0-19)**, not the current state of the whole project.
 
-**Current, full-project state (what's actually on top of `main` right
-now):** two further unmerged parts — Part 2 (Advanced/Next-Generation
-QA Engineering) and Part 3 (Platform Engineering & Quality Gates) — add
-21 more real, CI-verified automation labs on branch
-`feat/part-3-platform-engineering-quality-gates`, currently going
-through its own independent Codex review and fix pass (not yet merged
-to `main`). For the current, whole-repository status — what's merged,
-what's still on a review branch, and any open findings — see
+**Current, full-project state: COMPLETED.** Part 2 (Advanced/
+Next-Generation QA Engineering) and Part 3 (Platform Engineering &
+Quality Gates) — 21 more real, CI-verified automation labs — went
+through their own independent review and fix pass (findings F1–F8, all
+fixed) and are merged to `main` via PR #26, with post-merge `main` CI
+green. Parts 1, 2 and 3 are all complete and merged. For the current,
+whole-repository status, see
+[`.ai/MASTER-STATE.yaml`](.ai/MASTER-STATE.yaml) (`project_final_status`).
+For the Parts 2/3 review record, see
 [`.ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md`](.ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md),
 not the Part-1-only document above.

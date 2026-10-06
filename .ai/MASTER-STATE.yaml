@@ -1,8 +1,30 @@
 schema_version: 1
 last_updated: "2026-10-06"
 
+project_final_status:
+  # CURRENT — final project closeout after PR #26 merged Parts 2+3 into main.
+  project: "COMPLETED"
+  part_1: "COMPLETED / MERGED (PR #25, merge commit 2849d97)"
+  part_2: "COMPLETED / MERGED (PR #26, merge commit dfdec4c)"
+  part_3: "COMPLETED / MERGED (PR #26, merge commit dfdec4c)"
+  final_source_branch: "feat/part-3-platform-engineering-quality-gates"
+  final_source_sha: "9506d030fba76f9fce622c949bf41539b740c7fc"
+  final_pr: 26
+  merge_method: "merge (merge commit, no squash, no history rewrite)"
+  merge_commit_sha: "dfdec4c24fb070ae7b22fe86e8fa6c286d0a42cf"
+  source_ci: "run #76 (id 37469260217, push) and run #77 (id 37506045357, pull_request) on 9506d03 — each 30 of 30 jobs SUCCESS"
+  post_merge_main_ci: "run #78 (id 37506369774, push to main) on dfdec4c — 30 of 30 jobs SUCCESS, 0 failed, 0 skipped, no continue-on-error jobs (verified at the job level)"
+  post_merge_main_smoke: "registry validator 0 errors; registry regression 26/26 PASS; REGISTRY-INDEX.md regenerated twice with identical hashes, 0 drift; 0 real broken links (3 known prose false positives); git diff --check PASS"
+  main: "VERIFIED"
+  required_ci: "GREEN"
+  professional_experience: "UNCHANGED — professional-experience.yaml and claims.yaml untouched by Parts 2/3 and by this closeout"
+  dependency_note: "QA-DEMO-SYSTEM npm audit --omit=dev: 1 critical (proxy-addr, GHSA-jqcg-44mw-7w3h) — CASE B: production advisory present, reachable exploit not demonstrated, non-blocking, deliberately not upgraded. Repo root npm audit --omit=dev: 0."
+  release_tag: "NOT_CREATED — the repository has no release/versioning tag convention"
+  next_action: "PUBLIC_PORTFOLIO_READY — GitHub portfolio presentation, LinkedIn sharing, interview demonstration, future maintenance only. No Part 4 or further implementation phase is planned."
+
 repository:
-  main_branch_head: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
+  main_branch_head: "dfdec4c24fb070ae7b22fe86e8fa6c286d0a42cf (PR #26 merge commit; the project closeout commit follows it on main)"
+  historical_main_branch_head_at_transformation_start: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
   transformation_branch: "feat/qa-digital-twin-full-stack-transformation"
   transformation_base_sha: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
 
@@ -53,14 +75,15 @@ master_transformation_campaign:
     compliance_map: ".ai/MASTER-REQUIREMENTS-COMPLIANCE.md"
 
 test_status:
-  # CURRENT full-project status (Parts 1+2+3) at branch feat/part-3-platform-engineering-quality-gates,
-  # SHA 49f50014245485610ea991e4f0bd314493517844. Part 1-era figures are preserved, unchanged,
+  # CURRENT full-project status (Parts 1+2+3), now on main: final source SHA 9506d03 merged via
+  # PR #26 (merge commit dfdec4c). Part 1-era figures are preserved, unchanged,
   # under historical_part_1_snapshot below — they are NOT current.
-  as_of_sha: "49f50014245485610ea991e4f0bd314493517844"
-  backend: "160/160 PASS — local run during the F1-F8 fix pass, and the 'Backend unit/integration tests (node:test)' job green in GitHub Actions run #75"
+  as_of_sha: "dfdec4c24fb070ae7b22fe86e8fa6c286d0a42cf (main, PR #26 merge commit; source 9506d030fba76f9fce622c949bf41539b740c7fc)"
+  post_merge_main_ci: "GitHub Actions run #78 (id 37506369774) on main at dfdec4c — 30 of 30 jobs SUCCESS, 0 failed, 0 skipped (verified at the job level). Pre-merge: run #76 (37469260217) and run #77 (37506045357) on 9506d03, each 30/30 SUCCESS."
+  backend: "160/160 PASS — local run during the F1-F8 fix pass, and the 'Backend unit/integration tests (node:test)' job green in GitHub Actions runs #75, #76, #77 and #78 (main)"
   registry_validator: "0 errors — 57 competencies, 72 tools, 75 gaps, 31 labs, 38 evidence entries, 444 relationships, 0 orphans, generated-index 0 drift"
   registry_regression_suite: "26/26 PASS — scripts/registry/validate-registry.regression.test.mjs"
-  ci: "GitHub Actions run #75 (id 37445486608) on SHA 49f50014245485610ea991e4f0bd314493517844 — 30 of 30 jobs SUCCESS, 0 failed, 0 skipped (verified at the job level). Covers backend, API (Newman/AJV) suites, API-to-DB validation, Playwright, Selenium (real CI pass), registry integrity, and all 21 Part 2/3 lab aggregate runners. Part 2/3 lab unit-test files run locally only, not in CI (see labs.yaml, independent review finding F3)."
+  ci: "(Pre-merge record) GitHub Actions run #75 (id 37445486608) on SHA 49f50014245485610ea991e4f0bd314493517844 — 30 of 30 jobs SUCCESS, 0 failed, 0 skipped (verified at the job level). Covers backend, API (Newman/AJV) suites, API-to-DB validation, Playwright, Selenium (real CI pass), registry integrity, and all 21 Part 2/3 lab aggregate runners. Part 2/3 lab unit-test files run locally only, not in CI (see labs.yaml, independent review finding F3)."
   not_executed_locally: "Selenium (sandbox network), JMeter real binary (environment-specific XStream issue, see DECISIONS.md D9) — unchanged, pre-existing environment limits"
   dependency_audit: "repo root npm audit --omit=dev: 0. QA-DEMO-SYSTEM npm audit --omit=dev: 1 critical (proxy-addr, GHSA-jqcg-44mw-7w3h, newly disclosed advisory — not caused by a dependency change here, not upgraded in this fix scope). QA-DEMO-SYSTEM full npm audit: 28 (10 moderate / 16 high / 2 critical). See .ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md 'Dependency-security state'."
   detail: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md (current full-project results)"
@@ -104,7 +127,8 @@ part_1_closeout:
   next_phase: "PART 2 — Advanced / Next-Generation QA Engineering: see part_2_advanced_qa_engineering below (Milestones 2.1-2.7 complete, not merged to main)"
 
 part_2_advanced_qa_engineering:
-  status: "MILESTONES 2.1-2.7 COMPLETE — not merged to main, pending independent review"
+  status: "COMPLETED / MERGED to main — PR #26, merge commit dfdec4c24fb070ae7b22fe86e8fa6c286d0a42cf (see project_final_status)"
+  pre_merge_status_historical: "MILESTONES 2.1-2.7 COMPLETE — not merged to main, pending independent review"
   branch: "feat/part-2-advanced-qa-engineering"
   base_sha: "7051c2b (chore: close Part 1 after verified PR #25 merge)"
   final_sha: "ed7136a4d20a81258c1ee199654ea5f0d139b61d"
@@ -144,11 +168,13 @@ part_2_advanced_qa_engineering:
     - "supply-chain-security's lab uses npm's own built-in sbom/audit tooling — not a commercial SCA product."
     - "None of these are blockers; each is disclosed in its own lab's README.md Scope boundary section and was a deliberate, honest scoping choice, not an oversight."
   defect_counts: { p0: 0, p1: 0, p2: 0, p3: 0 }
-  merge_status: "NOT MERGED — stays on feat/part-2-advanced-qa-engineering pending independent (Codex) review, per standing instruction"
+  merge_status: "MERGED — included in PR #26 (feat/part-3-platform-engineering-quality-gates was built on top of the Part 2 branch), merge commit dfdec4c"
+  pre_merge_merge_status_historical: "NOT MERGED — stays on feat/part-2-advanced-qa-engineering pending independent (Codex) review, per standing instruction"
   final_report: ".ai/PART-2-FINAL-REPORT.md"
 
 part_3_platform_engineering_quality_gates:
-  status: "MILESTONES 3.1-3.3 COMPLETE — not merged to main, pending independent review"
+  status: "COMPLETED / MERGED to main — PR #26, merge commit dfdec4c24fb070ae7b22fe86e8fa6c286d0a42cf (see project_final_status)"
+  pre_merge_status_historical: "MILESTONES 3.1-3.3 COMPLETE — not merged to main, pending independent review"
   branch: "feat/part-3-platform-engineering-quality-gates"
   base_sha: "3fb0ac626ff79bf428445202cf8a48b2ca5fd0e0 (Part 2 M2.8: Final integration report + closeout)"
   final_sha: "fae793ea313ee2f7f85f747f5065f8e68654c73d"
@@ -185,11 +211,13 @@ part_3_platform_engineering_quality_gates:
     - "distributed-tracing's traceparent header is loosely modeled on, not fully conformant with, the W3C Trace Context specification (no tracestate handling); its span collector is in-memory only, with no real export to a tracing backend (Jaeger, Zipkin, OTLP)."
     - "None of these are blockers; each is disclosed in its own lab's README.md Scope boundary section and was a deliberate, honest scoping choice, not an oversight."
   defect_counts: { p0: 0, p1: 0, p2: 0, p3: 0 }
-  merge_status: "NOT MERGED — stays on feat/part-3-platform-engineering-quality-gates pending independent (Codex) review, per standing instruction"
+  merge_status: "MERGED — PR #26 at source SHA 9506d030fba76f9fce622c949bf41539b740c7fc, merge commit dfdec4c"
+  pre_merge_merge_status_historical: "NOT MERGED — stays on feat/part-3-platform-engineering-quality-gates pending independent (Codex) review, per standing instruction"
   final_report: ".ai/PART-3-FINAL-REPORT.md"
 
 codex_review_status:
-  status: "FINAL_CLOSURE_VERIFICATION_PENDING — the full-project independent review has been performed and its findings fixed; a final independent closure verification is pending/in progress. Not CLEAN until an independent reviewer returns CLEAN."
+  status: "CLOSED BY MERGE — NO FINAL INDEPENDENT CLEAN VERDICT RECORDED. The independent reviews found F1-F8; all were fixed (3adfce0, 49f5001, and the final F5/F6 micro-fix 9506d03). Source and CI verification at 9506d03 succeeded (runs #76/#77, 30/30 each). The merge (PR #26) was performed by explicit user decision; no reviewer returned a final CLEAN verdict on 9506d03, and none is claimed here."
+  pre_merge_status_historical: "FINAL_CLOSURE_VERIFICATION_PENDING — the full-project independent review has been performed and its findings fixed; a final independent closure verification is pending/in progress. Not CLEAN until an independent reviewer returns CLEAN."
   handoff: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md"
   history:
     - step: "Codex full-project review of Parts 2+3"
@@ -204,7 +232,17 @@ codex_review_status:
       sha: "49f50014245485610ea991e4f0bd314493517844"
       ci: "GitHub Actions run #75 (id 37445486608) — 30 of 30 jobs SUCCESS"
       verification_result: "F4, F7 FIXED; F5 (this file's test_status/codex_review_status, evidence.yaml data-engineering pointer) and F6 (three handbook tracing pages) still open — addressed by the next micro-fix commit, pending final closure verification"
-  merge_status: "Neither Part 2 nor Part 3 merged to main — independent closure verification comes first, per standing instruction"
+    - step: "Final F5/F6 micro-fix commit"
+      sha: "9506d030fba76f9fce622c949bf41539b740c7fc"
+      ci: "GitHub Actions run #76 (id 37469260217) and PR run #77 (id 37506045357) — each 30 of 30 jobs SUCCESS"
+      verification_result: "F5 and F6 fixes implemented and validated (registry 0 errors, regression 26/26, 0 drift, 0 broken links); no independent final CLEAN verdict was returned on this SHA"
+    - step: "Merge to main"
+      pr: 26
+      merge_commit: "dfdec4c24fb070ae7b22fe86e8fa6c286d0a42cf"
+      ci: "GitHub Actions run #78 (id 37506369774) on main — 30 of 30 jobs SUCCESS"
+      verification_result: "Merged by explicit user decision; post-merge main CI and registry smoke both green"
+  merge_status: "MERGED — Parts 2 and 3 merged to main via PR #26 (merge commit dfdec4c)"
+  pre_merge_merge_status_historical: "Neither Part 2 nor Part 3 merged to main — independent closure verification comes first, per standing instruction"
 
 pointers:
   codex_full_project_review_handoff: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md"
