@@ -49,9 +49,9 @@ items:
 
   - id: pattern.rate-limiting
     label: "Rate Limiting"
-    status: NOT_IMPLEMENTED
+    status: IMPLEMENTED
     path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RATE-LIMITING.md"
-    note: "Documented as a real, stated gap — QA-DEMO-SYSTEM's backend has no rate-limiting middleware."
+    note: "Independent review finding F4: corrected from NOT_IMPLEMENTED. MAIN QA-DEMO BACKEND (backend/src) still has no rate-limiting middleware — unchanged, still accurate. The rate-limiting ISOLATED EXECUTABLE LAB's lib/token-bucket.js + lib/rate-limited-server.js genuinely implement a real token-bucket limiter backing a real HTTP server, proving accept/reject/refill behavior (including a real validation bug — refillRatePerMs > 0 wrongly rejecting the legitimate refillRatePerMs: 0 case — caught and fixed), CI-verified (see labs.yaml). See RATE-LIMITING.md's 'Related labs' section."
 
   - id: pattern.state-machine
     label: "State Machine"

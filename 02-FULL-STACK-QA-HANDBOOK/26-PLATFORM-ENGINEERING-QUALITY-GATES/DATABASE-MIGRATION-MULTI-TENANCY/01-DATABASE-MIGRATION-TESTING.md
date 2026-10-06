@@ -18,7 +18,7 @@ real scenario rather than one combined check:
    table_info`), not inferred from the migration code reading
    correctly.
 
-## Zero-downtime column addition means backfilling in the same migration
+## Backward-compatible column addition means backfilling in the same migration
 
 `lib/sample-migrations.js`'s second migration adds a `category` column
 to an existing table. The real backward-compatibility risk a naive
@@ -30,6 +30,17 @@ NULL` backfill in the same step as the `ALTER TABLE ADD COLUMN` —
 `migration-runner.test.js` proves this concretely by inserting a real
 row *before* the migration runs, then asserting its `category` is the
 real backfilled default afterward, not `NULL`.
+
+**Independent review finding F7 — this is not a zero-downtime proof.**
+What's proven here is schema evolution and existing-row backfill
+correctness: that a column addition doesn't leave old rows in a
+broken state. It does **not** prove continuous application
+availability during concurrent production traffic (no concurrent
+reader/writer was run against the database while the migration
+executed), so it should not be cited as zero-downtime-deployment
+evidence. Zero-downtime deployment remains a valid pattern to discuss
+conceptually (see `22-SYSTEM-PATTERNS/`), just not something this
+lab's test suite verified.
 
 ## A real finding: verify SQLite feature support before relying on it
 

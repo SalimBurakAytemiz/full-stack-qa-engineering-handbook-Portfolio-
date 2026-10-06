@@ -13,14 +13,18 @@ accidental client-side retry storms (see `RETRY.md`).
 
 ## Status in this repository
 
-**Not implemented.** `QA-DEMO-SYSTEM`'s backend has no rate-limiting
-middleware — verified directly (`grep` across the middleware/routes
-found no such logic), documented honestly during the Phase 11
-security-aware QA work rather than silently assumed or invented. This
-page exists so the pattern is documented even though this repository
-has no working example of it yet — see `09-GAP-AND-LEARNING-MAP.md`
-in the Digital Twin for the same gap recorded at the personal-knowledge
+**MAIN QA-DEMO BACKEND (`backend/src`): not implemented.** It has no
+rate-limiting middleware — verified directly (`grep` across the
+middleware/routes found no such logic), documented honestly during
+the Phase 11 security-aware QA work rather than silently assumed or
+invented, and still true today. See `09-GAP-AND-LEARNING-MAP.md` in
+the Digital Twin for the same gap recorded at the personal-knowledge
 level.
+
+**ISOLATED EXECUTABLE LAB (independent review finding F4): a real
+token-bucket rate limiter is implemented and CI-verified** — see
+"Related labs" below. This does not mean the main demo backend gained
+rate-limiting; it remains as described above.
 
 ## QA risks (in a system that DOES implement it)
 
@@ -70,3 +74,17 @@ rate.
 ## Related domains
 
 FinTech, Identity/Security (any authentication endpoint).
+
+## Related labs
+
+`QA-DEMO-SYSTEM/automation-labs/rate-limiting/lib/token-bucket.js` +
+`lib/rate-limited-server.js` (independent review finding F4)
+implement a real token-bucket limiter backing a real HTTP server:
+requests within capacity get a real 200, a request over capacity gets
+a real 429, and advancing a real injected fake clock makes the next
+request succeed once a token has genuinely refilled — including a
+real validation bug (`refillRatePerMs > 0` wrongly rejecting the
+legitimate `refillRatePerMs: 0` case) caught by a real failing test
+run and fixed. CI-verified (see `shared/registry/catalog/labs.yaml`).
+This is an ISOLATED EXECUTABLE LAB; it does not add rate-limiting to
+the main backend.

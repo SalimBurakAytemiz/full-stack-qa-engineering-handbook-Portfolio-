@@ -44,17 +44,25 @@ rollout and would also match a segment rule must still come back
 
 ## "How do you prove distributed trace-context propagation actually works, rather than just asserting it in code?"
 
-By making it cross a real process boundary, not a function call. In
-this repository's lab, the "downstream" service makes a real HTTP
-request to a second, genuinely separate `node:http` server (the
-"upstream" service) on its own real loopback port, carrying a real
+By making it cross a real HTTP request boundary, not a function call —
+though I'd be careful not to overstate that as a process boundary,
+since in this lab it isn't one. The "downstream" side is a real HTTP
+client (a plain async function, not a server) that makes a real
+`http.request` to the one real `node:http` server in the lab (the
+"upstream" service), on a real loopback port, carrying a real
 `traceparent`-shaped header. The upstream server parses that header
 back out of the real incoming request and starts its own child span
-using the recovered trace id and parent span id. If I'd tested this
-with two function calls in the same process instead, I'd have proven
-nothing about the one step most likely to actually break in a real
-system — serializing context onto a header and deserializing it back
-out correctly on the other side.
+using the recovered trace id and parent span id. Both sides run in
+the same Node process and the same CI job — there's no second
+process, container, or machine here, and I wouldn't claim one when
+describing this lab. If I'd tested this with two function calls that
+passed the trace context directly instead of going through a real
+HTTP request, I'd have proven nothing about the one step most likely
+to actually break in a real system — serializing context onto a
+header and deserializing it back out correctly on the other side of
+an actual network call. Proving a genuine cross-process or
+cross-machine boundary would need a second real process (or
+container) in the test setup, which this lab doesn't have.
 
 ## "How do you verify a span tree has the right parent/child structure?"
 

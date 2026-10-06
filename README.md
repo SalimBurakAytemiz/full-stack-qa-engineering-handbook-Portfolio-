@@ -38,9 +38,15 @@ tests behind it.
   Orders, Payment, Events, Notifications, GraphQL, and WebSocket
   layers, exercised by Playwright, Selenium, JMeter, Locust, Postman/
   Newman/AJV, and a 160-test backend suite, wired into GitHub Actions
-  CI (see `.ai/TEST-STATUS.md` for the current, exact per-suite result
-  — job/test counts change as coverage grows, so this README points
-  there instead of hardcoding a number that would drift).
+  CI. **Independent review finding F5:** `.ai/TEST-STATUS.md` is a
+  **historical** Part 1 snapshot (160-test backend suite, 9 CI jobs,
+  803 links checked) — it was never updated for Part 2/3's 21
+  additional automation labs and does not reflect current, whole-repo
+  results. For the current, full-project test/CI/registry results
+  (backend 160/160, registry 0 errors, 444 relationships, 38 evidence,
+  30 CI jobs) see
+  [`.ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md`](.ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md)'s
+  "Test results" table instead.
 - **View evidence** → [`01-SALIM-BURAK-DIGITAL-TWIN/08-EVIDENCE-MAP.md`](01-SALIM-BURAK-DIGITAL-TWIN/08-EVIDENCE-MAP.md)
   indexes exactly where each piece of repository-practice evidence
   lives, and what an independent Codex audit already reviewed

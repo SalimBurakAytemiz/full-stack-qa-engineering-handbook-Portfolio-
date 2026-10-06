@@ -11,9 +11,13 @@ and rename-a-column.
 - **Forward application in version order.** Pending migrations are
   applied lowest-version-first, each recorded in a real
   `schema_migrations` table.
-- **Zero-downtime column addition.** The add-column migration backfills
-  every existing row in the same migration — proven with a real row
-  inserted before the migration runs.
+- **Backward-compatible column addition with existing-row backfill
+  (independent review finding F7 — not a zero-downtime proof).** The
+  add-column migration backfills every existing row in the same
+  migration — proven with a real row inserted before the migration
+  runs. This proves schema evolution and backfill correctness; it
+  does not test application availability under concurrent production
+  traffic, so it is not evidence of zero-downtime deployment.
 - **Idempotent re-apply.** Running `applyPending()` twice with the same
   migrations list is a genuine no-op the second time; nothing is
   re-executed.

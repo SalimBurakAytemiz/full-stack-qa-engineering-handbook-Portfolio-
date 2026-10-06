@@ -10,19 +10,20 @@ All 23 patterns in the master taxonomy now have real, substantive
 documentation — none is a heading, a TODO, or a shallow stub. Depth
 still varies honestly, and the table below is the CURRENT rendering of
 `shared/registry/catalog/patterns.yaml` (the canonical source — if the
-two ever disagree, the YAML wins): **13 IMPLEMENTED** (backed by real,
-executable evidence in this repository) and **10 NOT_IMPLEMENTED** (a
-real, verified gap in this repository). 13 + 10 = 23.
+two ever disagree, the YAML wins): **14 IMPLEMENTED** (backed by real,
+executable evidence in this repository) and **9 NOT_IMPLEMENTED** (a
+real, verified gap in this repository). 14 + 9 = 23.
 
-Four of the 13 IMPLEMENTED patterns (Retry, Timeout, Feature Flags,
-Multi-Tenancy — independent review finding F4) are implemented **only**
-in an ISOLATED EXECUTABLE LAB under `QA-DEMO-SYSTEM/automation-labs/`,
-never in the MAIN QA-DEMO BACKEND (`QA-DEMO-SYSTEM/backend/src`): the
-main backend still has no retry mechanism, no outbound call to time
-out, no feature-flag system, and remains single-tenant by design,
-exactly as before. Each of those four rows' "Real evidence" column and
-linked page state this scope distinction explicitly — do not read
-IMPLEMENTED here as "the main demo backend gained this feature."
+Five of the 14 IMPLEMENTED patterns (Retry, Timeout, Feature Flags,
+Multi-Tenancy, Rate Limiting — independent review finding F4) are
+implemented **only** in an ISOLATED EXECUTABLE LAB under
+`QA-DEMO-SYSTEM/automation-labs/`, never in the MAIN QA-DEMO BACKEND
+(`QA-DEMO-SYSTEM/backend/src`): the main backend still has no retry
+mechanism, no outbound call to time out, no feature-flag system, no
+rate-limiting middleware, and remains single-tenant by design, exactly
+as before. Each of those five rows' "Real evidence" column and linked
+page state this scope distinction explicitly — do not read IMPLEMENTED
+here as "the main demo backend gained this feature."
 
 | Pattern | Status | Real evidence in this repo |
 |---|---|---|
@@ -35,7 +36,7 @@ IMPLEMENTED here as "the main demo backend gained this feature."
 | [Async Events](ASYNC-EVENTS.md) | IMPLEMENTED | events.service.js, websocket-events-advanced.test.js |
 | [Retry](RETRY.md) | IMPLEMENTED (ISOLATED LAB only) | MAIN BACKEND (`backend/src`): no retry mechanism, unchanged. ISOLATED LAB: chaos-reliability's `lib/resilient-client.js` (bounded retry + backoff) and distributed-messaging's `lib/broker.js` (retry budget before dead-lettering), both CI-verified — see RETRY.md's "Related labs" section |
 | [State Machine](STATE-MACHINE.md) | IMPLEMENTED | orders.status transitions (the general technique behind Payment/Idempotency above) |
-| [Rate Limiting](RATE-LIMITING.md) | NOT_IMPLEMENTED | Real, stated gap — verified no rate-limiting middleware exists |
+| [Rate Limiting](RATE-LIMITING.md) | IMPLEMENTED (ISOLATED LAB only) | MAIN BACKEND (`backend/src`): no rate-limiting middleware, unchanged. ISOLATED LAB: rate-limiting lab's `lib/token-bucket.js` + `lib/rate-limited-server.js` (real token-bucket limiter backing a real HTTP server, including a real validation bug caught and fixed), CI-verified — see RATE-LIMITING.md's "Related labs" section |
 | [Search](SEARCH.md) | NOT_IMPLEMENTED | No query/filter parameter on any endpoint — verified |
 | [Pagination](PAGINATION.md) | NOT_IMPLEMENTED | `GET /api/products` returns the full unpaginated list — verified |
 | [File Upload](FILE-UPLOAD.md) | NOT_IMPLEMENTED | API surface is entirely JSON, no multipart endpoint — verified |
