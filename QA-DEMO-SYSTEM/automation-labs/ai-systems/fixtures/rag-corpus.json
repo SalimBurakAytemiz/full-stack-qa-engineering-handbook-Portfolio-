@@ -1,0 +1,25 @@
+{
+  "_comment": "Small deterministic document corpus for the RAG (Retrieval-Augmented Generation) lab. Real product facts drawn from this repository's own seeded QA-DEMO-SYSTEM data, so groundedness checks compare against a fact that is itself checkable.",
+  "documents": [
+    {
+      "id": "doc.qa-demo-klavye",
+      "title": "QA Demo Klavye",
+      "text": "QA Demo Klavye is a mechanical keyboard product in the QA Demo System catalog. It is seeded with stock_quantity 25 and price 1499.90 TRY."
+    },
+    {
+      "id": "doc.qa-demo-mouse",
+      "title": "QA Demo Mouse",
+      "text": "QA Demo Mouse is a wireless mouse product in the QA Demo System catalog. It is seeded with stock_quantity 0, meaning it is out of stock."
+    },
+    {
+      "id": "doc.selenium-lab",
+      "title": "Selenium Lab",
+      "text": "The Selenium lab in this repository runs real Chrome automation in GitHub Actions CI and reports CLEANUP_FAILED when driver.quit() fails, even with an empty error message."
+    },
+    {
+      "id": "doc.retry-pattern",
+      "title": "Retry Pattern Status",
+      "text": "The Retry system pattern is documented but not implemented anywhere in this repository's backend or automation code, as verified by a repository-wide grep."
+    }
+  ]
+}

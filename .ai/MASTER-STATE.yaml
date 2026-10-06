@@ -1,5 +1,5 @@
 schema_version: 1
-last_updated: "2026-09-25"
+last_updated: "2026-10-06"
 
 repository:
   main_branch_head: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
@@ -53,17 +53,31 @@ master_transformation_campaign:
     compliance_map: ".ai/MASTER-REQUIREMENTS-COMPLIANCE.md"
 
 test_status:
-  backend: "160/160 PASS"
-  api_contract_suites: "public 26/26 assert, auth 42/42 assert, orders-payment 118/118 assert (1 confirmed flake re-run — see TEST-STATUS.md), notifications 48/48 assert, api-db 97/97 assert — all re-run this session against a live server"
-  playwright: "26/26 PASS (PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium required this session — env build-version mismatch, not a repository defect)"
-  selenium: "NOT_EXECUTED — EXECUTION_BLOCKED (sandbox network, re-confirmed by a real attempt this session)"
-  jmeter_real_binary: "NOT_EXECUTED — LAUNCH_OR_RUNTIME_ERROR (environment-specific XStream issue, re-confirmed this session, see DECISIONS.md D9)"
-  jmeter_gate_unit_tests: "7/7 PASS"
-  locust: "not re-run this session (no locust-related finding); last real run 280 requests, 0 failures"
-  registry_validator: "0 errors — 235 relationships, 0 orphans across every entity type (125 competency/domain/tool/pattern/gap/professional-case + 17 evidence + 10 lab), plus 3 NEW structural checks this session (claim-level provenance, domain foreign-key, relationship-semantic PRACTICED_IN) — see post_codex_fix_campaign above"
-  registry_regression_suite: "9/9 PASS — scripts/registry/validate-registry.regression.test.mjs, proves negative+positive validator behavior against real files"
-  last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign, historical) — the registry-integrity job and 4 new API CI jobs are proven locally this session, not yet observed on a live run (EXTERNALLY_BLOCKED)"
-  detail: ".ai/TEST-STATUS.md"
+  # CURRENT full-project status (Parts 1+2+3) at branch feat/part-3-platform-engineering-quality-gates,
+  # SHA 49f50014245485610ea991e4f0bd314493517844. Part 1-era figures are preserved, unchanged,
+  # under historical_part_1_snapshot below — they are NOT current.
+  as_of_sha: "49f50014245485610ea991e4f0bd314493517844"
+  backend: "160/160 PASS — local run during the F1-F8 fix pass, and the 'Backend unit/integration tests (node:test)' job green in GitHub Actions run #75"
+  registry_validator: "0 errors — 57 competencies, 72 tools, 75 gaps, 31 labs, 38 evidence entries, 444 relationships, 0 orphans, generated-index 0 drift"
+  registry_regression_suite: "26/26 PASS — scripts/registry/validate-registry.regression.test.mjs"
+  ci: "GitHub Actions run #75 (id 37445486608) on SHA 49f50014245485610ea991e4f0bd314493517844 — 30 of 30 jobs SUCCESS, 0 failed, 0 skipped (verified at the job level). Covers backend, API (Newman/AJV) suites, API-to-DB validation, Playwright, Selenium (real CI pass), registry integrity, and all 21 Part 2/3 lab aggregate runners. Part 2/3 lab unit-test files run locally only, not in CI (see labs.yaml, independent review finding F3)."
+  not_executed_locally: "Selenium (sandbox network), JMeter real binary (environment-specific XStream issue, see DECISIONS.md D9) — unchanged, pre-existing environment limits"
+  dependency_audit: "repo root npm audit --omit=dev: 0. QA-DEMO-SYSTEM npm audit --omit=dev: 1 critical (proxy-addr, GHSA-jqcg-44mw-7w3h, newly disclosed advisory — not caused by a dependency change here, not upgraded in this fix scope). QA-DEMO-SYSTEM full npm audit: 28 (10 moderate / 16 high / 2 critical). See .ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md 'Dependency-security state'."
+  detail: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md (current full-project results)"
+  historical_part_1_snapshot:
+    # HISTORICAL PART 1 SNAPSHOT — recorded during the Part 1 post-Codex fix campaign (base SHA a8f0cd2).
+    # Preserved verbatim as history. These figures predate Parts 2/3 and do not describe the current repository.
+    backend: "160/160 PASS"
+    api_contract_suites: "public 26/26 assert, auth 42/42 assert, orders-payment 118/118 assert (1 confirmed flake re-run — see TEST-STATUS.md), notifications 48/48 assert, api-db 97/97 assert — all re-run this session against a live server"
+    playwright: "26/26 PASS (PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium required this session — env build-version mismatch, not a repository defect)"
+    selenium: "NOT_EXECUTED — EXECUTION_BLOCKED (sandbox network, re-confirmed by a real attempt this session)"
+    jmeter_real_binary: "NOT_EXECUTED — LAUNCH_OR_RUNTIME_ERROR (environment-specific XStream issue, re-confirmed this session, see DECISIONS.md D9)"
+    jmeter_gate_unit_tests: "7/7 PASS"
+    locust: "not re-run this session (no locust-related finding); last real run 280 requests, 0 failures"
+    registry_validator: "0 errors — 235 relationships, 0 orphans across every entity type (125 competency/domain/tool/pattern/gap/professional-case + 17 evidence + 10 lab), plus 3 NEW structural checks this session (claim-level provenance, domain foreign-key, relationship-semantic PRACTICED_IN) — see post_codex_fix_campaign above"
+    registry_regression_suite: "9/9 PASS — scripts/registry/validate-registry.regression.test.mjs, proves negative+positive validator behavior against real files"
+    last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign, historical) — the registry-integrity job and 4 new API CI jobs are proven locally this session, not yet observed on a live run (EXTERNALLY_BLOCKED)"
+    detail: ".ai/TEST-STATUS.md (historical Part 1 snapshot)"
 
 branch_note:
   harness_designated_branch: "claude/stoic-pasteur-svbmxs"
@@ -87,15 +101,121 @@ part_1_closeout:
     - "Historical orders/payment root cause: UNRESOLVED (current re-runs remain NOT_REPRODUCED, not a fix)"
     - "Windows Playwright visual baselines: intentionally absent, not a false PASS"
     - "Dependency advisories: 21 affected-package entries (9 moderate/11 high/1 critical), all dev-only, 0 under --omit=dev — disclosed, not eliminated"
-  next_phase: "PART 2 — Advanced / Next-Generation QA Engineering (not started; scope only, no implementation in this closeout)"
+  next_phase: "PART 2 — Advanced / Next-Generation QA Engineering: see part_2_advanced_qa_engineering below (Milestones 2.1-2.7 complete, not merged to main)"
+
+part_2_advanced_qa_engineering:
+  status: "MILESTONES 2.1-2.7 COMPLETE — not merged to main, pending independent review"
+  branch: "feat/part-2-advanced-qa-engineering"
+  base_sha: "7051c2b (chore: close Part 1 after verified PR #25 merge)"
+  final_sha: "ed7136a4d20a81258c1ee199654ea5f0d139b61d"
+  commit_count: 14
+  diff_stat: "187 files changed (173 added, 14 modified), 16283 insertions(+), 13 deletions(-)"
+  two_commit_pattern: "every milestone shipped as a feature commit (real local run, repository.status EXECUTED) followed by a chore elevation commit citing the real GitHub Actions run URL (repository.status CI_VERIFIED) — applied identically across all 7 milestones"
+  milestones:
+    - "2.1 AI/ML/LLM Systems Testing (mock-first, deterministic) — ai-systems lab"
+    - "2.2 Reliability, Chaos Engineering & Privacy Testing — chaos-reliability + privacy-testing labs"
+    - "2.3 Service Virtualization, Contract, Property-Based & Fuzz Testing — service-virtualization + property-and-fuzz-testing labs"
+    - "2.4 Mutation Testing, Testcontainers & Data Engineering — mutation-testing + testcontainers-lab + data-engineering labs"
+    - "2.5 Distributed Messaging, Supply Chain Security & Compatibility Testing — distributed-messaging + supply-chain-security + compatibility-testing labs"
+    - "2.6 i18n, Modern Protocols & Production Verification — i18n-testing + modern-protocols + production-verification labs"
+    - "2.7 Desktop QA & Advanced Release Engineering — release-engineering lab; Desktop QA documented LEARNING-only (infrastructure gap, same class as Appium/Mobile)"
+  digital_twin_deltas_vs_part_1_base:
+    competencies: "22 -> 51 (+29)"
+    tools_tech_protocols: "34 -> 66 (+32)"
+    labs: "10 -> 25 (+15)"
+    evidence: "17 -> 32 (+15)"
+    relationships: "236 -> 402 (+166)"
+    gaps: "30 -> 63 (+33)"
+    ci_jobs: "9 -> 24 (+15, one per new executable lab)"
+  professional_experience_changes: "NONE — professional-experience.yaml and claims.yaml have a zero-line diff across the entire Part 2 range (git diff 7051c2b..HEAD); every new competency's professional.status is NONE unless pre-existing source data already proved otherwise"
+  repository_practice_changes: "+15 real executable labs (CI_VERIFIED except the Desktop QA LEARNING-only area, which has no lab by design), +29 competencies with real repository evidence, 15 new self-contained CI jobs, all independently proven green"
+  knowledge_changes: "Knowledge column set to WORKING on every new competency (documented, hands-on-in-this-repo depth) — never claimed INDEPENDENT/ADVANCED without a backing professional source"
+  part_1_regression_result: "Backend unit/integration tests: 160/160 PASS, unchanged from Part 1 baseline (confirmed by local re-run at Part 2 final_sha, and by every one of the 14 Part 2 CI runs' backend-tests job, all success), including after Milestone 2.3's one real backend/src/middleware/errorHandler.js fix (independent review finding F5 — a genuine 500-instead-of-413 bug the property-and-fuzz-testing lab's fuzz suite found; see commit 2879d06). web-tests/api-tests jobs likewise green on every Part 2 CI run, and neither directory was modified. Every new lab lives under QA-DEMO-SYSTEM/automation-labs/<lab-name>/, self-contained."
+  registry_result: "0 errors (node scripts/registry/validate-registry.mjs) — 51/51 competencies, 66/66 tools, 63 gaps, 25/25 labs, 32/32 evidence, 402/402 relationships, 0 orphans. Validator's own regression suite: 26/26 PASS (node --test scripts/registry/validate-registry.regression.test.mjs)."
+  generated_output_result: "shared/registry/generated/REGISTRY-INDEX.md matches a fresh regeneration (EOL-normalized) — part of the same validate-registry.mjs run above, 0 drift."
+  broken_links_result: "0 broken relative links found across every Markdown file changed or added in the Part 2 diff (manual resolve-and-check of every ](path) reference against the filesystem)."
+  security_secret_result: "0 real secrets found in the Part 2 diff (git diff 7051c2b..HEAD scanned for common key/token patterns) — the only matches are the privacy-testing lab's own test fixtures proving its secret-redaction logic against a deliberately fake AWS-key-shaped string, not a real credential."
+  dependency_result: "npm audit --omit=dev: 0 vulnerabilities (both repo root and QA-DEMO-SYSTEM workspace). Full npm audit (incl. dev): 27 vulnerabilities (10 moderate/16 high/1 critical), all dev-only — consistent with the already-disclosed pattern from Part 1 closeout and the supply-chain-security lab's own real findings (M2.5); no new production-path exposure introduced by Part 2."
+  known_limitations:
+    - "Desktop QA: LEARNING-only by design — no real native desktop application or OS-level UI-automation target exists in this repository (same infrastructure-gap class as Mobile/Appium)."
+    - "release-engineering/lib/rollout-manager.js is a hand-rolled in-process state machine — never shifts real network traffic; not a substitute for a real service mesh/load balancer/cloud canary feature."
+    - "modern-protocols' SSE implementation is minimal and hand-rolled — no automatic client reconnection timer, no retry: field handling."
+    - "production-verification's synthetic monitor is a minimal custom script — not a commercial synthetic-monitoring platform (no geographic probes, no alerting integration)."
+    - "supply-chain-security's lab uses npm's own built-in sbom/audit tooling — not a commercial SCA product."
+    - "None of these are blockers; each is disclosed in its own lab's README.md Scope boundary section and was a deliberate, honest scoping choice, not an oversight."
+  defect_counts: { p0: 0, p1: 0, p2: 0, p3: 0 }
+  merge_status: "NOT MERGED — stays on feat/part-2-advanced-qa-engineering pending independent (Codex) review, per standing instruction"
+  final_report: ".ai/PART-2-FINAL-REPORT.md"
+
+part_3_platform_engineering_quality_gates:
+  status: "MILESTONES 3.1-3.3 COMPLETE — not merged to main, pending independent review"
+  branch: "feat/part-3-platform-engineering-quality-gates"
+  base_sha: "3fb0ac626ff79bf428445202cf8a48b2ca5fd0e0 (Part 2 M2.8: Final integration report + closeout)"
+  final_sha: "fae793ea313ee2f7f85f747f5065f8e68654c73d"
+  commit_count: 6
+  diff_stat: "71 files changed (59 added, 12 modified), 4113 insertions(+), 5 deletions(-)"
+  two_commit_pattern: "every milestone shipped as a feature commit (real local run, repository.status EXECUTED) followed by a chore elevation commit citing the real GitHub Actions run URL (repository.status CI_VERIFIED) — applied identically across all 3 milestones, same discipline as Part 2"
+  milestones:
+    - "3.1 Database Migration & Multi-Tenancy Data Isolation — db-migration-testing + multi-tenancy-isolation labs"
+    - "3.2 API Idempotency-Key Replay-Safety & Rate Limiting — idempotency-testing + rate-limiting labs"
+    - "3.3 Feature Flags & Progressive Targeting / Distributed Tracing — feature-flags + distributed-tracing labs"
+  digital_twin_deltas_vs_part_2_final:
+    competencies: "51 -> 57 (+6)"
+    tools_tech_protocols: "66 -> 72 (+6)"
+    labs: "25 -> 31 (+6)"
+    evidence: "32 -> 38 (+6)"
+    relationships: "402 -> 444 (+42)"
+    gaps: "63 -> 75 (+12)"
+    ci_jobs: "24 -> 30 (+6, one per new executable lab)"
+  professional_experience_changes: "NONE — professional-experience.yaml and claims.yaml have a zero-line diff across the entire Part 3 range (git diff 3fb0ac6..HEAD on both files returns empty). Every new competency's professional.status is NONE unless pre-existing source data already proved otherwise"
+  repository_practice_changes: "+6 real executable labs (all CI_VERIFIED), +6 competencies with real repository evidence, 6 new self-contained CI jobs, all independently proven green on GitHub Actions"
+  knowledge_changes: "Knowledge column set to WORKING on every new competency (documented, hands-on-in-this-repo depth) — never claimed INDEPENDENT/ADVANCED without a backing professional source"
+  part_1_and_2_regression_result: "Backend unit/integration tests: 160/160 PASS, unchanged from the Part 1/2 baseline (confirmed by local re-run at the Part 3 final_sha, and by every one of the 6 Part 3 CI runs' backend-tests job, all success). Part 3 never modifies backend/src, web-tests, or api-tests — every new lab lives under QA-DEMO-SYSTEM/automation-labs/<lab-name>/, self-contained."
+  registry_result: "0 errors (node scripts/registry/validate-registry.mjs) — 57/57 competencies, 72/72 tools, 75 gaps, 31/31 labs, 38/38 evidence, 444/444 relationships, 0 orphans. Validator's own regression suite: 26/26 PASS (node --test scripts/registry/validate-registry.regression.test.mjs)."
+  generated_output_result: "shared/registry/generated/REGISTRY-INDEX.md matches a fresh regeneration (EOL-normalized) — part of the same validate-registry.mjs run above, 0 drift."
+  broken_links_result: "0 broken relative links found across all 32 Markdown files changed or added in the Part 3 diff (3fb0ac6..HEAD) — scripted resolve-and-check of every ](path) reference against the filesystem."
+  security_secret_result: "0 real secrets found in the Part 3 diff (git diff 3fb0ac6..HEAD scanned for AWS/GitHub/Slack/PEM-style key patterns) — no matches at all (Part 3 added no fixture resembling a credential, unlike Part 2's privacy-testing lab). git diff --cached --check was clean (no whitespace errors) on every commit."
+  dependency_result: "npm audit --omit=dev: 0 vulnerabilities (both repo root and QA-DEMO-SYSTEM workspace) — unchanged, no new production-path exposure. Full npm audit (incl. dev): 27 vulnerabilities (10 moderate/16 high/1 critical), all dev-only — identical count to the Part 2 baseline, since Part 3 added zero new npm dependencies (every new lab uses only Node built-ins: node:http, node:crypto, node:sqlite)."
+  known_limitations:
+    - "db-migration-testing is a migration runner, not a migration generator — it does not diff two schemas and produce migration files automatically."
+    - "multi-tenancy-isolation implements row-level, query-predicate tenant isolation only — not database-level mechanisms (separate schemas per tenant, PostgreSQL RLS, separate physical databases)."
+    - "idempotency-testing's store is in-memory only — a real production implementation would need a persistent, shared store (Redis, a unique-constrained database table) to survive a restart or hold across multiple server instances."
+    - "rate-limiting enforces a single shared bucket — a real multi-tenant API would need per-client/API-key/IP buckets, which this lab does not implement."
+    - "feature-flags evaluates already-configured flags in memory — no remote flag-management platform (LaunchDarkly, Split, an admin UI), no audit trail, scheduling, or kill-switch propagation."
+    - "distributed-tracing's traceparent header is loosely modeled on, not fully conformant with, the W3C Trace Context specification (no tracestate handling); its span collector is in-memory only, with no real export to a tracing backend (Jaeger, Zipkin, OTLP)."
+    - "None of these are blockers; each is disclosed in its own lab's README.md Scope boundary section and was a deliberate, honest scoping choice, not an oversight."
+  defect_counts: { p0: 0, p1: 0, p2: 0, p3: 0 }
+  merge_status: "NOT MERGED — stays on feat/part-3-platform-engineering-quality-gates pending independent (Codex) review, per standing instruction"
+  final_report: ".ai/PART-3-FINAL-REPORT.md"
+
+codex_review_status:
+  status: "FINAL_CLOSURE_VERIFICATION_PENDING — the full-project independent review has been performed and its findings fixed; a final independent closure verification is pending/in progress. Not CLEAN until an independent reviewer returns CLEAN."
+  handoff: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md"
+  history:
+    - step: "Codex full-project review of Parts 2+3"
+      reviewed_sha: "23078eecb5458a29e29481898c3b35a84c3c0587"
+      original_scope: "git diff 7051c2b..5428e26 (the entire feat/part-3-platform-engineering-quality-gates branch at that time) plus the handoff commit 23078ee"
+      result: "FIX_REQUIRED — findings F1-F8 (P2: 5, P3: 3)"
+    - step: "Consolidated F1-F8 fix commit"
+      sha: "3adfce0e11e836aabf6c36e4cebef8f334ed6b55"
+      ci: "GitHub Actions run #74 (id 37420905295) — 30 of 30 jobs SUCCESS"
+      verification_result: "F1, F2, F3, F8 FIXED; F4, F5, F6, F7 partially open"
+    - step: "Documentation closure commit for F4-F7"
+      sha: "49f50014245485610ea991e4f0bd314493517844"
+      ci: "GitHub Actions run #75 (id 37445486608) — 30 of 30 jobs SUCCESS"
+      verification_result: "F4, F7 FIXED; F5 (this file's test_status/codex_review_status, evidence.yaml data-engineering pointer) and F6 (three handbook tracing pages) still open — addressed by the next micro-fix commit, pending final closure verification"
+  merge_status: "Neither Part 2 nor Part 3 merged to main — independent closure verification comes first, per standing instruction"
 
 pointers:
+  codex_full_project_review_handoff: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md"
+  part_3_final_report: ".ai/PART-3-FINAL-REPORT.md"
+  part_2_final_report: ".ai/PART-2-FINAL-REPORT.md"
   digital_twin: "01-SALIM-BURAK-DIGITAL-TWIN/"
   codex_handoff: ".ai/CODEX-FULL-AUDIT-HANDOFF.md"
   post_codex_closure_matrix: ".ai/CODEX-POST-FIX-CLOSURE-MATRIX.md"
   next_actions: ".ai/NEXT-ACTIONS.md"
   decisions: ".ai/DECISIONS.md"
   known_issues: ".ai/KNOWN-ISSUES.md"
-  test_status: ".ai/TEST-STATUS.md"
+  test_status: ".ai/TEST-STATUS.md (historical Part 1 snapshot — current status is the test_status block above)"
   architecture_state: ".ai/ARCHITECTURE-STATE.md"
   migration_state: ".ai/MIGRATION-STATE.md"

@@ -15,16 +15,22 @@ shouldn't be able to exhaust every connection/thread the caller has.
 
 ## Status in this repository
 
-**Partially implicit, not explicitly tested.** `QA-DEMO-SYSTEM`'s
-backend calls its own SQLite database synchronously (no network hop,
-so no realistic timeout scenario exists there) and has no outbound
-call to a genuine third-party dependency in its executable scope — the
-domain pages that DO model third-party dependencies
+**MAIN QA-DEMO BACKEND (`backend/src`): partially implicit, not
+explicitly tested.** The backend calls its own SQLite database
+synchronously (no network hop, so no realistic timeout scenario exists
+there) and has no outbound call to a genuine third-party dependency —
+the domain pages that DO model third-party dependencies
 (`03-MEDIA-STREAMING/README.md`'s provider-timeout risk,
 `01-FINANCIAL-SERVICES/INSURANCE/README.md`) describe this pattern
-conceptually without a repository lab behind it. Node's own default
-HTTP client/server timeouts apply implicitly but are not explicitly
-configured or tested anywhere in this codebase.
+conceptually without a main-backend implementation behind it. Node's
+own default HTTP client/server timeouts apply implicitly but are not
+explicitly configured or tested in the main backend's own code.
+
+**ISOLATED EXECUTABLE LABS (independent review finding F4): real,
+explicit timeouts do exist here**, built after the paragraph above was
+first written — see "Related labs" below. Reading this page's overall
+pattern status as "the main demo backend gained explicit timeout
+handling" would be incorrect; the main backend is unchanged.
 
 ## QA risks (in a system that DOES implement it explicitly)
 
@@ -64,3 +70,14 @@ retry after an ambiguous timeout needs idempotency to be safe).
 Media/Streaming (provider timeout), Insurance (third-party
 underwriting/payment-processor timeout), any domain integrating a
 third-party dependency.
+
+## Related labs
+
+`QA-DEMO-SYSTEM/automation-labs/chaos-reliability/lib/resilient-client.js`
+implements a real per-call timeout via `AbortController` against the
+same lab's deliberately unreliable fixture server, composed with its
+retry and circuit-breaker logic. `QA-DEMO-SYSTEM/automation-labs/production-verification/lib/synthetic-monitor.js`
+and `lib/smoke-checks.js` apply real `AbortSignal.timeout()` bounds
+against the actual running backend's HTTP endpoints. Both are
+CI-verified (see `shared/registry/catalog/labs.yaml`); neither changes
+the main backend itself.

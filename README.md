@@ -38,9 +38,15 @@ tests behind it.
   Orders, Payment, Events, Notifications, GraphQL, and WebSocket
   layers, exercised by Playwright, Selenium, JMeter, Locust, Postman/
   Newman/AJV, and a 160-test backend suite, wired into GitHub Actions
-  CI (see `.ai/TEST-STATUS.md` for the current, exact per-suite result
-  — job/test counts change as coverage grows, so this README points
-  there instead of hardcoding a number that would drift).
+  CI. **Independent review finding F5:** `.ai/TEST-STATUS.md` is a
+  **historical** Part 1 snapshot (160-test backend suite, 9 CI jobs,
+  803 links checked) — it was never updated for Part 2/3's 21
+  additional automation labs and does not reflect current, whole-repo
+  results. For the current, full-project test/CI/registry results
+  (backend 160/160, registry 0 errors, 444 relationships, 38 evidence,
+  30 CI jobs) see
+  [`.ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md`](.ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md)'s
+  "Test results" table instead.
 - **View evidence** → [`01-SALIM-BURAK-DIGITAL-TWIN/08-EVIDENCE-MAP.md`](01-SALIM-BURAK-DIGITAL-TWIN/08-EVIDENCE-MAP.md)
   indexes exactly where each piece of repository-practice evidence
   lives, and what an independent Codex audit already reviewed
@@ -64,10 +70,22 @@ Phase 0-19 of the original roadmap are implementation-complete and
 independently Codex-audited (final verdict: **PASS**, merged to `main`
 — see [`ROADMAP.md`](ROADMAP.md) for the phase-by-phase status table).
 The larger transformation into a Digital Twin + QA Handbook + Domain
-Knowledge Base + Executable Labs system is implementation-complete
-(every implementable master-transformation requirement is COMPLETE —
-see `.ai/MASTER-REQUIREMENTS-COMPLIANCE.md`) and has gone through
-multiple rounds of independent Codex verification and fix campaigns;
-current state, open findings (if any), and what's genuinely still
-outstanding (never hidden) are tracked honestly in
-[`.ai/CODEX-FULL-AUDIT-HANDOFF.md`](.ai/CODEX-FULL-AUDIT-HANDOFF.md).
+Knowledge Base + Executable Labs system is implementation-complete for
+that merged scope (every implementable master-transformation
+requirement is COMPLETE — see `.ai/MASTER-REQUIREMENTS-COMPLIANCE.md`)
+and went through multiple rounds of independent Codex verification and
+fix campaigns, tracked in
+[`.ai/CODEX-FULL-AUDIT-HANDOFF.md`](.ai/CODEX-FULL-AUDIT-HANDOFF.md) —
+**but that document covers only this merged Part 1 scope (Phases
+0-19)**, not the current state of the whole project.
+
+**Current, full-project state (what's actually on top of `main` right
+now):** two further unmerged parts — Part 2 (Advanced/Next-Generation
+QA Engineering) and Part 3 (Platform Engineering & Quality Gates) — add
+21 more real, CI-verified automation labs on branch
+`feat/part-3-platform-engineering-quality-gates`, currently going
+through its own independent Codex review and fix pass (not yet merged
+to `main`). For the current, whole-repository status — what's merged,
+what's still on a review branch, and any open findings — see
+[`.ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md`](.ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md),
+not the Part-1-only document above.

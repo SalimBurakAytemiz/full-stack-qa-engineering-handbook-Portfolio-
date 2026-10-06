@@ -29,6 +29,41 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Accessibility Testing (axe-core / WCAG) | WORKING | NONE | CI_VERIFIED |
 | Visual Regression / Pixel-Perfect Comparison | WORKING | EXECUTED | CI_VERIFIED |
 | Locust (Load Testing) | WORKING | NONE | EXECUTED |
+| LLM Prompt & Golden-Set Evaluation Testing | WORKING | NONE | CI_VERIFIED |
+| Structured-Output & RAG (Retrieval-Augmented Generation) Testing | WORKING | NONE | CI_VERIFIED |
+| AI Agent & Tool-Calling Testing | WORKING | NONE | CI_VERIFIED |
+| AI Safety, Security & Privacy Testing (Prompt Injection, Secret/PII Leakage) | WORKING | NONE | CI_VERIFIED |
+| AI Provider/Model Regression & Cost-Latency Budget Testing | WORKING | NONE | CI_VERIFIED |
+| Chaos Engineering & Fault-Injection Testing | WORKING | NONE | CI_VERIFIED |
+| Circuit Breaker & Resilience Pattern Testing | WORKING | NONE | CI_VERIFIED |
+| PII / Sensitive-Data Response Scanning | WORKING | NONE | CI_VERIFIED |
+| GDPR-Style Data-Subject-Rights Testing | WORKING | NONE | CI_VERIFIED |
+| Service Virtualization (WireMock-Style Stub Servers) | WORKING | NONE | CI_VERIFIED |
+| Consumer-Driven Contract Testing | WORKING | NONE | CI_VERIFIED |
+| Property-Based Testing (Generative/Invariant Testing) | WORKING | NONE | CI_VERIFIED |
+| Structured API Fuzz Testing | WORKING | NONE | CI_VERIFIED |
+| Mutation Testing (Mutation-Based Test Adequacy) | WORKING | NONE | CI_VERIFIED |
+| Testcontainers-Style Container-Based Integration Testing | WORKING | NONE | CI_VERIFIED |
+| ETL Pipeline Testing | WORKING | NONE | CI_VERIFIED |
+| Data Quality Validation (Referential Integrity, Reconciliation, Schema Drift) | WORKING | NONE | CI_VERIFIED |
+| Distributed Messaging — Delivery Semantics, Ordering & Dead-Letter Queues | WORKING | NONE | CI_VERIFIED |
+| Idempotent Consumer Design Under At-Least-Once Delivery | WORKING | NONE | CI_VERIFIED |
+| SBOM Generation & Vulnerability Auditing | WORKING | NONE | CI_VERIFIED |
+| Lockfile Integrity Verification (SRI Hash Coverage) | WORKING | NONE | CI_VERIFIED |
+| API Backward-Compatibility & Breaking-Change Detection | WORKING | NONE | CI_VERIFIED |
+| Locale-Aware Formatting (Intl Number/Date/Currency) | WORKING | NONE | CI_VERIFIED |
+| Unicode Data Integrity (Multi-Byte Round-Trip) | WORKING | NONE | CI_VERIFIED |
+| Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | CI_VERIFIED |
+| Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | CI_VERIFIED |
+| Desktop QA — Cross-Platform Native UI Automation Concepts | WORKING | NONE | DOCUMENTED |
+| Release Versioning & Changelog Integrity Testing | WORKING | NONE | CI_VERIFIED |
+| Canary Rollout & Automatic Rollback Testing | WORKING | NONE | CI_VERIFIED |
+| Database Migration & Schema Evolution Testing | WORKING | NONE | CI_VERIFIED |
+| Multi-Tenancy Data Isolation Testing | WORKING | NONE | CI_VERIFIED |
+| API Idempotency-Key Replay-Safety Testing | WORKING | NONE | CI_VERIFIED |
+| Rate Limiting & Abuse Testing | WORKING | NONE | CI_VERIFIED |
+| Feature Flags & Progressive Targeting | WORKING | NONE | CI_VERIFIED |
+| Distributed Tracing | WORKING | NONE | CI_VERIFIED |
 
 ## Domain Maturity
 
@@ -59,6 +94,27 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Database — SQL data validation suite | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/backend/tests/database-testing.test.js` |
 | Observability — access-log / RCA investigation | L2_TESTED | `QA-DEMO-SYSTEM/evidence/PHASE-13-LOGGING-OBSERVABILITY` |
 | CI/CD — GitHub Actions pipeline | L4_CI_VERIFIED | `.github/workflows` |
+| AI Systems Testing — mock-first (prompt, golden-eval, structured-output, RAG, agent, safety, provider-regression) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/ai-systems` |
+| Chaos/Reliability — deterministic fault injection (circuit breaker, resilient client) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability` |
+| Privacy Testing — PII/sensitive-field response scanning + GDPR-style data-subject-rights fixture | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing` |
+| Service Virtualization & Consumer-Driven Contract Testing (WireMock-style stub server + ajv contracts) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/service-virtualization` |
+| Property-Based & Fuzz Testing (hand-rolled framework + real-API fuzzing) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing` |
+| Mutation Testing (hand-rolled text-based generator vs. real backend module) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing` |
+| Testcontainers (real Docker container lifecycle via the real testcontainers library) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab` |
+| Data Engineering — ETL + data-quality checks (referential integrity, uniqueness, reconciliation, schema drift) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/data-engineering` |
+| Distributed Messaging (hand-rolled in-process broker — ordering, DLQ, idempotent consumer) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging` |
+| Supply Chain Security (real npm sbom + npm audit + lockfile integrity) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security` |
+| Compatibility Testing (frozen baseline contract vs. real backend response shape) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing` |
+| i18n Testing (Intl locale formatting + Unicode multi-byte round-trip) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing` |
+| Modern Protocols (hand-rolled real Server-Sent Events server + client) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols` |
+| Production Verification (real synthetic smoke-test monitor against a real backend) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification` |
+| Release Engineering (hand-rolled semver/changelog integrity checks + canary rollout state machine) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering` |
+| Database Migration Testing (hand-rolled migration runner against a real in-memory SQLite database) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing` |
+| Multi-Tenancy Isolation (tenant-scoped data access layer + deliberately unsafe negative-path proof) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation` |
+| API Idempotency-Key Replay-Safety (in-flight-promise store backing a real Idempotency-Key HTTP server) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing` |
+| Rate Limiting & Abuse Testing (hand-rolled token-bucket limiter backing a real HTTP server) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting` |
+| Feature Flags & Progressive Targeting (hand-rolled deterministic hash-based evaluator) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/feature-flags` |
+| Distributed Tracing (trace-context propagation over a real HTTP network hop: one node:http server, one HTTP client, same process) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing` |
 
 ## System Patterns
 
@@ -71,22 +127,22 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Payment | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/PAYMENT.md` |
 | Notification | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/NOTIFICATION.md` |
 | Async Events | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/ASYNC-EVENTS.md` |
-| Retry | DOCUMENTED_ONLY | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RETRY.md` |
-| Rate Limiting | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RATE-LIMITING.md` |
+| Retry | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RETRY.md` |
+| Rate Limiting | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RATE-LIMITING.md` |
 | State Machine | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/STATE-MACHINE.md` |
 | Search | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SEARCH.md` |
 | Pagination | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/PAGINATION.md` |
 | File Upload | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FILE-UPLOAD.md` |
 | Import / Export | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/IMPORT-EXPORT.md` |
-| Timeout | NOT_APPLICABLE | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/TIMEOUT.md` |
+| Timeout | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/TIMEOUT.md` |
 | Cache | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/CACHE.md` |
 | Audit Log | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/AUDIT-LOG.md` |
 | Webhook | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/WEBHOOK.md` |
 | Third-Party Integration | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/THIRD-PARTY-INTEGRATION.md` |
 | Scheduled Jobs | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SCHEDULED-JOBS.md` |
-| Feature Flags | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FEATURE-FLAGS.md` |
+| Feature Flags | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FEATURE-FLAGS.md` |
 | Localization | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/LOCALIZATION.md` |
-| Multi-Tenancy | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/MULTI-TENANCY.md` |
+| Multi-Tenancy | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/MULTI-TENANCY.md` |
 
 ## Evidence
 
@@ -105,12 +161,33 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | JMeter fail-gate logic — JTL-content-based PASS/FAIL, fixture-tested | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/jmeter/scripts/run-jmeter.test.js` |
 | JMeter real binary execution — attempted, root cause diagnosed, BLOCKED (not a successful load run) | E1_DOCUMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md` |
 | Locust load test | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md` |
+| AI Systems Testing lab — 35/35 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real mock-mode aggregate run (CI AGGREGATE EXECUTION — 'ai:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/ai-systems/EXECUTION.md` |
+| Chaos/Reliability lab — 17/17 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real deterministic fault-injection aggregate run (CI AGGREGATE EXECUTION — 'chaos:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability/EXECUTION.md` |
+| Privacy Testing lab — 14 unit + 3 real-backend integration tests (LOCAL UNIT EXECUTION only, node --test) + a real PII/data-subject-rights aggregate run (CI AGGREGATE EXECUTION — 'privacy:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md` |
+| Service Virtualization & Contract Testing lab — 11/11 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real stub-server/contract aggregate run (CI AGGREGATE EXECUTION — 'virtualization:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/service-virtualization/EXECUTION.md` |
+| Property-Based & Fuzz Testing lab — 16/16 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real property/fuzz aggregate run (CI AGGREGATE EXECUTION — 'property-fuzz:test' GitHub Actions job), including a real backend bug found and fixed | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/EXECUTION.md` |
+| Mutation Testing lab — 5 unit tests (LOCAL UNIT EXECUTION only) + a real mutation run (5/6 killed, 1 confirmed equivalent mutant) (CI AGGREGATE EXECUTION — 'mutation:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing/EXECUTION.md` |
+| Testcontainers lab — 5 unit tests (LOCAL UNIT EXECUTION only) + a real container lifecycle run (genuinely EXECUTED on GitHub Actions' real Docker daemon, CI AGGREGATE EXECUTION — 'testcontainers:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/EXECUTION.md` |
+| Data Engineering lab — 17 unit tests (13 original + 4 payment-status regression tests added by independent-review finding F2; LOCAL UNIT EXECUTION only) + a real ETL/data-quality run (zero real violations, all 4 negative-path proofs confirmed, plus a real payment-status revenue/spend proof) (CI AGGREGATE EXECUTION — 'data-eng:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/data-engineering/EXECUTION.md` |
+| Distributed Messaging lab — 8 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run (ordering, DLQ routing, non-idempotent double-apply vs. idempotent single-apply) (CI AGGREGATE EXECUTION — 'messaging:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging/EXECUTION.md` |
+| Supply Chain Security lab — 14 unit tests (LOCAL UNIT EXECUTION only) + a real npm sbom/npm audit/lockfile-integrity run (CI AGGREGATE EXECUTION — 'supply-chain:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security/EXECUTION.md` |
+| Compatibility Testing lab — 4 unit tests (LOCAL UNIT EXECUTION only) + a real baseline-vs-current-response run (CI AGGREGATE EXECUTION — 'compatibility:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing/EXECUTION.md` |
+| i18n Testing lab — 7 unit tests (LOCAL UNIT EXECUTION only) + a real Intl-formatting/Unicode-roundtrip run (CI AGGREGATE EXECUTION — 'i18n:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing/EXECUTION.md` |
+| Modern Protocols lab — 3 unit tests (LOCAL UNIT EXECUTION only) + a real SSE server/client run (CI AGGREGATE EXECUTION — 'modern-protocols:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md` |
+| Production Verification lab — 15 unit tests (LOCAL UNIT EXECUTION only) + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) (CI AGGREGATE EXECUTION — 'production-verification:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md` |
+| Release Engineering lab — 21 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof (CI AGGREGATE EXECUTION — 'release-eng:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md` |
+| DB Migration Testing lab — 6 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run against a real in-memory SQLite database (CI AGGREGATE EXECUTION — 'db-migration:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing/EXECUTION.md` |
+| Multi-Tenancy Isolation lab — 6 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving tenant CRUD isolation and a real negative-path leak proof (CI AGGREGATE EXECUTION — 'multi-tenancy:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/EXECUTION.md` |
+| Idempotency Testing lab — 9 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race (CI AGGREGATE EXECUTION — 'idempotency:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing/EXECUTION.md` |
+| Rate Limiting lab — 8 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving accept/reject/refill behavior against a real HTTP server (CI AGGREGATE EXECUTION — 'rate-limiting:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting/EXECUTION.md` |
+| Feature Flags lab — 8 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving deterministic hash-based rollout, override precedence, and segment targeting (CI AGGREGATE EXECUTION — 'feature-flags:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/feature-flags/EXECUTION.md` |
+| Distributed Tracing lab — 12 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving trace-context propagation over a real HTTP hop (one node:http server + one HTTP client, same process) (CI AGGREGATE EXECUTION — 'distributed-tracing:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |
 | BUG-AUTH-EDU-001 — real reproduction attempt executed, result: NOT REPRODUCED | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/BUG-AUTH-EDU-001/EXECUTION.md` |
 
-## Relationships (236 edges)
+## Relationships (444 edges)
 
 | From | Predicate | To |
 |---|---|---|
@@ -174,6 +251,45 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.api.contract-automation | USES_TOOL | tool.newman |
 | competency.api.contract-automation | USES_TOOL | tool.ajv |
 | competency.api.contract-automation | USES_TECHNOLOGY | tech.json-schema |
+| competency.ai.llm-prompt-testing | USES_TOOL | tool.ai-mock-provider |
+| competency.ai.structured-output-rag-testing | USES_TOOL | tool.ajv |
+| competency.ai.structured-output-rag-testing | USES_TECHNOLOGY | tech.rag |
+| competency.ai.agent-tool-calling-testing | USES_TECHNOLOGY | tech.llm-agents |
+| competency.ai.safety-privacy-testing | USES_TOOL | tool.ai-mock-provider |
+| competency.ai.provider-regression-testing | USES_TOOL | tool.ai-mock-provider |
+| competency.reliability.chaos-fault-injection-testing | USES_TOOL | tool.chaos-fault-injection-fixture |
+| competency.reliability.circuit-breaker-resilience-testing | USES_TECHNOLOGY | tech.circuit-breaker-pattern |
+| competency.privacy.pii-response-scanning | USES_TOOL | tool.pii-response-scanner |
+| competency.privacy.gdpr-data-subject-rights-testing | USES_TECHNOLOGY | tech.gdpr-data-subject-rights |
+| competency.virtualization.service-virtualization | USES_TOOL | tool.stub-server |
+| competency.virtualization.consumer-driven-contracts | USES_TOOL | tool.contract-verifier |
+| competency.virtualization.consumer-driven-contracts | USES_TOOL | tool.ajv |
+| competency.property-testing.generative-invariant-testing | USES_TECHNOLOGY | tech.property-based-testing |
+| competency.fuzz-testing.structured-api-fuzzing | USES_TECHNOLOGY | tech.fuzz-testing |
+| competency.mutation-testing.mutation-based-test-adequacy | USES_TOOL | tool.mutation-generator |
+| competency.testcontainers.container-based-integration-testing | USES_TOOL | tool.testcontainers |
+| competency.data-engineering.etl-pipeline-testing | USES_TECHNOLOGY | tech.etl-pipeline |
+| competency.data-engineering.data-quality-validation | USES_TECHNOLOGY | tech.data-quality-checks |
+| competency.distributed-messaging.delivery-semantics-and-dead-lettering | USES_TECHNOLOGY | tech.in-process-message-broker |
+| competency.distributed-messaging.idempotent-consumer-design | USES_TECHNOLOGY | tech.idempotent-consumer-pattern |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | USES_TOOL | tool.npm-sbom |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | USES_TOOL | tool.npm-audit |
+| competency.supply-chain-security.lockfile-integrity-verification | USES_TECHNOLOGY | tech.lockfile-integrity-check |
+| competency.compatibility-testing.breaking-change-detection | USES_TECHNOLOGY | tech.json-schema-compatibility-contract |
+| competency.i18n-testing.locale-aware-formatting | USES_TOOL | tool.intl-api |
+| competency.i18n-testing.unicode-data-integrity | USES_TECHNOLOGY | tech.unicode-roundtrip-check |
+| competency.modern-protocols.server-sent-events | USES_TECHNOLOGY | protocol.server-sent-events |
+| competency.production-verification.synthetic-monitoring | USES_TECHNOLOGY | tech.synthetic-monitoring |
+| competency.desktop-qa.cross-platform-automation-concepts | USES_TOOL | tool.winappdriver-concept |
+| competency.release-engineering.semver-and-changelog-integrity | USES_TECHNOLOGY | tech.semver-parser |
+| competency.release-engineering.semver-and-changelog-integrity | USES_TECHNOLOGY | tech.changelog-structural-checker |
+| competency.release-engineering.canary-rollout-and-automatic-rollback | USES_TECHNOLOGY | tech.canary-rollout-state-machine |
+| competency.db-migration-testing.schema-evolution-and-rollback | USES_TECHNOLOGY | tech.sqlite-migration-runner |
+| competency.multi-tenancy-isolation.tenant-scoped-data-access | USES_TECHNOLOGY | tech.tenant-scoped-repository |
+| competency.idempotency-testing.replay-safety | USES_TECHNOLOGY | tech.idempotency-store |
+| competency.rate-limiting.token-bucket-abuse-prevention | USES_TECHNOLOGY | tech.token-bucket-rate-limiter |
+| competency.feature-flags.deterministic-hash-rollout | USES_TECHNOLOGY | tech.deterministic-flag-evaluator |
+| competency.distributed-tracing.cross-service-span-propagation | USES_TECHNOLOGY | tech.hand-rolled-tracer |
 | competency.api.graphql | USES_TECHNOLOGY | protocol.graphql |
 | competency.api.rest | USES_TECHNOLOGY | protocol.rest |
 | competency.integration.websocket | USES_TECHNOLOGY | protocol.websocket |
@@ -193,6 +309,29 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.database.sql-validation | USES_TECHNOLOGY | tech.sql |
 | lab.database.sql-validation | USES_TOOL | tool.sqlite |
 | lab.cicd.github-actions | USES_TOOL | platform.github-actions |
+| lab.mutation-testing.real-mutants-vs-real-tests | USES_TOOL | tool.mutation-generator |
+| lab.testcontainers.real-container-lifecycle | USES_TOOL | tool.testcontainers |
+| lab.data-engineering.etl-and-data-quality | USES_TECHNOLOGY | tech.etl-pipeline |
+| lab.data-engineering.etl-and-data-quality | USES_TECHNOLOGY | tech.data-quality-checks |
+| lab.distributed-messaging.broker-and-idempotent-consumer | USES_TECHNOLOGY | tech.in-process-message-broker |
+| lab.distributed-messaging.broker-and-idempotent-consumer | USES_TECHNOLOGY | tech.idempotent-consumer-pattern |
+| lab.supply-chain-security.sbom-audit-lockfile | USES_TOOL | tool.npm-sbom |
+| lab.supply-chain-security.sbom-audit-lockfile | USES_TOOL | tool.npm-audit |
+| lab.supply-chain-security.sbom-audit-lockfile | USES_TECHNOLOGY | tech.lockfile-integrity-check |
+| lab.compatibility-testing.breaking-change-detection | USES_TECHNOLOGY | tech.json-schema-compatibility-contract |
+| lab.i18n-testing.locale-formatting-and-unicode-roundtrip | USES_TOOL | tool.intl-api |
+| lab.i18n-testing.locale-formatting-and-unicode-roundtrip | USES_TECHNOLOGY | tech.unicode-roundtrip-check |
+| lab.modern-protocols.server-sent-events | USES_TECHNOLOGY | protocol.server-sent-events |
+| lab.production-verification.synthetic-smoke-monitor | USES_TECHNOLOGY | tech.synthetic-monitoring |
+| lab.release-engineering.semver-changelog-and-canary-rollout | USES_TECHNOLOGY | tech.semver-parser |
+| lab.release-engineering.semver-changelog-and-canary-rollout | USES_TECHNOLOGY | tech.changelog-structural-checker |
+| lab.release-engineering.semver-changelog-and-canary-rollout | USES_TECHNOLOGY | tech.canary-rollout-state-machine |
+| lab.db-migration-testing.real-sqlite-migration-runner | USES_TECHNOLOGY | tech.sqlite-migration-runner |
+| lab.multi-tenancy-isolation.tenant-scoped-repository | USES_TECHNOLOGY | tech.tenant-scoped-repository |
+| lab.idempotency-testing.in-flight-promise-store | USES_TECHNOLOGY | tech.idempotency-store |
+| lab.rate-limiting.token-bucket-limiter | USES_TECHNOLOGY | tech.token-bucket-rate-limiter |
+| lab.feature-flags.deterministic-hash-rollout | USES_TECHNOLOGY | tech.deterministic-flag-evaluator |
+| lab.distributed-tracing.cross-service-span-propagation | USES_TECHNOLOGY | tech.hand-rolled-tracer |
 | competency.api.rest | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.api.graphql | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.integration.websocket | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
@@ -204,6 +343,40 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.web.selenium | PRACTICED_IN | lab.web-automation.selenium |
 | competency.performance.jmeter | PRACTICED_IN | lab.performance.jmeter |
 | competency.performance.locust | PRACTICED_IN | lab.performance.locust |
+| competency.ai.llm-prompt-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
+| competency.ai.structured-output-rag-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
+| competency.ai.agent-tool-calling-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
+| competency.ai.safety-privacy-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
+| competency.ai.provider-regression-testing | PRACTICED_IN | lab.ai-systems.mock-first-testing |
+| competency.reliability.chaos-fault-injection-testing | PRACTICED_IN | lab.chaos-reliability.fault-injection |
+| competency.reliability.circuit-breaker-resilience-testing | PRACTICED_IN | lab.chaos-reliability.fault-injection |
+| competency.privacy.pii-response-scanning | PRACTICED_IN | lab.privacy-testing.pii-and-data-subject-rights |
+| competency.privacy.gdpr-data-subject-rights-testing | PRACTICED_IN | lab.privacy-testing.pii-and-data-subject-rights |
+| competency.virtualization.service-virtualization | PRACTICED_IN | lab.service-virtualization.stub-and-contract-testing |
+| competency.virtualization.consumer-driven-contracts | PRACTICED_IN | lab.service-virtualization.stub-and-contract-testing |
+| competency.property-testing.generative-invariant-testing | PRACTICED_IN | lab.property-and-fuzz-testing.generative-and-api-fuzzing |
+| competency.fuzz-testing.structured-api-fuzzing | PRACTICED_IN | lab.property-and-fuzz-testing.generative-and-api-fuzzing |
+| competency.mutation-testing.mutation-based-test-adequacy | PRACTICED_IN | lab.mutation-testing.real-mutants-vs-real-tests |
+| competency.testcontainers.container-based-integration-testing | PRACTICED_IN | lab.testcontainers.real-container-lifecycle |
+| competency.data-engineering.etl-pipeline-testing | PRACTICED_IN | lab.data-engineering.etl-and-data-quality |
+| competency.data-engineering.data-quality-validation | PRACTICED_IN | lab.data-engineering.etl-and-data-quality |
+| competency.distributed-messaging.delivery-semantics-and-dead-lettering | PRACTICED_IN | lab.distributed-messaging.broker-and-idempotent-consumer |
+| competency.distributed-messaging.idempotent-consumer-design | PRACTICED_IN | lab.distributed-messaging.broker-and-idempotent-consumer |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | PRACTICED_IN | lab.supply-chain-security.sbom-audit-lockfile |
+| competency.supply-chain-security.lockfile-integrity-verification | PRACTICED_IN | lab.supply-chain-security.sbom-audit-lockfile |
+| competency.compatibility-testing.breaking-change-detection | PRACTICED_IN | lab.compatibility-testing.breaking-change-detection |
+| competency.i18n-testing.locale-aware-formatting | PRACTICED_IN | lab.i18n-testing.locale-formatting-and-unicode-roundtrip |
+| competency.i18n-testing.unicode-data-integrity | PRACTICED_IN | lab.i18n-testing.locale-formatting-and-unicode-roundtrip |
+| competency.modern-protocols.server-sent-events | PRACTICED_IN | lab.modern-protocols.server-sent-events |
+| competency.production-verification.synthetic-monitoring | PRACTICED_IN | lab.production-verification.synthetic-smoke-monitor |
+| competency.release-engineering.semver-and-changelog-integrity | PRACTICED_IN | lab.release-engineering.semver-changelog-and-canary-rollout |
+| competency.release-engineering.canary-rollout-and-automatic-rollback | PRACTICED_IN | lab.release-engineering.semver-changelog-and-canary-rollout |
+| competency.db-migration-testing.schema-evolution-and-rollback | PRACTICED_IN | lab.db-migration-testing.real-sqlite-migration-runner |
+| competency.multi-tenancy-isolation.tenant-scoped-data-access | PRACTICED_IN | lab.multi-tenancy-isolation.tenant-scoped-repository |
+| competency.idempotency-testing.replay-safety | PRACTICED_IN | lab.idempotency-testing.in-flight-promise-store |
+| competency.rate-limiting.token-bucket-abuse-prevention | PRACTICED_IN | lab.rate-limiting.token-bucket-limiter |
+| competency.feature-flags.deterministic-hash-rollout | PRACTICED_IN | lab.feature-flags.deterministic-hash-rollout |
+| competency.distributed-tracing.cross-service-span-propagation | PRACTICED_IN | lab.distributed-tracing.cross-service-span-propagation |
 | competency.security.security-aware-qa | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.correlation-logging | PRACTICED_IN | lab.backend-api.rest-graphql-websocket |
 | competency.observability.elastic-log-analysis | RELATED_TO | lab.observability.elastic-log-analysis |
@@ -221,6 +394,27 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | lab.performance.jmeter | TESTED_BY | evidence.performance.jmeter-fail-gate-logic |
 | lab.performance.jmeter | DOCUMENTED_BY | evidence.performance.jmeter-real-execution-blocked |
 | lab.performance.locust | TESTED_BY | evidence.performance.locust-load-run |
+| lab.ai-systems.mock-first-testing | TESTED_BY | evidence.ai-systems.mock-lab-execution |
+| lab.chaos-reliability.fault-injection | TESTED_BY | evidence.chaos-reliability.fault-injection-execution |
+| lab.privacy-testing.pii-and-data-subject-rights | TESTED_BY | evidence.privacy-testing.pii-and-rights-execution |
+| lab.service-virtualization.stub-and-contract-testing | TESTED_BY | evidence.service-virtualization.stub-and-contract-execution |
+| lab.property-and-fuzz-testing.generative-and-api-fuzzing | TESTED_BY | evidence.property-and-fuzz-testing.generative-and-fuzz-execution |
+| lab.mutation-testing.real-mutants-vs-real-tests | TESTED_BY | evidence.mutation-testing.real-mutation-run |
+| lab.testcontainers.real-container-lifecycle | TESTED_BY | evidence.testcontainers.real-lab-run |
+| lab.data-engineering.etl-and-data-quality | TESTED_BY | evidence.data-engineering.real-etl-and-quality-run |
+| lab.distributed-messaging.broker-and-idempotent-consumer | TESTED_BY | evidence.distributed-messaging.real-lab-run |
+| lab.supply-chain-security.sbom-audit-lockfile | TESTED_BY | evidence.supply-chain-security.real-lab-run |
+| lab.compatibility-testing.breaking-change-detection | TESTED_BY | evidence.compatibility-testing.real-lab-run |
+| lab.i18n-testing.locale-formatting-and-unicode-roundtrip | TESTED_BY | evidence.i18n-testing.real-lab-run |
+| lab.modern-protocols.server-sent-events | TESTED_BY | evidence.modern-protocols.real-lab-run |
+| lab.production-verification.synthetic-smoke-monitor | TESTED_BY | evidence.production-verification.real-lab-run |
+| lab.release-engineering.semver-changelog-and-canary-rollout | TESTED_BY | evidence.release-engineering.real-lab-run |
+| lab.db-migration-testing.real-sqlite-migration-runner | TESTED_BY | evidence.db-migration-testing.real-lab-run |
+| lab.multi-tenancy-isolation.tenant-scoped-repository | TESTED_BY | evidence.multi-tenancy-isolation.real-lab-run |
+| lab.idempotency-testing.in-flight-promise-store | TESTED_BY | evidence.idempotency-testing.real-lab-run |
+| lab.rate-limiting.token-bucket-limiter | TESTED_BY | evidence.rate-limiting.real-lab-run |
+| lab.feature-flags.deterministic-hash-rollout | TESTED_BY | evidence.feature-flags.real-lab-run |
+| lab.distributed-tracing.cross-service-span-propagation | TESTED_BY | evidence.distributed-tracing.real-lab-run |
 | lab.database.sql-validation | TESTED_BY | evidence.database.sql-validation-suite |
 | lab.security.owasp-mapping | DOCUMENTED_BY | evidence.security.owasp-mapping-review |
 | lab.cicd.github-actions | IMPLEMENTED_BY | evidence.cicd.github-actions-pipeline |
@@ -231,6 +425,40 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.database.sql-data-validation | EVIDENCED_BY | evidence.backend.unit-integration-suite |
 | competency.security.security-aware-qa | EVIDENCED_BY | evidence.backend.unit-integration-suite |
 | competency.observability.correlation-logging | EVIDENCED_BY | evidence.backend.unit-integration-suite |
+| competency.ai.llm-prompt-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
+| competency.ai.structured-output-rag-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
+| competency.ai.agent-tool-calling-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
+| competency.ai.safety-privacy-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
+| competency.ai.provider-regression-testing | EVIDENCED_BY | evidence.ai-systems.mock-lab-execution |
+| competency.reliability.chaos-fault-injection-testing | EVIDENCED_BY | evidence.chaos-reliability.fault-injection-execution |
+| competency.reliability.circuit-breaker-resilience-testing | EVIDENCED_BY | evidence.chaos-reliability.fault-injection-execution |
+| competency.privacy.pii-response-scanning | EVIDENCED_BY | evidence.privacy-testing.pii-and-rights-execution |
+| competency.privacy.gdpr-data-subject-rights-testing | EVIDENCED_BY | evidence.privacy-testing.pii-and-rights-execution |
+| competency.virtualization.service-virtualization | EVIDENCED_BY | evidence.service-virtualization.stub-and-contract-execution |
+| competency.virtualization.consumer-driven-contracts | EVIDENCED_BY | evidence.service-virtualization.stub-and-contract-execution |
+| competency.property-testing.generative-invariant-testing | EVIDENCED_BY | evidence.property-and-fuzz-testing.generative-and-fuzz-execution |
+| competency.fuzz-testing.structured-api-fuzzing | EVIDENCED_BY | evidence.property-and-fuzz-testing.generative-and-fuzz-execution |
+| competency.mutation-testing.mutation-based-test-adequacy | EVIDENCED_BY | evidence.mutation-testing.real-mutation-run |
+| competency.testcontainers.container-based-integration-testing | EVIDENCED_BY | evidence.testcontainers.real-lab-run |
+| competency.data-engineering.etl-pipeline-testing | EVIDENCED_BY | evidence.data-engineering.real-etl-and-quality-run |
+| competency.data-engineering.data-quality-validation | EVIDENCED_BY | evidence.data-engineering.real-etl-and-quality-run |
+| competency.distributed-messaging.delivery-semantics-and-dead-lettering | EVIDENCED_BY | evidence.distributed-messaging.real-lab-run |
+| competency.distributed-messaging.idempotent-consumer-design | EVIDENCED_BY | evidence.distributed-messaging.real-lab-run |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | EVIDENCED_BY | evidence.supply-chain-security.real-lab-run |
+| competency.supply-chain-security.lockfile-integrity-verification | EVIDENCED_BY | evidence.supply-chain-security.real-lab-run |
+| competency.compatibility-testing.breaking-change-detection | EVIDENCED_BY | evidence.compatibility-testing.real-lab-run |
+| competency.i18n-testing.locale-aware-formatting | EVIDENCED_BY | evidence.i18n-testing.real-lab-run |
+| competency.i18n-testing.unicode-data-integrity | EVIDENCED_BY | evidence.i18n-testing.real-lab-run |
+| competency.modern-protocols.server-sent-events | EVIDENCED_BY | evidence.modern-protocols.real-lab-run |
+| competency.production-verification.synthetic-monitoring | EVIDENCED_BY | evidence.production-verification.real-lab-run |
+| competency.release-engineering.semver-and-changelog-integrity | EVIDENCED_BY | evidence.release-engineering.real-lab-run |
+| competency.release-engineering.canary-rollout-and-automatic-rollback | EVIDENCED_BY | evidence.release-engineering.real-lab-run |
+| competency.db-migration-testing.schema-evolution-and-rollback | EVIDENCED_BY | evidence.db-migration-testing.real-lab-run |
+| competency.multi-tenancy-isolation.tenant-scoped-data-access | EVIDENCED_BY | evidence.multi-tenancy-isolation.real-lab-run |
+| competency.idempotency-testing.replay-safety | EVIDENCED_BY | evidence.idempotency-testing.real-lab-run |
+| competency.rate-limiting.token-bucket-abuse-prevention | EVIDENCED_BY | evidence.rate-limiting.real-lab-run |
+| competency.feature-flags.deterministic-hash-rollout | EVIDENCED_BY | evidence.feature-flags.real-lab-run |
+| competency.distributed-tracing.cross-service-span-propagation | EVIDENCED_BY | evidence.distributed-tracing.real-lab-run |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.public-schema-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.protected-auth-suite |
 | competency.api.contract-automation | EVIDENCED_BY | evidence.api-tests.orders-payment-suite |
@@ -253,6 +481,63 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | competency.security.owasp-zap | LEARNING | gap.security.owasp-zap |
 | competency.performance.locust | LEARNING | gap.performance.k6 |
 | competency.performance.locust | LEARNING | gap.performance.gatling |
+| competency.ai.llm-prompt-testing | LEARNING | gap.ai.professional-exposure |
+| competency.ai.llm-prompt-testing | LEARNING | gap.ai.live-provider-integration |
+| competency.ai.structured-output-rag-testing | LEARNING | gap.ai.live-provider-integration |
+| competency.ai.agent-tool-calling-testing | LEARNING | gap.ai.live-provider-integration |
+| competency.ai.safety-privacy-testing | LEARNING | gap.ai.live-provider-integration |
+| competency.ai.provider-regression-testing | LEARNING | gap.ai.live-provider-integration |
+| competency.reliability.chaos-fault-injection-testing | LEARNING | gap.reliability.real-chaos-infrastructure |
+| competency.reliability.chaos-fault-injection-testing | LEARNING | gap.reliability.professional-exposure |
+| competency.reliability.circuit-breaker-resilience-testing | LEARNING | gap.reliability.professional-exposure |
+| competency.privacy.pii-response-scanning | LEARNING | gap.privacy.professional-exposure |
+| competency.privacy.gdpr-data-subject-rights-testing | LEARNING | gap.privacy.real-data-subject-rights-endpoints |
+| competency.privacy.gdpr-data-subject-rights-testing | LEARNING | gap.privacy.professional-exposure |
+| competency.virtualization.service-virtualization | LEARNING | gap.virtualization.real-tooling |
+| competency.virtualization.service-virtualization | LEARNING | gap.virtualization.professional-exposure |
+| competency.virtualization.consumer-driven-contracts | LEARNING | gap.virtualization.professional-exposure |
+| competency.property-testing.generative-invariant-testing | LEARNING | gap.property-testing.professional-exposure |
+| competency.fuzz-testing.structured-api-fuzzing | LEARNING | gap.fuzz-testing.real-tooling |
+| competency.fuzz-testing.structured-api-fuzzing | LEARNING | gap.fuzz-testing.professional-exposure |
+| competency.mutation-testing.mutation-based-test-adequacy | LEARNING | gap.mutation-testing.real-tooling |
+| competency.mutation-testing.mutation-based-test-adequacy | LEARNING | gap.mutation-testing.professional-exposure |
+| competency.testcontainers.container-based-integration-testing | LEARNING | gap.testcontainers.docker-daemon-unavailable-locally |
+| competency.testcontainers.container-based-integration-testing | LEARNING | gap.testcontainers.professional-exposure |
+| competency.data-engineering.etl-pipeline-testing | LEARNING | gap.data-engineering.professional-exposure |
+| competency.data-engineering.data-quality-validation | LEARNING | gap.data-engineering.professional-exposure |
+| competency.distributed-messaging.delivery-semantics-and-dead-lettering | LEARNING | gap.distributed-messaging.real-broker-infrastructure |
+| competency.distributed-messaging.delivery-semantics-and-dead-lettering | LEARNING | gap.distributed-messaging.professional-exposure |
+| competency.distributed-messaging.idempotent-consumer-design | LEARNING | gap.distributed-messaging.professional-exposure |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | LEARNING | gap.supply-chain-security.commercial-sca-tooling |
+| competency.supply-chain-security.sbom-and-vulnerability-auditing | LEARNING | gap.supply-chain-security.professional-exposure |
+| competency.supply-chain-security.lockfile-integrity-verification | LEARNING | gap.supply-chain-security.professional-exposure |
+| competency.compatibility-testing.breaking-change-detection | LEARNING | gap.compatibility-testing.generic-openapi-diffing |
+| competency.compatibility-testing.breaking-change-detection | LEARNING | gap.compatibility-testing.professional-exposure |
+| competency.i18n-testing.locale-aware-formatting | LEARNING | gap.i18n-testing.ui-rtl-and-translation-coverage |
+| competency.i18n-testing.locale-aware-formatting | LEARNING | gap.i18n-testing.professional-exposure |
+| competency.i18n-testing.unicode-data-integrity | LEARNING | gap.i18n-testing.professional-exposure |
+| competency.modern-protocols.server-sent-events | LEARNING | gap.modern-protocols.grpc-http2-webrtc |
+| competency.modern-protocols.server-sent-events | LEARNING | gap.modern-protocols.professional-exposure |
+| competency.production-verification.synthetic-monitoring | LEARNING | gap.production-verification.commercial-monitoring-platform |
+| competency.production-verification.synthetic-monitoring | LEARNING | gap.production-verification.professional-exposure |
+| competency.desktop-qa.cross-platform-automation-concepts | LEARNING | gap.desktop-qa.repo-desktop-app-evidence |
+| competency.desktop-qa.cross-platform-automation-concepts | LEARNING | gap.desktop-qa.professional-exposure |
+| competency.release-engineering.semver-and-changelog-integrity | LEARNING | gap.release-engineering.commit-convention-automation |
+| competency.release-engineering.semver-and-changelog-integrity | LEARNING | gap.release-engineering.professional-exposure |
+| competency.release-engineering.canary-rollout-and-automatic-rollback | LEARNING | gap.release-engineering.real-traffic-shifting-infrastructure |
+| competency.release-engineering.canary-rollout-and-automatic-rollback | LEARNING | gap.release-engineering.professional-exposure |
+| competency.db-migration-testing.schema-evolution-and-rollback | LEARNING | gap.db-migration-testing.migration-generator-tooling |
+| competency.db-migration-testing.schema-evolution-and-rollback | LEARNING | gap.db-migration-testing.professional-exposure |
+| competency.multi-tenancy-isolation.tenant-scoped-data-access | LEARNING | gap.multi-tenancy-isolation.database-level-isolation-mechanisms |
+| competency.multi-tenancy-isolation.tenant-scoped-data-access | LEARNING | gap.multi-tenancy-isolation.professional-exposure |
+| competency.idempotency-testing.replay-safety | LEARNING | gap.idempotency-testing.persistent-distributed-store |
+| competency.idempotency-testing.replay-safety | LEARNING | gap.idempotency-testing.professional-exposure |
+| competency.rate-limiting.token-bucket-abuse-prevention | LEARNING | gap.rate-limiting.per-client-limiting |
+| competency.rate-limiting.token-bucket-abuse-prevention | LEARNING | gap.rate-limiting.professional-exposure |
+| competency.feature-flags.deterministic-hash-rollout | LEARNING | gap.feature-flags.flag-management-platform-tooling |
+| competency.feature-flags.deterministic-hash-rollout | LEARNING | gap.feature-flags.professional-exposure |
+| competency.distributed-tracing.cross-service-span-propagation | LEARNING | gap.distributed-tracing.real-tracing-backend-export |
+| competency.distributed-tracing.cross-service-span-propagation | LEARNING | gap.distributed-tracing.professional-exposure |
 | competency.web.accessibility | LEARNING | gap.accessibility.professional-exposure |
 | competency.security.security-aware-qa | LEARNING | gap.security.professional-exposure |
 | domain.commerce.ecommerce | IMPLEMENTED_BY | lab.backend-api.rest-graphql-websocket |

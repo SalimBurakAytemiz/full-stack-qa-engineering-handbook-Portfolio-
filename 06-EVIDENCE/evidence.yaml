@@ -113,6 +113,174 @@ items:
     produced_by: "locust (local execution only)"
     related_lab: lab.performance.locust
 
+  - id: evidence.ai-systems.mock-lab-execution
+    label: "AI Systems Testing lab — 35/35 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real mock-mode aggregate run (CI AGGREGATE EXECUTION — 'ai:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/ai-systems/EXECUTION.md"
+    produced_by: "npm run ai:test --workspace automation-labs (AI_TEST_MODE=mock) — GitHub Actions job 'AI Systems Testing lab (mock-first, deterministic)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36623661602, commit e2a53d0, conclusion: success"
+    related_lab: lab.ai-systems.mock-first-testing
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (bkz. produced_by'daki run URL'i), sandbox'taki manuel node --test çalıştırmasına ek olarak."
+
+  - id: evidence.chaos-reliability.fault-injection-execution
+    label: "Chaos/Reliability lab — 17/17 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real deterministic fault-injection aggregate run (CI AGGREGATE EXECUTION — 'chaos:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/chaos-reliability/EXECUTION.md"
+    produced_by: "npm run chaos:test --workspace automation-labs — GitHub Actions job 'Chaos/Reliability lab (deterministic fault injection)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36626191865, commit 70f8358, conclusion: success"
+    related_lab: lab.chaos-reliability.fault-injection
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (bkz. produced_by'daki run URL'i), sandbox'taki manuel node --test çalıştırmasına ek olarak."
+
+  - id: evidence.privacy-testing.pii-and-rights-execution
+    label: "Privacy Testing lab — 14 unit + 3 real-backend integration tests (LOCAL UNIT EXECUTION only, node --test) + a real PII/data-subject-rights aggregate run (CI AGGREGATE EXECUTION — 'privacy:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md"
+    produced_by: "npm run privacy:test --workspace automation-labs against a real, CI-seeded backend — GitHub Actions job 'Privacy Testing lab (real-backend PII scan + data-subject-rights fixture)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36626191865, commit 70f8358, conclusion: success"
+    related_lab: lab.privacy-testing.pii-and-data-subject-rights
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (bkz. produced_by'daki run URL'i). PII scanner kısmı GERÇEK backend'e karşı çalıştı (fixture değil); data-subject-rights kısmı açıkça beyan edilmiş bir fixture'dır."
+
+  - id: evidence.service-virtualization.stub-and-contract-execution
+    label: "Service Virtualization & Contract Testing lab — 11/11 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real stub-server/contract aggregate run (CI AGGREGATE EXECUTION — 'virtualization:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/service-virtualization/EXECUTION.md"
+    produced_by: "npm run virtualization:test --workspace automation-labs — GitHub Actions job 'Service Virtualization & Contract Testing lab (stub server + real provider verification)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36629081710, commit 2879d06, conclusion: success"
+    related_lab: lab.service-virtualization.stub-and-contract-testing
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Provider-side doğrulama GERÇEK, çalışan backend'e karşı çalıştı (fixture değil)."
+
+  - id: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
+    label: "Property-Based & Fuzz Testing lab — 16/16 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real property/fuzz aggregate run (CI AGGREGATE EXECUTION — 'property-fuzz:test' GitHub Actions job), including a real backend bug found and fixed"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/EXECUTION.md"
+    produced_by: "npm run property-fuzz:test --workspace automation-labs — GitHub Actions job 'Property-Based & Fuzz Testing lab (real backend properties + real-API fuzzing)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36629081710, commit 2879d06, conclusion: success"
+    related_lab: lab.property-and-fuzz-testing.generative-and-api-fuzzing
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Bu lab'ın fuzz testi backend/src/middleware/errorHandler.js'de GERÇEK bir hatayı buldu (413 yerine 500 dönen büyük istek gövdesi) ve düzeltilmesini sağladı — bkz. artifact ve COMMON-MISTAKES.md."
+
+  - id: evidence.mutation-testing.real-mutation-run
+    label: "Mutation Testing lab — 5 unit tests (LOCAL UNIT EXECUTION only) + a real mutation run (5/6 killed, 1 confirmed equivalent mutant) (CI AGGREGATE EXECUTION — 'mutation:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/mutation-testing/EXECUTION.md"
+    produced_by: "npm run mutation:test --workspace automation-labs — GitHub Actions job 'Mutation Testing lab (real mutants vs real products.service tests)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997, commit 97da16f, conclusion: success"
+    related_lab: lab.mutation-testing.real-mutants-vs-real-tests
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (5/6 mutant öldürüldü, hayatta kalan mutant gerçek bir eşdeğer mutant olarak araştırılıp doğrulandı)."
+
+  - id: evidence.testcontainers.real-lab-run
+    label: "Testcontainers lab — 5 unit tests (LOCAL UNIT EXECUTION only) + a real container lifecycle run (genuinely EXECUTED on GitHub Actions' real Docker daemon, CI AGGREGATE EXECUTION — 'testcontainers:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/EXECUTION.md"
+    produced_by: "npm run testcontainers:test --workspace automation-labs — GitHub Actions job 'Testcontainers lab (real container lifecycle via the real testcontainers library)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997, commit 97da16f, conclusion: success"
+    related_lab: lab.testcontainers.real-container-lifecycle
+    note: "TR: E4_CI_VERIFIED — bu sandbox'ta Docker daemon olmadığı için EXTERNALLY_BLOCKED idi, ancak GitHub Actions ubuntu-latest runner'ında GERÇEK bir Docker daemon bulundu ve lab GERÇEKTEN EXECUTED oldu (gerçek container, gerçek mapped port, gerçek 200 yanıtı, gerçek teardown) — bkz. artifact ve produced_by'daki run URL'i."
+
+  - id: evidence.data-engineering.real-etl-and-quality-run
+    label: "Data Engineering lab — 17 unit tests (13 original + 4 payment-status regression tests added by independent-review finding F2; LOCAL UNIT EXECUTION only) + a real ETL/data-quality run (zero real violations, all 4 negative-path proofs confirmed, plus a real payment-status revenue/spend proof) (CI AGGREGATE EXECUTION — 'data-eng:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/data-engineering/EXECUTION.md"
+    produced_by: "npm run data-eng:test --workspace automation-labs — GitHub Actions job 'Data Engineering lab (real ETL + data-quality checks)', .github/workflows/ci.yml; originally CI-verified at run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997 (commit 97da16f), which predates independent-review finding F2's fix. Post-F2 CI re-verification: the same job, running the F2-fixed aggregate runner (including its payment-status revenue/spend proof), concluded success at run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37420905295 (commit 3adfce0) and again at run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37445486608 (commit 49f5001). The 17 unit tests (13 original + 4 F2 regression tests) were verified LOCALLY only — CI runs the aggregate runner, not the unit-test files (independent review finding F3)"
+    related_lab: lab.data-engineering.etl-and-data-quality
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Dört veri-kalitesi kontrolünün HER BİRİ hem gerçek temiz veriye hem de kasıtlı olarak bozulmuş veriye karşı kanıtlandı. Bağımsız bir Codex incelemesi (F2) başarısız/zaman-aşımına-uğramış siparişlerin hatalı şekilde gelir olarak sayıldığını buldu — düzeltildi, 4 yeni regresyon testi eklendi."
+
+  - id: evidence.distributed-messaging.real-lab-run
+    label: "Distributed Messaging lab — 8 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run (ordering, DLQ routing, non-idempotent double-apply vs. idempotent single-apply) (CI AGGREGATE EXECUTION — 'messaging:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/distributed-messaging/EXECUTION.md"
+    produced_by: "npm run messaging:test --workspace automation-labs — GitHub Actions job 'Distributed Messaging lab (broker ordering, DLQ, idempotent consumer)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37080426518, commit e573ddf, conclusion: success"
+    related_lab: lab.distributed-messaging.broker-and-idempotent-consumer
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı."
+
+  - id: evidence.supply-chain-security.real-lab-run
+    label: "Supply Chain Security lab — 14 unit tests (LOCAL UNIT EXECUTION only) + a real npm sbom/npm audit/lockfile-integrity run (CI AGGREGATE EXECUTION — 'supply-chain:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/supply-chain-security/EXECUTION.md"
+    produced_by: "npm run supply-chain:test --workspace automation-labs — GitHub Actions job 'Supply Chain Security lab (real npm sbom + npm audit + lockfile integrity)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37080426518, commit e573ddf, conclusion: success"
+    related_lab: lab.supply-chain-security.sbom-audit-lockfile
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (76 bileşenli gerçek SBOM; 24 full-graph'a karşı 0 production-only zafiyet; 415 gerçek registry girdisinde sıfır integrity ihlali, 4 yerel workspace doğru şekilde hariç tutuldu)."
+
+  - id: evidence.compatibility-testing.real-lab-run
+    label: "Compatibility Testing lab — 4 unit tests (LOCAL UNIT EXECUTION only) + a real baseline-vs-current-response run (CI AGGREGATE EXECUTION — 'compatibility:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/compatibility-testing/EXECUTION.md"
+    produced_by: "npm run compatibility:test --workspace automation-labs — GitHub Actions job 'Compatibility Testing lab (frozen baseline vs real backend response shape)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37080426518, commit e573ddf, conclusion: success"
+    related_lab: lab.compatibility-testing.breaking-change-detection
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (gerçek mevcut yanıt şekli NO_CHANGE; kaldırılan alan ve tip değişikliği BREAKING, yeni eklenen alan SAFE_ADDITIVE olarak doğru sınıflandırıldı)."
+
+  - id: evidence.i18n-testing.real-lab-run
+    label: "i18n Testing lab — 7 unit tests (LOCAL UNIT EXECUTION only) + a real Intl-formatting/Unicode-roundtrip run (CI AGGREGATE EXECUTION — 'i18n:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/i18n-testing/EXECUTION.md"
+    produced_by: "npm run i18n:test --workspace automation-labs — GitHub Actions job 'i18n Testing lab (Intl locale formatting + Unicode round-trip)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37082016580, commit ef228cd, conclusion: success"
+    related_lab: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Node'un gerçek Intl API'si birden fazla locale'de gerçekten farklı cikti uretti; dört gercek cok-baytli string backend'in gercek products tablosuna karsi bayt-bayt degismeden gidip-geldi."
+
+  - id: evidence.modern-protocols.real-lab-run
+    label: "Modern Protocols lab — 3 unit tests (LOCAL UNIT EXECUTION only) + a real SSE server/client run (CI AGGREGATE EXECUTION — 'modern-protocols:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md"
+    produced_by: "npm run modern-protocols:test --workspace automation-labs — GitHub Actions job 'Modern Protocols lab (real Server-Sent Events server + client)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37082016580, commit ef228cd, conclusion: success"
+    related_lab: lab.modern-protocols.server-sent-events
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı (gercek olay zamanlamalari ilerlemeli teslimati kanitladi; Last-Event-ID yeniden baglanma semantigi dogrulandi)."
+
+  - id: evidence.production-verification.real-lab-run
+    label: "Production Verification lab — 15 unit tests (LOCAL UNIT EXECUTION only) + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) (CI AGGREGATE EXECUTION — 'production-verification:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md"
+    produced_by: "npm run production-verification:test --workspace automation-labs — GitHub Actions job 'Production Verification lab (real synthetic smoke-test monitor)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37082016580, commit ef228cd, conclusion: success"
+    related_lab: lab.production-verification.synthetic-smoke-monitor
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Sunucu yokken dürüstçe NOT_EXECUTED raporlandi; gercek bir backend baslatilinca gercek bir GO sonucu gercek milisaniye gecikmeleriyle uretildi."
+
+  - id: evidence.release-engineering.real-lab-run
+    label: "Release Engineering lab — 21 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof (CI AGGREGATE EXECUTION — 'release-eng:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md"
+    produced_by: "npm run release-eng:test --workspace automation-labs — GitHub Actions job 'Release Engineering lab (semver/changelog integrity + canary rollout)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37085881867, commit 131c685, conclusion: success"
+    related_lab: lab.release-engineering.semver-changelog-and-canary-rollout
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Bu reponun KENDİ gerçek CHANGELOG.md ve 6 gerçek workspace package.json dosyası dogrulandi (0 ihlal); canary rollout durum makinesi hem basarili hem de otomatik-rollback senaryolarinda kanitlandi."
+
+  - id: evidence.db-migration-testing.real-lab-run
+    label: "DB Migration Testing lab — 6 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run against a real in-memory SQLite database (CI AGGREGATE EXECUTION — 'db-migration:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/db-migration-testing/EXECUTION.md"
+    produced_by: "npm run db-migration:test --workspace automation-labs — GitHub Actions job 'DB Migration Testing lab (real SQLite migration runner)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37165865596, commit 36a01d5, conclusion: success"
+    related_lab: lab.db-migration-testing.real-sqlite-migration-runner
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Gerçek bir in-memory SQLite veritabanı 3 gerçek migration ile sürüldü; ileri uygulama, backfill, idempotent yeniden-uygulama ve tam rollback kanıtlandı."
+
+  - id: evidence.multi-tenancy-isolation.real-lab-run
+    label: "Multi-Tenancy Isolation lab — 6 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving tenant CRUD isolation and a real negative-path leak proof (CI AGGREGATE EXECUTION — 'multi-tenancy:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/EXECUTION.md"
+    produced_by: "npm run multi-tenancy:test --workspace automation-labs — GitHub Actions job 'Multi-Tenancy Isolation lab (tenant-scoped repository + negative-path leak proof)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37165865596, commit 36a01d5, conclusion: success"
+    related_lab: lab.multi-tenancy-isolation.tenant-scoped-repository
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. İki gerçek tenant'ın verisiyle tam CRUD izolasyonu ve kasıtlı güvensiz repository'nin gerçek sızıntısı kanıtlandı."
+
+  - id: evidence.idempotency-testing.real-lab-run
+    label: "Idempotency Testing lab — 9 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race (CI AGGREGATE EXECUTION — 'idempotency:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/idempotency-testing/EXECUTION.md"
+    produced_by: "npm run idempotency:test --workspace automation-labs — GitHub Actions job 'Idempotency Testing lab (Idempotency-Key HTTP server + in-flight-promise store)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37204986576, commit 7440151, conclusion: success"
+    related_lab: lab.idempotency-testing.in-flight-promise-store
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Eksik Idempotency-Key başlığı reddedildi; aynı anahtarla 10 gerçek eşzamanlı HTTP isteği tam olarak bir gerçek sipariş ürettiği kanıtlandı."
+
+  - id: evidence.rate-limiting.real-lab-run
+    label: "Rate Limiting lab — 8 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving accept/reject/refill behavior against a real HTTP server (CI AGGREGATE EXECUTION — 'rate-limiting:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/rate-limiting/EXECUTION.md"
+    produced_by: "npm run rate-limiting:test --workspace automation-labs — GitHub Actions job 'Rate Limiting lab (token-bucket limiter + HTTP server)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37204986576, commit 7440151, conclusion: success"
+    related_lab: lab.rate-limiting.token-bucket-limiter
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Kapasite içindeki istekler kabul edildi, aşan istek gerçek 429 aldı, enjekte edilmiş sahte saat ilerletildiğinde gerçek refill kanıtlandı — ayrıca gerçek bir doğrulama hatası (refillRatePerMs > 0, geçerli refillRatePerMs: 0 durumunu hatalı şekilde reddediyordu) gerçek bir başarısız test çalışmasıyla yakalandı ve düzeltildi."
+
+  - id: evidence.feature-flags.real-lab-run
+    label: "Feature Flags lab — 8 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving deterministic hash-based rollout, override precedence, and segment targeting (CI AGGREGATE EXECUTION — 'feature-flags:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/feature-flags/EXECUTION.md"
+    produced_by: "npm run feature-flags:test --workspace automation-labs — GitHub Actions job 'Feature Flags lab (deterministic hash-based rollout)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37255041775, commit e5d2041, conclusion: success"
+    related_lab: lab.feature-flags.deterministic-hash-rollout
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. 2000 gerçek kullanıcı üzerinde %25 dağıtımın istatistiksel olarak doğru olduğu ve allowList/denyList/segment önceliğinin doğru çalıştığı kanıtlandı."
+
+  - id: evidence.distributed-tracing.real-lab-run
+    label: "Distributed Tracing lab — 12 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving trace-context propagation over a real HTTP hop (one node:http server + one HTTP client, same process) (CI AGGREGATE EXECUTION — 'distributed-tracing:test' GitHub Actions job)"
+    maturity: E4_CI_VERIFIED
+    artifact: "QA-DEMO-SYSTEM/automation-labs/distributed-tracing/EXECUTION.md"
+    produced_by: "npm run distributed-tracing:test --workspace automation-labs — GitHub Actions job 'Distributed Tracing lab (trace-context propagation over a real HTTP hop, same process)', .github/workflows/ci.yml, run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37255041775, commit e5d2041, conclusion: success"
+    related_lab: lab.distributed-tracing.cross-service-span-propagation
+    note: "TR: E4_CI_VERIFIED — GitHub Actions'ta gerçekten çalıştırılıp PASS aldı. Gerçek bir traceparent başlığının bir node:http sunucusu ile bir HTTP istemcisi arasındaki gerçek bir ağ sıçramasını (serialize edilip tekrar parse edilen gerçek bir HTTP isteği) aştığı ve sonuçtaki span ağacının doğru şekle sahip olduğu kanıtlandı — istemci ve sunucu AYNI Node sürecinde çalışır, bu iki ayrı süreç sınırı kanıtı DEĞİLDİR (bkz. independent review finding F6)."
+
   - id: evidence.database.sql-validation-suite
     label: "Database — SQL/data validation suite"
     maturity: E3_EXECUTED

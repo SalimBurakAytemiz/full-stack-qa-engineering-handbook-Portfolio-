@@ -17,11 +17,17 @@ isolation bug.
 
 ## Status in this repository
 
-**Not implemented — single-tenant by design.** `QA-DEMO-SYSTEM` has no
-tenant concept at all; every user shares the same product catalog and
-the same database, with no notion of "which customer's data is this."
-This is a genuine architectural simplification appropriate to this
-repository's scope, not an oversight.
+**MAIN QA-DEMO BACKEND (`backend/src`): not implemented —
+single-tenant by design.** It has no tenant concept at all; every user
+shares the same product catalog and the same database, with no notion
+of "which customer's data is this." This is a genuine architectural
+simplification appropriate to the main backend's scope, not an
+oversight, and remains true after the lab described below was built.
+
+**ISOLATED EXECUTABLE LAB (independent review finding F4): a real
+tenant-scoped data access layer is implemented and CI-verified** — see
+"Related labs" below. This does not mean the main demo backend gained
+multi-tenancy; it remains single-tenant as described above.
 
 ## QA Risks
 
@@ -69,5 +75,16 @@ repository already tests it for individual user data.
 B2B/B2C platforms serving multiple business customers — noted as a
 professional/domain knowledge area in
 `01-SALIM-BURAK-DIGITAL-TWIN/registry/professional-experience.yaml#professional_domain_tool_knowledge`
-(`b2b`, `supplier-management`), without a dedicated executable lab in
-this repository.
+(`b2b`, `supplier-management`); this is personal/professional
+knowledge exposure, separate from the ISOLATED EXECUTABLE LAB below.
+
+## Related labs
+
+`QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/lib/tenant-scoped-repository.js`
+(independent review finding F4) seeds two real tenants' rows into one
+real SQLite database and proves the scoped repository's full CRUD
+isolation (`getById`/`list`/`update`/`remove`), plus a deliberately
+unsafe comparison repository that genuinely leaks another tenant's
+real row — the negative-path proof that makes the positive-path proof
+meaningful. CI-verified (see `shared/registry/catalog/labs.yaml`).
+This does not change the main backend's single-tenant design.

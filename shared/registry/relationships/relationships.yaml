@@ -229,6 +229,123 @@ relationships:
   - from: competency.api.contract-automation
     predicate: USES_TECHNOLOGY
     to: tech.json-schema
+  - from: competency.ai.llm-prompt-testing
+    predicate: USES_TOOL
+    to: tool.ai-mock-provider
+  - from: competency.ai.structured-output-rag-testing
+    predicate: USES_TOOL
+    to: tool.ajv
+  - from: competency.ai.structured-output-rag-testing
+    predicate: USES_TECHNOLOGY
+    to: tech.rag
+  - from: competency.ai.agent-tool-calling-testing
+    predicate: USES_TECHNOLOGY
+    to: tech.llm-agents
+  - from: competency.ai.safety-privacy-testing
+    predicate: USES_TOOL
+    to: tool.ai-mock-provider
+  - from: competency.ai.provider-regression-testing
+    predicate: USES_TOOL
+    to: tool.ai-mock-provider
+  - from: competency.reliability.chaos-fault-injection-testing
+    predicate: USES_TOOL
+    to: tool.chaos-fault-injection-fixture
+  - from: competency.reliability.circuit-breaker-resilience-testing
+    predicate: USES_TECHNOLOGY
+    to: tech.circuit-breaker-pattern
+  - from: competency.privacy.pii-response-scanning
+    predicate: USES_TOOL
+    to: tool.pii-response-scanner
+  - from: competency.privacy.gdpr-data-subject-rights-testing
+    predicate: USES_TECHNOLOGY
+    to: tech.gdpr-data-subject-rights
+  - from: competency.virtualization.service-virtualization
+    predicate: USES_TOOL
+    to: tool.stub-server
+  - from: competency.virtualization.consumer-driven-contracts
+    predicate: USES_TOOL
+    to: tool.contract-verifier
+  - from: competency.virtualization.consumer-driven-contracts
+    predicate: USES_TOOL
+    to: tool.ajv
+  - from: competency.property-testing.generative-invariant-testing
+    predicate: USES_TECHNOLOGY
+    to: tech.property-based-testing
+  - from: competency.fuzz-testing.structured-api-fuzzing
+    predicate: USES_TECHNOLOGY
+    to: tech.fuzz-testing
+  - from: competency.mutation-testing.mutation-based-test-adequacy
+    predicate: USES_TOOL
+    to: tool.mutation-generator
+  - from: competency.testcontainers.container-based-integration-testing
+    predicate: USES_TOOL
+    to: tool.testcontainers
+  - from: competency.data-engineering.etl-pipeline-testing
+    predicate: USES_TECHNOLOGY
+    to: tech.etl-pipeline
+  - from: competency.data-engineering.data-quality-validation
+    predicate: USES_TECHNOLOGY
+    to: tech.data-quality-checks
+  - from: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    predicate: USES_TECHNOLOGY
+    to: tech.in-process-message-broker
+  - from: competency.distributed-messaging.idempotent-consumer-design
+    predicate: USES_TECHNOLOGY
+    to: tech.idempotent-consumer-pattern
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: USES_TOOL
+    to: tool.npm-sbom
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: USES_TOOL
+    to: tool.npm-audit
+  - from: competency.supply-chain-security.lockfile-integrity-verification
+    predicate: USES_TECHNOLOGY
+    to: tech.lockfile-integrity-check
+  - from: competency.compatibility-testing.breaking-change-detection
+    predicate: USES_TECHNOLOGY
+    to: tech.json-schema-compatibility-contract
+  - from: competency.i18n-testing.locale-aware-formatting
+    predicate: USES_TOOL
+    to: tool.intl-api
+  - from: competency.i18n-testing.unicode-data-integrity
+    predicate: USES_TECHNOLOGY
+    to: tech.unicode-roundtrip-check
+  - from: competency.modern-protocols.server-sent-events
+    predicate: USES_TECHNOLOGY
+    to: protocol.server-sent-events
+  - from: competency.production-verification.synthetic-monitoring
+    predicate: USES_TECHNOLOGY
+    to: tech.synthetic-monitoring
+  - from: competency.desktop-qa.cross-platform-automation-concepts
+    predicate: USES_TOOL
+    to: tool.winappdriver-concept
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: USES_TECHNOLOGY
+    to: tech.semver-parser
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: USES_TECHNOLOGY
+    to: tech.changelog-structural-checker
+  - from: competency.release-engineering.canary-rollout-and-automatic-rollback
+    predicate: USES_TECHNOLOGY
+    to: tech.canary-rollout-state-machine
+  - from: competency.db-migration-testing.schema-evolution-and-rollback
+    predicate: USES_TECHNOLOGY
+    to: tech.sqlite-migration-runner
+  - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    predicate: USES_TECHNOLOGY
+    to: tech.tenant-scoped-repository
+  - from: competency.idempotency-testing.replay-safety
+    predicate: USES_TECHNOLOGY
+    to: tech.idempotency-store
+  - from: competency.rate-limiting.token-bucket-abuse-prevention
+    predicate: USES_TECHNOLOGY
+    to: tech.token-bucket-rate-limiter
+  - from: competency.feature-flags.deterministic-hash-rollout
+    predicate: USES_TECHNOLOGY
+    to: tech.deterministic-flag-evaluator
+  - from: competency.distributed-tracing.cross-service-span-propagation
+    predicate: USES_TECHNOLOGY
+    to: tech.hand-rolled-tracer
   - from: competency.api.graphql
     predicate: USES_TECHNOLOGY
     to: protocol.graphql
@@ -290,6 +407,75 @@ relationships:
   - from: lab.cicd.github-actions
     predicate: USES_TOOL
     to: platform.github-actions
+  - from: lab.mutation-testing.real-mutants-vs-real-tests
+    predicate: USES_TOOL
+    to: tool.mutation-generator
+  - from: lab.testcontainers.real-container-lifecycle
+    predicate: USES_TOOL
+    to: tool.testcontainers
+  - from: lab.data-engineering.etl-and-data-quality
+    predicate: USES_TECHNOLOGY
+    to: tech.etl-pipeline
+  - from: lab.data-engineering.etl-and-data-quality
+    predicate: USES_TECHNOLOGY
+    to: tech.data-quality-checks
+  - from: lab.distributed-messaging.broker-and-idempotent-consumer
+    predicate: USES_TECHNOLOGY
+    to: tech.in-process-message-broker
+  - from: lab.distributed-messaging.broker-and-idempotent-consumer
+    predicate: USES_TECHNOLOGY
+    to: tech.idempotent-consumer-pattern
+  - from: lab.supply-chain-security.sbom-audit-lockfile
+    predicate: USES_TOOL
+    to: tool.npm-sbom
+  - from: lab.supply-chain-security.sbom-audit-lockfile
+    predicate: USES_TOOL
+    to: tool.npm-audit
+  - from: lab.supply-chain-security.sbom-audit-lockfile
+    predicate: USES_TECHNOLOGY
+    to: tech.lockfile-integrity-check
+  - from: lab.compatibility-testing.breaking-change-detection
+    predicate: USES_TECHNOLOGY
+    to: tech.json-schema-compatibility-contract
+  - from: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+    predicate: USES_TOOL
+    to: tool.intl-api
+  - from: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+    predicate: USES_TECHNOLOGY
+    to: tech.unicode-roundtrip-check
+  - from: lab.modern-protocols.server-sent-events
+    predicate: USES_TECHNOLOGY
+    to: protocol.server-sent-events
+  - from: lab.production-verification.synthetic-smoke-monitor
+    predicate: USES_TECHNOLOGY
+    to: tech.synthetic-monitoring
+  - from: lab.release-engineering.semver-changelog-and-canary-rollout
+    predicate: USES_TECHNOLOGY
+    to: tech.semver-parser
+  - from: lab.release-engineering.semver-changelog-and-canary-rollout
+    predicate: USES_TECHNOLOGY
+    to: tech.changelog-structural-checker
+  - from: lab.release-engineering.semver-changelog-and-canary-rollout
+    predicate: USES_TECHNOLOGY
+    to: tech.canary-rollout-state-machine
+  - from: lab.db-migration-testing.real-sqlite-migration-runner
+    predicate: USES_TECHNOLOGY
+    to: tech.sqlite-migration-runner
+  - from: lab.multi-tenancy-isolation.tenant-scoped-repository
+    predicate: USES_TECHNOLOGY
+    to: tech.tenant-scoped-repository
+  - from: lab.idempotency-testing.in-flight-promise-store
+    predicate: USES_TECHNOLOGY
+    to: tech.idempotency-store
+  - from: lab.rate-limiting.token-bucket-limiter
+    predicate: USES_TECHNOLOGY
+    to: tech.token-bucket-rate-limiter
+  - from: lab.feature-flags.deterministic-hash-rollout
+    predicate: USES_TECHNOLOGY
+    to: tech.deterministic-flag-evaluator
+  - from: lab.distributed-tracing.cross-service-span-propagation
+    predicate: USES_TECHNOLOGY
+    to: tech.hand-rolled-tracer
 
   # ============================================================
   # COMPETENCY -> LAB (repository practice location — PRACTICED_IN)
@@ -327,6 +513,108 @@ relationships:
   - from: competency.performance.locust
     predicate: PRACTICED_IN
     to: lab.performance.locust
+  - from: competency.ai.llm-prompt-testing
+    predicate: PRACTICED_IN
+    to: lab.ai-systems.mock-first-testing
+  - from: competency.ai.structured-output-rag-testing
+    predicate: PRACTICED_IN
+    to: lab.ai-systems.mock-first-testing
+  - from: competency.ai.agent-tool-calling-testing
+    predicate: PRACTICED_IN
+    to: lab.ai-systems.mock-first-testing
+  - from: competency.ai.safety-privacy-testing
+    predicate: PRACTICED_IN
+    to: lab.ai-systems.mock-first-testing
+  - from: competency.ai.provider-regression-testing
+    predicate: PRACTICED_IN
+    to: lab.ai-systems.mock-first-testing
+  - from: competency.reliability.chaos-fault-injection-testing
+    predicate: PRACTICED_IN
+    to: lab.chaos-reliability.fault-injection
+  - from: competency.reliability.circuit-breaker-resilience-testing
+    predicate: PRACTICED_IN
+    to: lab.chaos-reliability.fault-injection
+  - from: competency.privacy.pii-response-scanning
+    predicate: PRACTICED_IN
+    to: lab.privacy-testing.pii-and-data-subject-rights
+  - from: competency.privacy.gdpr-data-subject-rights-testing
+    predicate: PRACTICED_IN
+    to: lab.privacy-testing.pii-and-data-subject-rights
+  - from: competency.virtualization.service-virtualization
+    predicate: PRACTICED_IN
+    to: lab.service-virtualization.stub-and-contract-testing
+  - from: competency.virtualization.consumer-driven-contracts
+    predicate: PRACTICED_IN
+    to: lab.service-virtualization.stub-and-contract-testing
+  - from: competency.property-testing.generative-invariant-testing
+    predicate: PRACTICED_IN
+    to: lab.property-and-fuzz-testing.generative-and-api-fuzzing
+  - from: competency.fuzz-testing.structured-api-fuzzing
+    predicate: PRACTICED_IN
+    to: lab.property-and-fuzz-testing.generative-and-api-fuzzing
+  - from: competency.mutation-testing.mutation-based-test-adequacy
+    predicate: PRACTICED_IN
+    to: lab.mutation-testing.real-mutants-vs-real-tests
+  - from: competency.testcontainers.container-based-integration-testing
+    predicate: PRACTICED_IN
+    to: lab.testcontainers.real-container-lifecycle
+  - from: competency.data-engineering.etl-pipeline-testing
+    predicate: PRACTICED_IN
+    to: lab.data-engineering.etl-and-data-quality
+  - from: competency.data-engineering.data-quality-validation
+    predicate: PRACTICED_IN
+    to: lab.data-engineering.etl-and-data-quality
+  - from: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    predicate: PRACTICED_IN
+    to: lab.distributed-messaging.broker-and-idempotent-consumer
+  - from: competency.distributed-messaging.idempotent-consumer-design
+    predicate: PRACTICED_IN
+    to: lab.distributed-messaging.broker-and-idempotent-consumer
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: PRACTICED_IN
+    to: lab.supply-chain-security.sbom-audit-lockfile
+  - from: competency.supply-chain-security.lockfile-integrity-verification
+    predicate: PRACTICED_IN
+    to: lab.supply-chain-security.sbom-audit-lockfile
+  - from: competency.compatibility-testing.breaking-change-detection
+    predicate: PRACTICED_IN
+    to: lab.compatibility-testing.breaking-change-detection
+  - from: competency.i18n-testing.locale-aware-formatting
+    predicate: PRACTICED_IN
+    to: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+  - from: competency.i18n-testing.unicode-data-integrity
+    predicate: PRACTICED_IN
+    to: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+  - from: competency.modern-protocols.server-sent-events
+    predicate: PRACTICED_IN
+    to: lab.modern-protocols.server-sent-events
+  - from: competency.production-verification.synthetic-monitoring
+    predicate: PRACTICED_IN
+    to: lab.production-verification.synthetic-smoke-monitor
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: PRACTICED_IN
+    to: lab.release-engineering.semver-changelog-and-canary-rollout
+  - from: competency.release-engineering.canary-rollout-and-automatic-rollback
+    predicate: PRACTICED_IN
+    to: lab.release-engineering.semver-changelog-and-canary-rollout
+  - from: competency.db-migration-testing.schema-evolution-and-rollback
+    predicate: PRACTICED_IN
+    to: lab.db-migration-testing.real-sqlite-migration-runner
+  - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    predicate: PRACTICED_IN
+    to: lab.multi-tenancy-isolation.tenant-scoped-repository
+  - from: competency.idempotency-testing.replay-safety
+    predicate: PRACTICED_IN
+    to: lab.idempotency-testing.in-flight-promise-store
+  - from: competency.rate-limiting.token-bucket-abuse-prevention
+    predicate: PRACTICED_IN
+    to: lab.rate-limiting.token-bucket-limiter
+  - from: competency.feature-flags.deterministic-hash-rollout
+    predicate: PRACTICED_IN
+    to: lab.feature-flags.deterministic-hash-rollout
+  - from: competency.distributed-tracing.cross-service-span-propagation
+    predicate: PRACTICED_IN
+    to: lab.distributed-tracing.cross-service-span-propagation
   - from: competency.security.security-aware-qa
     predicate: PRACTICED_IN
     to: lab.backend-api.rest-graphql-websocket
@@ -389,6 +677,69 @@ relationships:
   - from: lab.performance.locust
     predicate: TESTED_BY
     to: evidence.performance.locust-load-run
+  - from: lab.ai-systems.mock-first-testing
+    predicate: TESTED_BY
+    to: evidence.ai-systems.mock-lab-execution
+  - from: lab.chaos-reliability.fault-injection
+    predicate: TESTED_BY
+    to: evidence.chaos-reliability.fault-injection-execution
+  - from: lab.privacy-testing.pii-and-data-subject-rights
+    predicate: TESTED_BY
+    to: evidence.privacy-testing.pii-and-rights-execution
+  - from: lab.service-virtualization.stub-and-contract-testing
+    predicate: TESTED_BY
+    to: evidence.service-virtualization.stub-and-contract-execution
+  - from: lab.property-and-fuzz-testing.generative-and-api-fuzzing
+    predicate: TESTED_BY
+    to: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
+  - from: lab.mutation-testing.real-mutants-vs-real-tests
+    predicate: TESTED_BY
+    to: evidence.mutation-testing.real-mutation-run
+  - from: lab.testcontainers.real-container-lifecycle
+    predicate: TESTED_BY
+    to: evidence.testcontainers.real-lab-run
+  - from: lab.data-engineering.etl-and-data-quality
+    predicate: TESTED_BY
+    to: evidence.data-engineering.real-etl-and-quality-run
+  - from: lab.distributed-messaging.broker-and-idempotent-consumer
+    predicate: TESTED_BY
+    to: evidence.distributed-messaging.real-lab-run
+  - from: lab.supply-chain-security.sbom-audit-lockfile
+    predicate: TESTED_BY
+    to: evidence.supply-chain-security.real-lab-run
+  - from: lab.compatibility-testing.breaking-change-detection
+    predicate: TESTED_BY
+    to: evidence.compatibility-testing.real-lab-run
+  - from: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+    predicate: TESTED_BY
+    to: evidence.i18n-testing.real-lab-run
+  - from: lab.modern-protocols.server-sent-events
+    predicate: TESTED_BY
+    to: evidence.modern-protocols.real-lab-run
+  - from: lab.production-verification.synthetic-smoke-monitor
+    predicate: TESTED_BY
+    to: evidence.production-verification.real-lab-run
+  - from: lab.release-engineering.semver-changelog-and-canary-rollout
+    predicate: TESTED_BY
+    to: evidence.release-engineering.real-lab-run
+  - from: lab.db-migration-testing.real-sqlite-migration-runner
+    predicate: TESTED_BY
+    to: evidence.db-migration-testing.real-lab-run
+  - from: lab.multi-tenancy-isolation.tenant-scoped-repository
+    predicate: TESTED_BY
+    to: evidence.multi-tenancy-isolation.real-lab-run
+  - from: lab.idempotency-testing.in-flight-promise-store
+    predicate: TESTED_BY
+    to: evidence.idempotency-testing.real-lab-run
+  - from: lab.rate-limiting.token-bucket-limiter
+    predicate: TESTED_BY
+    to: evidence.rate-limiting.real-lab-run
+  - from: lab.feature-flags.deterministic-hash-rollout
+    predicate: TESTED_BY
+    to: evidence.feature-flags.real-lab-run
+  - from: lab.distributed-tracing.cross-service-span-propagation
+    predicate: TESTED_BY
+    to: evidence.distributed-tracing.real-lab-run
   - from: lab.database.sql-validation
     predicate: TESTED_BY
     to: evidence.database.sql-validation-suite
@@ -424,6 +775,108 @@ relationships:
   - from: competency.observability.correlation-logging
     predicate: EVIDENCED_BY
     to: evidence.backend.unit-integration-suite
+  - from: competency.ai.llm-prompt-testing
+    predicate: EVIDENCED_BY
+    to: evidence.ai-systems.mock-lab-execution
+  - from: competency.ai.structured-output-rag-testing
+    predicate: EVIDENCED_BY
+    to: evidence.ai-systems.mock-lab-execution
+  - from: competency.ai.agent-tool-calling-testing
+    predicate: EVIDENCED_BY
+    to: evidence.ai-systems.mock-lab-execution
+  - from: competency.ai.safety-privacy-testing
+    predicate: EVIDENCED_BY
+    to: evidence.ai-systems.mock-lab-execution
+  - from: competency.ai.provider-regression-testing
+    predicate: EVIDENCED_BY
+    to: evidence.ai-systems.mock-lab-execution
+  - from: competency.reliability.chaos-fault-injection-testing
+    predicate: EVIDENCED_BY
+    to: evidence.chaos-reliability.fault-injection-execution
+  - from: competency.reliability.circuit-breaker-resilience-testing
+    predicate: EVIDENCED_BY
+    to: evidence.chaos-reliability.fault-injection-execution
+  - from: competency.privacy.pii-response-scanning
+    predicate: EVIDENCED_BY
+    to: evidence.privacy-testing.pii-and-rights-execution
+  - from: competency.privacy.gdpr-data-subject-rights-testing
+    predicate: EVIDENCED_BY
+    to: evidence.privacy-testing.pii-and-rights-execution
+  - from: competency.virtualization.service-virtualization
+    predicate: EVIDENCED_BY
+    to: evidence.service-virtualization.stub-and-contract-execution
+  - from: competency.virtualization.consumer-driven-contracts
+    predicate: EVIDENCED_BY
+    to: evidence.service-virtualization.stub-and-contract-execution
+  - from: competency.property-testing.generative-invariant-testing
+    predicate: EVIDENCED_BY
+    to: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
+  - from: competency.fuzz-testing.structured-api-fuzzing
+    predicate: EVIDENCED_BY
+    to: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
+  - from: competency.mutation-testing.mutation-based-test-adequacy
+    predicate: EVIDENCED_BY
+    to: evidence.mutation-testing.real-mutation-run
+  - from: competency.testcontainers.container-based-integration-testing
+    predicate: EVIDENCED_BY
+    to: evidence.testcontainers.real-lab-run
+  - from: competency.data-engineering.etl-pipeline-testing
+    predicate: EVIDENCED_BY
+    to: evidence.data-engineering.real-etl-and-quality-run
+  - from: competency.data-engineering.data-quality-validation
+    predicate: EVIDENCED_BY
+    to: evidence.data-engineering.real-etl-and-quality-run
+  - from: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    predicate: EVIDENCED_BY
+    to: evidence.distributed-messaging.real-lab-run
+  - from: competency.distributed-messaging.idempotent-consumer-design
+    predicate: EVIDENCED_BY
+    to: evidence.distributed-messaging.real-lab-run
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: EVIDENCED_BY
+    to: evidence.supply-chain-security.real-lab-run
+  - from: competency.supply-chain-security.lockfile-integrity-verification
+    predicate: EVIDENCED_BY
+    to: evidence.supply-chain-security.real-lab-run
+  - from: competency.compatibility-testing.breaking-change-detection
+    predicate: EVIDENCED_BY
+    to: evidence.compatibility-testing.real-lab-run
+  - from: competency.i18n-testing.locale-aware-formatting
+    predicate: EVIDENCED_BY
+    to: evidence.i18n-testing.real-lab-run
+  - from: competency.i18n-testing.unicode-data-integrity
+    predicate: EVIDENCED_BY
+    to: evidence.i18n-testing.real-lab-run
+  - from: competency.modern-protocols.server-sent-events
+    predicate: EVIDENCED_BY
+    to: evidence.modern-protocols.real-lab-run
+  - from: competency.production-verification.synthetic-monitoring
+    predicate: EVIDENCED_BY
+    to: evidence.production-verification.real-lab-run
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: EVIDENCED_BY
+    to: evidence.release-engineering.real-lab-run
+  - from: competency.release-engineering.canary-rollout-and-automatic-rollback
+    predicate: EVIDENCED_BY
+    to: evidence.release-engineering.real-lab-run
+  - from: competency.db-migration-testing.schema-evolution-and-rollback
+    predicate: EVIDENCED_BY
+    to: evidence.db-migration-testing.real-lab-run
+  - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    predicate: EVIDENCED_BY
+    to: evidence.multi-tenancy-isolation.real-lab-run
+  - from: competency.idempotency-testing.replay-safety
+    predicate: EVIDENCED_BY
+    to: evidence.idempotency-testing.real-lab-run
+  - from: competency.rate-limiting.token-bucket-abuse-prevention
+    predicate: EVIDENCED_BY
+    to: evidence.rate-limiting.real-lab-run
+  - from: competency.feature-flags.deterministic-hash-rollout
+    predicate: EVIDENCED_BY
+    to: evidence.feature-flags.real-lab-run
+  - from: competency.distributed-tracing.cross-service-span-propagation
+    predicate: EVIDENCED_BY
+    to: evidence.distributed-tracing.real-lab-run
   - from: competency.api.contract-automation
     predicate: EVIDENCED_BY
     to: evidence.api-tests.public-schema-suite
@@ -498,6 +951,178 @@ relationships:
   - from: competency.performance.locust
     predicate: LEARNING
     to: gap.performance.gatling
+  - from: competency.ai.llm-prompt-testing
+    predicate: LEARNING
+    to: gap.ai.professional-exposure
+  - from: competency.ai.llm-prompt-testing
+    predicate: LEARNING
+    to: gap.ai.live-provider-integration
+  - from: competency.ai.structured-output-rag-testing
+    predicate: LEARNING
+    to: gap.ai.live-provider-integration
+  - from: competency.ai.agent-tool-calling-testing
+    predicate: LEARNING
+    to: gap.ai.live-provider-integration
+  - from: competency.ai.safety-privacy-testing
+    predicate: LEARNING
+    to: gap.ai.live-provider-integration
+  - from: competency.ai.provider-regression-testing
+    predicate: LEARNING
+    to: gap.ai.live-provider-integration
+  - from: competency.reliability.chaos-fault-injection-testing
+    predicate: LEARNING
+    to: gap.reliability.real-chaos-infrastructure
+  - from: competency.reliability.chaos-fault-injection-testing
+    predicate: LEARNING
+    to: gap.reliability.professional-exposure
+  - from: competency.reliability.circuit-breaker-resilience-testing
+    predicate: LEARNING
+    to: gap.reliability.professional-exposure
+  - from: competency.privacy.pii-response-scanning
+    predicate: LEARNING
+    to: gap.privacy.professional-exposure
+  - from: competency.privacy.gdpr-data-subject-rights-testing
+    predicate: LEARNING
+    to: gap.privacy.real-data-subject-rights-endpoints
+  - from: competency.privacy.gdpr-data-subject-rights-testing
+    predicate: LEARNING
+    to: gap.privacy.professional-exposure
+  - from: competency.virtualization.service-virtualization
+    predicate: LEARNING
+    to: gap.virtualization.real-tooling
+  - from: competency.virtualization.service-virtualization
+    predicate: LEARNING
+    to: gap.virtualization.professional-exposure
+  - from: competency.virtualization.consumer-driven-contracts
+    predicate: LEARNING
+    to: gap.virtualization.professional-exposure
+  - from: competency.property-testing.generative-invariant-testing
+    predicate: LEARNING
+    to: gap.property-testing.professional-exposure
+  - from: competency.fuzz-testing.structured-api-fuzzing
+    predicate: LEARNING
+    to: gap.fuzz-testing.real-tooling
+  - from: competency.fuzz-testing.structured-api-fuzzing
+    predicate: LEARNING
+    to: gap.fuzz-testing.professional-exposure
+  - from: competency.mutation-testing.mutation-based-test-adequacy
+    predicate: LEARNING
+    to: gap.mutation-testing.real-tooling
+  - from: competency.mutation-testing.mutation-based-test-adequacy
+    predicate: LEARNING
+    to: gap.mutation-testing.professional-exposure
+  - from: competency.testcontainers.container-based-integration-testing
+    predicate: LEARNING
+    to: gap.testcontainers.docker-daemon-unavailable-locally
+  - from: competency.testcontainers.container-based-integration-testing
+    predicate: LEARNING
+    to: gap.testcontainers.professional-exposure
+  - from: competency.data-engineering.etl-pipeline-testing
+    predicate: LEARNING
+    to: gap.data-engineering.professional-exposure
+  - from: competency.data-engineering.data-quality-validation
+    predicate: LEARNING
+    to: gap.data-engineering.professional-exposure
+  - from: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    predicate: LEARNING
+    to: gap.distributed-messaging.real-broker-infrastructure
+  - from: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    predicate: LEARNING
+    to: gap.distributed-messaging.professional-exposure
+  - from: competency.distributed-messaging.idempotent-consumer-design
+    predicate: LEARNING
+    to: gap.distributed-messaging.professional-exposure
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: LEARNING
+    to: gap.supply-chain-security.commercial-sca-tooling
+  - from: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    predicate: LEARNING
+    to: gap.supply-chain-security.professional-exposure
+  - from: competency.supply-chain-security.lockfile-integrity-verification
+    predicate: LEARNING
+    to: gap.supply-chain-security.professional-exposure
+  - from: competency.compatibility-testing.breaking-change-detection
+    predicate: LEARNING
+    to: gap.compatibility-testing.generic-openapi-diffing
+  - from: competency.compatibility-testing.breaking-change-detection
+    predicate: LEARNING
+    to: gap.compatibility-testing.professional-exposure
+  - from: competency.i18n-testing.locale-aware-formatting
+    predicate: LEARNING
+    to: gap.i18n-testing.ui-rtl-and-translation-coverage
+  - from: competency.i18n-testing.locale-aware-formatting
+    predicate: LEARNING
+    to: gap.i18n-testing.professional-exposure
+  - from: competency.i18n-testing.unicode-data-integrity
+    predicate: LEARNING
+    to: gap.i18n-testing.professional-exposure
+  - from: competency.modern-protocols.server-sent-events
+    predicate: LEARNING
+    to: gap.modern-protocols.grpc-http2-webrtc
+  - from: competency.modern-protocols.server-sent-events
+    predicate: LEARNING
+    to: gap.modern-protocols.professional-exposure
+  - from: competency.production-verification.synthetic-monitoring
+    predicate: LEARNING
+    to: gap.production-verification.commercial-monitoring-platform
+  - from: competency.production-verification.synthetic-monitoring
+    predicate: LEARNING
+    to: gap.production-verification.professional-exposure
+  - from: competency.desktop-qa.cross-platform-automation-concepts
+    predicate: LEARNING
+    to: gap.desktop-qa.repo-desktop-app-evidence
+    note: "No repository lab exists for Desktop QA — same infrastructure-gap class as Appium's own equivalent edge."
+  - from: competency.desktop-qa.cross-platform-automation-concepts
+    predicate: LEARNING
+    to: gap.desktop-qa.professional-exposure
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: LEARNING
+    to: gap.release-engineering.commit-convention-automation
+  - from: competency.release-engineering.semver-and-changelog-integrity
+    predicate: LEARNING
+    to: gap.release-engineering.professional-exposure
+  - from: competency.release-engineering.canary-rollout-and-automatic-rollback
+    predicate: LEARNING
+    to: gap.release-engineering.real-traffic-shifting-infrastructure
+  - from: competency.release-engineering.canary-rollout-and-automatic-rollback
+    predicate: LEARNING
+    to: gap.release-engineering.professional-exposure
+  - from: competency.db-migration-testing.schema-evolution-and-rollback
+    predicate: LEARNING
+    to: gap.db-migration-testing.migration-generator-tooling
+  - from: competency.db-migration-testing.schema-evolution-and-rollback
+    predicate: LEARNING
+    to: gap.db-migration-testing.professional-exposure
+  - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    predicate: LEARNING
+    to: gap.multi-tenancy-isolation.database-level-isolation-mechanisms
+  - from: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    predicate: LEARNING
+    to: gap.multi-tenancy-isolation.professional-exposure
+  - from: competency.idempotency-testing.replay-safety
+    predicate: LEARNING
+    to: gap.idempotency-testing.persistent-distributed-store
+  - from: competency.idempotency-testing.replay-safety
+    predicate: LEARNING
+    to: gap.idempotency-testing.professional-exposure
+  - from: competency.rate-limiting.token-bucket-abuse-prevention
+    predicate: LEARNING
+    to: gap.rate-limiting.per-client-limiting
+  - from: competency.rate-limiting.token-bucket-abuse-prevention
+    predicate: LEARNING
+    to: gap.rate-limiting.professional-exposure
+  - from: competency.feature-flags.deterministic-hash-rollout
+    predicate: LEARNING
+    to: gap.feature-flags.flag-management-platform-tooling
+  - from: competency.feature-flags.deterministic-hash-rollout
+    predicate: LEARNING
+    to: gap.feature-flags.professional-exposure
+  - from: competency.distributed-tracing.cross-service-span-propagation
+    predicate: LEARNING
+    to: gap.distributed-tracing.real-tracing-backend-export
+  - from: competency.distributed-tracing.cross-service-span-propagation
+    predicate: LEARNING
+    to: gap.distributed-tracing.professional-exposure
   - from: competency.web.accessibility
     predicate: LEARNING
     to: gap.accessibility.professional-exposure

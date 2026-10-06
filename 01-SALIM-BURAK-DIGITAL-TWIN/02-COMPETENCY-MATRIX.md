@@ -35,6 +35,41 @@ Legend — **Knowledge:** AWARE < WORKING < INDEPENDENT < ADVANCED.
 | Accessibility testing (axe-core) | WORKING | NONE | CI_VERIFIED |
 | Visual regression / pixel-perfect comparison | WORKING | EXECUTED | CI_VERIFIED |
 | Locust (load testing) | WORKING | NONE | EXECUTED |
+| LLM Prompt & Golden-Set Evaluation Testing | WORKING | NONE | CI_VERIFIED |
+| Structured-Output & RAG Testing | WORKING | NONE | CI_VERIFIED |
+| AI Agent & Tool-Calling Testing | WORKING | NONE | CI_VERIFIED |
+| AI Safety, Security & Privacy Testing | WORKING | NONE | CI_VERIFIED |
+| AI Provider/Model Regression & Cost-Latency Budget Testing | WORKING | NONE | CI_VERIFIED |
+| Chaos Engineering & Fault-Injection Testing | WORKING | NONE | CI_VERIFIED |
+| Circuit Breaker & Resilience Pattern Testing | WORKING | NONE | CI_VERIFIED |
+| PII / Sensitive-Data Response Scanning | WORKING | NONE | CI_VERIFIED |
+| GDPR-Style Data-Subject-Rights Testing | WORKING | NONE | CI_VERIFIED |
+| Service Virtualization (WireMock-Style Stub Servers) | WORKING | NONE | CI_VERIFIED |
+| Consumer-Driven Contract Testing | WORKING | NONE | CI_VERIFIED |
+| Property-Based Testing (Generative/Invariant Testing) | WORKING | NONE | CI_VERIFIED |
+| Structured API Fuzz Testing | WORKING | NONE | CI_VERIFIED |
+| Mutation Testing (Mutation-Based Test Adequacy) | WORKING | NONE | CI_VERIFIED |
+| Testcontainers-Style Container-Based Integration Testing | WORKING | NONE | CI_VERIFIED |
+| ETL Pipeline Testing | WORKING | NONE | CI_VERIFIED |
+| Data Quality Validation (Referential Integrity, Reconciliation, Schema Drift) | WORKING | NONE | CI_VERIFIED |
+| Distributed Messaging — Delivery Semantics, Ordering & Dead-Letter Queues | WORKING | NONE | CI_VERIFIED |
+| Idempotent Consumer Design Under At-Least-Once Delivery | WORKING | NONE | CI_VERIFIED |
+| SBOM Generation & Vulnerability Auditing | WORKING | NONE | CI_VERIFIED |
+| Lockfile Integrity Verification (SRI Hash Coverage) | WORKING | NONE | CI_VERIFIED |
+| API Backward-Compatibility & Breaking-Change Detection | WORKING | NONE | CI_VERIFIED |
+| Locale-Aware Formatting (Intl Number/Date/Currency) | WORKING | NONE | CI_VERIFIED |
+| Unicode Data Integrity (Multi-Byte Round-Trip) | WORKING | NONE | CI_VERIFIED |
+| Modern Protocols — Server-Sent Events (Streaming, Reconnection) | WORKING | NONE | CI_VERIFIED |
+| Production Verification — Synthetic Monitoring / Smoke Tests | WORKING | NONE | CI_VERIFIED |
+| Desktop QA — Cross-Platform Native UI Automation Concepts | WORKING | NONE | DOCUMENTED |
+| Release Versioning & Changelog Integrity Testing | WORKING | NONE | CI_VERIFIED |
+| Canary Rollout & Automatic Rollback Testing | WORKING | NONE | CI_VERIFIED |
+| Database Migration & Schema Evolution Testing | WORKING | NONE | CI_VERIFIED |
+| Multi-Tenancy Data Isolation Testing | WORKING | NONE | CI_VERIFIED |
+| API Idempotency-Key Replay-Safety Testing | WORKING | NONE | CI_VERIFIED |
+| Rate Limiting & Abuse Testing | WORKING | NONE | CI_VERIFIED |
+| Feature Flags & Progressive Targeting | WORKING | NONE | CI_VERIFIED |
+| Distributed Tracing | WORKING | NONE | CI_VERIFIED |
 
 ## Reading this table correctly
 

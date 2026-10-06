@@ -72,3 +72,16 @@ FinTech (payment retry), Commerce (checkout retry).
 
 `QA-DEMO-SYSTEM/automation-labs/jmeter/scripts/run-jmeter.js` (fail
 gate does NOT auto-retry — it reports the real result, on principle).
+
+**MAIN QA-DEMO BACKEND (`backend/src`): still no retry mechanism**,
+unchanged. **ISOLATED EXECUTABLE LABS (independent review finding
+F4)** built after this page's status note was first written now
+genuinely implement and exercise real retry logic:
+`QA-DEMO-SYSTEM/automation-labs/chaos-reliability/lib/resilient-client.js`
+(real bounded retry with backoff against a deliberately unreliable
+fixture server) and
+`QA-DEMO-SYSTEM/automation-labs/distributed-messaging/lib/broker.js`
+(real message redelivery against a configured retry budget before
+dead-lettering). Both are CI-verified (see
+`shared/registry/catalog/labs.yaml`); neither changes the main
+backend itself.

@@ -99,6 +99,174 @@ items:
     covers_competencies: []
     note: "TR: Bu lab GitHub Actions'ın KENDİSİNİ çalıştırır — başka bir CI/CD aracının (ör. Jenkins) burada PRACTICED_IN iddiası olamaz; covers_competencies bilerek boştur (bkz. F3/N1 Jenkins regression testi)."
 
+  - id: lab.ai-systems.mock-first-testing
+    label: "AI Systems Testing — mock-first (prompt, golden-eval, structured-output, RAG, agent, safety, provider-regression)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/ai-systems"
+    evidence_id: evidence.ai-systems.mock-lab-execution
+    covers_competencies: [competency.ai.llm-prompt-testing, competency.ai.structured-output-rag-testing, competency.ai.agent-tool-calling-testing, competency.ai.safety-privacy-testing, competency.ai.provider-regression-testing]
+    note: "TR: GitHub Actions'ta 'AI Systems Testing lab (mock-first, deterministic)' job'ı olarak gerçekten çalıştırıldı ve PASS aldı (bkz. evidence.ai-systems.mock-lab-execution#produced_by'daki run URL'i). AI_TEST_MODE=mock varsayılandır, gerçek API anahtarı gerektirmez."
+
+  - id: lab.chaos-reliability.fault-injection
+    label: "Chaos/Reliability — deterministic fault injection (circuit breaker, resilient client)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/chaos-reliability"
+    evidence_id: evidence.chaos-reliability.fault-injection-execution
+    covers_competencies: [competency.reliability.chaos-fault-injection-testing, competency.reliability.circuit-breaker-resilience-testing]
+    note: "TR: GitHub Actions'ta 'Chaos/Reliability lab (deterministic fault injection)' job'ı olarak gerçekten çalıştırıldı ve PASS aldı (bkz. evidence#produced_by'daki run URL'i). 'Unreliable dependency' lab'ın kendi kontrol ettiği deterministik bir fixture sunucusudur — gerçek chaos-engineering altyapısı değildir."
+
+  - id: lab.privacy-testing.pii-and-data-subject-rights
+    label: "Privacy Testing — PII/sensitive-field response scanning + GDPR-style data-subject-rights fixture"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/privacy-testing"
+    evidence_id: evidence.privacy-testing.pii-and-rights-execution
+    covers_competencies: [competency.privacy.pii-response-scanning, competency.privacy.gdpr-data-subject-rights-testing]
+    note: "TR: GitHub Actions'ta 'Privacy Testing lab' job'ı olarak gerçekten çalıştırıldı ve PASS aldı (bkz. evidence#produced_by'daki run URL'i). PII response scanner GERÇEK backend yanıtlarını tarar (gerçek entegrasyon); data-subject-rights kısmı ise açıkça beyan edilmiş bir bellek-içi fixture'dır (gerçek backend'de böyle bir endpoint yok)."
+
+  - id: lab.service-virtualization.stub-and-contract-testing
+    label: "Service Virtualization & Consumer-Driven Contract Testing (WireMock-style stub server + ajv contracts)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/service-virtualization"
+    evidence_id: evidence.service-virtualization.stub-and-contract-execution
+    covers_competencies: [competency.virtualization.service-virtualization, competency.virtualization.consumer-driven-contracts]
+    note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı. Stub server ve sözleşme doğrulayıcı lab'ın kendi yazdığı, gerçek çalışan bileşenlerdir — WireMock veya Pact kütüphanesi değildir. Provider-side doğrulama GERÇEK backend'e karşı çalışır."
+
+  - id: lab.property-and-fuzz-testing.generative-and-api-fuzzing
+    label: "Property-Based & Fuzz Testing (hand-rolled framework + real-API fuzzing)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing"
+    evidence_id: evidence.property-and-fuzz-testing.generative-and-fuzz-execution
+    covers_competencies: [competency.property-testing.generative-invariant-testing, competency.fuzz-testing.structured-api-fuzzing]
+    note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı. Property-based test framework'ü elle yazılmıştır (fast-check değildir) ve backend'in GERÇEK servis fonksiyonlarına karşı çalışır; fuzz testi GERÇEK, çalışan backend'e karşı çalışır ve gerçek bir backend hatasını bulup düzeltilmesini sağladı (bkz. evidence notu)."
+
+  - id: lab.mutation-testing.real-mutants-vs-real-tests
+    label: "Mutation Testing (hand-rolled text-based generator vs. real backend module)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/mutation-testing"
+    evidence_id: evidence.mutation-testing.real-mutation-run
+    covers_competencies: [competency.mutation-testing.mutation-based-test-adequacy]
+    note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı (5/6 mutant öldürüldü; hayatta kalan mutant GERÇEK bir eşdeğer mutant olarak araştırılıp doğrulandı — test boşluğu değil)."
+
+  - id: lab.testcontainers.real-container-lifecycle
+    label: "Testcontainers (real Docker container lifecycle via the real testcontainers library)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/testcontainers-lab"
+    evidence_id: evidence.testcontainers.real-lab-run
+    covers_competencies: [competency.testcontainers.container-based-integration-testing]
+    note: "TR: Bu sandbox'ta Docker daemon'a erişilemediği için EXTERNALLY_BLOCKED idi — GitHub Actions ubuntu-latest runner'ında GERÇEK bir Docker daemon bulundu ve lab GERÇEKTEN EXECUTED oldu (gerçek container, gerçek mapped port, gerçek 200 yanıtı)."
+
+  - id: lab.data-engineering.etl-and-data-quality
+    label: "Data Engineering — ETL + data-quality checks (referential integrity, uniqueness, reconciliation, schema drift)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/data-engineering"
+    evidence_id: evidence.data-engineering.real-etl-and-quality-run
+    covers_competencies: [competency.data-engineering.etl-pipeline-testing, competency.data-engineering.data-quality-validation]
+    note: "TR: GitHub Actions'ta gerçekten çalıştırıldı ve PASS aldı. Dört veri-kalitesi kontrolünün HER BİRİ hem gerçek temiz veriye (sıfır ihlal) hem de kasıtlı olarak bozulmuş sentetik veriye (gerçek yakalama) karşı kanıtlandı."
+
+  - id: lab.distributed-messaging.broker-and-idempotent-consumer
+    label: "Distributed Messaging (hand-rolled in-process broker — ordering, DLQ, idempotent consumer)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/distributed-messaging"
+    evidence_id: evidence.distributed-messaging.real-lab-run
+    covers_competencies: [competency.distributed-messaging.delivery-semantics-and-dead-lettering, competency.distributed-messaging.idempotent-consumer-design]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('messaging:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (4/4 agregat kontrol). 8/8 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). Aynı simüle edilmiş hata senaryosu non-idempotent (appliedCount=2, gerçek double-apply hatası) ve idempotent (appliedCount=1) consumer'lar üzerinden GERÇEKTEN karşılaştırıldı."
+
+  - id: lab.supply-chain-security.sbom-audit-lockfile
+    label: "Supply Chain Security (real npm sbom + npm audit + lockfile integrity)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/supply-chain-security"
+    evidence_id: evidence.supply-chain-security.real-lab-run
+    covers_competencies: [competency.supply-chain-security.sbom-and-vulnerability-auditing, competency.supply-chain-security.lockfile-integrity-verification]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('supply-chain:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (4/4 agregat kontrol). 14/14 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). npm'in kendi `npm sbom`/`npm audit` komutları bu repoya karşı GERÇEKTEN çalıştırıldı (76 bileşenli gerçek SBOM; 24 full-graph'a karşı 0 production-only zafiyet). Lockfile-integrity kontrolcüsü 4 yerel workspace sembolik bağlantısını false-positive olarak İŞARETLEMEDİĞİNİ kanıtladı."
+
+  - id: lab.compatibility-testing.breaking-change-detection
+    label: "Compatibility Testing (frozen baseline contract vs. real backend response shape)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/compatibility-testing"
+    evidence_id: evidence.compatibility-testing.real-lab-run
+    covers_competencies: [competency.compatibility-testing.breaking-change-detection]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('compatibility:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (4/4 agregat kontrol). 4/4 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). Backend'in GERÇEK mevcut yanıt şekli dondurulmuş bir baseline'a karşı doğrulandı (NO_CHANGE); kaldırılan alan ve tip değişikliği BREAKING, yeni eklenen alan SAFE_ADDITIVE olarak doğru sınıflandırıldı."
+
+  - id: lab.i18n-testing.locale-formatting-and-unicode-roundtrip
+    label: "i18n Testing (Intl locale formatting + Unicode multi-byte round-trip)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/i18n-testing"
+    evidence_id: evidence.i18n-testing.real-lab-run
+    covers_competencies: [competency.i18n-testing.locale-aware-formatting, competency.i18n-testing.unicode-data-integrity]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('i18n:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (7/7 agregat kontrol). 7/7 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). Node'un kendi GERÇEK Intl API'si birkaç gerçek locale'de farklı cikti uretti; dört gercek cok-baytli string (Turkce, Japonca, emoji, Arapca) backend'in gercek products tablosuna karsi bayt-bayt degismeden gidip-geldi."
+
+  - id: lab.modern-protocols.server-sent-events
+    label: "Modern Protocols (hand-rolled real Server-Sent Events server + client)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/modern-protocols"
+    evidence_id: evidence.modern-protocols.real-lab-run
+    covers_competencies: [competency.modern-protocols.server-sent-events]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('modern-protocols:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (3/3 agregat kontrol). 3/3 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). Gercek olay zamanlamalari (timestamp) GERCEKTEN ilerlemeli teslimati kanitladi; Last-Event-ID yeniden baglanma semantigi dogrulandi."
+
+  - id: lab.production-verification.synthetic-smoke-monitor
+    label: "Production Verification (real synthetic smoke-test monitor against a real backend)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/production-verification"
+    evidence_id: evidence.production-verification.real-lab-run
+    covers_competencies: [competency.production-verification.synthetic-monitoring]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('production-verification:test' job'ı) gerçekten çalıştırıldı ve PASS aldı. 15/15 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). Sunucu yokken dürüstçe NOT_EXECUTED raporlandı; gerçek bir backend başlatılınca GERÇEK bir GO sonucu gerçek milisaniye gecikmeleriyle üretildi."
+
+  - id: lab.release-engineering.semver-changelog-and-canary-rollout
+    label: "Release Engineering (hand-rolled semver/changelog integrity checks + canary rollout state machine)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/release-engineering"
+    evidence_id: evidence.release-engineering.real-lab-run
+    covers_competencies: [competency.release-engineering.semver-and-changelog-integrity, competency.release-engineering.canary-rollout-and-automatic-rollback]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('release-eng:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (11/11 agregat kontrol). 21/21 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). Bu reponun KENDİ gerçek CHANGELOG.md ve 6 gerçek workspace package.json dosyası dogrulandi; canary rollout durum makinesi hem tam basarili hem de 50% asamasinda gercek bir enjekte edilmis hatayla otomatik rollback senaryolarinda kanitlandi."
+
+  - id: lab.db-migration-testing.real-sqlite-migration-runner
+    label: "Database Migration Testing (hand-rolled migration runner against a real in-memory SQLite database)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/db-migration-testing"
+    evidence_id: evidence.db-migration-testing.real-lab-run
+    covers_competencies: [competency.db-migration-testing.schema-evolution-and-rollback]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('db-migration:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (5/5 agregat kontrol). 6/6 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). Gerçek bir in-memory SQLite veritabanı 3 gerçek migration ile sürüldü; ileri uygulama ve var olan satırların backfill'i, idempotent yeniden-uygulama ve tam tersine çevrilebilir rollback GERÇEKTEN kanıtlandı — bu, uygulama trafiği altında kesintisiz (zero-downtime) üretim dağıtımını KANITLAMAZ (bkz. EXECUTION.md independent review finding F7)."
+
+  - id: lab.multi-tenancy-isolation.tenant-scoped-repository
+    label: "Multi-Tenancy Isolation (tenant-scoped data access layer + deliberately unsafe negative-path proof)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation"
+    evidence_id: evidence.multi-tenancy-isolation.real-lab-run
+    covers_competencies: [competency.multi-tenancy-isolation.tenant-scoped-data-access]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('multi-tenancy:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (5/5 agregat kontrol). 6/6 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). İki gerçek tenant'ın verisi tek bir gerçek SQLite veritabanına tohumlandı; scoped repository'nin tam CRUD izolasyonu kanıtlandı, kasıtlı olarak güvensiz bir karşılaştırma repository'si ise GERÇEKTEN başka bir tenant'ın satırını sızdırdı."
+
+  - id: lab.idempotency-testing.in-flight-promise-store
+    label: "API Idempotency-Key Replay-Safety (in-flight-promise store backing a real Idempotency-Key HTTP server)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/idempotency-testing"
+    evidence_id: evidence.idempotency-testing.real-lab-run
+    covers_competencies: [competency.idempotency-testing.replay-safety]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('idempotency:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (4/4 agregat kontrol). 9/9 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). Eksik Idempotency-Key başlığı gerçek bir 400 ile reddedildi; aynı anahtarla 10 gerçek eşzamanlı HTTP isteği (Promise.all ile ateşlendi) tam olarak bir gerçek sipariş ve bir gerçek yan-etki artışı ürettiği GERÇEKTEN kanıtlandı."
+
+  - id: lab.rate-limiting.token-bucket-limiter
+    label: "Rate Limiting & Abuse Testing (hand-rolled token-bucket limiter backing a real HTTP server)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/rate-limiting"
+    evidence_id: evidence.rate-limiting.real-lab-run
+    covers_competencies: [competency.rate-limiting.token-bucket-abuse-prevention]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('rate-limiting:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (3/3 agregat kontrol). 8/8 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). Kapasite içindeki istekler gerçek 200 ile kabul edildi, kapasiteyi aşan istek gerçek 429 aldı, ve enjekte edilmiş gerçek bir sahte saat ilerletildiğinde bir sonraki istek GERÇEKTEN başarılı oldu — ayrıca gerçek bir doğrulama hatası (refillRatePerMs > 0, geçerli refillRatePerMs: 0 durumunu hatalı şekilde reddediyordu) gerçek bir başarısız test çalışmasıyla yakalandı ve düzeltildi."
+
+  - id: lab.feature-flags.deterministic-hash-rollout
+    label: "Feature Flags & Progressive Targeting (hand-rolled deterministic hash-based evaluator)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/feature-flags"
+    evidence_id: evidence.feature-flags.real-lab-run
+    covers_competencies: [competency.feature-flags.deterministic-hash-rollout]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('feature-flags:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (5/5 agregat kontrol). 8/8 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). 25% yüzde dağıtımı 2000 gerçek farklı kullanıcı üzerinde gerçek bir istatistiksel toleransla kanıtlandı; allowList/denyList önceliği ve segment hedefleme GERÇEKTEN doğrulandı."
+
+  - id: lab.distributed-tracing.cross-service-span-propagation
+    label: "Distributed Tracing (trace-context propagation over a real HTTP network hop: one node:http server, one HTTP client, same process)"
+    maturity: L4_CI_VERIFIED
+    path: "QA-DEMO-SYSTEM/automation-labs/distributed-tracing"
+    evidence_id: evidence.distributed-tracing.real-lab-run
+    covers_competencies: [competency.distributed-tracing.cross-service-span-propagation]
+    note: "TR: GitHub Actions'ta CI AGGREGATE EXECUTION olarak ('distributed-tracing:test' job'ı) gerçekten çalıştırıldı ve PASS aldı (3/3 agregat kontrol). 12/12 unit testi ayrıca LOCAL UNIT EXECUTION olarak bu makinede çalıştırılıp PASS almıştır — CI şu an bu lab için unit test dosyalarını doğrudan çalıştırmaz (bkz. .github/workflows/ci.yml, ilgili job yalnızca agregat runner'ı tetikler; independent review finding F3). Gerçek bir traceparent başlığı, bir node:http sunucusu ile bir HTTP istemcisi arasındaki gerçek bir ağ sıçramasını (serialize edilip tekrar parse edilen gerçek bir HTTP isteği) GERÇEKTEN aştı — istemci ve sunucu AYNI Node sürecinde çalışır, 'iki ayrı süreç sınırı' kanıtı DEĞİLDİR (bkz. independent review finding F6, EXECUTION.md). Sonuçtaki span ağacının şekli (bir kök, bir çocuk, doğru parentSpanId bağlantısı) paylaşılan bir bellek-içi kolektörden okunarak kanıtlandı."
+
 related:
   fact_owner: "01-SALIM-BURAK-DIGITAL-TWIN/registry/tool-state.yaml"
   narrative_docs:

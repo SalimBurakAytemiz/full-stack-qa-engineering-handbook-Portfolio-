@@ -240,6 +240,423 @@ competencies:
       note: "TR: CI_VERIFIED DEĞİL — hiçbir GitHub Actions job'u Locust'u çalıştırmıyor, yalnızca sandbox'ta manuel çalıştırıldı."
     gaps: [gap.performance.k6, gap.performance.gatling]
 
+  # Part 2 — Advanced QA Engineering: AI/ML/LLM Systems Testing.
+  # TR: Bu beş competency bu oturumda YENİ eklendi — her biri için
+  # professional.status BİLİNÇLİ olarak NONE'dur (hiçbir kaynak veri
+  # bunu profesyonel deneyim olarak doğrulamıyor). repository.status
+  # CI_VERIFIED'dır çünkü bu lab GitHub Actions'ta gerçekten çalıştırıldı
+  # ve PASS aldı (run https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36623661602,
+  # commit e2a53d0, job "AI Systems Testing lab (mock-first, deterministic)" —
+  # bkz. tool-state.yaml ai_ml kategorisi ve
+  # labs.yaml#lab.ai-systems.mock-first-testing).
+
+  - id: competency.ai.llm-prompt-testing
+    label: "LLM Prompt & Golden-Set Evaluation Testing"
+    knowledge: WORKING
+    professional:
+      status: NONE
+      note: "TR: Bu tamamen yeni, hiç profesyonel olarak kullanılmamış bir alandır — repository practice profesyonel deneyime asla dönüştürülmez."
+    repository:
+      status: CI_VERIFIED
+      evidence: "ai-systems/lib/mock-provider.js + eval-harness.js — prompt-testing.test.js (6) + golden-eval.test.js (3) genuinely passing against a deterministic mock provider, AI_TEST_MODE=mock, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
+
+  - id: competency.ai.structured-output-rag-testing
+    label: "Structured-Output & RAG (Retrieval-Augmented Generation) Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "ai-systems/lib/schema-validator.js (ajv v8) + rag.js — structured-output.test.js (4) + rag.test.js (5) genuinely passing, including a citation-integrity negative case, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
+
+  - id: competency.ai.agent-tool-calling-testing
+    label: "AI Agent & Tool-Calling Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "ai-systems/lib/agent.js — agent.test.js (6) genuinely passing: tool selection, pre-execution argument validation, no-match termination, bounded-loop force-termination, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
+
+  - id: competency.ai.safety-privacy-testing
+    label: "AI Safety, Security & Privacy Testing (Prompt Injection, Secret/PII Leakage)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "ai-systems/lib/safety.js + mock-provider.js detectInjection — safety.test.js (4) + injection-defense cases in prompt-testing.test.js genuinely passing, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
+
+  - id: competency.ai.provider-regression-testing
+    label: "AI Provider/Model Regression & Cost-Latency Budget Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "ai-systems/lib/provider-regression.js + live-provider.js — provider-regression.test.js (2) + cost-latency-budget.test.js (3) + live-provider.test.js (2) genuinely passing, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.ai.professional-exposure, gap.ai.live-provider-integration]
+
+  # Part 2 — Advanced QA Engineering: Reliability, Chaos Engineering &
+  # Privacy Testing (Milestone 2.2). Same discipline as the AI/ML/LLM
+  # competencies above: professional.status is NONE for all four —
+  # genuinely new, never-professionally-used ground. repository.status
+  # is CI_VERIFIED — GitHub Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36626191865
+  # (commit 70f8358) confirmed both the "Chaos/Reliability lab" and
+  # "Privacy Testing lab" CI jobs pass, in addition to the local
+  # node --test runs (see chaos-reliability/EXECUTION.md and
+  # privacy-testing/EXECUTION.md).
+
+  - id: competency.reliability.chaos-fault-injection-testing
+    label: "Chaos Engineering & Fault-Injection Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "chaos-reliability/lib/unreliable-server.js — unreliable-server.test.js (5) + chaos-scenario.test.js (2) genuinely passing against a deterministic, locally-controlled fault-injection fixture (not real chaos infrastructure), verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.reliability.professional-exposure, gap.reliability.real-chaos-infrastructure]
+
+  - id: competency.reliability.circuit-breaker-resilience-testing
+    label: "Circuit Breaker & Resilience Pattern Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "chaos-reliability/lib/circuit-breaker.js + resilient-client.js — circuit-breaker.test.js (5) + resilient-client.test.js (5) genuinely passing, including a call-count proof that an OPEN circuit stops reaching the dependency, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.reliability.professional-exposure]
+
+  - id: competency.privacy.pii-response-scanning
+    label: "PII / Sensitive-Data Response Scanning"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "privacy-testing/lib/pii-response-scanner.js — pii-scanner-unit.test.js (7) + api-response-privacy.test.js (3, real integration against a running backend) genuinely passing, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.privacy.professional-exposure]
+
+  - id: competency.privacy.gdpr-data-subject-rights-testing
+    label: "GDPR-Style Data-Subject-Rights Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "privacy-testing/lib/data-subject-rights-simulator.js — data-subject-rights.test.js (7) genuinely passing against a disclosed in-memory fixture (QA-DEMO-SYSTEM's real backend has no data-subject-rights endpoints), verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.privacy.professional-exposure, gap.privacy.real-data-subject-rights-endpoints]
+
+  # Part 2 — Advanced QA Engineering: Service Virtualization, Contract,
+  # Property-Based & Fuzz Testing (Milestone 2.3). Same discipline as
+  # Milestones 2.1/2.2: professional.status NONE for all four —
+  # genuinely new ground. repository.status is CI_VERIFIED — GitHub
+  # Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/36629081710
+  # (commit 2879d06) confirmed both the "Service Virtualization &
+  # Contract Testing lab" and "Property-Based & Fuzz Testing lab" CI
+  # jobs pass, in addition to the local node --test runs (see
+  # service-virtualization/EXECUTION.md and
+  # property-and-fuzz-testing/EXECUTION.md).
+
+  - id: competency.virtualization.service-virtualization
+    label: "Service Virtualization (WireMock-Style Stub Servers)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "service-virtualization/lib/stub-server.js — stub-server.test.js (6) genuinely passing: request matching, stateful/sequenced responses, and an unmatched request producing a real, loud 501 failure rather than a silent 200, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.virtualization.professional-exposure, gap.virtualization.real-tooling]
+
+  - id: competency.virtualization.consumer-driven-contracts
+    label: "Consumer-Driven Contract Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "service-virtualization/lib/contract.js + fixtures/contracts.js — consumer-contract.test.js (3) + provider-contract-verification.test.js (2, real integration: the SAME contract verified against the actual running backend) genuinely passing, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.virtualization.professional-exposure, gap.virtualization.real-tooling]
+
+  - id: competency.property-testing.generative-invariant-testing
+    label: "Property-Based Testing (Generative/Invariant Testing)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "property-and-fuzz-testing/lib/property-testing.js — property-testing-framework.test.js (6) + products-service-properties.test.js (6, real property tests against backend's real getProductById/listProducts via an in-memory SQLite db) genuinely passing, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.property-testing.professional-exposure]
+
+  - id: competency.fuzz-testing.structured-api-fuzzing
+    label: "Structured API Fuzz Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "property-and-fuzz-testing/lib/fuzz-generators.js — api-fuzz.test.js (4, real fuzz testing against the live backend) genuinely passing, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml); found and drove the fix for a real backend bug (oversized request bodies returning 500 instead of 413 — see backend/src/middleware/errorHandler.js)"
+    gaps: [gap.fuzz-testing.professional-exposure, gap.fuzz-testing.real-tooling]
+
+  # Part 2 — Advanced QA Engineering: Mutation Testing, Testcontainers &
+  # Data Engineering (Milestone 2.4). Same discipline as Milestones
+  # 2.1/2.2/2.3: professional.status NONE for all four — genuinely new
+  # ground. repository.status is CI_VERIFIED — GitHub Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37078354997
+  # (commit 97da16f) confirmed the "Mutation Testing lab", "Testcontainers
+  # lab", and "Data Engineering lab" CI jobs all pass — including the
+  # Testcontainers lab genuinely executing a real container against
+  # GitHub Actions' real Docker daemon (this sandbox has none, so its
+  # local run reports EXTERNALLY_BLOCKED, exactly as disclosed).
+
+  - id: competency.mutation-testing.mutation-based-test-adequacy
+    label: "Mutation Testing (Mutation-Based Test Adequacy)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "mutation-testing/lib/mutate.js — mutation-engine.test.js (5) + a real mutation run against backend's real, unmodified products.service.js (5/6 mutants killed; the survivor investigated and confirmed a genuine equivalent mutant, not a test gap), verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.mutation-testing.professional-exposure, gap.mutation-testing.real-tooling]
+
+  - id: competency.testcontainers.container-based-integration-testing
+    label: "Testcontainers-Style Container-Based Integration Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "testcontainers-lab/run-testcontainers-lab.js — classify-docker-error.test.js (5) genuinely passing; the real lab run genuinely EXECUTED against GitHub Actions' real Docker daemon (real container, real mapped port, real 200 response), verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.testcontainers.professional-exposure, gap.testcontainers.docker-daemon-unavailable-locally]
+
+  - id: competency.data-engineering.etl-pipeline-testing
+    label: "ETL Pipeline Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "data-engineering/lib/etl.js — etl.test.js (8, real extraction from a real in-memory SQLite db + real aggregate transforms, including 4 payment-status regression tests added by independent-review finding F2: all-PAYMENT_FAILED/all-PAYMENT_TIMEOUT/mixed/all-PAID, proving revenue and spend are scoped to PAID orders only) genuinely passing, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.data-engineering.professional-exposure]
+
+  - id: competency.data-engineering.data-quality-validation
+    label: "Data Quality Validation (Referential Integrity, Reconciliation, Schema Drift)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "data-engineering/lib/data-quality.js — data-quality.test.js (9) genuinely passing; every one of the four checks proven against both real clean data (zero violations) and deliberately corrupted synthetic data (the exact injected violation caught), verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.data-engineering.professional-exposure]
+
+  # Part 2 — Advanced QA Engineering: Distributed Messaging, Supply Chain
+  # Security & Compatibility Testing (Milestone 2.5). Same discipline as
+  # every prior milestone: professional.status NONE for all five —
+  # genuinely new ground. repository.status is CI_VERIFIED — GitHub
+  # Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37080426518
+  # (commit e573ddf) confirmed the "Distributed Messaging lab", "Supply
+  # Chain Security lab", and "Compatibility Testing lab" CI jobs all pass.
+
+  - id: competency.distributed-messaging.delivery-semantics-and-dead-lettering
+    label: "Distributed Messaging — Delivery Semantics, Ordering & Dead-Letter Queues"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "distributed-messaging/lib/broker.js — broker.test.js (5) genuinely passing; a real aggregate run proved same-key ordering is preserved and a permanently-failing message is routed to the dead-letter queue with the real error and attempt count attached, after exhausting a configured retry budget, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.distributed-messaging.professional-exposure, gap.distributed-messaging.real-broker-infrastructure]
+
+  - id: competency.distributed-messaging.idempotent-consumer-design
+    label: "Idempotent Consumer Design Under At-Least-Once Delivery"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "distributed-messaging/lib/idempotent-consumer.js — idempotent-consumer.test.js (3) genuinely passing; the exact same simulated redelivery was run through a non-idempotent consumer (observed appliedCount=2, a real double-application bug) and an idempotent consumer (observed appliedCount=1), differing only by one dedup check, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.distributed-messaging.professional-exposure, gap.distributed-messaging.real-broker-infrastructure]
+
+  - id: competency.supply-chain-security.sbom-and-vulnerability-auditing
+    label: "SBOM Generation & Vulnerability Auditing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "supply-chain-security/lib/sbom.js + lib/audit.js — sbom.test.js (2) + audit.test.js (3) genuinely passing; a real run of npm's own `npm sbom`/`npm audit` against this repository produced a real 76-component CycloneDX SBOM and a real audit (24 full-graph advisories, all dev-only, vs. 0 production-only), cross-referenced for SBOM visibility via cross-reference.test.js (4), verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.supply-chain-security.professional-exposure, gap.supply-chain-security.commercial-sca-tooling]
+
+  - id: competency.supply-chain-security.lockfile-integrity-verification
+    label: "Lockfile Integrity Verification (SRI Hash Coverage)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "supply-chain-security/lib/lockfile-integrity.js — lockfile-integrity.test.js (5, including a direct check against this repository's own real package-lock.json) genuinely passing; a real run found zero integrity violations among 415 real registry-resolved entries, correctly excluding 4 legitimate local workspace symlinks from being false-positive-flagged, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.supply-chain-security.professional-exposure, gap.supply-chain-security.commercial-sca-tooling]
+
+  - id: competency.compatibility-testing.breaking-change-detection
+    label: "API Backward-Compatibility & Breaking-Change Detection"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "compatibility-testing/lib/compatibility-check.js — compatibility-check.test.js (4) genuinely passing; a real run validated the backend's real current GET /api/products response against a frozen baseline JSON Schema contract (NO_CHANGE), then proved the checker correctly classifies a removed required field and a changed field type as BREAKING and a newly added field as SAFE_ADDITIVE, each against a deliberately constructed candidate built from that same real response, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.compatibility-testing.professional-exposure, gap.compatibility-testing.generic-openapi-diffing]
+
+  # Part 2 — Advanced QA Engineering: i18n, Modern Protocols &
+  # Production Verification (Milestone 2.6). Same discipline as every
+  # prior milestone: professional.status NONE for all four — genuinely
+  # new ground. repository.status is CI_VERIFIED — GitHub Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37082016580
+  # (commit ef228cd) confirmed the "i18n Testing lab", "Modern Protocols
+  # lab", and "Production Verification lab" CI jobs all pass.
+
+  - id: competency.i18n-testing.locale-aware-formatting
+    label: "Locale-Aware Formatting (Intl Number/Date/Currency)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "i18n-testing/lib/locale-formatting.js — locale-formatting.test.js (3) genuinely passing against Node's real built-in Intl API; a real run confirmed currency/date/number formatting genuinely differs between real locales (tr-TR, de-DE, ja-JP, en-US), including a real finding that German ICU currency formatting uses a non-breaking space the first test draft missed, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.i18n-testing.professional-exposure, gap.i18n-testing.ui-rtl-and-translation-coverage]
+
+  - id: competency.i18n-testing.unicode-data-integrity
+    label: "Unicode Data Integrity (Multi-Byte Round-Trip)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "i18n-testing/lib/unicode-roundtrip.js — unicode-roundtrip.test.js (4) genuinely passing; a real run inserted and read back Turkish, Japanese, emoji (non-BMP, 4-byte UTF-8), and Arabic (RTL) strings through the backend's real products table and real service functions, each confirmed byte-for-byte unchanged, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.i18n-testing.professional-exposure, gap.i18n-testing.ui-rtl-and-translation-coverage]
+
+  - id: competency.modern-protocols.server-sent-events
+    label: "Modern Protocols — Server-Sent Events (Streaming, Reconnection)"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "modern-protocols/lib/sse-server.js + lib/sse-client.js — sse.test.js (3) genuinely passing; a real run proved correct event framing/ordering, genuine progressive delivery timed against real wall-clock gaps between consecutively-received events, and correct Last-Event-ID reconnection semantics (no replay of already-seen events), verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.modern-protocols.professional-exposure, gap.modern-protocols.grpc-http2-webrtc]
+
+  - id: competency.production-verification.synthetic-monitoring
+    label: "Production Verification — Synthetic Monitoring / Smoke Tests"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "production-verification/lib/synthetic-monitor.js + lib/smoke-checks.js — synthetic-monitor.test.js (8) + smoke-checks.test.js (6) genuinely passing; a real run against a real running backend (health, real seeded-user login, products list) produced a real GO verdict with real observed millisecond latencies, and the same unmodified script honestly reported NOT_EXECUTED with no backend reachable, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.production-verification.professional-exposure, gap.production-verification.commercial-monitoring-platform]
+
+  # Part 2 — Advanced QA Engineering: Desktop QA & Advanced Release
+  # Engineering (Milestone 2.7). Desktop QA is LEARNING-only — the
+  # same infrastructure-gap class as Appium/Mobile (no real desktop
+  # application or OS-level UI-automation target exists in this
+  # repository) — repository.status DOCUMENTED, not NOT_PRACTICED,
+  # because a real, substantive LEARNING doc now exists (mirrors
+  # competency.mobile.appium's own DOCUMENTED precedent). professional.status
+  # NONE for all three — genuinely new ground. repository.status on
+  # the two release-engineering competencies is CI_VERIFIED — GitHub
+  # Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37085881867
+  # (commit 131c685) confirmed the "Release Engineering lab" CI job
+  # passes.
+
+  - id: competency.desktop-qa.cross-platform-automation-concepts
+    label: "Desktop QA — Cross-Platform Native UI Automation Concepts"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: DOCUMENTED
+      note: "TR: LEARNING-only kaldı — bu repoda gerçek bir native masaüstü uygulaması veya OS-seviyesi UI-otomasyon hedefi (WinAppDriver/Accessibility API için) hiç mevcut değil, bu icat edilmedi. Appium/Mobile ile birebir aynı altyapı-eksikliği sınıfı."
+    gaps: [gap.desktop-qa.professional-exposure, gap.desktop-qa.repo-desktop-app-evidence]
+
+  - id: competency.release-engineering.semver-and-changelog-integrity
+    label: "Release Versioning & Changelog Integrity Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "release-engineering/lib/semver.js + lib/changelog-check.js — semver.test.js (9) + changelog-check.test.js (7) genuinely passing; a real run validated all 6 real workspace package.json versions and this repository's own real CHANGELOG.md structure (3 headings, 0 violations), including a real finding that an invented pre-1.0 bump category had to be replaced with a correctly-scoped isUnstableApi() check, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.release-engineering.professional-exposure, gap.release-engineering.commit-convention-automation]
+
+  - id: competency.release-engineering.canary-rollout-and-automatic-rollback
+    label: "Canary Rollout & Automatic Rollback Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "release-engineering/lib/rollout-manager.js — rollout-manager.test.js (5) genuinely passing; the exact same unmodified state machine was proven against two opposite real scenarios, an all-healthy run reaching COMPLETE at 100% traffic and a real injected failure at the 50% stage producing an automatic rollback to 0% traffic with a correct ordered event history, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.release-engineering.professional-exposure, gap.release-engineering.real-traffic-shifting-infrastructure]
+
+  # Part 3 — Platform Engineering & Quality Gates: Database Migration
+  # & Multi-Tenancy Data Isolation (Milestone 3.1). Same discipline as
+  # every Part 2 milestone: professional.status NONE for both —
+  # genuinely new ground. repository.status is CI_VERIFIED — GitHub
+  # Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37165865596
+  # (commit 36a01d5) confirmed the "DB Migration Testing lab" and
+  # "Multi-Tenancy Isolation lab" CI jobs both pass.
+
+  - id: competency.db-migration-testing.schema-evolution-and-rollback
+    label: "Database Migration & Schema Evolution Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "db-migration-testing/lib/migration-runner.js — migration-runner.test.js (6) genuinely passing; a real run drove a real in-memory SQLite database through 3 real migrations, proving forward application, backward-compatible column-addition backfill for existing rows, idempotent re-apply, and exact single-step rollback (verified against real PRAGMA table_info output) — this proves schema evolution and backfill correctness, NOT application availability under concurrent production traffic, so it does not prove true zero-downtime deployment (independent review finding F7) — including a real SQLite-version check run before relying on ALTER TABLE RENAME/DROP COLUMN, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.db-migration-testing.professional-exposure, gap.db-migration-testing.migration-generator-tooling]
+
+  - id: competency.multi-tenancy-isolation.tenant-scoped-data-access
+    label: "Multi-Tenancy Data Isolation Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "multi-tenancy-isolation/lib/tenant-scoped-repository.js — tenant-isolation.test.js (6) genuinely passing; a real run seeded two real tenants' rows in one real SQLite database and proved the scoped repository's full CRUD isolation (getById/list/update/remove), plus a deliberately unsafe comparison repository that genuinely leaked another tenant's real row — the negative-path proof that makes the positive-path proof meaningful, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.multi-tenancy-isolation.professional-exposure, gap.multi-tenancy-isolation.database-level-isolation-mechanisms]
+
+  # Part 3 — Platform Engineering & Quality Gates: API Idempotency-Key
+  # Replay-Safety & Rate Limiting (Milestone 3.2). Same discipline:
+  # professional.status NONE for both. repository.status is CI_VERIFIED
+  # — GitHub Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37204986576
+  # (commit 7440151) confirmed the "Idempotency Testing lab" and "Rate
+  # Limiting lab" CI jobs both pass.
+
+  - id: competency.idempotency-testing.replay-safety
+    label: "API Idempotency-Key Replay-Safety Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "idempotency-testing/lib/idempotency-store.js + lib/idempotent-server.js — idempotency-store.test.js (4) + idempotent-server.test.js (5) genuinely passing (9/9); a real run proved a request with no Idempotency-Key header gets a real 400, a replayed key returns the identical cached order with no duplicate side effect, and 10 real concurrent HTTP requests with the same key (fired via Promise.all) produced exactly one real order and exactly one real side-effect increment, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.idempotency-testing.professional-exposure, gap.idempotency-testing.persistent-distributed-store]
+
+  - id: competency.rate-limiting.token-bucket-abuse-prevention
+    label: "Rate Limiting & Abuse Testing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "rate-limiting/lib/token-bucket.js + lib/rate-limited-server.js — token-bucket.test.js (5) + rate-limited-server.test.js (3) genuinely passing (8/8); a real run proved requests within capacity succeed with a real 200, a request over capacity gets a real 429 checked against the server's own real accepted/rejected counters, and advancing a real injected fake clock makes the next request succeed once a token has genuinely refilled — including a real validation bug (refillRatePerMs > 0 wrongly rejecting the legitimate refillRatePerMs: 0 case) caught by a real failing test run and fixed, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.rate-limiting.professional-exposure, gap.rate-limiting.per-client-limiting]
+
+  # Part 3 — Platform Engineering & Quality Gates: Feature Flags &
+  # Progressive Targeting / Distributed Tracing (Milestone 3.3). Same
+  # discipline: professional.status NONE for both. repository.status
+  # is CI_VERIFIED — GitHub Actions run
+  # https://github.com/SalimBurakAytemiz/full-stack-qa-engineering-handbook-Portfolio-/actions/runs/37255041775
+  # (commit e5d2041) confirmed the "Feature Flags lab" and
+  # "Distributed Tracing lab" CI jobs both pass.
+
+  - id: competency.feature-flags.deterministic-hash-rollout
+    label: "Feature Flags & Progressive Targeting"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "feature-flags/lib/flag-evaluator.js — flag-evaluator.test.js (8) genuinely passing; a real run proved deterministic repeated evaluation, a 25% rollout landing within a real statistical tolerance of its target over 2000 real distinct synthetic user ids, allowList/denyList override precedence (including the adversarial case of a denyList entry also matching a 100% rollout), and segment-based targeting at 0% rollout, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.feature-flags.professional-exposure, gap.feature-flags.flag-management-platform-tooling]
+
+  - id: competency.distributed-tracing.cross-service-span-propagation
+    label: "Distributed Tracing"
+    knowledge: WORKING
+    professional: { status: NONE }
+    repository:
+      status: CI_VERIFIED
+      evidence: "distributed-tracing/lib/tracer.js + lib/trace-context.js + lib/traced-service.js — trace-context.test.js (3) + tracer.test.js (5) + traced-service.test.js (4) genuinely passing (12/12); a real run proved a traceparent-shaped header genuinely crosses a real HTTP hop (a real node:http server and a real HTTP client, serializing and re-parsing an actual request — both in the SAME Node process, not two separate server processes; independent review finding F6), with the resulting span tree (one root, one child, correct parentSpanId linkage) read back from a shared in-memory collector, verified LOCALLY (node --test) — CI only runs this lab's separate aggregate runner script, not these unit test files directly (independent review finding F3; see shared/registry/catalog/labs.yaml)"
+    gaps: [gap.distributed-tracing.professional-exposure, gap.distributed-tracing.real-tracing-backend-export]
+
 related:
   professional_source: "professional-experience.yaml"
   gap_detail: "gaps.yaml"

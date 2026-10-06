@@ -133,5 +133,230 @@ gaps:
     status: PLANNED
     note: "TR: Section 39 gereği tamamlanmış hiçbir sertifika İCAT EDİLMEDİ — ISTQB gelecek hedef olarak kaydedilmiştir."
 
+  - id: gap.ai.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "AI/ML/LLM Systems Testing — professional project exposure"
+    note: "TR: Part 2'de eklenen tüm competency.ai.* alanları için ortak — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.ai.live-provider-integration
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "AI/ML/LLM Testing — real paid-API provider integration (OpenAI/Anthropic/Gemini)"
+    note: "TR: ai-systems lab'ı kasıtlı olarak mock-first'tür — hiçbir gerçek, ücretli LLM API çağrısı hiç yapılmadı. AI_TEST_MODE=live EXTERNALLY_BLOCKED raporlar, asla sessizce mock sonucu gerçekmiş gibi sunmaz."
+
+  - id: gap.reliability.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Chaos Engineering / Resilience Testing — professional project exposure"
+    note: "TR: competency.reliability.* alanları için ortak — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.reliability.real-chaos-infrastructure
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Chaos Engineering — real infrastructure-level fault injection (Chaos Monkey/Gremlin/Litmus/Toxiproxy)"
+    note: "TR: chaos-reliability lab'ı kendi kontrol ettiği, deterministik bir fixture sunucusu kullanır — gerçek chaos-engineering altyapısı hiç kullanılmadı."
+
+  - id: gap.privacy.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Privacy / GDPR-Style Testing — professional project exposure"
+    note: "TR: competency.privacy.* alanları için ortak — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.privacy.real-data-subject-rights-endpoints
+    types: [PRACTICE]
+    label: "GDPR Data-Subject-Rights Testing — real backend export/erasure endpoints"
+    note: "TR: QA-DEMO-SYSTEM'in gerçek backend'inde /api/users/:id/export veya /api/users/:id/erase gibi bir route yok — bu alan bilerek İCAT EDİLMEDİ; test edilen teknik, açıkça beyan edilmiş bir bellek-içi fixture'a karşı çalışır."
+
+  - id: gap.virtualization.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Service Virtualization / Contract Testing — professional project exposure"
+    note: "TR: competency.virtualization.* alanları için ortak — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.virtualization.real-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Service Virtualization / Contract Testing — real WireMock/Pact tooling"
+    note: "TR: service-virtualization lab'ı kendi yazdığı bir stub server ve ajv-tabanlı bir sözleşme doğrulayıcı kullanır — WireMock veya Pact kütüphanesinin kendisi hiç kullanılmadı."
+
+  - id: gap.property-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Property-Based Testing — professional project exposure"
+    note: "TR: competency.property-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.fuzz-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Fuzz Testing — professional project exposure"
+    note: "TR: competency.fuzz-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.fuzz-testing.real-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Fuzz Testing — real coverage-guided fuzzing infrastructure (AFL/libFuzzer)"
+    note: "TR: api-fuzz.test.js sabit, açıkça beyan edilmiş düşman değer kümeleri kullanır — gerçek coverage-guided fuzzing altyapısı (AFL/libFuzzer) hiç kullanılmadı."
+
+  - id: gap.mutation-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Mutation Testing — professional project exposure"
+    note: "TR: competency.mutation-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.mutation-testing.real-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Mutation Testing — real AST-based mutation engine (Stryker/PIT/mutmut)"
+    note: "TR: mutation-testing lab'ı elle yazılmış, metin-tabanlı bir find/replace üretici kullanır — Stryker, PIT veya mutmut gibi gerçek bir AST-tabanlı mutation engine hiç kullanılmadı."
+
+  - id: gap.testcontainers.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Testcontainers / Container-Based Integration Testing — professional project exposure"
+    note: "TR: competency.testcontainers.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.testcontainers.docker-daemon-unavailable-locally
+    types: [ENVIRONMENT_LIMITATION]
+    label: "Testcontainers lab — no reachable Docker daemon in this sandbox"
+    note: "TR: Bu sandbox'ta docker CLI mevcut ama erişilebilir bir Docker daemon YOK (doğrulandı: docker info /var/run/docker.sock üzerinde başarısız oluyor) — lab bunu dürüstçe EXTERNALLY_BLOCKED olarak raporluyor; GitHub Actions ubuntu-latest runner'larında gerçek bir daemon vardır, bu yüzden CI_VERIFIED elevation o gerçek CI çalışmasına dayanacaktır."
+
+  - id: gap.data-engineering.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Data Engineering QA (ETL / Data Quality) — professional project exposure"
+    note: "TR: competency.data-engineering.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.distributed-messaging.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Distributed Messaging QA — professional project exposure"
+    note: "TR: competency.distributed-messaging.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.distributed-messaging.real-broker-infrastructure
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Distributed Messaging — real broker infrastructure (Kafka/RabbitMQ/SQS)"
+    note: "TR: distributed-messaging lab'ı elle yazılmış, bellek-içi bir pub/sub broker kullanır — kalıcılık, ağ, partition'lama veya consumer-group rebalancing olmadan; gerçek bir Kafka/RabbitMQ/SQS broker'ı hiç kullanılmadı."
+
+  - id: gap.supply-chain-security.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Supply Chain Security QA — professional project exposure"
+    note: "TR: competency.supply-chain-security.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.supply-chain-security.commercial-sca-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Supply Chain Security — commercial SCA tooling (Snyk/Dependabot/Sonatype)"
+    note: "TR: supply-chain-security lab'ı npm'in kendi yerleşik `npm sbom` ve `npm audit` komutlarını kullanır — lisans uyumluluğu kontrolü veya typosquatting tespiti yapan ticari bir SCA aracı (Snyk, Dependabot, Sonatype vb.) hiç kullanılmadı."
+
+  - id: gap.compatibility-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Compatibility (Backward-Compatibility) Testing — professional project exposure"
+    note: "TR: competency.compatibility-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.compatibility-testing.generic-openapi-diffing
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Compatibility Testing — generic OpenAPI-diffing engine (openapi-diff/oasdiff)"
+    note: "TR: compatibility-testing lab'ı tek bir gerçek endpoint şekli için dondurulmuş bir JSON Schema baseline'ı kullanır — gelişmiş JSON Schema anahtar kelimelerini (enum, oneOf, $ref) ele alan genel bir OpenAPI-diffing motoru (openapi-diff, oasdiff vb.) hiç kullanılmadı."
+
+  - id: gap.i18n-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "i18n Testing — professional project exposure"
+    note: "TR: competency.i18n-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.i18n-testing.ui-rtl-and-translation-coverage
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "i18n Testing — UI RTL/LTR layout testing and translation-key coverage scanning"
+    note: "TR: i18n-testing lab'ı yalnızca Intl tabanlı biçimlendirme ve Unicode veri bütünlüğünü kapsar — gerçek bir UI'nin RTL/LTR duzen testi veya bir ceviri-anahtarı kapsama tarayıcısı hiç uygulanmadı."
+
+  - id: gap.modern-protocols.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Modern Protocols (SSE) — professional project exposure"
+    note: "TR: competency.modern-protocols.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.modern-protocols.grpc-http2-webrtc
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Modern Protocols — gRPC, HTTP/2 server push, WebRTC"
+    note: "TR: modern-protocols lab'ı yalnızca elle yazılmış bir Server-Sent Events implementasyonunu kapsar — gRPC, HTTP/2 server push veya WebRTC hiç uygulanmadı."
+
+  - id: gap.production-verification.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Production Verification (Synthetic Monitoring) — professional project exposure"
+    note: "TR: competency.production-verification.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.production-verification.commercial-monitoring-platform
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Production Verification — commercial synthetic-monitoring platform (Pingdom/Datadog Synthetics/New Relic)"
+    note: "TR: production-verification lab'ı elle yazılmış, minimal bir sentetik-izleme calistiricisi kullanır — cografi olarak dagitilmis prob'lari, uyari (alerting) entegrasyonu veya tarihsel trend panolari olan ticari bir platform (Pingdom, Datadog Synthetics, New Relic vb.) hiç kullanılmadı."
+
+  - id: gap.desktop-qa.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Desktop QA — professional project exposure"
+    note: "TR: competency.desktop-qa.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.desktop-qa.repo-desktop-app-evidence
+    types: [EVIDENCE]
+    label: "Desktop QA — real native desktop application repository-executable evidence"
+    note: "TR: Bu repoda gerçek bir native masaüstü uygulaması (Electron/WPF/.NET MAUI/Qt) veya OS-seviyesi UI-otomasyon hedefi (WinAppDriver/Accessibility API için) hiç mevcut olmadı; icat edilmedi. Appium/Mobile ile birebir aynı altyapı-eksikliği sınıfı."
+
+  - id: gap.release-engineering.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Release Engineering — professional project exposure"
+    note: "TR: competency.release-engineering.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.release-engineering.commit-convention-automation
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Release Engineering — commit-convention-driven automation (Conventional Commits / semantic-release)"
+    note: "TR: release-engineering lab'ı mevcut bir CHANGELOG.md'nin yapısını dogrular ve iki gerçek sürüm dizisi arasındaki semver farkını sınıflandırır; commit mesajı kurallarından (Conventional Commits) otomatik changelog/sürüm üretimi (semantic-release vb.) hiç uygulanmadı."
+
+  - id: gap.release-engineering.real-traffic-shifting-infrastructure
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Release Engineering — real traffic-shifting infrastructure (service mesh / load balancer / cloud canary feature)"
+    note: "TR: rollout-manager.js elle yazılmış, process-içi bir durum makinesidir — gerçek ağ trafiği hiç kaydırılmadı; gerçek bir service mesh, load balancer veya bulut sağlayıcısının native canary/weighted-routing özelliği hiç kullanılmadı."
+
+  - id: gap.db-migration-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Database Migration Testing — professional project exposure"
+    note: "TR: competency.db-migration-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.db-migration-testing.migration-generator-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Database Migration Testing — schema-diff migration generator tooling (Prisma Migrate / Django makemigrations-style)"
+    note: "TR: db-migration-testing lab'ı bir migration RUNNER'dır (elle yazılmış up/down fonksiyonlarını uygular/geri alır) — mevcut şema ile hedef şemayı karşılaştırıp migration dosyası ÜRETEN bir araç (Prisma Migrate, Django makemigrations vb.) hiç uygulanmadı."
+
+  - id: gap.multi-tenancy-isolation.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Multi-Tenancy Isolation Testing — professional project exposure"
+    note: "TR: competency.multi-tenancy-isolation.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.multi-tenancy-isolation.database-level-isolation-mechanisms
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Multi-Tenancy Isolation Testing — database-level isolation mechanisms (separate schemas/databases per tenant, PostgreSQL RLS)"
+    note: "TR: multi-tenancy-isolation lab'ı satır-seviyesi, sorgu-koşullu (query-predicate) tenant izolasyonu kanıtlar — tenant başına ayrı şema/veritabanı veya PostgreSQL row-level security gibi veritabanı motoru seviyesinde izolasyon mekanizmaları (SQLite'ta zaten mevcut değil) hiç uygulanmadı."
+
+  - id: gap.idempotency-testing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "API Idempotency-Key Replay-Safety Testing — professional project exposure"
+    note: "TR: competency.idempotency-testing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.idempotency-testing.persistent-distributed-store
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "API Idempotency-Key Replay-Safety Testing — persistent/distributed idempotency store (Redis, unique-constrained DB table)"
+    note: "TR: idempotency-testing lab'ındaki store tek bir process içinde bellekte (in-memory) tutulur — birden fazla sunucu örneği arasında paylaşılan veya process yeniden başlatıldığında hayatta kalan gerçek, kalıcı/dağıtık bir idempotency store (Redis SETNX, benzersiz kısıtlamalı bir veritabanı tablosu) hiç uygulanmadı."
+
+  - id: gap.rate-limiting.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Rate Limiting & Abuse Testing — professional project exposure"
+    note: "TR: competency.rate-limiting.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.rate-limiting.per-client-limiting
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Rate Limiting & Abuse Testing — per-client/per-API-key/per-IP rate limiting middleware"
+    note: "TR: rate-limiting lab'ı tek, paylaşılan bir token-bucket algoritmasını kanıtlar — gerçek çok-kiracılı (multi-tenant) bir API'nin ihtiyaç duyacağı, istemci/API-anahtarı/IP başına ayrı bucket tutan bir rate-limiting middleware'i hiç uygulanmadı."
+
+  - id: gap.feature-flags.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Feature Flags & Progressive Targeting — professional project exposure"
+    note: "TR: competency.feature-flags.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.feature-flags.flag-management-platform-tooling
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Feature Flags & Progressive Targeting — real flag-management platform tooling (LaunchDarkly, Split, admin UI, audit trail)"
+    note: "TR: feature-flags lab'ı bir flag-SDK'sının çalıştıracağı gerçek DEĞERLENDİRME algoritmasını (hash tabanlı yüzde dağıtımı, allow/deny-list, segment hedefleme) kanıtlar — gerçek bir flag-yönetim platformu (LaunchDarkly, Split, veritabanı destekli bir admin arayüzü, değişiklik denetim izi, kill-switch yayılımı) hiç uygulanmadı."
+
+  - id: gap.distributed-tracing.professional-exposure
+    types: [PROFESSIONAL_EXPOSURE]
+    label: "Distributed Tracing — professional project exposure"
+    note: "TR: competency.distributed-tracing.* alanı için — hiçbir kaynak veri bunu profesyonel deneyim olarak doğrulamıyor."
+
+  - id: gap.distributed-tracing.real-tracing-backend-export
+    types: [PRACTICE, TOOL_DEPTH]
+    label: "Distributed Tracing — real tracing-backend export (Jaeger, Zipkin, OTLP collector) and full W3C Trace Context conformance"
+    note: "TR: distributed-tracing lab'ı trace-bağlamı yayılımını ve span-ağacı şeklini bellek-içi bir kolektöre kanıtlar — gerçek bir tracing backend'ine (Jaeger, Zipkin, bir OTLP collector) export hiç yapılmadı, ve traceparent başlığı W3C Trace Context spesifikasyonuna (tracestate, tam örnekleme semantiği) tam uyumlu değildir — sadece şekli ödünç alır."
+
 related:
   narrative_doc: "09-GAP-AND-LEARNING-MAP.md"

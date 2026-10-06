@@ -45,13 +45,163 @@ not incompleteness; no row implies content that isn't there.
 | 23 | Modern QA Engineering | `../QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/` | Full |
 | 24 | Learning Paths | [`24-LEARNING-PATHS/`](24-LEARNING-PATHS/) | 6 specialization paths, each built from real `gap.*` registry entries, not a generic curriculum |
 
-## Additional topic, real and substantial, not in the 24-item list
+## Additional topics, real and substantial, not in the 24-item list
 
 - **Defect Management** — [`06-DEFECT-MANAGEMENT/`](06-DEFECT-MANAGEMENT/)
   (41 docs). The master taxonomy doesn't list this as a separate
   numbered topic; it is folded conceptually into QA Foundations / Test
   Management, but its existing content is substantial enough to keep
   as its own folder rather than force-merge it.
+
+- **Advanced QA Engineering** — [`25-ADVANCED-QA-ENGINEERING/`](25-ADVANCED-QA-ENGINEERING/).
+  Next-generation QA practices beyond the base 24 topics. Currently
+  covers **AI/ML/LLM Systems Testing** in real depth — a genuine,
+  executable, deterministic mock-first lab
+  (`QA-DEMO-SYSTEM/automation-labs/ai-systems/`, 35 passing tests
+  across prompt testing, golden-set evaluation, structured-output
+  validation, RAG groundedness/citation checks, agent tool-calling,
+  safety/privacy leakage detection, and provider-regression detection)
+  with matching handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/AI-ML-LLM-SYSTEMS-TESTING/`](25-ADVANCED-QA-ENGINEERING/AI-ML-LLM-SYSTEMS-TESTING/).
+  Also covers **Reliability, Chaos Engineering & Privacy Testing** —
+  two more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/chaos-reliability/`, 17 passing
+  tests: a real circuit-breaker state machine, bounded-retry/timeout
+  client, and composed failure-recovery scenarios against a
+  deterministic fault-injection fixture; and
+  `QA-DEMO-SYSTEM/automation-labs/privacy-testing/`, 17 passing tests:
+  a recursive sensitive-field/PII response scanner — including real
+  integration against the live backend — plus a disclosed GDPR-style
+  data-subject-rights fixture) with matching handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/RELIABILITY-CHAOS-PRIVACY-TESTING/`](25-ADVANCED-QA-ENGINEERING/RELIABILITY-CHAOS-PRIVACY-TESTING/).
+  Also covers **Service Virtualization, Contract, Property-Based &
+  Fuzz Testing** — two more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/service-virtualization/`, 11 passing
+  tests: a real WireMock-style stub server plus consumer-driven
+  contract testing verified both against a virtualized double and the
+  real, running backend; and
+  `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/`, 16
+  passing tests: a real hand-rolled property-based testing framework
+  applied to the backend's real service functions, plus fuzz testing
+  against the real, running API that found and drove the fix for a
+  genuine backend bug — an oversized request body was falling through
+  to a raw 500 instead of a proper 413) with matching handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/`](25-ADVANCED-QA-ENGINEERING/SERVICE-VIRTUALIZATION-CONTRACT-PROPERTY-FUZZ-TESTING/).
+  Also covers **Mutation Testing, Testcontainers & Data Engineering** —
+  three more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/mutation-testing/`: a real, hand-rolled
+  mutation generator run against the backend's real, unmodified
+  `products.service.js`, including a genuine equivalent-mutant finding;
+  `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/`: the real
+  `testcontainers` npm package starting a real Docker container,
+  honestly `EXTERNALLY_BLOCKED` in this no-daemon sandbox; and
+  `QA-DEMO-SYSTEM/automation-labs/data-engineering/`: real ETL plus four
+  real data-quality checks — referential integrity, uniqueness,
+  reconciliation, schema drift — each proven to actually detect what it
+  claims to) with matching handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/`](25-ADVANCED-QA-ENGINEERING/MUTATION-TESTING-TESTCONTAINERS-DATA-ENGINEERING/).
+  Also covers **Distributed Messaging, Supply Chain Security &
+  Compatibility Testing** — three more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/distributed-messaging/`: a real,
+  hand-rolled in-process pub/sub broker proving ordering, dead-letter
+  routing, and a real observed non-idempotent-consumer double-application
+  bug versus an idempotent fix on the same simulated failure;
+  `QA-DEMO-SYSTEM/automation-labs/supply-chain-security/`: npm's own
+  built-in `npm sbom` and `npm audit` run for real against this actual
+  repository — 76 real SBOM components, 24 full-graph vs. 0
+  production-only vulnerabilities, both disclosed, plus a
+  lockfile-integrity checker that correctly excludes this repo's own
+  local workspace packages; and
+  `QA-DEMO-SYSTEM/automation-labs/compatibility-testing/`: a frozen
+  baseline JSON Schema contract validated against the backend's real
+  current response shape, with breaking-vs-additive classification
+  proven against deliberately constructed candidates) with matching
+  handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/DISTRIBUTED-MESSAGING-SUPPLY-CHAIN-COMPATIBILITY/`](25-ADVANCED-QA-ENGINEERING/DISTRIBUTED-MESSAGING-SUPPLY-CHAIN-COMPATIBILITY/).
+  Also covers **i18n, Modern Protocols & Production Verification** —
+  three more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/i18n-testing/`: real locale-distinct
+  formatting via Node's own `Intl` API plus a real Unicode round-trip —
+  Turkish, Japanese, an emoji outside the Basic Multilingual Plane, and
+  right-to-left Arabic — through the backend's real database and
+  service layer, including a real finding that German ICU currency
+  formatting uses a non-breaking space the lab's first test draft
+  missed;
+  `QA-DEMO-SYSTEM/automation-labs/modern-protocols/`: a real,
+  hand-rolled Server-Sent Events server and client proving genuine
+  progressive delivery timed against real wall-clock gaps and correct
+  `Last-Event-ID` reconnection semantics; and
+  `QA-DEMO-SYSTEM/automation-labs/production-verification/`: a real
+  synthetic-monitoring smoke-test runner against a real running
+  backend, classifying each check as PASS/SLOW/FAIL rather than a
+  single boolean, with an honest `NOT_EXECUTED` result when no backend
+  is reachable) with matching handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/I18N-MODERN-PROTOCOLS-PRODUCTION-VERIFICATION/`](25-ADVANCED-QA-ENGINEERING/I18N-MODERN-PROTOCOLS-PRODUCTION-VERIFICATION/).
+  Also covers **Desktop QA & Advanced Release Engineering** — one more
+  genuine, executable lab
+  (`QA-DEMO-SYSTEM/automation-labs/release-engineering/`: a real
+  hand-rolled semver 2.0.0 parser/comparator and Keep-a-Changelog
+  structural checker, run against this repository's own real
+  `CHANGELOG.md` and all 6 real workspace `package.json` files, plus a
+  real canary-rollout state machine proving both pass-through-to-100%
+  and automatic-rollback-on-a-real-injected-failure with the same
+  unmodified code), with Desktop QA documented LEARNING-only (the same
+  infrastructure-gap class as Mobile/Appium — no real desktop
+  application exists in this repository to automate), and matching
+  handbook docs at
+  [`25-ADVANCED-QA-ENGINEERING/DESKTOP-QA-RELEASE-ENGINEERING/`](25-ADVANCED-QA-ENGINEERING/DESKTOP-QA-RELEASE-ENGINEERING/).
+  Professional experience for this whole area is explicitly `NONE` in
+  the Digital Twin registry — this is repository practice only,
+  disclosed as such throughout (see each folder's `README.md`
+  scope-boundary note). This completes Part 2 (Milestones 2.1-2.7, all
+  CI-verified — see `.ai/PART-2-FINAL-REPORT.md`).
+
+- **Platform Engineering & Quality Gates** — [`26-PLATFORM-ENGINEERING-QUALITY-GATES/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/).
+  Part 3 — platform-level QA concerns beneath or around individual
+  features. Currently covers **Database Migration & Multi-Tenancy
+  Data Isolation** — two genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/db-migration-testing/`: a real,
+  hand-rolled migration runner driving a real in-memory SQLite
+  database through 3 real migrations, proving forward application,
+  backward-compatible column-addition backfill for existing rows,
+  idempotent re-apply, and exact single-step rollback (schema
+  evolution and backfill correctness, not a zero-downtime-deployment
+  proof — see that lab's README.md); and
+  `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/`: a real
+  tenant-scoped data-access layer proven against a real SQLite
+  database seeded with two real tenants' rows, including a
+  deliberately unsafe comparison repository that proves the real
+  cross-tenant leak the safe one prevents) with matching handbook docs
+  at
+  [`26-PLATFORM-ENGINEERING-QUALITY-GATES/DATABASE-MIGRATION-MULTI-TENANCY/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/DATABASE-MIGRATION-MULTI-TENANCY/).
+  Also covers **API Idempotency-Key Replay-Safety & Rate Limiting** —
+  two more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/idempotency-testing/`: a real,
+  hand-rolled HTTP server implementing Stripe's own real
+  `Idempotency-Key` convention, backed by an in-flight-promise store
+  proven safe under a genuine 10-way concurrent race; and
+  `QA-DEMO-SYSTEM/automation-labs/rate-limiting/`: a real hand-rolled
+  token-bucket limiter backing a real HTTP server, proven to accept
+  within capacity, reject over capacity with a real `429`, and refill
+  correctly over real elapsed time via an injected fake clock) with
+  matching handbook docs at
+  [`26-PLATFORM-ENGINEERING-QUALITY-GATES/API-IDEMPOTENCY-RATE-LIMITING/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/API-IDEMPOTENCY-RATE-LIMITING/).
+  Also covers **Feature Flags & Progressive Targeting / Distributed
+  Tracing** — two more genuine, executable labs
+  (`QA-DEMO-SYSTEM/automation-labs/feature-flags/`: a real,
+  hand-rolled feature-flag evaluator proving deterministic hash-based
+  percentage rollout — checked against a real 2000-sample statistical
+  proof — plus allow/deny-list override precedence and segment
+  targeting; and `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/`:
+  a real trace-context propagation layer proven over a real HTTP
+  request/response hop — one `node:http` server and one HTTP client in
+  the same Node process, with a shared in-memory span collector; real
+  header serialization and re-parsing, not a cross-process boundary) with
+  matching handbook docs at
+  [`26-PLATFORM-ENGINEERING-QUALITY-GATES/FEATURE-FLAGS-DISTRIBUTED-TRACING/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/FEATURE-FLAGS-DISTRIBUTED-TRACING/).
+  Professional experience for this area is explicitly `NONE` in the
+  Digital Twin registry — repository practice only. Further
+  platform-engineering subtopics are planned but not yet added.
 
 ## What "meaningful canonical coverage" means here
 

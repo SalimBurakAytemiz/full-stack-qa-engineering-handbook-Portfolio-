@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GET /api/products response — frozen baseline contract",
+  "description": "A frozen snapshot of the real backend/src/routes/products.routes.js GET / response shape. This file represents what a previously-shipped API consumer was built against. additionalProperties is intentionally left as the schema default (true) at every level, because adding a NEW field is a non-breaking, additive change — only a REMOVED required field or a CHANGED type is a breaking change.",
+  "type": "object",
+  "required": ["products"],
+  "properties": {
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "price", "stock_quantity", "in_stock"],
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "price": { "type": "number" },
+          "stock_quantity": { "type": "integer" },
+          "in_stock": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}
