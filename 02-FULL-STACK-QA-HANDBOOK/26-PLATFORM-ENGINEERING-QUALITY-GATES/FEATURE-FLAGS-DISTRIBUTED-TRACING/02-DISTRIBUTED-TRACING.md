@@ -11,9 +11,10 @@ back out of it on the receiving side. A test that calls two functions
 in the same process and checks they share a trace id proves nothing
 about that serialization step, because there wasn't one. This lab's
 real proof (`automation-labs/distributed-tracing/lib/traced-service.js`)
-starts a second, genuinely separate `node:http` server on its own
-real loopback port, and the "downstream" side sends it a real HTTP
-request carrying a real `traceparent`-shaped header:
+starts one real `node:http` server (the "upstream") on a real loopback
+port, and the "downstream" side — a plain async HTTP client function,
+not a second server — sends it a real HTTP request carrying a real
+`traceparent`-shaped header:
 
 ```js
 const traceParentHeader = formatTraceParent({ traceId: rootSpan.traceId, spanId: rootSpan.spanId });
@@ -21,7 +22,15 @@ const traceParentHeader = formatTraceParent({ traceId: rootSpan.traceId, spanId:
 
 The upstream server parses that header back out of the real incoming
 request and starts its own child span with the recovered `traceId`
-and `parentSpanId` — proving the context genuinely crossed the wire.
+and `parentSpanId` — proving the context genuinely survived real HTTP
+serialization and re-parsing over a real request/response.
+
+**Scope (independent review finding F6):** both sides run in the same
+Node process and write to one shared in-memory collector. This lab
+proves real HTTP transport, header serialization/re-parsing, trace
+propagation and span linkage — it does **not** prove a cross-process
+or cross-machine boundary, which would need a second real process or
+container that this lab does not have.
 
 ## Why the span tree is checked by shape, not assumed
 

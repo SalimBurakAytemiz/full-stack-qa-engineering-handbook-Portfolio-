@@ -193,8 +193,10 @@ not incompleteness; no row implies content that isn't there.
   percentage rollout — checked against a real 2000-sample statistical
   proof — plus allow/deny-list override precedence and segment
   targeting; and `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/`:
-  a real trace-context propagation layer proven across a real network
-  hop between two genuinely separate `node:http` services) with
+  a real trace-context propagation layer proven over a real HTTP
+  request/response hop — one `node:http` server and one HTTP client in
+  the same Node process, with a shared in-memory span collector; real
+  header serialization and re-parsing, not a cross-process boundary) with
   matching handbook docs at
   [`26-PLATFORM-ENGINEERING-QUALITY-GATES/FEATURE-FLAGS-DISTRIBUTED-TRACING/`](26-PLATFORM-ENGINEERING-QUALITY-GATES/FEATURE-FLAGS-DISTRIBUTED-TRACING/).
   Professional experience for this area is explicitly `NONE` in the

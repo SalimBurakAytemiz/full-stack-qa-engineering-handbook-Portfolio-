@@ -1,5 +1,5 @@
 schema_version: 1
-last_updated: "2026-10-03"
+last_updated: "2026-10-06"
 
 repository:
   main_branch_head: "e63ca070103cd87b9e4e074b0fea4574c5448d38"
@@ -53,17 +53,31 @@ master_transformation_campaign:
     compliance_map: ".ai/MASTER-REQUIREMENTS-COMPLIANCE.md"
 
 test_status:
-  backend: "160/160 PASS"
-  api_contract_suites: "public 26/26 assert, auth 42/42 assert, orders-payment 118/118 assert (1 confirmed flake re-run — see TEST-STATUS.md), notifications 48/48 assert, api-db 97/97 assert — all re-run this session against a live server"
-  playwright: "26/26 PASS (PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium required this session — env build-version mismatch, not a repository defect)"
-  selenium: "NOT_EXECUTED — EXECUTION_BLOCKED (sandbox network, re-confirmed by a real attempt this session)"
-  jmeter_real_binary: "NOT_EXECUTED — LAUNCH_OR_RUNTIME_ERROR (environment-specific XStream issue, re-confirmed this session, see DECISIONS.md D9)"
-  jmeter_gate_unit_tests: "7/7 PASS"
-  locust: "not re-run this session (no locust-related finding); last real run 280 requests, 0 failures"
-  registry_validator: "0 errors — 235 relationships, 0 orphans across every entity type (125 competency/domain/tool/pattern/gap/professional-case + 17 evidence + 10 lab), plus 3 NEW structural checks this session (claim-level provenance, domain foreign-key, relationship-semantic PRACTICED_IN) — see post_codex_fix_campaign above"
-  registry_regression_suite: "9/9 PASS — scripts/registry/validate-registry.regression.test.mjs, proves negative+positive validator behavior against real files"
-  last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign, historical) — the registry-integrity job and 4 new API CI jobs are proven locally this session, not yet observed on a live run (EXTERNALLY_BLOCKED)"
-  detail: ".ai/TEST-STATUS.md"
+  # CURRENT full-project status (Parts 1+2+3) at branch feat/part-3-platform-engineering-quality-gates,
+  # SHA 49f50014245485610ea991e4f0bd314493517844. Part 1-era figures are preserved, unchanged,
+  # under historical_part_1_snapshot below — they are NOT current.
+  as_of_sha: "49f50014245485610ea991e4f0bd314493517844"
+  backend: "160/160 PASS — local run during the F1-F8 fix pass, and the 'Backend unit/integration tests (node:test)' job green in GitHub Actions run #75"
+  registry_validator: "0 errors — 57 competencies, 72 tools, 75 gaps, 31 labs, 38 evidence entries, 444 relationships, 0 orphans, generated-index 0 drift"
+  registry_regression_suite: "26/26 PASS — scripts/registry/validate-registry.regression.test.mjs"
+  ci: "GitHub Actions run #75 (id 37445486608) on SHA 49f50014245485610ea991e4f0bd314493517844 — 30 of 30 jobs SUCCESS, 0 failed, 0 skipped (verified at the job level). Covers backend, API (Newman/AJV) suites, API-to-DB validation, Playwright, Selenium (real CI pass), registry integrity, and all 21 Part 2/3 lab aggregate runners. Part 2/3 lab unit-test files run locally only, not in CI (see labs.yaml, independent review finding F3)."
+  not_executed_locally: "Selenium (sandbox network), JMeter real binary (environment-specific XStream issue, see DECISIONS.md D9) — unchanged, pre-existing environment limits"
+  dependency_audit: "repo root npm audit --omit=dev: 0. QA-DEMO-SYSTEM npm audit --omit=dev: 1 critical (proxy-addr, GHSA-jqcg-44mw-7w3h, newly disclosed advisory — not caused by a dependency change here, not upgraded in this fix scope). QA-DEMO-SYSTEM full npm audit: 28 (10 moderate / 16 high / 2 critical). See .ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md 'Dependency-security state'."
+  detail: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md (current full-project results)"
+  historical_part_1_snapshot:
+    # HISTORICAL PART 1 SNAPSHOT — recorded during the Part 1 post-Codex fix campaign (base SHA a8f0cd2).
+    # Preserved verbatim as history. These figures predate Parts 2/3 and do not describe the current repository.
+    backend: "160/160 PASS"
+    api_contract_suites: "public 26/26 assert, auth 42/42 assert, orders-payment 118/118 assert (1 confirmed flake re-run — see TEST-STATUS.md), notifications 48/48 assert, api-db 97/97 assert — all re-run this session against a live server"
+    playwright: "26/26 PASS (PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium required this session — env build-version mismatch, not a repository defect)"
+    selenium: "NOT_EXECUTED — EXECUTION_BLOCKED (sandbox network, re-confirmed by a real attempt this session)"
+    jmeter_real_binary: "NOT_EXECUTED — LAUNCH_OR_RUNTIME_ERROR (environment-specific XStream issue, re-confirmed this session, see DECISIONS.md D9)"
+    jmeter_gate_unit_tests: "7/7 PASS"
+    locust: "not re-run this session (no locust-related finding); last real run 280 requests, 0 failures"
+    registry_validator: "0 errors — 235 relationships, 0 orphans across every entity type (125 competency/domain/tool/pattern/gap/professional-case + 17 evidence + 10 lab), plus 3 NEW structural checks this session (claim-level provenance, domain foreign-key, relationship-semantic PRACTICED_IN) — see post_codex_fix_campaign above"
+    registry_regression_suite: "9/9 PASS — scripts/registry/validate-registry.regression.test.mjs, proves negative+positive validator behavior against real files"
+    last_known_ci_result: "4/4 GitHub Actions jobs SUCCESS (Phase 6-19 campaign, historical) — the registry-integrity job and 4 new API CI jobs are proven locally this session, not yet observed on a live run (EXTERNALLY_BLOCKED)"
+    detail: ".ai/TEST-STATUS.md (historical Part 1 snapshot)"
 
 branch_note:
   harness_designated_branch: "claude/stoic-pasteur-svbmxs"
@@ -175,10 +189,22 @@ part_3_platform_engineering_quality_gates:
   final_report: ".ai/PART-3-FINAL-REPORT.md"
 
 codex_review_status:
-  status: "DEFERRED_UNTIL_NOW — Parts 2 and 3 implementation is complete; one combined independent review is now ready to begin, per standing instruction to defer review until all planned work finished"
+  status: "FINAL_CLOSURE_VERIFICATION_PENDING — the full-project independent review has been performed and its findings fixed; a final independent closure verification is pending/in progress. Not CLEAN until an independent reviewer returns CLEAN."
   handoff: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md"
-  scope: "git diff 7051c2b..5428e26 (the entire feat/part-3-platform-engineering-quality-gates branch, which contains both Part 2 and Part 3 since Part 3 was built on Part 2's unmerged tip)"
-  merge_status: "Neither Part 2 nor Part 3 merged to main — independent review comes first, per standing instruction"
+  history:
+    - step: "Codex full-project review of Parts 2+3"
+      reviewed_sha: "23078eecb5458a29e29481898c3b35a84c3c0587"
+      original_scope: "git diff 7051c2b..5428e26 (the entire feat/part-3-platform-engineering-quality-gates branch at that time) plus the handoff commit 23078ee"
+      result: "FIX_REQUIRED — findings F1-F8 (P2: 5, P3: 3)"
+    - step: "Consolidated F1-F8 fix commit"
+      sha: "3adfce0e11e836aabf6c36e4cebef8f334ed6b55"
+      ci: "GitHub Actions run #74 (id 37420905295) — 30 of 30 jobs SUCCESS"
+      verification_result: "F1, F2, F3, F8 FIXED; F4, F5, F6, F7 partially open"
+    - step: "Documentation closure commit for F4-F7"
+      sha: "49f50014245485610ea991e4f0bd314493517844"
+      ci: "GitHub Actions run #75 (id 37445486608) — 30 of 30 jobs SUCCESS"
+      verification_result: "F4, F7 FIXED; F5 (this file's test_status/codex_review_status, evidence.yaml data-engineering pointer) and F6 (three handbook tracing pages) still open — addressed by the next micro-fix commit, pending final closure verification"
+  merge_status: "Neither Part 2 nor Part 3 merged to main — independent closure verification comes first, per standing instruction"
 
 pointers:
   codex_full_project_review_handoff: ".ai/CODEX-FULL-PROJECT-REVIEW-HANDOFF.md"
@@ -190,6 +216,6 @@ pointers:
   next_actions: ".ai/NEXT-ACTIONS.md"
   decisions: ".ai/DECISIONS.md"
   known_issues: ".ai/KNOWN-ISSUES.md"
-  test_status: ".ai/TEST-STATUS.md"
+  test_status: ".ai/TEST-STATUS.md (historical Part 1 snapshot — current status is the test_status block above)"
   architecture_state: ".ai/ARCHITECTURE-STATE.md"
   migration_state: ".ai/MIGRATION-STATE.md"

@@ -80,10 +80,12 @@ feature-flag evaluator proving deterministic hash-based percentage
 rollout — checked against a real 2000-sample statistical proof, not
 just a boolean — plus allow/deny-list override precedence and segment
 targeting) and `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/`
-(a real trace-context propagation layer proven across a real network
-hop between two genuinely separate `node:http` services, with the
-resulting span tree's shape read back from a shared in-memory
-collector both services independently write to).
+(a real trace-context propagation layer proven over a real HTTP
+request/response hop — one `node:http` server and one HTTP client,
+both in the same Node process — with the resulting span tree's shape
+read back from a shared in-memory collector both sides write to; this
+proves real header serialization/re-parsing and span linkage, not a
+cross-process boundary).
 
 Read `FEATURE-FLAGS-DISTRIBUTED-TRACING/README.md` first — it states
 the scope boundary (the flag-evaluation algorithm, not a
