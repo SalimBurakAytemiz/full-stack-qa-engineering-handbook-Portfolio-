@@ -122,6 +122,25 @@ function main() {
     return;
   }
 
+  console.log('\n--- Payment-status revenue/spend proof (independent review finding F2) ---');
+  const unpaidDb = getDatabase(':memory:');
+  unpaidDb.prepare("INSERT INTO users (id, email, password, status) VALUES (1, 'carol@example.com', 'x', 'ACTIVE')").run();
+  unpaidDb.prepare("INSERT INTO products (id, name, price, stock_quantity) VALUES (1, 'Widget', 149.90, 50)").run();
+  unpaidDb.prepare("INSERT INTO orders (id, user_id, status, total) VALUES (1, 1, 'PAYMENT_FAILED', 149.90)").run();
+  unpaidDb.prepare("INSERT INTO orders (id, user_id, status, total) VALUES (2, 1, 'PAYMENT_TIMEOUT', 149.90)").run();
+  unpaidDb.prepare('INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (1, 1, 1, 149.90)').run();
+  unpaidDb.prepare('INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (2, 1, 1, 149.90)').run();
+  const unpaidExtracted = extract(unpaidDb);
+  const unpaidRevenue = transformRevenueByProduct(unpaidExtracted);
+  const unpaidSummary = transformOrderSummaryByUser(unpaidExtracted);
+  const noFakeRevenue = unpaidRevenue.length === 0 && unpaidSummary.length === 0;
+  console.log(`  [${noFakeRevenue ? 'PASS' : 'FAIL'}] 2 real unpaid orders (PAYMENT_FAILED + PAYMENT_TIMEOUT) at 149.90 each produce 0 revenue/spend, not 299.80 (observed revenue rows: ${unpaidRevenue.length}, spend rows: ${unpaidSummary.length})`);
+  if (!noFakeRevenue) {
+    console.log('\nDATA_ENGINEERING_LAB_STATUS: FAILED — a failed/timed-out order was counted as real revenue or spend.');
+    reportOutcome(1);
+    return;
+  }
+
   console.log('\nDATA_ENGINEERING_LAB_STATUS: EXECUTED');
   reportOutcome(0);
 }

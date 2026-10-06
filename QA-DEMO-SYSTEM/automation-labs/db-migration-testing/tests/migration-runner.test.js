@@ -20,7 +20,7 @@ test('applyPending() applies every migration in version order against a real db'
   assert.deepEqual(columns, ['id', 'display_name', 'price', 'category']);
 });
 
-test('applyPending() genuinely backfills existing rows when adding a column (real zero-downtime proof)', () => {
+test('applyPending() genuinely backfills existing rows when adding a column (real backward-compatible schema-evolution proof)', () => {
   const db = freshDb();
   applyPending(db, [migrations[0]]);
   db.prepare('INSERT INTO catalog_items (name, price) VALUES (?, ?)').run('Widget', 9.99);

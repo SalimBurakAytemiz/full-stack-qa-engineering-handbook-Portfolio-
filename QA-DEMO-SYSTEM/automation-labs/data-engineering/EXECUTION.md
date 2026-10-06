@@ -16,7 +16,7 @@ node --test automation-labs/data-engineering/tests/etl.test.js automation-labs/d
 ## Run 2 — the real aggregate lab
 
 **Command:** `node automation-labs/data-engineering/run-data-engineering-lab.js`
-(from `QA-DEMO-SYSTEM/automation-labs/`).
+(from `QA-DEMO-SYSTEM/`) — independent review finding F8: this run's cwd was previously misdocumented as `QA-DEMO-SYSTEM/automation-labs/`, which combined with this exact command would resolve to a nonexistent doubled path (automation-labs/automation-labs/...); corrected to match the command's own automation-labs/ prefix.
 
 **Actual observed output:**
 ```
@@ -53,6 +53,48 @@ Exit code `0`.
   `order_item`, a case-variant duplicate email, a wrong `orders.total`, a
   wrong expected column list), and confirmed the checker's output
   contained the expected violation `type`. All four printed `[PROVEN]`.
+
+## Run 3 — real defect fix: failed/timed-out orders were counted as revenue (independent review finding F2)
+
+An independent Codex review of commit `23078ee` found a real defect:
+`transformRevenueByProduct` and `transformOrderSummaryByUser` summed
+every order/order_item regardless of the order's real `status`,
+including `PAYMENT_FAILED` and `PAYMENT_TIMEOUT` — orders the real
+backend's own payment simulator recorded as never having collected
+money. A real reproduction with 2 unpaid orders at 149.90 each
+reported 299.80 of revenue/spend that never actually occurred.
+
+The fix scopes both aggregates to `status === 'PAID'` only (the only
+status the real backend's `STATUS_BY_PAYMENT_RESULT` map writes for a
+genuinely successful payment — see `lib/etl.js`'s own comment for the
+exact reference). `order_count`/`total_spent` in
+`transformOrderSummaryByUser` are now both scoped to PAID orders,
+making them a real completed-purchases summary rather than a mix of
+real spend against all-attempts count.
+
+**New regression tests** (`tests/etl.test.js`): all-PAYMENT_FAILED
+(expect 0 revenue/spend), all-PAYMENT_TIMEOUT (expect 0 revenue/spend),
+a mix of PAID+PAYMENT_FAILED+PAYMENT_TIMEOUT (expect only the 1 PAID
+order counted), and all-PAID (baseline, expect full counting) —
+4 new tests, run against a real in-memory SQLite db via the same real
+`getDatabase()`/`extract()` path as every other test in this suite.
+
+**New aggregate-runner proof** (`run-data-engineering-lab.js`): a real
+second in-memory database seeded with exactly the reproduction case
+from the Codex finding (2 unpaid orders, 149.90 each), proving the
+real output is 0 revenue rows / 0 spend rows, not 299.80.
+
+```bash
+node --test automation-labs/data-engineering/tests/etl.test.js automation-labs/data-engineering/tests/data-quality.test.js
+# -> 1..17 / # pass 17 / # fail 0 (13 existing + 4 new payment-status tests)
+node automation-labs/data-engineering/run-data-engineering-lab.js
+```
+
+**Actual observed aggregate-runner output (new section only):**
+```
+--- Payment-status revenue/spend proof (independent review finding F2) ---
+  [PASS] 2 real unpaid orders (PAYMENT_FAILED + PAYMENT_TIMEOUT) at 149.90 each produce 0 revenue/spend, not 299.80 (observed revenue rows: 0, spend rows: 0)
+```
 
 ## Scope and honesty notes
 

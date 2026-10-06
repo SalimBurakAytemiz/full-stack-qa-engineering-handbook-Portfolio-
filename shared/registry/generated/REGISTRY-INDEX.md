@@ -114,7 +114,7 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | API Idempotency-Key Replay-Safety (in-flight-promise store backing a real Idempotency-Key HTTP server) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing` |
 | Rate Limiting & Abuse Testing (hand-rolled token-bucket limiter backing a real HTTP server) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting` |
 | Feature Flags & Progressive Targeting (hand-rolled deterministic hash-based evaluator) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/feature-flags` |
-| Distributed Tracing (trace-context propagation across two real node:http services) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing` |
+| Distributed Tracing (trace-context propagation over a real HTTP network hop: one node:http server, one HTTP client, same process) | L4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing` |
 
 ## System Patterns
 
@@ -127,22 +127,22 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | Payment | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/PAYMENT.md` |
 | Notification | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/NOTIFICATION.md` |
 | Async Events | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/ASYNC-EVENTS.md` |
-| Retry | DOCUMENTED_ONLY | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RETRY.md` |
+| Retry | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RETRY.md` |
 | Rate Limiting | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RATE-LIMITING.md` |
 | State Machine | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/STATE-MACHINE.md` |
 | Search | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SEARCH.md` |
 | Pagination | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/PAGINATION.md` |
 | File Upload | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FILE-UPLOAD.md` |
 | Import / Export | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/IMPORT-EXPORT.md` |
-| Timeout | NOT_APPLICABLE | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/TIMEOUT.md` |
+| Timeout | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/TIMEOUT.md` |
 | Cache | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/CACHE.md` |
 | Audit Log | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/AUDIT-LOG.md` |
 | Webhook | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/WEBHOOK.md` |
 | Third-Party Integration | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/THIRD-PARTY-INTEGRATION.md` |
 | Scheduled Jobs | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/SCHEDULED-JOBS.md` |
-| Feature Flags | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FEATURE-FLAGS.md` |
+| Feature Flags | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FEATURE-FLAGS.md` |
 | Localization | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/LOCALIZATION.md` |
-| Multi-Tenancy | NOT_IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/MULTI-TENANCY.md` |
+| Multi-Tenancy | IMPLEMENTED | `02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/MULTI-TENANCY.md` |
 
 ## Evidence
 
@@ -161,27 +161,27 @@ Generated from competency-state.yaml, domains.yaml, labs.yaml, patterns.yaml, ev
 | JMeter fail-gate logic — JTL-content-based PASS/FAIL, fixture-tested | E3_EXECUTED | `QA-DEMO-SYSTEM/automation-labs/jmeter/scripts/run-jmeter.test.js` |
 | JMeter real binary execution — attempted, root cause diagnosed, BLOCKED (not a successful load run) | E1_DOCUMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-10-AUTOMATION-LEARNING-LABS/EXECUTION.md` |
 | Locust load test | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-14-MODERN-QA-LEARNING-LABS/EXECUTION.md` |
-| AI Systems Testing lab — 35/35 deterministic mock-mode tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/ai-systems/EXECUTION.md` |
-| Chaos/Reliability lab — 17/17 deterministic tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability/EXECUTION.md` |
-| Privacy Testing lab — 14 unit + 3 real-backend integration tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md` |
-| Service Virtualization & Contract Testing lab — 11/11 tests executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/service-virtualization/EXECUTION.md` |
-| Property-Based & Fuzz Testing lab — 16/16 tests executed (local + CI), including a real backend bug found and fixed | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/EXECUTION.md` |
-| Mutation Testing lab — 5 unit tests + a real mutation run (5/6 killed, 1 confirmed equivalent mutant) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing/EXECUTION.md` |
-| Testcontainers lab — 5 unit tests + a real container lifecycle run (genuinely EXECUTED on GitHub Actions' real Docker daemon) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/EXECUTION.md` |
-| Data Engineering lab — 13 unit tests + a real ETL/data-quality run (zero real violations, all 4 negative-path proofs confirmed) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/data-engineering/EXECUTION.md` |
-| Distributed Messaging lab — 8 unit tests + a real aggregate run (ordering, DLQ routing, non-idempotent double-apply vs. idempotent single-apply) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging/EXECUTION.md` |
-| Supply Chain Security lab — 14 unit tests + a real npm sbom/npm audit/lockfile-integrity run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security/EXECUTION.md` |
-| Compatibility Testing lab — 4 unit tests + a real baseline-vs-current-response run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing/EXECUTION.md` |
-| i18n Testing lab — 7 unit tests + a real Intl-formatting/Unicode-roundtrip run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing/EXECUTION.md` |
-| Modern Protocols lab — 3 unit tests + a real SSE server/client run executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md` |
-| Production Verification lab — 15 unit tests + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md` |
-| Release Engineering lab — 21 unit tests + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md` |
-| DB Migration Testing lab — 6 unit tests + a real aggregate run against a real in-memory SQLite database executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing/EXECUTION.md` |
-| Multi-Tenancy Isolation lab — 6 unit tests + a real aggregate run proving tenant CRUD isolation and a real negative-path leak proof executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/EXECUTION.md` |
-| Idempotency Testing lab — 9 unit tests + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing/EXECUTION.md` |
-| Rate Limiting lab — 8 unit tests + a real aggregate run proving accept/reject/refill behavior against a real HTTP server executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting/EXECUTION.md` |
-| Feature Flags lab — 8 unit tests + a real aggregate run proving deterministic hash-based rollout, override precedence, and segment targeting executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/feature-flags/EXECUTION.md` |
-| Distributed Tracing lab — 12 unit tests + a real aggregate run proving trace-context propagation across a real HTTP hop executed (local + CI) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/EXECUTION.md` |
+| AI Systems Testing lab — 35/35 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real mock-mode aggregate run (CI AGGREGATE EXECUTION — 'ai:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/ai-systems/EXECUTION.md` |
+| Chaos/Reliability lab — 17/17 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real deterministic fault-injection aggregate run (CI AGGREGATE EXECUTION — 'chaos:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/chaos-reliability/EXECUTION.md` |
+| Privacy Testing lab — 14 unit + 3 real-backend integration tests (LOCAL UNIT EXECUTION only, node --test) + a real PII/data-subject-rights aggregate run (CI AGGREGATE EXECUTION — 'privacy:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/privacy-testing/EXECUTION.md` |
+| Service Virtualization & Contract Testing lab — 11/11 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real stub-server/contract aggregate run (CI AGGREGATE EXECUTION — 'virtualization:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/service-virtualization/EXECUTION.md` |
+| Property-Based & Fuzz Testing lab — 16/16 unit tests (LOCAL UNIT EXECUTION only, node --test) + a real property/fuzz aggregate run (CI AGGREGATE EXECUTION — 'property-fuzz:test' GitHub Actions job), including a real backend bug found and fixed | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/property-and-fuzz-testing/EXECUTION.md` |
+| Mutation Testing lab — 5 unit tests (LOCAL UNIT EXECUTION only) + a real mutation run (5/6 killed, 1 confirmed equivalent mutant) (CI AGGREGATE EXECUTION — 'mutation:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/mutation-testing/EXECUTION.md` |
+| Testcontainers lab — 5 unit tests (LOCAL UNIT EXECUTION only) + a real container lifecycle run (genuinely EXECUTED on GitHub Actions' real Docker daemon, CI AGGREGATE EXECUTION — 'testcontainers:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/testcontainers-lab/EXECUTION.md` |
+| Data Engineering lab — 17 unit tests (13 original + 4 payment-status regression tests added by independent-review finding F2; LOCAL UNIT EXECUTION only) + a real ETL/data-quality run (zero real violations, all 4 negative-path proofs confirmed, plus a real payment-status revenue/spend proof) (CI AGGREGATE EXECUTION — 'data-eng:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/data-engineering/EXECUTION.md` |
+| Distributed Messaging lab — 8 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run (ordering, DLQ routing, non-idempotent double-apply vs. idempotent single-apply) (CI AGGREGATE EXECUTION — 'messaging:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-messaging/EXECUTION.md` |
+| Supply Chain Security lab — 14 unit tests (LOCAL UNIT EXECUTION only) + a real npm sbom/npm audit/lockfile-integrity run (CI AGGREGATE EXECUTION — 'supply-chain:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/supply-chain-security/EXECUTION.md` |
+| Compatibility Testing lab — 4 unit tests (LOCAL UNIT EXECUTION only) + a real baseline-vs-current-response run (CI AGGREGATE EXECUTION — 'compatibility:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/compatibility-testing/EXECUTION.md` |
+| i18n Testing lab — 7 unit tests (LOCAL UNIT EXECUTION only) + a real Intl-formatting/Unicode-roundtrip run (CI AGGREGATE EXECUTION — 'i18n:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/i18n-testing/EXECUTION.md` |
+| Modern Protocols lab — 3 unit tests (LOCAL UNIT EXECUTION only) + a real SSE server/client run (CI AGGREGATE EXECUTION — 'modern-protocols:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/modern-protocols/EXECUTION.md` |
+| Production Verification lab — 15 unit tests (LOCAL UNIT EXECUTION only) + a real synthetic smoke-test run (honest NOT_EXECUTED + real GO against a real backend) (CI AGGREGATE EXECUTION — 'production-verification:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/production-verification/EXECUTION.md` |
+| Release Engineering lab — 21 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run against this repository's own real CHANGELOG.md/package.json files and a real canary-rollout pass/rollback proof (CI AGGREGATE EXECUTION — 'release-eng:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/release-engineering/EXECUTION.md` |
+| DB Migration Testing lab — 6 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run against a real in-memory SQLite database (CI AGGREGATE EXECUTION — 'db-migration:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/db-migration-testing/EXECUTION.md` |
+| Multi-Tenancy Isolation lab — 6 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving tenant CRUD isolation and a real negative-path leak proof (CI AGGREGATE EXECUTION — 'multi-tenancy:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/EXECUTION.md` |
+| Idempotency Testing lab — 9 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving exactly-once side effects under a genuine 10-way concurrent race (CI AGGREGATE EXECUTION — 'idempotency:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/idempotency-testing/EXECUTION.md` |
+| Rate Limiting lab — 8 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving accept/reject/refill behavior against a real HTTP server (CI AGGREGATE EXECUTION — 'rate-limiting:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/rate-limiting/EXECUTION.md` |
+| Feature Flags lab — 8 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving deterministic hash-based rollout, override precedence, and segment targeting (CI AGGREGATE EXECUTION — 'feature-flags:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/feature-flags/EXECUTION.md` |
+| Distributed Tracing lab — 12 unit tests (LOCAL UNIT EXECUTION only) + a real aggregate run proving trace-context propagation over a real HTTP hop (one node:http server + one HTTP client, same process) (CI AGGREGATE EXECUTION — 'distributed-tracing:test' GitHub Actions job) | E4_CI_VERIFIED | `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/EXECUTION.md` |
 | Database — SQL/data validation suite | E3_EXECUTED | `QA-DEMO-SYSTEM/evidence/PHASE-7-DATABASE-TESTING/EXECUTION.md` |
 | OWASP API Security Top 10 mapping review | E2_IMPLEMENTED | `QA-DEMO-SYSTEM/evidence/PHASE-11-SECURITY-AWARE-QA/EXECUTION.md` |
 | GitHub Actions CI pipeline with real executable QA jobs | E4_CI_VERIFIED | `.github/workflows/ci.yml` |

@@ -13,7 +13,13 @@ Real ETL and data-quality testing against the real backend database schema
   staging/warehouse area.
 - `transformRevenueByProduct` / `transformOrderSummaryByUser` are pure
   functions over those arrays, computing real aggregates (quantity and
-  revenue per product; order count and spend per user).
+  revenue per product; completed-purchase count and spend per user) —
+  both scoped to `orders.status === 'PAID'` only. A `PAYMENT_FAILED` or
+  `PAYMENT_TIMEOUT` order (the only other two statuses the real
+  backend ever writes — see `STATUS_BY_PAYMENT_RESULT` in
+  `backend/src/services/orders.service.js`) never collected real
+  money and is deliberately excluded from both revenue and spend; see
+  `EXECUTION.md`'s "Run 3" section for the real bug this fixed.
 
 `lib/data-quality.js` — four real checks, three of them deliberately
 operating on the **extracted, unconstrained** row arrays rather than the

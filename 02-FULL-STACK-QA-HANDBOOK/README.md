@@ -163,8 +163,10 @@ not incompleteness; no row implies content that isn't there.
   (`QA-DEMO-SYSTEM/automation-labs/db-migration-testing/`: a real,
   hand-rolled migration runner driving a real in-memory SQLite
   database through 3 real migrations, proving forward application,
-  zero-downtime column-addition backfill, idempotent re-apply, and
-  exact single-step rollback; and
+  backward-compatible column-addition backfill for existing rows,
+  idempotent re-apply, and exact single-step rollback (schema
+  evolution and backfill correctness, not a zero-downtime-deployment
+  proof — see that lab's README.md); and
   `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/`: a real
   tenant-scoped data-access layer proven against a real SQLite
   database seeded with two real tenants' rows, including a

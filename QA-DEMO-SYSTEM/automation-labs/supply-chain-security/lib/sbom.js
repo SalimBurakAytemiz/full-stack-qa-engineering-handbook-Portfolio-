@@ -5,7 +5,7 @@
 // TR: Gercek SBOM uretimi: npm'in kendi `npm sbom` komutunu calistirir
 // (ek bir bagimlilik eklenmez), gercek CycloneDX JSON ciktisini parse eder.
 
-const { execFileSync } = require('node:child_process');
+const { runNpmCli } = require('./npm-cli');
 
 /**
  * @param {string} workspaceName - e.g. "backend"
@@ -13,8 +13,7 @@ const { execFileSync } = require('node:child_process');
  * @returns {object} the real, parsed CycloneDX SBOM document
  */
 function generateSbom(workspaceName, cwd) {
-  const raw = execFileSync(
-    'npm',
+  const raw = runNpmCli(
     ['sbom', '--sbom-format', 'cyclonedx', '--workspace', workspaceName],
     { cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
   );

@@ -37,8 +37,11 @@ Executable labs:
 `QA-DEMO-SYSTEM/automation-labs/db-migration-testing/` (a real,
 hand-rolled migration runner driving a real in-memory SQLite database
 through 3 real migrations — create table, add-column-with-backfill,
-rename-column — proving forward application, zero-downtime backfill,
-idempotent re-apply, and exact single-step rollback), and
+rename-column — proving forward application, backward-compatible
+column-addition backfill for existing rows, idempotent re-apply, and
+exact single-step rollback — not a zero-downtime-deployment proof,
+since it does not test application availability under concurrent
+production traffic; see that lab's README.md), and
 `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/` (a real
 tenant-scoped data-access layer proven against a real SQLite database
 seeded with two real tenants' rows, including a deliberately unsafe

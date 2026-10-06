@@ -337,25 +337,34 @@ test('relationship semantics: all real PRACTICED_IN edges in relationships.yaml 
 });
 
 // Codex final-verification fix (N5): this is the LITERAL drift Codex
-// found — the System Patterns README still said Retry was IMPLEMENTED
-// (with a fabricated "JMeter/Selenium CI retry policy" evidence claim)
-// after patterns.yaml's canonical status had already been corrected to
-// DOCUMENTED_ONLY in an earlier fix round. This test reverts the README
-// row to the exact stale wording and requires the new system-patterns
-// sync check to reject it.
-// TR: Bu, Codex'in bulduğu BİREBİR sürüklenmedir — patterns.yaml zaten
-// DOCUMENTED_ONLY'ye düzeltilmişken, README hâlâ IMPLEMENTED yazıyordu.
-test('system-patterns sync: a stale Retry status that disagrees with canonical patterns.yaml fails validation (exact Codex N5 drift)', async () => {
+// originally found — the System Patterns README said Retry was
+// IMPLEMENTED (with a fabricated "JMeter/Selenium CI retry policy"
+// evidence claim) after patterns.yaml's canonical status had already
+// been corrected to DOCUMENTED_ONLY. Independent review finding F4
+// later corrected Retry's canonical status a second time — to
+// IMPLEMENTED, honestly, because real isolated-lab retry logic
+// (chaos-reliability, distributed-messaging) now exists — so this test
+// no longer reverts to the original N5 wording (patterns.yaml's
+// canonical status for Retry is no longer DOCUMENTED_ONLY). It instead
+// mutates the CURRENT, correct README row to a stale/wrong status word
+// and requires the same system-patterns sync check to still reject it.
+// TR: Codex'in orijinal bulduğu sürüklenme buydu; F4 ile Retry'nin
+// kanonik durumu GERÇEK bir sebeple (izole lab'larda gerçek retry
+// mantığı var) ikinci kez düzeltildi — bu sefer IMPLEMENTED'a. Bu test
+// artık eski N5 metnine dönmüyor, bunun yerine GÜNCEL doğru satırı
+// yanlış bir durum kelimesine çeviriyor ve kontrolün hâlâ yakaladığını
+// doğruluyor.
+test('system-patterns sync: a stale Retry status that disagrees with canonical patterns.yaml fails validation (same drift class as the original Codex N5 finding)', async () => {
   await withMutatedFile(
     '02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/README.md',
     (content) => content.replace(
-      '| [Retry](RETRY.md) | DOCUMENTED_ONLY | No real retry mechanism exists anywhere in `backend/src` or `automation-labs` (verified by grep, zero matches) — the JMeter fail-gate wrapper explicitly does NOT auto-retry, by design (see RETRY.md\'s own "Related labs" section) |',
-      '| [Retry](RETRY.md) | IMPLEMENTED | JMeter/Selenium CI retry policy, N4 fail-safe pattern |'
+      '| [Retry](RETRY.md) | IMPLEMENTED (ISOLATED LAB only) | MAIN BACKEND (`backend/src`): no retry mechanism, unchanged. ISOLATED LAB: chaos-reliability\'s `lib/resilient-client.js` (bounded retry + backoff) and distributed-messaging\'s `lib/broker.js` (retry budget before dead-lettering), both CI-verified — see RETRY.md\'s "Related labs" section |',
+      '| [Retry](RETRY.md) | DOCUMENTED_ONLY | JMeter/Selenium CI retry policy, N4 fail-safe pattern |'
     ),
     () => {
       const result = runValidator();
       assert.notEqual(result.code, 0, 'validator must FAIL when the README status column disagrees with canonical patterns.yaml');
-      assert.match(result.stderr, /pattern 'pattern\.retry': README status column says "IMPLEMENTED" but canonical patterns\.yaml says "DOCUMENTED_ONLY"/);
+      assert.match(result.stderr, /pattern 'pattern\.retry': README status column says "DOCUMENTED_ONLY" but canonical patterns\.yaml says "IMPLEMENTED"/);
     }
   );
 });

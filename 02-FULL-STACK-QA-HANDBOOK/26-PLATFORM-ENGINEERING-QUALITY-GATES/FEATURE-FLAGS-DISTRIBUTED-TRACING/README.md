@@ -5,8 +5,11 @@
 aggregate run proving deterministic percentage rollout, allow/deny-list
 overrides, and segment targeting) and
 `QA-DEMO-SYSTEM/automation-labs/distributed-tracing/` (12 unit tests +
-a real aggregate run proving trace-context propagation across a real
-HTTP hop between two real `node:http` services).
+a real aggregate run proving trace-context propagation over a real
+HTTP hop — one real `node:http` server plus one real HTTP client, both
+in the same process; see that lab's `README.md` "What this does and
+doesn't prove" section — this does not prove a separate-process
+boundary, independent review finding F6).
 
 ## Scope boundary — read this first
 

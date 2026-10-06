@@ -33,7 +33,7 @@
 ## FILES ADDED / MODIFIED
 
 - **187 files changed** (173 added, 14 modified), **16,283 insertions(+)**, 13 deletions(-) across the full range `7051c2b..ed7136a`.
-- Modified files are exclusively registry/index/README cross-reference files (`competency-state.yaml`, `gaps.yaml`, `tool-state.yaml`, `labs.yaml`, `evidence.yaml`, `relationships.yaml`, `REGISTRY-INDEX.md`, `02-COMPETENCY-MATRIX.md`, `05-EXECUTABLE-LABS/README.md`, `02-FULL-STACK-QA-HANDBOOK/README.md` and its `25-ADVANCED-QA-ENGINEERING/README.md`, `.github/workflows/ci.yml`, `automation-labs/package.json`) — never `backend/src/`, `web-tests/`, or `api-tests/`.
+- Modified files are overwhelmingly registry/index/README cross-reference files (`competency-state.yaml`, `gaps.yaml`, `tool-state.yaml`, `labs.yaml`, `evidence.yaml`, `relationships.yaml`, `REGISTRY-INDEX.md`, `02-COMPETENCY-MATRIX.md`, `05-EXECUTABLE-LABS/README.md`, `02-FULL-STACK-QA-HANDBOOK/README.md` and its `25-ADVANCED-QA-ENGINEERING/README.md`, `.github/workflows/ci.yml`, `automation-labs/package.json`) — **correction (independent review finding F5): with one real exception**, `backend/src/middleware/errorHandler.js`, a one-line fix for a genuine bug Milestone 2.3's fuzz suite found (an oversized request body returning 500 instead of 413 — see commit `2879d06` and that milestone's `COMMON-MISTAKES.md`). `web-tests/` and `api-tests/` remain untouched.
 
 ## HANDBOOK AREAS ADDED
 
@@ -87,7 +87,7 @@ Every new competency's `knowledge` field is set to `WORKING` — documented, han
 
 ## PART 1 REGRESSION RESULT
 
-**PASS — no regression.** Backend unit/integration tests: **160/160 PASS**, identical count to the Part 1 baseline, confirmed by a local re-run at the Part 2 final SHA and by the `backend-tests` job on every one of the 14 Part 2 CI runs (all `success`). The `web-tests` and all `api-*` CI jobs were likewise green on every Part 2 CI run. Part 2 never modifies `backend/src/`, `web-tests/`, or `api-tests/` — every new lab is self-contained under its own `QA-DEMO-SYSTEM/automation-labs/<lab-name>/` directory.
+**PASS — no regression.** Backend unit/integration tests: **160/160 PASS**, identical count to the Part 1 baseline, confirmed by a local re-run at the Part 2 final SHA and by the `backend-tests` job on every one of the 14 Part 2 CI runs (all `success`), including after Milestone 2.3's one real `backend/src/middleware/errorHandler.js` fix (see "FILES ADDED / MODIFIED" above). The `web-tests` and all `api-*` CI jobs were likewise green on every Part 2 CI run, and neither directory was modified. Every new lab is self-contained under its own `QA-DEMO-SYSTEM/automation-labs/<lab-name>/` directory.
 
 ## REGISTRY RESULT
 

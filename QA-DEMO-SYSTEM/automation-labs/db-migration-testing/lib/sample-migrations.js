@@ -29,8 +29,11 @@ const migrations = [
     // Real backward-compatibility concern: existing rows must not be
     // left with a NULL category after the column is added — this
     // migration's up() adds the column AND backfills every existing
-    // row in the same migration, which is exactly the two-step
-    // pattern a real zero-downtime column addition needs.
+    // row in the same migration, which is the add-then-backfill
+    // pattern a real backward-compatible column addition needs (this
+    // proves schema evolution and backfill correctness, not
+    // application availability under concurrent traffic — see
+    // independent review finding F7).
     up(db) {
       db.exec('ALTER TABLE catalog_items ADD COLUMN category TEXT');
       db.exec("UPDATE catalog_items SET category = 'uncategorized' WHERE category IS NULL");

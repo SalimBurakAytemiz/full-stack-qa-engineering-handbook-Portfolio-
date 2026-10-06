@@ -43,9 +43,9 @@ items:
 
   - id: pattern.retry
     label: "Retry"
-    status: DOCUMENTED_ONLY
+    status: IMPLEMENTED
     path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/RETRY.md"
-    note: "Codex post-audit correction (P2-05): no real retry mechanism exists anywhere in QA-DEMO-SYSTEM/backend/src or automation-labs (verified by grep — zero matches for retry/Retry/RETRY in either); the JMeter fail-gate wrapper explicitly does NOT auto-retry, by design (see RETRY.md's own 'Related labs' section). Previously marked IMPLEMENTED with a note claiming a 'CI/test-execution level (JMeter/Selenium retry policy)' — that claim was also false (same grep covers automation-labs/, zero matches). Not implementing fake retry logic solely to satisfy a status badge — accuracy over feature count."
+    note: "Independent review finding F4: corrected from DOCUMENTED_ONLY (the earlier P2-05 correction, made before these labs existed). MAIN QA-DEMO BACKEND (backend/src) still has no retry mechanism — unchanged, still accurate. Two ISOLATED EXECUTABLE LABS built afterward now genuinely implement and exercise real retry logic: chaos-reliability's lib/resilient-client.js (real bounded retry with backoff against a deliberately unreliable fixture) and distributed-messaging's lib/broker.js (real redelivery against a configured retry budget before dead-lettering), both CI-verified (see labs.yaml). The JMeter fail-gate wrapper still explicitly does NOT auto-retry, by design — see RETRY.md's 'Related labs' section for the full, current list."
 
   - id: pattern.rate-limiting
     label: "Rate Limiting"
@@ -81,9 +81,9 @@ items:
 
   - id: pattern.timeout
     label: "Timeout"
-    status: NOT_APPLICABLE
+    status: IMPLEMENTED
     path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/TIMEOUT.md"
-    note: "No outbound third-party dependency exists in this repository's executable scope to apply an explicit timeout against."
+    note: "Independent review finding F4: corrected from NOT_APPLICABLE. MAIN QA-DEMO BACKEND (backend/src) still makes no outbound third-party call to apply an explicit timeout against — unchanged, still accurate. Two ISOLATED EXECUTABLE LABS built afterward genuinely implement real timeouts: chaos-reliability's lib/resilient-client.js (a real per-call timeout via AbortController against a deliberately unreliable fixture server) and production-verification's lib/synthetic-monitor.js / lib/smoke-checks.js (real AbortSignal.timeout() against the real running backend's HTTP endpoints), both CI-verified (see labs.yaml). See TIMEOUT.md's 'Related labs' section for the full, current list."
 
   - id: pattern.cache
     label: "Cache"
@@ -114,8 +114,9 @@ items:
 
   - id: pattern.feature-flags
     label: "Feature Flags"
-    status: NOT_IMPLEMENTED
+    status: IMPLEMENTED
     path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/FEATURE-FLAGS.md"
+    note: "Independent review finding F4: corrected from NOT_IMPLEMENTED. MAIN QA-DEMO BACKEND (backend/src) still has no feature-flag system — unchanged, still accurate. The feature-flags ISOLATED EXECUTABLE LAB's lib/flag-evaluator.js genuinely implements a deterministic hash-based percentage rollout, allowList/denyList override precedence, and segment targeting, CI-verified (see labs.yaml). See FEATURE-FLAGS.md's 'Related labs' section."
 
   - id: pattern.localization
     label: "Localization"
@@ -125,9 +126,9 @@ items:
 
   - id: pattern.multi-tenancy
     label: "Multi-Tenancy"
-    status: NOT_IMPLEMENTED
+    status: IMPLEMENTED
     path: "02-FULL-STACK-QA-HANDBOOK/22-SYSTEM-PATTERNS/MULTI-TENANCY.md"
-    note: "Single-tenant by design — no tenant concept exists."
+    note: "Independent review finding F4: corrected from NOT_IMPLEMENTED. MAIN QA-DEMO BACKEND (backend/src) remains single-tenant by design — no tenant concept exists there, unchanged, still accurate. The multi-tenancy-isolation ISOLATED EXECUTABLE LAB's lib/tenant-scoped-repository.js genuinely implements a tenant-scoped data access layer over a real SQLite database, proving full CRUD isolation plus a deliberately unsafe comparison repository that genuinely leaks another tenant's row, CI-verified (see labs.yaml). See MULTI-TENANCY.md's 'Related labs' section."
 
 related:
   narrative_docs:

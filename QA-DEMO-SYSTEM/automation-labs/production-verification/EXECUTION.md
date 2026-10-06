@@ -20,7 +20,12 @@ mimicking the backend's real response shapes).
 ## Run 2 — honest degraded mode (no backend running)
 
 **Command:** `node automation-labs/production-verification/run-production-verification-lab.js`
-(from `QA-DEMO-SYSTEM/automation-labs/`), with no backend server started.
+(from `QA-DEMO-SYSTEM/`), with no backend server started — independent
+review finding F8: this run's cwd was previously misdocumented as
+`QA-DEMO-SYSTEM/automation-labs/`, which combined with this exact
+command would resolve to a nonexistent doubled path
+(automation-labs/automation-labs/...); corrected to match the
+command's own automation-labs/ prefix.
 
 **Actual observed output:**
 ```

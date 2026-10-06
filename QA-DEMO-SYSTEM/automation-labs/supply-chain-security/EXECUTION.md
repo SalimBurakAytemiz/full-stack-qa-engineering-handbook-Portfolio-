@@ -19,7 +19,7 @@ repository's own real `package-lock.json`).
 ## Run 2 — the real aggregate lab
 
 **Command:** `node automation-labs/supply-chain-security/run-supply-chain-security-lab.js`
-(from `QA-DEMO-SYSTEM/automation-labs/`).
+(from `QA-DEMO-SYSTEM/`) — independent review finding F8: this run's cwd was previously misdocumented as `QA-DEMO-SYSTEM/automation-labs/`, which combined with this exact command would resolve to a nonexistent doubled path (automation-labs/automation-labs/...); corrected to match the command's own automation-labs/ prefix.
 
 **Actual observed output:**
 ```
@@ -73,6 +73,55 @@ have been a false positive. The checker excludes any entry with
 ## Scope and honesty notes
 
 - Not a commercial SCA tool — see `README.md`'s "Scope boundary" section.
+
+## Run 4 — Windows-safe npm launch fix (independent review finding F1)
+
+An independent Codex review of commit `23078ee` found a real
+portability defect: `lib/sbom.js` and `lib/audit.js` both called
+`execFileSync('npm', ...)` directly. On Windows, the real `npm`
+executable on `PATH` is `npm.cmd` (a shell wrapper), and
+`execFileSync` without `shell: true` does not consult `PATHEXT` the
+way a real shell does — so the documented Windows workflow for this
+lab would genuinely fail with `spawnSync npm ENOENT`, even though
+Linux CI (which this repository's only available sandbox and CI
+runner both are) never surfaces it.
+
+The fix (`lib/npm-cli.js`) never invokes a bare `npm`/`npm.cmd` name
+at all: it resolves npm's own real JavaScript CLI entry point
+(`npm-cli.js`) relative to the currently running Node binary
+(`process.execPath`), trying both the Windows layout
+(`<node-bin-dir>/node_modules/npm/bin/npm-cli.js`) and the Unix layout
+(`<node-prefix>/lib/node_modules/npm/bin/npm-cli.js`), then runs that
+file directly through `process.execPath` — exactly the same
+cross-platform mechanism already used elsewhere in this repository
+(e.g. `api-tests/scripts/generate-html-report.js`'s `resetDatabase()`)
+to invoke a known Node script without going through a shell or `PATH`
+lookup at all. No `.cmd`/`.bat` file is ever launched, so this is not
+a `shell: true` workaround and does not depend on shell-specific
+quoting.
+
+**Honest scope of this verification:** this sandbox and this
+repository's GitHub Actions runners are both Linux (`ubuntu-latest`)
+— there is no Windows environment available to this session to
+execute the fix on. What was actually verified: (1) the fix's
+resolver correctly locates this environment's real
+`/opt/node22/lib/node_modules/npm/bin/npm-cli.js` via the Unix branch
+of the same candidate-path logic a Windows machine would use the
+Windows branch for; (2) all 14 existing unit tests and the full
+aggregate runner still pass unchanged on Linux after the fix,
+confirming no regression; (3) the only code path that could produce
+Windows' `ENOENT` (a bare `execFileSync('npm', ...)` call) no longer
+exists anywhere in this lab. A real Windows CI run or Windows
+developer machine is the only way to literally observe the fix
+succeed there — that observation has not been made and is not
+claimed here.
+
+```bash
+node --test automation-labs/supply-chain-security/tests/*.test.js
+# -> 1..14 / # pass 14 / # fail 0 (unchanged)
+node automation-labs/supply-chain-security/run-supply-chain-security-lab.js
+# -> SUPPLY_CHAIN_SECURITY_LAB_STATUS: EXECUTED (unchanged)
+```
 
 ## Run 3 — CI-verified
 

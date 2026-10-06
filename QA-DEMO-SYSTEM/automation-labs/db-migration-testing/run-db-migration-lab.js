@@ -2,10 +2,18 @@
 
 // Real aggregate run: a real, hand-rolled migration runner driving a
 // real in-memory SQLite database through 3 real migrations, proving
-// forward application, zero-downtime backfill, idempotent re-apply,
-// and single-step rollback, all against the same unmodified code.
+// forward application, backward-compatible column-addition backfill
+// for existing rows, idempotent re-apply, and single-step rollback,
+// all against the same unmodified code. This proves schema evolution
+// and backfill correctness — it does NOT prove application
+// availability under concurrent production traffic, so it is not a
+// zero-downtime-deployment proof (independent review finding F7).
 // TR: Bu, GERÇEK bir migration runner'ın GERÇEK bir in-memory SQLite
 // veritabanını 3 GERÇEK migration ile sürdüğü bir agregat çalıştırmadır.
+// Bu, şema evrimini ve backfill doğruluğunu kanıtlar — eşzamanlı
+// üretim trafiği altında uygulama erişilebilirliğini KANITLAMAZ,
+// dolayısıyla bir sıfır-kesintili (zero-downtime) dağıtım kanıtı
+// değildir (independent review finding F7).
 
 const { DatabaseSync } = require('node:sqlite');
 const { applyPending, rollbackLast, getAppliedVersions } = require('./lib/migration-runner');

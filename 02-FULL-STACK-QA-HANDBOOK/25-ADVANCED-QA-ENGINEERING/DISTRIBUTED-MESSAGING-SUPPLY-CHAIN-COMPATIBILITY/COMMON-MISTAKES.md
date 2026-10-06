@@ -57,13 +57,42 @@ keywords, and a dedicated test proves a newly added field is classified
 `SAFE_ADDITIVE`, not `BREAKING` — the negative case that would have caught
 the naive version.
 
-## What these four have in common
+## 5. Shelling out to a bare `npm` name, which silently assumes Linux
+
+`lib/sbom.js` and `lib/audit.js` both originally called
+`execFileSync('npm', ...)` directly. This passed every test and every
+CI run in this repository — because this repository's only available
+sandbox and CI runner are both Linux, where the real `npm` executable
+on `PATH` genuinely is named `npm`. It does not pass on Windows: the
+real Windows `npm` on `PATH` is `npm.cmd` (a shell wrapper), and
+`execFileSync` without `shell: true` does not consult `PATHEXT` the
+way a real shell does, so the call fails with `spawnSync npm ENOENT`.
+Unlike the other four mistakes in this file, this one was **not**
+caught during the original build — it was found by an independent
+Codex review of the finished lab, which is exactly why independent
+review exists, and that distinction is kept honest here rather than
+rewritten as if it had been self-caught. The fix
+(`lib/npm-cli.js`) never calls a bare `npm` name at all: it resolves
+npm's own real CLI JavaScript entry point relative to the currently
+running Node binary and runs that file directly through
+`process.execPath`, the same Node-binary-direct mechanism already
+used elsewhere in this repository to avoid exactly this class of
+platform-specific `PATH`/shell assumption. See
+`automation-labs/supply-chain-security/EXECUTION.md`'s "Run 4" section
+for the honest scope of what was and was not verified (no Windows
+environment is available to directly observe the fix running there).
+
+## What these five have in common
 
 Each mistake looks, at first glance, like a reasonable simplification:
 test the fix alone, trust any `resolved` field, show the reassuring
-number, treat any schema mismatch as a problem. In every case the actual
-fix was to **run the real comparison** (bug vs. fix, local-workspace vs.
-real-registry, full-graph vs. production-only, breaking vs. additive)
-rather than describing only one side of it, and to write the test that
-specifically proves the distinction holds, not just that the common case
-works.
+number, treat any schema mismatch as a problem, assume the one
+operating system this repository's sandbox happens to run on is the
+only one that matters. In every case the actual fix was to **run the
+real comparison** (bug vs. fix, local-workspace vs. real-registry,
+full-graph vs. production-only, breaking vs. additive, Windows path
+vs. Unix path) rather than describing only one side of it, and to
+write the test — or, for the one mistake this repository's own
+environment cannot directly test, the clearly-scoped honest
+verification — that specifically proves the distinction holds, not
+just that the common case works.

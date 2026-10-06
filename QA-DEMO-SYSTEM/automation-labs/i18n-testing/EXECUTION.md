@@ -17,7 +17,7 @@ node --test automation-labs/i18n-testing/tests/*.test.js
 ## Run 2 — the real aggregate lab
 
 **Command:** `node automation-labs/i18n-testing/run-i18n-lab.js`
-(from `QA-DEMO-SYSTEM/automation-labs/`).
+(from `QA-DEMO-SYSTEM/`) — independent review finding F8: this run's cwd was previously misdocumented as `QA-DEMO-SYSTEM/automation-labs/`, which combined with this exact command would resolve to a nonexistent doubled path (automation-labs/automation-labs/...); corrected to match the command's own automation-labs/ prefix.
 
 **Actual observed output:**
 ```

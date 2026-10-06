@@ -650,10 +650,12 @@ jobs:
 
   distributed-tracing-lab:
     # Part 3 — Platform Engineering & Quality Gates: Distributed
-    # Tracing (Milestone 3.3). Self-contained: two real hand-rolled
-    # HTTP servers over Node's own http module on real loopback
-    # ports — no backend server, no real tracing-backend export.
-    name: Distributed Tracing lab (trace-context propagation across two real services)
+    # Tracing (Milestone 3.3). Self-contained: one real hand-rolled
+    # HTTP server (node:http) plus one HTTP client, both in this same
+    # job's single Node process, exchanging a real traceparent header
+    # over a real loopback network hop — not two separate processes.
+    # No backend server, no real tracing-backend export.
+    name: Distributed Tracing lab (trace-context propagation over a real HTTP hop, same process)
     runs-on: ubuntu-latest
     needs: backend-tests
     steps:

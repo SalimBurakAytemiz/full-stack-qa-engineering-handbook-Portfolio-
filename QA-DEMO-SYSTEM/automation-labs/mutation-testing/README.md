@@ -71,7 +71,7 @@ it is the only thing that makes the row order a documented guarantee
 rather than an unstated implementation detail current behavior happens to
 match — but no test written against the module's public behavior can kill
 this mutant. See `COMMON-MISTAKES.md` in this milestone's handbook docs for
-the full writeup, and `02-SALIM-BURAK-DIGITAL-TWIN/registry/gaps.yaml` for
+the full writeup, and `01-SALIM-BURAK-DIGITAL-TWIN/registry/gaps.yaml` for
 the tracked gap this leaves (closing it for real would need either an
 `EXPLAIN QUERY PLAN` assertion or a white-box test that forces a different
 scan strategy, both out of this lab's scope).

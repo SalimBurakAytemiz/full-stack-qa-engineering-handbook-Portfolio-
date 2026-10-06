@@ -1,12 +1,24 @@
 'use strict';
 
-// Two real services (an "upstream" and a "downstream"), both real
-// node:http servers listening on real loopback ports, used to prove
-// that trace context actually survives a real network hop — not a
-// same-process function call pretending to be a service boundary.
-// TR: Gerçek bir ağ sıçramasının trace bağlamını GERÇEKTEN
-// koruduğunu kanıtlamak için kullanılan, gerçek loopback portlarında
-// dinleyen iki gerçek node:http sunucusu.
+// One real "upstream" node:http server listening on a real loopback
+// port, called by a real "downstream" HTTP client (runDownstreamRequest)
+// — a plain async function, not a second server. Both run in this same
+// Node process; the proof is that a real traceparent header survives a
+// real network hop (an actual HTTP request serialized, sent over
+// loopback, and re-parsed), not that there are two separate processes
+// or machines. Independent review finding F6: this file's own header
+// comment previously claimed "two real services, both real node:http
+// servers" — that was inaccurate; corrected here.
+// TR: Gerçek bir loopback portunda dinleyen TEK bir gerçek "upstream"
+// node:http sunucusu, gerçek bir "downstream" HTTP istemcisi
+// (runDownstreamRequest — ikinci bir sunucu DEĞİL, sıradan bir async
+// fonksiyon) tarafından çağrılır. İkisi de AYNI Node sürecinde çalışır;
+// kanıtlanan şey gerçek bir ağ sıçraması (serialize edilip tekrar parse
+// edilen gerçek bir HTTP isteği) üzerinden traceparent başlığının
+// hayatta kalmasıdır — iki ayrı süreç veya makine değil. Bağımsız
+// inceleme bulgusu F6: bu dosyanın önceki başlık yorumu "iki gerçek
+// servis, ikisi de gerçek node:http sunucusu" diyordu — bu yanlıştı,
+// burada düzeltildi.
 
 const http = require('node:http');
 const { formatTraceParent, parseTraceParent } = require('./trace-context');

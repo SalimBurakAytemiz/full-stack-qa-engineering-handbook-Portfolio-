@@ -10,7 +10,7 @@
 // calistirir. Zafiyet bulununca npm audit sifirdan farkli exit code
 // doner; bu normal bir sonuctur, hata degildir.
 
-const { execFileSync } = require('node:child_process');
+const { runNpmCli } = require('./npm-cli');
 
 /**
  * @param {string} cwd - directory to run npm in (the npm workspace root)
@@ -23,7 +23,7 @@ function runAudit(cwd, options = {}) {
   if (options.omitDev) args.push('--omit=dev');
   let raw;
   try {
-    raw = execFileSync('npm', args, { cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+    raw = runNpmCli(args, { cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
   } catch (err) {
     // TR: npm audit zafiyet buldugunda exit code != 0 doner ama stdout'ta
     // gecerli JSON vardir — bu durumu gercek bir hatadan ayirt ediyoruz.

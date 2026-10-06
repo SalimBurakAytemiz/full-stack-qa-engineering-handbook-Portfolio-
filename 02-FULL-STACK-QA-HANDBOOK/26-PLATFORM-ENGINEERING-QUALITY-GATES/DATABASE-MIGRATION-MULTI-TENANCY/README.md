@@ -2,9 +2,12 @@
 
 **Executable labs:**
 `QA-DEMO-SYSTEM/automation-labs/db-migration-testing/` (6 unit tests +
-a real aggregate run proving forward migration, zero-downtime
-backfill, idempotent re-apply, and exact rollback against a real
-in-memory SQLite database) and
+a real aggregate run proving forward migration, backward-compatible
+column-addition backfill for existing rows, idempotent re-apply, and
+exact rollback against a real in-memory SQLite database — this proves
+schema evolution and backfill correctness, not application
+availability under concurrent production traffic, so it is not a
+zero-downtime-deployment proof; independent review finding F7) and
 `QA-DEMO-SYSTEM/automation-labs/multi-tenancy-isolation/` (6 unit
 tests + a real aggregate run proving full CRUD tenant isolation,
 including a deliberately unsafe comparison repository that proves the

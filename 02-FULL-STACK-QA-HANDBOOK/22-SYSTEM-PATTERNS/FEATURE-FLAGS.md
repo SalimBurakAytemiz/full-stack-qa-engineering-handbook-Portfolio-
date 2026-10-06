@@ -15,12 +15,17 @@ lets a broken feature be disabled instantly without a rollback.
 
 ## Status in this repository
 
-**Not implemented.** No feature-flag system exists in
-`QA-DEMO-SYSTEM` — every code path is either always active or not
-present at all (this repository's own documented gaps —
+**MAIN QA-DEMO BACKEND (`backend/src`): not implemented.** No
+feature-flag system exists there — every code path is either always
+active or not present at all (this repository's own documented gaps —
 `gap.release.feature-flags` in
 `01-SALIM-BURAK-DIGITAL-TWIN/registry/gaps.yaml` — record this
-honestly).
+honestly, and still apply to the main backend).
+
+**ISOLATED EXECUTABLE LAB (independent review finding F4): real
+deterministic hash-based rollout is implemented and CI-verified** —
+see "Related labs" below. This does not mean the main demo backend
+gained a feature-flag system; it remains as described above.
 
 ## QA Risks
 
@@ -64,3 +69,14 @@ rather than a full separate deployment.
 Any domain doing staged/gradual feature rollout — Multi-Country Mobile
 (country-by-country rollout) is the most natural fit among this
 repository's own domain pages.
+
+## Related labs
+
+`QA-DEMO-SYSTEM/automation-labs/feature-flags/lib/flag-evaluator.js`
+(independent review finding F4) implements a real, deterministic
+hash-based percentage rollout (proven against 2000 distinct synthetic
+user ids within a real statistical tolerance of its target), plus
+allowList/denyList override precedence and segment-based targeting —
+CI-verified (see `shared/registry/catalog/labs.yaml`). This is an
+ISOLATED EXECUTABLE LAB; it does not add a feature-flag system to the
+main backend.

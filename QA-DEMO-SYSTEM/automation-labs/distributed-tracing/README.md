@@ -2,22 +2,47 @@
 
 A real, hand-rolled tracer (`lib/tracer.js`) and trace-context
 propagation layer (`lib/trace-context.js`, loosely modeled on the
-W3C `traceparent` header shape) proven across a real network hop
-between two real `node:http` services (`lib/traced-service.js`) — not
-a same-process function call standing in for a service boundary.
+W3C `traceparent` header shape) proven over a real network hop: one
+real `node:http` server (the "upstream") on a real loopback port,
+called by a real HTTP client (the "downstream" — a plain async
+function, not a second server) that lives in this same process
+(`lib/traced-service.js`) — not a same-process **function call**
+standing in for an HTTP boundary.
 
-## Why a real second server, not a function call
+**Independent review finding F6:** earlier wording on this page (and
+in this lab's `EXECUTION.md`, the registry, and the CI job name)
+described this as "two real services" / "two real server processes" /
+"a separate process boundary proof." That overstated what is actually
+built — see "What this does and doesn't prove" below.
 
-The entire point of distributed tracing is correlating work that
-happens in *different processes*, usually on different machines. A
-test that calls two functions in the same process and checks they
-share a trace id would not actually prove the context survives
-serialization onto an HTTP header and deserialization back out of
-one — it's exactly the step most likely to be implemented wrong (a
-dropped header, a case-sensitivity bug, a missing propagation call on
-one of several outbound calls a real service makes). This lab starts
-a second real `node:http` server on a real loopback port and makes a
-real HTTP request to it, so the propagation proof is genuine.
+## Why a real HTTP request, not a function call
+
+The risk this lab actually tests is that trace context survives
+serialization onto an HTTP header and deserialization back out of one
+— exactly the step most likely to be implemented wrong (a dropped
+header, a case-sensitivity bug, a missing propagation call on one of
+several outbound calls a real service makes). Calling two functions
+in the same process and checking they share a trace id, with no real
+header in between, would not catch that class of bug. This lab
+instead starts a real `node:http` server on a real loopback port and
+makes a real `http.request` against it — a real request line, real
+headers, a real TCP round-trip on loopback — so the header-propagation
+proof is genuine, even though both sides run in one process.
+
+## What this does and doesn't prove
+
+- **Does prove**: a `traceparent`-shaped header is correctly formatted,
+  sent over a real HTTP request, received, parsed, and used to link a
+  child span to its parent — real HTTP serialization and trace-context
+  propagation, not asserted from the code but observed from an actual
+  network round-trip.
+- **Does NOT prove**: a true cross-process or cross-machine boundary.
+  Both the "upstream" server and the "downstream" client run inside
+  the same Node process and the same CI job — there is no second
+  process, no second container, no second machine. A real multi-process
+  or multi-service deployment would additionally need to prove context
+  survives a process boundary (e.g. two separate `node` processes, or
+  two separate containers), which this lab does not attempt.
 
 ## What this proves
 

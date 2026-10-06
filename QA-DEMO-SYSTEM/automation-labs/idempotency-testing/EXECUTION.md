@@ -19,7 +19,7 @@ a real 10-way concurrent race over real HTTP).
 ## Run 2 — the real aggregate lab
 
 **Command:** `node automation-labs/idempotency-testing/run-idempotency-lab.js`
-(from `QA-DEMO-SYSTEM/automation-labs/`).
+(from `QA-DEMO-SYSTEM/`) — independent review finding F8: this run's cwd was previously misdocumented as `QA-DEMO-SYSTEM/automation-labs/`, which combined with this exact command would resolve to a nonexistent doubled path (automation-labs/automation-labs/...); corrected to match the command's own automation-labs/ prefix.
 
 **Actual observed output:**
 ```
